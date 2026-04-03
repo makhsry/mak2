@@ -64,7 +64,7 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
     for t in sorted(all_tabs):
         is_active = (t == tab_name)
         active_class = ' class="active"' if is_active else ""
-        nav_links += f'            <a href="{t}.html"{active_class}>{t}</a>\n'
+        nav_links += f'            <a href="{t.lower()}.html"{active_class}>{t}</a>\n'
 
     # HTML Template
     html_content = f"""<!DOCTYPE html>
@@ -113,7 +113,7 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
 </html>
 """
 
-    output_path = Path(output_dir) / f"{tab_name}.html"
+    output_path = Path(output_dir) / f"{tab_name.lower()}.html"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
