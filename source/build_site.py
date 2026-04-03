@@ -61,10 +61,14 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
 
     # Create Navigation Links
     nav_links = ""
+    # Create Navigation Links
+    nav_links = ""
     for t in sorted(all_tabs):
         is_active = (t == tab_name)
         active_class = ' class="active"' if is_active else ""
-        nav_links += f'            <a href="{t.lower()}.html"{active_class}>{t}</a>\n'
+        # Link to index.html if it's the 'About' tab, otherwise lowercase filename
+        target_filename = "index.html" if t.lower() == "about" else f"{t.lower()}.html"
+        nav_links += f'            <a href="{target_filename}"{active_class}>{t}</a>\n'
 
     # HTML Template
     html_content = f"""<!DOCTYPE html>
@@ -113,7 +117,9 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
 </html>
 """
 
-    output_path = Path(output_dir) / f"{tab_name.lower()}.html"
+    # Rename 'About' output to index.html for GitHub Pages entry point
+    actual_name = "index" if tab_name.lower() == "about" else tab_name.lower()
+    output_path = Path(output_dir) / f"{actual_name}.html"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
