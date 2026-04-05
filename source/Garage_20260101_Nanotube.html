@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nanochannel Builder</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: #050a12;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      color: #c8e0ff;
+      overflow: hidden;
+    }
+
+    #app {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 290px;
+      min-width: 290px;
+      background: linear-gradient(180deg, #0a1628 0%, #060e1c 100%);
+      border-right: 1px solid #1a2d4a;
+      padding: 20px 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb {
+      background: #1a2d4a;
+      border-radius: 2px;
+    }
+
+    .section-label {
+      color: #4a9eff;
+      font-size: 10px;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .section {
+      margin-bottom: 22px;
+    }
+
+    /* equations box */
+    .eq-box {
+      background: rgba(74, 158, 255, 0.05);
+      border: 1px solid #1a2d4a;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 10px;
+      color: #7db3e8;
+      line-height: 2;
+      margin-bottom: 22px;
+    }
+
+    .eq-box .eq-sub {
+      color: #3a5a7a;
+      margin-top: 4px;
+    }
+
+    /* validity table */
+    .val-table {
+      background: #060e1c;
+      border: 1px solid #1a2d4a;
+      border-radius: 7px;
+      overflow: hidden;
+      font-size: 11px;
+    }
+
+    .val-row {
+      display: grid;
+      grid-template-columns: 34px 70px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-bottom: 1px solid #0d1829;
+    }
+
+    .val-row:last-child {
+      border-bottom: none;
+    }
+
+    .val-sym {
+      color: #c8e0ff;
+      font-weight: 700;
+    }
+
+    .val-range {
+      color: #4adf80;
+      font-size: 10px;
+      background: rgba(40, 160, 80, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .val-note {
+      color: #2a4a6a;
+      font-size: 10px;
+    }
+
+    /* param control */
+    .param-control {
+      margin-bottom: 16px;
+    }
+
+    .param-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+    }
+
+    .param-label {
+      color: #7db3e8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .param-range {
+      color: #2a4a6a;
+      font-size: 10px;
+    }
+
+    .param-slider {
+      width: 100%;
+      accent-color: #4a9eff;
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .param-input {
+      width: 100%;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: #060e1c;
+      border: 1px solid #1a2d4a;
+      color: #c8e0ff;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .param-input::-webkit-inner-spin-button,
+    .param-input::-webkit-outer-spin-button {
+      opacity: 0.4;
+    }
+
+    .param-input:hover,
+    .param-input:focus {
+      border-color: #4a9eff;
+    }
+
+    /* toggle switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .toggle-label {
+      color: #7db3e8;
+      font-size: 12px;
+    }
+
+    .toggle {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-knob {
+      position: absolute;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      transition: left 0.2s;
+    }
+
+    /* mesh density stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .stat-card {
+      background: #060e1c;
+      border: 1px solid #1a2d4a;
+      border-radius: 6px;
+      padding: 6px 8px;
+    }
+
+    .stat-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .stat-val {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stat-lbl {
+      color: #2a4a6a;
+      font-size: 9px;
+      margin-top: 2px;
+    }
+
+    .size-section-label {
+      color: #4a9eff;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      margin: 10px 0 6px;
+    }
+
+    .size-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #060e1c;
+      border: 1px solid #1a2d4a;
+      border-radius: 5px;
+      padding: 5px 10px;
+      margin-bottom: 4px;
+    }
+
+    .size-lbl {
+      color: #3a5a7a;
+      font-size: 10px;
+    }
+
+    .size-val {
+      color: #c8e0ff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* export */
+    .fmt-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .fmt-btn {
+      flex: 1;
+      padding: 6px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #1a2d4a;
+      background: transparent;
+      color: #4a6a8a;
+      font-size: 11px;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .fmt-btn.active {
+      background: rgba(74, 158, 255, 0.2);
+      border-color: #4a9eff;
+      color: #c8e0ff;
+    }
+
+    .fmt-desc {
+      color: #3a5a7a;
+      font-size: 10px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .size-est-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(74, 158, 255, 0.06);
+      border: 1px solid #1a2d4a;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+    }
+
+    .size-est-lbl {
+      color: #4a6a8a;
+      font-size: 10px;
+    }
+
+    .size-est-val {
+      color: #ffaa44;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .download-btn {
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 7px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #1a4a8a, #0d2a5a);
+      border: 1px solid #4a9eff;
+      color: #c8e0ff;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 1px;
+    }
+
+    .export-msg {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(40, 160, 80, 0.12);
+      border: 1px solid #1a6a30;
+      color: #4adf80;
+      font-size: 10px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    /* canvas area */
+    #canvas-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    #canvas-wrap canvas {
+      display: block;
+    }
+
+    #hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #1a3a5a;
+      font-size: 11px;
+      letter-spacing: 1px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #zoom-btns {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .zoom-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(10, 22, 40, 0.85);
+      border: 1px solid #1a2d4a;
+      color: #4a9eff;
+      font-size: 20px;
+      line-height: 36px;
+      text-align: center;
+      cursor: pointer;
+      font-family: monospace;
+      user-select: none;
+    }
+
+    .zoom-btn.rst {
+      color: #3a5a7a;
+      font-size: 10px;
+    }
+
+    /* title */
+    .app-tag {
+      color: #4a9eff;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .app-title {
+      color: #c8e0ff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+
+    .density-sep {
+      border-top: 1px solid #1a2d4a;
+      padding-top: 14px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <!-- ══ SIDEBAR ══ -->
+    <div id="sidebar">
+      <div class="app-title">Nanochannel Builder</div>
+
+      <!-- Equations -->
+      <div class="eq-box">
+        <div class="section-label" style="margin-bottom:6px">GOVERNING EQUATIONS</div>
+        <div>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)</div>
+        <div>w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</div>
+        <div class="eq-sub">r(ξ) = (w₂ − w₁) / 2</div>
+      </div>
+
+      <!-- Validity ranges -->
+      <div class="section">
+        <div class="section-label">VALIDITY RANGES</div>
+        <div class="val-table">
+          <div class="val-row"><span class="val-sym">α₁</span><span class="val-range">[0, 1]</span><span
+              class="val-note">asymmetry amplitude</span></div>
+          <div class="val-row"><span class="val-sym">α₂</span><span class="val-range">[0, 1]</span><span
+              class="val-note">corrugation amplitude</span></div>
+          <div class="val-row"><span class="val-sym">α₃</span><span class="val-range">[0.5, 4]</span><span
+              class="val-note">wavenumber multiplier</span></div>
+          <div class="val-row"><span class="val-sym">r₀</span><span class="val-range">[0.2, 2]</span><span
+              class="val-note">minimum base radius</span></div>
+          <div class="val-row"><span class="val-sym">L</span><span class="val-range">[2, 40]</span><span
+              class="val-note">tube length (ξ domain)</span></div>
+          <div class="val-row"><span class="val-sym">Nₐ</span><span class="val-range">[20, ∞)</span><span
+              class="val-note">axial mesh points</span></div>
+          <div class="val-row"><span class="val-sym">Nᵣ</span><span class="val-range">[8, ∞)</span><span
+              class="val-note">radial mesh points</span></div>
+        </div>
+      </div>
+
+      <!-- Parameters -->
+      <div class="section">
+        <div class="section-label">PARAMETERS</div>
+
+        <div class="param-control">
+          <div class="param-header"><span class="param-label">α₁</span><span class="param-range">[0, 1]</span></div>
+          <input class="param-slider" type="range" id="sl-a1" min="0" max="1" step="0.01" value="0">
+          <input class="param-input" type="number" id="in-a1" min="0" max="1" step="0.01" value="0">
+        </div>
+        <div class="param-control">
+          <div class="param-header"><span class="param-label">α₂</span><span class="param-range">[0, 1]</span></div>
+          <input class="param-slider" type="range" id="sl-a2" min="0" max="1" step="0.01" value="0.4">
+          <input class="param-input" type="number" id="in-a2" min="0" max="1" step="0.01" value="0.4">
+        </div>
+        <div class="param-control">
+          <div class="param-header"><span class="param-label">α₃</span><span class="param-range">[0.5, 4]</span></div>
+          <input class="param-slider" type="range" id="sl-a3" min="0.5" max="4" step="0.1" value="1">
+          <input class="param-input" type="number" id="in-a3" min="0.5" max="4" step="0.1" value="1">
+        </div>
+        <div class="param-control">
+          <div class="param-header"><span class="param-label">r₀</span><span class="param-range">[0.2, 2]</span></div>
+          <input class="param-slider" type="range" id="sl-r0" min="0.2" max="2" step="0.05" value="1">
+          <input class="param-input" type="number" id="in-r0" min="0.2" max="2" step="0.05" value="1">
+        </div>
+        <div class="param-control">
+          <div class="param-header"><span class="param-label">L (length)</span><span class="param-range">[2, 40]</span>
+          </div>
+          <input class="param-slider" type="range" id="sl-len" min="2" max="40" step="0.5" value="10">
+          <input class="param-input" type="number" id="in-len" min="2" max="40" step="0.5" value="10">
+        </div>
+
+        <!-- Mesh density sub-section -->
+        <div class="density-sep">
+          <div class="section-label">MESH DENSITY</div>
+          <div class="param-control">
+            <div class="param-header"><span class="param-label">Nₐ axial pts</span><span class="param-range">[20,
+                ∞)</span></div>
+            <input class="param-input" type="number" id="in-na" min="20" step="10" value="200">
+          </div>
+          <div class="param-control">
+            <div class="param-header"><span class="param-label">Nᵣ radial pts</span><span class="param-range">[8,
+                ∞)</span></div>
+            <input class="param-input" type="number" id="in-nr" min="8" step="4" value="48">
+          </div>
+
+          <!-- Live stats -->
+          <div class="stats-grid" id="stats-grid"></div>
+          <div class="size-section-label">EST. FILE SIZES</div>
+          <div id="size-rows"></div>
+        </div>
+      </div>
+
+      <!-- Display toggles -->
+      <div class="section">
+        <div class="section-label">DISPLAY</div>
+        <div class="toggle-row">
+          <span class="toggle-label">Wireframe</span>
+          <div class="toggle" id="tog-wire" style="background:#4a9eff" onclick="toggleSwitch('wire')">
+            <div class="toggle-knob" id="knob-wire" style="left:18px"></div>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Inner flow tube</span>
+          <div class="toggle" id="tog-inner" style="background:#4a9eff" onclick="toggleSwitch('inner')">
+            <div class="toggle-knob" id="knob-inner" style="left:18px"></div>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Auto-rotate</span>
+          <div class="toggle" id="tog-rot" style="background:#4a9eff" onclick="toggleSwitch('rot')">
+            <div class="toggle-knob" id="knob-rot" style="left:18px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="section">
+        <div class="section-label">EXPORT MESH</div>
+        <div class="fmt-row">
+          <button class="fmt-btn active" id="fmt-csv" onclick="setFmt('csv')">CSV</button>
+          <button class="fmt-btn" id="fmt-obj" onclick="setFmt('obj')">OBJ</button>
+          <button class="fmt-btn" id="fmt-json" onclick="setFmt('json')">JSON</button>
+        </div>
+        <div class="fmt-desc" id="fmt-desc">Vertices + normals + UVs for both surfaces in a flat table.</div>
+        <div class="size-est-row">
+          <span class="size-est-lbl" id="est-lbl">est. CSV size</span>
+          <span class="size-est-val" id="est-val">—</span>
+        </div>
+        <button class="download-btn" onclick="doExport()">⬇ DOWNLOAD <span id="dl-fmt">CSV</span></button>
+        <div class="export-msg" id="export-msg"></div>
+      </div>
+    </div><!-- /sidebar -->
+
+    <!-- ══ CANVAS ══ -->
+    <div id="canvas-wrap">
+      <div id="hint">DRAG TO PAN · RIGHT-DRAG / SHIFT-DRAG TO ROTATE · SCROLL TO ZOOM</div>
+      <div id="zoom-btns">
+        <div class="zoom-btn" onclick="adjustZoom(-1.2)">+</div>
+        <div class="zoom-btn" onclick="adjustZoom(1.2)">−</div>
+        <div class="zoom-btn rst" onclick="resetZoom()">RST</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════
+    //  STATE
+    // ══════════════════════════════════════════════════════
+    const state = {
+      a1: 0, a2: 0.4, a3: 1, r0: 1, tubeLength: 10,
+      axialSegs: 200, radialSegs: 48,
+      wireframe: true, showInner: true, autoRot: true,
+      exportFmt: 'csv',
+    };
+
+    // ══════════════════════════════════════════════════════
+    //  THREE.JS SETUP
+    // ══════════════════════════════════════════════════════
+    const wrap = document.getElementById('canvas-wrap');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x080c14);
+
+    const camera = new THREE.PerspectiveCamera(55, wrap.clientWidth / wrap.clientHeight, 0.01, 100);
+    camera.position.set(0, 1.5, 5.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+    wrap.appendChild(renderer.domElement);
+
+    // Lights
+    scene.add(new THREE.AmbientLight(0x8ab4f8, 0.6));
+    const dir1 = new THREE.DirectionalLight(0xffffff, 2.0);
+    dir1.position.set(3, 5, 4); scene.add(dir1);
+    const dir2 = new THREE.DirectionalLight(0xff6030, 1.2);
+    dir2.position.set(-4, -2, -3); scene.add(dir2);
+    const pt = new THREE.PointLight(0x60aaff, 1.5, 20);
+    pt.position.set(0, 0, 3); scene.add(pt);
+
+    // Grid
+    const grid = new THREE.GridHelper(14, 20, 0x1a2a4a, 0x0d1829);
+    grid.position.y = -1.8; scene.add(grid);
+
+    // ══════════════════════════════════════════════════════
+    //  GEOMETRY
+    // ══════════════════════════════════════════════════════
+    function computeTubePath(a1, a2, a3, r0, segments, length) {
+      const center = [], radii = [];
+      for (let i = 0; i <= segments; i++) {
+        const xi = (i / segments) * length;
+        const w1 = a1 * Math.sin((a3 * Math.PI * xi) / 5) + a2 * Math.sin((7 * Math.PI * xi) / 5);
+        const w2 = r0 + a1 * Math.sin((a3 * Math.PI * xi) / 5) - a2 * Math.sin((7 * Math.PI * xi) / 5);
+        const r = (w2 - w1) / 2;
+        center.push(new THREE.Vector3(xi - length / 2, (w1 + w2) / 2, 0));
+        radii.push(Math.max(r, 0.01));
+      }
+      return { center, radii };
+    }
+
+    function computeFrenetFrames(points) {
+      const up = new THREE.Vector3(0, 1, 0);
+      return points.map((_, i) => {
+        let t;
+        if (i === 0) t = points[1].clone().sub(points[0]).normalize();
+        else if (i === points.length - 1) t = points[i].clone().sub(points[i - 1]).normalize();
+        else t = points[i + 1].clone().sub(points[i - 1]).normalize();
+        const b = t.clone().cross(up).normalize();
+        const n = b.clone().cross(t).normalize();
+        return { tangent: t, normal: n, binormal: b };
+      });
+    }
+
+    function buildTubeMesh(center, radii, tubularSegments, radialSegments) {
+      const positions = [], normals = [], uvs = [], indices = [];
+      const frames = computeFrenetFrames(center);
+      for (let i = 0; i <= tubularSegments; i++) {
+        const r = radii[i], P = center[i];
+        const { normal, binormal } = frames[i];
+        for (let j = 0; j <= radialSegments; j++) {
+          const angle = (j / radialSegments) * Math.PI * 2;
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          const nx = cos * normal.x + sin * binormal.x;
+          const ny = cos * normal.y + sin * binormal.y;
+          const nz = cos * normal.z + sin * binormal.z;
+          positions.push(P.x + r * nx, P.y + r * ny, P.z + r * nz);
+          normals.push(nx, ny, nz);
+          uvs.push(i / tubularSegments, j / radialSegments);
+        }
+      }
+      for (let i = 0; i < tubularSegments; i++) {
+        for (let j = 0; j < radialSegments; j++) {
+          const a = i * (radialSegments + 1) + j;
+          const b = (i + 1) * (radialSegments + 1) + j;
+          const c = (i + 1) * (radialSegments + 1) + j + 1;
+          const d = i * (radialSegments + 1) + j + 1;
+          indices.push(a, b, d, b, c, d);
+        }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geo.setIndex(indices);
+      return geo;
+    }
+
+    let tubeMeshes = [];
+    function rebuildMesh() {
+      tubeMeshes.forEach(m => { scene.remove(m); m.geometry.dispose(); m.material.dispose(); });
+      tubeMeshes = [];
+
+      const { a1, a2, a3, r0, tubeLength: L, axialSegs: Na, radialSegs: Nr, wireframe, showInner } = state;
+      const { center, radii } = computeTubePath(a1, a2, a3, r0, Na, L);
+
+      const outerGeo = buildTubeMesh(center, radii, Na, Nr);
+      const outerMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(0.15, 0.55, 0.95),
+        metalness: 0.1, roughness: 0.25,
+        transmission: 0.55, thickness: 0.5,
+        transparent: true, opacity: 0.72,
+        side: THREE.DoubleSide, wireframe,
+      });
+      const outerMesh = new THREE.Mesh(outerGeo, outerMat);
+      outerMesh.userData.isTube = true;
+      scene.add(outerMesh);
+      tubeMeshes.push(outerMesh);
+
+      if (showInner) {
+        const innerRadii = radii.map(r => r * 0.35);
+        const innerGeo = buildTubeMesh(center, innerRadii, Na, Nr);
+        const innerMat = new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color(0.95, 0.4, 0.15),
+          metalness: 0.2, roughness: 0.15,
+          emissive: new THREE.Color(0.4, 0.1, 0.0), emissiveIntensity: 0.3,
+          side: THREE.DoubleSide, wireframe,
+        });
+        const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+        innerMesh.userData.isTube = true;
+        scene.add(innerMesh);
+        tubeMeshes.push(innerMesh);
+      }
+      updateStats();
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  ANIMATION
+    // ══════════════════════════════════════════════════════
+    const rot = { x: 0.2, y: 0 };
+    let zoom = 5.5;
+    // pan offset: how much the camera lookAt target is shifted
+    const pan = { x: 0, y: 0 };
+    const ZOOM_MIN = 1, ZOOM_MAX = 20;
+    const mouse = { down: false, button: 0, lastX: 0, lastY: 0, pinchDist: 0 };
+
+    function updateCamera() {
+      // Camera orbits around (pan.x, pan.y, 0) at distance zoom
+      const sinX = Math.sin(rot.x), cosX = Math.cos(rot.x);
+      const sinY = Math.sin(rot.y), cosY = Math.cos(rot.y);
+      camera.position.set(
+        pan.x + zoom * cosX * sinY,
+        pan.y + zoom * sinX,
+        zoom * cosX * cosY
+      );
+      camera.lookAt(pan.x, pan.y, 0);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (state.autoRot && !mouse.down) rot.y += 0.003;
+      // Meshes sit at origin; camera orbits around pan target
+      tubeMeshes.forEach(m => { m.rotation.x = 0; m.rotation.y = 0; });
+      updateCamera();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      camera.aspect = wrap.clientWidth / wrap.clientHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    // ══════════════════════════════════════════════════════
+    //  MOUSE / TOUCH
+    // ══════════════════════════════════════════════════════
+    const canvas = renderer.domElement;
+    canvas.style.cursor = 'grab';
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    function isRotateMode(e) {
+      return e.button === 2 || e.shiftKey;
+    }
+
+    canvas.addEventListener('mousedown', e => {
+      mouse.down = true;
+      mouse.button = e.button;
+      mouse.lastX = e.clientX;
+      mouse.lastY = e.clientY;
+      state.autoRot = false;
+      updateToggleUI('rot', false);
+      canvas.style.cursor = isRotateMode(e) ? 'crosshair' : 'grabbing';
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!mouse.down) return;
+      const dx = e.clientX - mouse.lastX;
+      const dy = e.clientY - mouse.lastY;
+      mouse.lastX = e.clientX;
+      mouse.lastY = e.clientY;
+
+      if (mouse.button === 2 || e.shiftKey) {
+        // Rotate
+        rot.y += dx * 0.008;
+        rot.x += dy * 0.008;
+      } else {
+        // Pan — scale by zoom so speed feels consistent
+        const panScale = zoom * 0.0014;
+        // Right = camera's local X, Up = camera's local Y (approximate in world space)
+        const cosY = Math.cos(rot.y), sinY = Math.sin(rot.y);
+        const cosX = Math.cos(rot.x);
+        // world right vector (horizontal pan)
+        pan.x -= dx * panScale * cosY;
+        pan.y -= dy * panScale * cosX;   // vertical pan in screen-Y
+        pan.x += dy * panScale * sinY * Math.sin(rot.x); // tilt correction
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      mouse.down = false;
+      canvas.style.cursor = 'grab';
+    });
+
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + e.deltaY * 0.01));
+    }, { passive: false });
+
+    // Touch: single-finger pan, two-finger pinch-zoom, two-finger rotate
+    let touchPrev = [];
+    canvas.addEventListener('touchstart', e => {
+      touchPrev = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        mouse.pinchDist = Math.hypot(dx, dy);
+      }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const cur = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
+
+      if (e.touches.length === 1 && touchPrev.length >= 1) {
+        // Single finger: pan
+        const dx = cur[0].x - touchPrev[0].x;
+        const dy = cur[0].y - touchPrev[0].y;
+        const panScale = zoom * 0.0014;
+        const cosY = Math.cos(rot.y), sinY = Math.sin(rot.y);
+        const cosX = Math.cos(rot.x);
+        pan.x -= dx * panScale * cosY;
+        pan.y -= dy * panScale * cosX;
+        pan.x += dy * panScale * sinY * Math.sin(rot.x);
+        state.autoRot = false; updateToggleUI('rot', false);
+      } else if (e.touches.length === 2 && touchPrev.length >= 2) {
+        // Pinch: zoom
+        const dx = cur[0].x - cur[1].x, dy = cur[0].y - cur[1].y;
+        const dist = Math.hypot(dx, dy);
+        zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + (mouse.pinchDist - dist) * 0.03));
+        mouse.pinchDist = dist;
+      }
+
+      touchPrev = cur;
+    }, { passive: false });
+
+    function adjustZoom(delta) { zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + delta)); }
+    function resetZoom() { zoom = 5.5; pan.x = 0; pan.y = 0; rot.x = 0.2; rot.y = 0; }
+
+    // ══════════════════════════════════════════════════════
+    //  PARAM BINDING
+    // ══════════════════════════════════════════════════════
+    function bindParam(key, slId, inId, min, max, uncapped) {
+      const sl = slId ? document.getElementById(slId) : null;
+      const inp = document.getElementById(inId);
+
+      function apply(raw) {
+        let v = parseFloat(raw);
+        if (isNaN(v)) return false;
+        v = uncapped ? Math.max(min, v) : Math.min(max, Math.max(min, v));
+        state[key] = v;
+        if (sl) sl.value = Math.min(sl.max, v);
+        inp.value = v;
+        return true;
+      }
+
+      if (sl) {
+        sl.addEventListener('input', () => { apply(sl.value); rebuildMesh(); });
+      }
+      inp.addEventListener('change', () => { if (apply(inp.value)) rebuildMesh(); });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { if (apply(inp.value)) rebuildMesh(); inp.blur(); } });
+    }
+
+    bindParam('a1', 'sl-a1', 'in-a1', 0, 1, false);
+    bindParam('a2', 'sl-a2', 'in-a2', 0, 1, false);
+    bindParam('a3', 'sl-a3', 'in-a3', 0.5, 4, false);
+    bindParam('r0', 'sl-r0', 'in-r0', 0.2, 2, false);
+    bindParam('tubeLength', 'sl-len', 'in-len', 2, 40, false);
+    bindParam('axialSegs', null, 'in-na', 20, Infinity, true);
+    bindParam('radialSegs', null, 'in-nr', 8, Infinity, true);
+
+    // integer rounding for density inputs
+    ['in-na', 'in-nr'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('change', () => {
+        const k = id === 'in-na' ? 'axialSegs' : 'radialSegs';
+        state[k] = Math.max(id === 'in-na' ? 20 : 8, Math.round(parseFloat(el.value) || state[k]));
+        el.value = state[k];
+      });
+    });
+
+    // ══════════════════════════════════════════════════════
+    //  TOGGLES
+    // ══════════════════════════════════════════════════════
+    const toggleState = { wire: true, inner: true, rot: true };
+
+    function updateToggleUI(key, val) {
+      toggleState[key] = val;
+      const tog = document.getElementById('tog-' + key);
+      const knob = document.getElementById('knob-' + key);
+      tog.style.background = val ? '#4a9eff' : '#1a2d4a';
+      knob.style.left = val ? '18px' : '3px';
+    }
+
+    function toggleSwitch(key) {
+      const next = !toggleState[key];
+      updateToggleUI(key, next);
+      if (key === 'wire') { state.wireframe = next; rebuildMesh(); }
+      if (key === 'inner') { state.showInner = next; rebuildMesh(); }
+      if (key === 'rot') { state.autoRot = next; }
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  LIVE STATS + FILE SIZE
+    // ══════════════════════════════════════════════════════
+    function fmtBytes(b) {
+      if (b < 1024) return b + ' B';
+      if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+      return (b / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function updateStats() {
+      const Na = state.axialSegs, Nr = state.radialSegs;
+      const vertsPerSurf = (Na + 1) * (Nr + 1);
+      const facesPerSurf = Na * Nr * 2;
+      const totalVerts = vertsPerSurf * 2;
+      const totalFaces = facesPerSurf * 2;
+      const totalPoints = totalVerts;
+
+      const csvB = totalVerts * 80;
+      const objB = totalVerts * 76 + totalFaces * 20;
+      const jsonB = totalVerts * 120 + totalFaces * 18 + 500;
+
+      const cards = [
+        { lbl: 'total points', val: totalPoints.toLocaleString(), color: '#ffaa44', full: true },
+        { lbl: 'verts / surface', val: vertsPerSurf.toLocaleString(), color: '#4adf80', full: false },
+        { lbl: 'faces / surface', val: facesPerSurf.toLocaleString(), color: '#4adf80', full: false },
+        { lbl: 'total vertices', val: totalVerts.toLocaleString(), color: '#4a9eff', full: false },
+        { lbl: 'total faces', val: totalFaces.toLocaleString(), color: '#4a9eff', full: false },
+      ];
+
+      document.getElementById('stats-grid').innerHTML = cards.map(c =>
+        `<div class="stat-card${c.full ? ' full' : ''}">
+      <div class="stat-val" style="color:${c.color}">${c.val}</div>
+      <div class="stat-lbl">${c.lbl}</div>
+    </div>`
+      ).join('');
+
+      document.getElementById('size-rows').innerHTML = [
+        { lbl: 'CSV est. size', val: fmtBytes(csvB) },
+        { lbl: 'OBJ est. size', val: fmtBytes(objB) },
+        { lbl: 'JSON est. size', val: fmtBytes(jsonB) },
+      ].map(r => `<div class="size-row"><span class="size-lbl">${r.lbl}</span><span class="size-val">${r.val}</span></div>`).join('');
+
+      // Export panel size estimate
+      const bytes = state.exportFmt === 'csv' ? csvB : state.exportFmt === 'obj' ? objB : jsonB;
+      document.getElementById('est-val').textContent = fmtBytes(bytes);
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  EXPORT FORMAT
+    // ══════════════════════════════════════════════════════
+    const fmtDescs = {
+      csv: 'x, y, z, face_indices first — then nx, ny, nz, u, v per vertex for both surfaces.',
+      obj: 'Positions then faces first, followed by normals and UVs. Two named objects: outer & inner.',
+      json: 'Each vertex has x, y, z, face_indices inline, then nx, ny, nz, u, v. Faces listed separately.',
+    };
+
+    function setFmt(fmt) {
+      state.exportFmt = fmt;
+      ['csv', 'obj', 'json'].forEach(f => {
+        document.getElementById('fmt-' + f).classList.toggle('active', f === fmt);
+      });
+      document.getElementById('fmt-desc').textContent = fmtDescs[fmt];
+      document.getElementById('est-lbl').textContent = 'est. ' + fmt.toUpperCase() + ' size';
+      document.getElementById('dl-fmt').textContent = fmt.toUpperCase();
+      updateStats();
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  MESH DATA + EXPORT
+    // ══════════════════════════════════════════════════════
+    function getMeshData(center, radii, Na, Nr) {
+      const frames = computeFrenetFrames(center);
+      const verts = [], norms = [], uvCoords = [], faces = [];
+      for (let i = 0; i <= Na; i++) {
+        const r = radii[i], P = center[i];
+        const { normal, binormal } = frames[i];
+        for (let j = 0; j <= Nr; j++) {
+          const angle = (j / Nr) * Math.PI * 2;
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          const nx = cos * normal.x + sin * binormal.x;
+          const ny = cos * normal.y + sin * binormal.y;
+          const nz = cos * normal.z + sin * binormal.z;
+          verts.push([P.x + r * nx, P.y + r * ny, P.z + r * nz]);
+          norms.push([nx, ny, nz]);
+          uvCoords.push([i / Na, j / Nr]);
+        }
+      }
+      for (let i = 0; i < Na; i++) {
+        for (let j = 0; j < Nr; j++) {
+          const a = i * (Nr + 1) + j, b = (i + 1) * (Nr + 1) + j;
+          const c = (i + 1) * (Nr + 1) + j + 1, d = i * (Nr + 1) + j + 1;
+          faces.push([a, b, d], [b, c, d]);
+        }
+      }
+      return { verts, norms, uvCoords, faces };
+    }
+
+    function downloadBlob(content, filename, mime) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function doExport() {
+      const { a1, a2, a3, r0, tubeLength: L, axialSegs: Na, radialSegs: Nr, exportFmt: fmt } = state;
+      const { center, radii } = computeTubePath(a1, a2, a3, r0, Na, L);
+      const outerData = getMeshData(center, radii, Na, Nr);
+      const innerData = getMeshData(center, radii.map(r => r * 0.35), Na, Nr);
+
+      if (fmt === 'csv') {
+        // Build a vertex→face lookup so each vertex row knows which faces it belongs to
+        const buildFaceLookup = (data) => {
+          const lookup = new Array(data.verts.length).fill(null).map(() => []);
+          data.faces.forEach(([a, b, c], fi) => { lookup[a].push(fi); lookup[b].push(fi); lookup[c].push(fi); });
+          return lookup;
+        };
+        const rows = ['surface,vertex_index,x,y,z,face_indices,nx,ny,nz,u,v'];
+        const addSurf = (data, label) => {
+          const faceLookup = buildFaceLookup(data);
+          data.verts.forEach(([x, y, z], i) => {
+            const [nx, ny, nz] = data.norms[i], [u, v] = data.uvCoords[i];
+            const faceList = faceLookup[i].join(';');
+            rows.push(`${label},${i},${x.toFixed(6)},${y.toFixed(6)},${z.toFixed(6)},"${faceList}",${nx.toFixed(6)},${ny.toFixed(6)},${nz.toFixed(6)},${u.toFixed(6)},${v.toFixed(6)}`);
+          });
+        };
+        addSurf(outerData, 'outer'); addSurf(innerData, 'inner');
+        downloadBlob(rows.join('\n'), 'nanotube_mesh.csv', 'text/csv');
+      } else if (fmt === 'obj') {
+        // OBJ: positions first, then faces, then normals and UVs as comments/attributes after
+        const lines = ['# Nanotube mesh export'];
+        const addObj = (data, name, offset) => {
+          lines.push(`o ${name}`);
+          // 1) positions
+          data.verts.forEach(([x, y, z]) => lines.push(`v ${x.toFixed(6)} ${y.toFixed(6)} ${z.toFixed(6)}`));
+          // 2) faces (referencing positions only, 1-based)
+          data.faces.forEach(([a, b, c]) => {
+            lines.push(`f ${a + 1 + offset} ${b + 1 + offset} ${c + 1 + offset}`);
+          });
+          // 3) normals
+          data.norms.forEach(([nx, ny, nz]) => lines.push(`vn ${nx.toFixed(6)} ${ny.toFixed(6)} ${nz.toFixed(6)}`));
+          // 4) UVs
+          data.uvCoords.forEach(([u, v]) => lines.push(`vt ${u.toFixed(6)} ${v.toFixed(6)}`));
+        };
+        addObj(outerData, 'outer_surface', 0);
+        addObj(innerData, 'inner_surface', outerData.verts.length);
+        downloadBlob(lines.join('\n'), 'nanotube_mesh.obj', 'text/plain');
+      } else {
+        // JSON: vertices with x/y/z + face_indices inline, then normals/uvs separately
+        const buildVertexList = (data) => {
+          const faceLookup = new Array(data.verts.length).fill(null).map(() => []);
+          data.faces.forEach(([a, b, c], fi) => { faceLookup[a].push(fi); faceLookup[b].push(fi); faceLookup[c].push(fi); });
+          return data.verts.map(([x, y, z], i) => ({
+            x, y, z,
+            face_indices: faceLookup[i],
+            nx: data.norms[i][0], ny: data.norms[i][1], nz: data.norms[i][2],
+            u: data.uvCoords[i][0], v: data.uvCoords[i][1],
+          }));
+        };
+        const out = {
+          metadata: { generator: 'NanoTubeViz', params: { a1, a2, a3, r0, length: L, axialSegs: Na, radialSegs: Nr } },
+          outer: { vertices: buildVertexList(outerData), faces: outerData.faces },
+          inner: { vertices: buildVertexList(innerData), faces: innerData.faces },
+        };
+        downloadBlob(JSON.stringify(out, null, 2), 'nanotube_mesh.json', 'application/json');
+      }
+
+      const totalV = outerData.verts.length + innerData.verts.length;
+      const totalF = outerData.faces.length + innerData.faces.length;
+      const msg = document.getElementById('export-msg');
+      msg.textContent = `✓ Exported ${fmt.toUpperCase()} — ${totalV.toLocaleString()} vertices · ${totalF.toLocaleString()} faces`;
+      msg.style.display = 'block';
+      setTimeout(() => { msg.style.display = 'none'; }, 3500);
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  INIT
+    // ══════════════════════════════════════════════════════
+    rebuildMesh();
+  </script>
+</body>
+
+</html>
