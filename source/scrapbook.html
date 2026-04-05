@@ -24,6 +24,7 @@
             <div class="card-content"><h2>Table of Contents</h2>
 <p>&nbsp;</p>
 <ul>
+<li>Raman Spectroscopy for Mineral Detection and Sorting</li>
 <li>Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS</li>
 </ul></div>
         </section>
@@ -31,7 +32,56 @@
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h1>Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS</h1>
+            <div class="card-content"><h2>Raman Spectroscopy for Mineral Detection and Sorting</h2>
+<p>&nbsp;</p>
+<p>A critical aspect of mineral processing is selecting the appropriate technique to extract minerals from mined ore, which heavily relies on accurate species identification. This task can be challenging even for experienced professionals—minerals like chalcopyrite, pyrite, and gold can be easily mistaken for each other due to their similar visual appearances (e.g., yellowish color with metallic luster). Such misidentifications can lead to incorrect processing choices, such as using flotation to extract non-existent species, resulting in substantial financial, material, and time losses. This issue is exacerbated with low-grade ore samples, which are increasingly common due to continuous mineral exploration and the declining grades and availability of mineral resources.</p>
+<p>&nbsp;</p>
+<p>The aim is to develop digital twins—high-fidelity computational models that replicate physical materials and processes. These models can be deployed at mining sites for the smart identification of mineral species and the selection of appropriate extraction processes. This work aims to revolutionize mineral identification at mine operations through the development of robust digital twins and advanced machine learning models, ensuring efficient and accurate resource extraction with minimal waste.     </p>
+<p>&nbsp;</p>
+<p>Electromagnetic spectra and Raman spectra (fingerprints) will be used to identify species in mined ore samples. Currently, two comprehensive sets of spectral fingerprints exist:     <br />
+- Elemental spectra: Hosted at <a href="https://physics.nist.gov/asd">NIST's Standard Reference Database -- Atomic Spectra Database (ASD)</a>; these spectra are unique for all known elements.   <br />
+- Mineral spectra: Available from the <a href="https://pubs.usgs.gov/ds/730/">U.S. Geological Survey Data Series</a> and <a href="https://www.jpl.nasa.gov/">NASA's Jet Propulsion Laboratory</a>, although discrepancies exist depending on factors such as mine location and purity/contamination.      </p>
+<p>&nbsp;</p>
+<p><strong>Investigating Discrepancies</strong>         <br />
+We will examine the fundamental building blocks of minerals—atoms—and their unique spectral fingerprints. By correlating the elemental spectra from ASD with mineral spectra, we aim to understand and account for discrepancies.    <br />
+Using an Extended Iterative Optimization Technique (EIOT), we will extract intrinsic (constant) and non-intrinsic (variable) features from the spectra. Principal Component Analysis (PCA) will identify the most relevant components while maintaining a high data correlation.</p>
+<p>&nbsp;</p>
+<p><strong>Developing Transferable Machine Learning Models</strong>    <br />
+Current mineral identification methods using hyperspectral sensors rely on supervised machine learning, which requires labeled data. This is limited by:    <br />
+- The need to retrain models for each mine location,    <br />
+- The inability to handle previously unseen mineral species.    <br />
+We propose developing <strong>unsupervised, physically informed machine learning models</strong> that adapt to new data on-the-fly.      </p>
+<p>&nbsp;</p>
+<p><strong>Building a Design Space for Single Species</strong>      <br />
+We will compile data on minerals of concern at Canadian mine sites, including their phase structures, transitions, and electromagnetic spectra. When data is lacking, we will use Density Functional Theory (DFT) and Molecular Dynamics (MD) to compute spectra.    <br />
+This dataset will train a Convolutional Neural Network (CNN), which will be validated using a separate test dataset.      </p>
+<p>&nbsp;</p>
+<p><strong>Creating Realistic Design Spaces</strong>    <br />
+While a CNN trained on pure species data can identify individual minerals, it may struggle with mixtures. To address this:    <br />
+- Mixture models of the collected species will be developed,    <br />
+- Random configurations will be generated and their spectra computed using Machine Learning Interatomic Potentials (MLIP) in MD,    <br />
+- A CNN trained on these mixture datasets will be tested with experimentally collected hyperspectral images.   </p>
+<p>&nbsp;</p>
+<p><strong>Enabling Deployment</strong>   <br />
+We will explore the development of a low-cost, fast, cloud-based self-learning model for mineral detection called <strong>otfMLesf</strong> (on-the-fly Machine Learning models for electromagnetic spectrum fingerprints).   <br />
+- The model will use the CNN from Milestone 3 to detect single species in real-time,    <br />
+- For mixtures involving detected species, it will recall the CNN from Milestone 4 to quantify composition,    <br />
+- For unknown species, it will build random mixture models, compute spectra as in Milestone 4, retrain the CNN, and proceed to quantification.  </p>
+<p>&nbsp;</p>
+<p><strong>Supporting Information</strong>              <br />
+- <a href="https://doi.org/10.1039/D2SC05892H">Automatic materials characterization from infrared spectra using convolutional neural networks</a>    <br />
+- <a href="https://www.nature.com/articles/s42004-024-01341-w">Leveraging infrared spectroscopy for automated structure elucidation</a>    <br />
+- <a href="https://doi.org/10.1063/1.4916629">On the interplay of the potential energy and dipole moment surfaces in controlling the infrared activity of liquid water</a>     <br />
+- - the infrared (IR) spectrum of a generic molecular system can be obtained, within the electric dipole approximation and linear response theory, from the Fourier transform of the quantum time autocorrelation function of the system’s dipole moment      <br />
+- <a href="https://doi.org/10.1002/jrs.4914">Raman spectroscopy of minerals and mineral pigments in archaeometry</a>    <br />
+- <a href="https://doi.org/10.1016/S1386-1425(03)00080-5">Stand-off Raman spectroscopic detection of minerals on planetary surfaces</a>    <br />
+- <a href="https://www.rruff.net/">RRUFF - Comprehensive Database of Mineral Data</a> (<a href="https://rruff.info/about/about_IMA_list.php">old website</a>) <br />
+- <a href="https://www.mindat.org/">Mindat.org is the world's largest open database of minerals, rocks, meteorites and the localities they come from</a>    <br />
+- <a href="https://doi.org/10.1029/97JE01694">Raman spectroscopy for mineral identification and quantification for in situ planetary surface analysis: A point count</a>      </p></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h2>Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS</h2>
 <p>&nbsp;</p>
 <p>This is a <a href="https://www.lammps.org/">LAMMPS</a>-based implementation of a <a href="https://en.wikipedia.org/wiki/Population_balance_equation">Physiochemical Population Balance Model (PBM)</a> using <a href="https://en.wikipedia.org/wiki/Dissipative_particle_dynamics">Dissipative Particle Dynamics (DPD)</a> for structural evolution and <a href="https://en.wikipedia.org/wiki/Transition_state_theory">Transition State Theory (TST)</a> for chemical kinetics.</p>
 <p>&nbsp;</p>
@@ -80,15 +130,15 @@ Chemical reaction rates are calculated using the Arrhenius-like Transition State
 k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)</p>
 <p>&nbsp;</p>
 <p><strong>Physical Constants:</strong>    <br />
-- k<sub>B</sub>: Boltzmann constant ($3.2976 \times 10^{-27}$ kcal/K)    <br />
-- h: Planck constant ($2.51 \times 10^{-38}$ kcal$\cdot$s)    <br />
-- N<sub>A</sub>: Avogadro constant ($6.0221 \times 10^{23}$ /mol)    <br />
-- R<sub>g</sub>: Gas constant ($1.987 \times 10^{-3}$ kcal/K$\cdot$mol)      </p>
+- k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)    <br />
+- h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)    <br />
+- N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)    <br />
+- R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)      </p>
 <p>&nbsp;</p>
-<p>The activation energy barriers ($E_a$) are defined in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a> for every birth (B) and death (D) event for clusters AA, BB, and AB.</p>
+<p>The activation energy barriers (E<sub>a</sub>) are defined in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a> for every birth (B) and death (D) event for clusters AA, BB, and AB.</p>
 <p>&nbsp;</p>
 <p><strong>Population Balance Logic (PBM)</strong>    <br />
-The number of chemical events ($n$) performed at each iteration is calculated using the following discrete logic:      </p>
+The number of chemical events (n) performed at each iteration is calculated using the following discrete logic:      </p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Monomer Birth (forming clusters AA or BB)</strong>:    <br />
@@ -122,28 +172,27 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</
 | <strong>21–23</strong> | <strong>BB1–BB3</strong> | B-B Homoclusters | 412.570 | ~9.5 |</p>
 <p>&nbsp;</p>
 <p><strong>Execution Flow</strong><br />
-1. <strong>Setup</strong>: Initializes 23 atom types and constants.    <br />
-2. <strong>Equilibration</strong>: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.        <br />
-3. <strong>PBM-DYNAMICS Loop</strong>:    <br />
-   - Updates k rates based on current T.    <br />
-   - Measures species populations (N<sub>i</sub>).    <br />
-   - Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.    <br />
-   - Executes reactions via <code>create_atoms</code> (Birth) and <code>delete_atoms</code> (Death).    <br />
-   - Updates DPD interaction parameters based on new populations.    <br />
-   - Runs N<sub>DYN</sub> steps of mechanical dynamics.      </p>
+- <strong>Setup</strong>: Initializes 23 atom types and constants.    <br />
+- <strong>Equilibration</strong>: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.        <br />
+- <strong>PBM-DYNAMICS Loop</strong>:    <br />
+   -- Updates k rates based on current T.    <br />
+   -- Measures species populations (N<sub>i</sub>).    <br />
+   -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.    <br />
+   -- Executes reactions via <code>create_atoms</code> (Birth) and <code>delete_atoms</code> (Death).    <br />
+   -- Updates DPD interaction parameters based on new populations.    <br />
+   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.      </p>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong></p>
-<p>&nbsp;</p>
-<p><strong>Prerequisites</strong><br />
+<p><strong>Usage Instructions</strong>    <br />
+<strong>Prerequisites</strong>    <br />
 - <strong>LAMMPS</strong>: Must be compiled with <code>DPD</code> and <code>ASPHERE</code> packages.    <br />
 - <strong>Units</strong>: The script uses <code>real</code> units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).      </p>
 <p>&nbsp;</p>
-<p><strong>Running the Simulation</strong><br />
-Execute the main input script from the terminal:</p>
-<pre><code class="language-bash">lmp -in Main.lmp
+<p><strong>Running the Simulation</strong>    <br />
+Execute the main input script from the terminal:      </p>
+<pre><code class="language-bash">lmp -in Main.lmp      
 </code></pre>
 <p>&nbsp;</p>
-<p><strong>Key Input Files</strong><br />
+<p><strong>Key Input Files</strong>    <br />
 - <a href="Scrapbook_20200101_PBMwDPD_Main.lmp"><code>Main.lmp</code></a>: Main control script.    <br />
 - <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>: Matrix of interaction fingerprints.    <br />
 - <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a>: Kinetic barriers for all species.    <br />
@@ -152,6 +201,7 @@ Execute the main input script from the terminal:</p>
 <p>&nbsp;</p>
 <p>© 2020 Physiochemical PBM Simulation Project (Part of CoCryM project)      </p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
