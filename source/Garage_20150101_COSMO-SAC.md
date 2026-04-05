@@ -1,4 +1,4 @@
-## COSMO-SAC Activity Coefficient Model in MATLAB
+## COSMO-SAC Activity Coefficient Model
 
 This is a MATLAB implementation of the **COSMO-SAC (COSMO Segment Activity Coefficient)** model. The code calculates the thermodynamic activity coefficients of components in chemical mixtures based on their molecular surface charge distributions, known as sigma-profiles. An `.html` version of the calculator can be found [here](Garage_20150101_COSMO-SAC_Calculator.html).
 
