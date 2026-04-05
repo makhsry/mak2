@@ -442,7 +442,7 @@ To successfully submit a job, follow this functional walkthrough:</p>
 - <strong>Submission Trial</strong>: Executes <code>sbatch --test-only</code> to verify the Slurm scheduler will accept the job before final submission.    <br />
 - <strong>Execution</strong>: Runs <code>sbatch submit_job.sh</code> and displays the current state of the queue (<code>squeue -u $username</code>).      </p>
 <p>&nbsp;</p>
-<p><strong>Cluster Options</strong> </p>
+<p><strong>Cluster Options</strong>    </p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -476,70 +476,477 @@ To successfully submit a job, follow this functional walkthrough:</p>
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p><strong>- Sockeye (UBC ARC)</strong> <br />
-| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
-| 1 | 6 GB | 192G | 32 | Skylake | | |<br />
-| 2 | 12 GB | 384G | 32 | Skylake | | |<br />
-| 3 | 24 GB | 768G | 32 | Skylake | | |<br />
-| 4 | 8 GB | 192G | 24 | Skylake | Yes | Not supported yet |<br />
-| 5 | 4.8 GB | 192G | 40 | Cascade | | |<br />
-| 6 | 9.6 GB | 384G | 40 | Cascade | | |<br />
-| 7 | 19.2 GB | 768G | 40 | Cascade | | |<br />
-| 8 | 8 GB | 192G | 24 | Cascade | Yes | Not supported yet |<br />
-| Login | 8 GB | 192G | 16 | Skylake | | login node |<br />
-| Data | 8 GB | 192G | 16 | Skylake | | data node |</p>
+<p><strong>- Sockeye (UBC ARC)</strong>   </p>
 <p>&nbsp;</p>
-<p><strong>- Narval (Compute Canada)</strong>    <br />
-| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
-| 1 | 3.8 GB | 249G | 64 | Rome | | |<br />
-| 2 | 31.3 GB | 2009G | 64 | Rome | | |<br />
-| 3 | 62.5 GB | 4000G | 64 | Rome | | |<br />
-| 4 | 7.7 GB | 498G | 48 | Milan | Yes | Not supported yet |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">RAM/CPU</th>
+<th style="text-align: left;">M<sub>total</sub></th>
+<th style="text-align: left;">N<sub>cpu</sub></th>
+<th style="text-align: left;">Arch</th>
+<th style="text-align: left;">isGPU</th>
+<th style="text-align: left;">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">6 GB</td>
+<td style="text-align: left;">192G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">12 GB</td>
+<td style="text-align: left;">384G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">24 GB</td>
+<td style="text-align: left;">768G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">8 GB</td>
+<td style="text-align: left;">192G</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">4.8 GB</td>
+<td style="text-align: left;">192G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">9.6 GB</td>
+<td style="text-align: left;">384G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">19.2 GB</td>
+<td style="text-align: left;">768G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">8 GB</td>
+<td style="text-align: left;">192G</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">Login</td>
+<td style="text-align: left;">8 GB</td>
+<td style="text-align: left;">192G</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">login node</td>
+</tr>
+<tr>
+<td style="text-align: left;">Data</td>
+<td style="text-align: left;">8 GB</td>
+<td style="text-align: left;">192G</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">data node</td>
+</tr>
+</tbody>
+</table>
 <p>&nbsp;</p>
-<p><strong>- Beluga (Compute Canada)</strong>    <br />
-| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
-| 1 | 2.3 GB | 92G | 40 | Skylake | | |<br />
-| 2 | 4.65 GB | 186G | 40 | Skylake | | |<br />
-| 3 | 18.8 GB | 752G | 40 | Skylake | | |<br />
-| 4 | 4.65 GB | 186G | 40 | Skylake | Yes | Not supported yet |</p>
+<p><strong>- Narval (Compute Canada)</strong>       </p>
 <p>&nbsp;</p>
-<p><strong>- Cedar (Compute Canada)</strong>    <br />
-| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
-| 1 | 3.9 GB | 125G | 32 | Broadwell | | |<br />
-| 2 | 7.8 GB | 250G | 32 | Broadwell | | |<br />
-| 3 | 15.6 GB | 502G | 32 | Broadwell | | |<br />
-| 4 | 47.18 GB | 1510G | 32 | Broadwell | | |<br />
-| 5 | 125 GB | 4000G | 32 | EPYC | | |<br />
-| 6 | 150 GB | 6000G | 40 | Cascade | | |<br />
-| 7 | 5.2 GB | 125G | 24 | Broadwell | Yes | Not supported yet |<br />
-| 8 | 10.4 GB | 250G | 24 | Broadwell | Yes | Not supported yet |<br />
-| 9 | 5.8 GB | 187G | 32 | Cascade | Yes | Not supported yet |<br />
-| 10 | 3.8 GB | 187G | 48 | Skylake | | |<br />
-| 11 | 3.8 GB | 187G | 48 | Cascade | | |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">RAM/CPU</th>
+<th style="text-align: left;">M<sub>total</sub></th>
+<th style="text-align: left;">N<sub>cpu</sub></th>
+<th style="text-align: left;">Arch</th>
+<th style="text-align: left;">isGPU</th>
+<th style="text-align: left;">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">3.8 GB</td>
+<td style="text-align: left;">249G</td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">Rome</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">31.3 GB</td>
+<td style="text-align: left;">2009G</td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">Rome</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">62.5 GB</td>
+<td style="text-align: left;">4000G</td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">Rome</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">7.7 GB</td>
+<td style="text-align: left;">498G</td>
+<td style="text-align: left;">48</td>
+<td style="text-align: left;">Milan</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+</tbody>
+</table>
 <p>&nbsp;</p>
-<p><strong>- Graham (Compute Canada)</strong>    <br />
-| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
-| 1 | 3.9 GB | 125G | 32 | Broadwell | | |<br />
-| 2 | 15.6 GB | 502G | 32 | Broadwell | | |<br />
-| 3 | 7.8 GB | 250G | 32 | Broadwell | | |<br />
-| 4 | 47.2 GB | 3022G | 64 | Broadwell | | |<br />
-| 5 | 3.8 GB | 124G | 32 | Broadwell | Yes | Not supported yet |<br />
-| 6 | 6.6 GB | 187G | 28 | Skylake | Yes | Not supported yet |<br />
-| 7 | 9.4 GB | 377G | 40 | Cascade | Yes | Not supported yet |<br />
-| 8 | 11.6 GB | 187G | 16 | Skylake | Yes | Not supported yet |<br />
-| 9 | 4.25 GB | 187G | 44 | Cascade | Yes | Not supported yet |<br />
-| 10 | 4.25 GB | 187G | 44 | Cascade | | |<br />
-| 11 | 15.6 GB | 2000G | 128 | EPYC | Yes | Not supported yet |<br />
-| 12 | 8 GB | 256G | 32 | Cascade | Yes | Not supported yet |<br />
-| 13 | 1.95 GB | 125G | 64 | EPYC | Yes | Not supported yet |</p>
+<p><strong>- Beluga (Compute Canada)</strong>      </p>
 <p>&nbsp;</p>
-<p><strong>- Niagara (Compute Canada)</strong>    <br />
-<em>Preset Configuration</em>: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      </p></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">RAM/CPU</th>
+<th style="text-align: left;">M<sub>total</sub></th>
+<th style="text-align: left;">N<sub>cpu</sub></th>
+<th style="text-align: left;">Arch</th>
+<th style="text-align: left;">isGPU</th>
+<th style="text-align: left;">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2.3 GB</td>
+<td style="text-align: left;">92G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">4.65 GB</td>
+<td style="text-align: left;">186G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">18.8 GB</td>
+<td style="text-align: left;">752G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">4.65 GB</td>
+<td style="text-align: left;">186G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>- Cedar (Compute Canada)</strong>      </p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">RAM/CPU</th>
+<th style="text-align: left;">M<sub>total</sub></th>
+<th style="text-align: left;">N<sub>cpu</sub></th>
+<th style="text-align: left;">Arch</th>
+<th style="text-align: left;">isGPU</th>
+<th style="text-align: left;">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">3.9 GB</td>
+<td style="text-align: left;">125G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">7.8 GB</td>
+<td style="text-align: left;">250G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">15.6 GB</td>
+<td style="text-align: left;">502G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">47.18 GB</td>
+<td style="text-align: left;">1510G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">125 GB</td>
+<td style="text-align: left;">4000G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">EPYC</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">150 GB</td>
+<td style="text-align: left;">6000G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">5.2 GB</td>
+<td style="text-align: left;">125G</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10.4 GB</td>
+<td style="text-align: left;">250G</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">5.8 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">3.8 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">48</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">3.8 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">48</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>- Graham (Compute Canada)</strong>      </p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">RAM/CPU</th>
+<th style="text-align: left;">M<sub>total</sub></th>
+<th style="text-align: left;">N<sub>cpu</sub></th>
+<th style="text-align: left;">Arch</th>
+<th style="text-align: left;">isGPU</th>
+<th style="text-align: left;">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">3.9 GB</td>
+<td style="text-align: left;">125G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">15.6 GB</td>
+<td style="text-align: left;">502G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">7.8 GB</td>
+<td style="text-align: left;">250G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">47.2 GB</td>
+<td style="text-align: left;">3022G</td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">3.8 GB</td>
+<td style="text-align: left;">124G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Broadwell</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">6.6 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">28</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">9.4 GB</td>
+<td style="text-align: left;">377G</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">11.6 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">Skylake</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">4.25 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">44</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">4.25 GB</td>
+<td style="text-align: left;">187G</td>
+<td style="text-align: left;">44</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">15.6 GB</td>
+<td style="text-align: left;">2000G</td>
+<td style="text-align: left;">128</td>
+<td style="text-align: left;">EPYC</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">8 GB</td>
+<td style="text-align: left;">256G</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">Cascade</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+<tr>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">1.95 GB</td>
+<td style="text-align: left;">125G</td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">EPYC</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Not supported yet</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>- Niagara (Compute Canada)</strong>      </p>
+<p>&nbsp;</p>
+<p><em>Preset Configuration</em>: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      </p></div>
         </section>
         <section class="card span-1 empty"></section>
 
