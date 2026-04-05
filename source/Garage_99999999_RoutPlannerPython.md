@@ -73,11 +73,11 @@ The pattern is scaled and positioned on top of the `osmnx` map axes.
 ```
 max_route_width  = graph_width  × scale_factor_x
 max_route_height = graph_height × scale_factor_y
-
+ 
 width_scale  = max_route_width  / img_width
 height_scale = max_route_height / img_height
 final_scale  = min(width_scale, height_scale)   ← preserves aspect ratio
-
+ 
 new_width  = img_width  × final_scale
 new_height = img_height × final_scale
 ```
@@ -89,7 +89,7 @@ route_right  = graph_xlim[1] − (graph_width  × position_offset_x)
 route_left   = route_right − new_width
 route_bottom = graph_ylim[0] + (graph_height × position_offset_y)
 route_top    = route_bottom + new_height
-
+ 
 reference_center = ( (route_left + route_right) / 2,
                      (route_bottom + route_top) / 2 )
 ```
@@ -104,7 +104,7 @@ The user iterates on `scale_factor_x`, `scale_factor_y`, `position_offset_x`, an
 ```
 lon_per_pixel = (right − left) / width
 lat_per_pixel = (top − bottom) / height
-
+ 
 longitude = left + (x + 0.5) × lon_per_pixel
 latitude  = top  − (y + 0.5) × lat_per_pixel
 ```
