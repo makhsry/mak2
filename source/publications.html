@@ -32,19 +32,21 @@
         <section class="card span-2">
             <div class="card-content"><script>
 window.MathJax = {
-  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-  chtml: {
-    scale: 1,
-    mtextInheritFont: true
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']]
+  },
+  svg: {
+    fontCache: 'global'
   },
   options: {
-    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    skipHtmlTags: ['script','noscript','style','textarea','pre','code']
   }
 };
 </script>
 
 <p>&nbsp;</p>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 <p>&nbsp;</p>
 <h2>Falling Film Mass Transfer &amp; Penetration Theory</h2>
@@ -298,23 +300,7 @@ for gamma in varG:
 <pre><code class="language-python">L = 1         # Wall length (m)
 gamma = 0.05  # Film flow rate (kg/m.s)
 cAi = 0.0366  # Interfacial concentration
-</code></pre>
-<p>&nbsp;</p>
-<script>
-window.MathJax = {
-  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-  chtml: {
-    scale: 1,
-    mtextInheritFont: true
-  },
-  options: {
-    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-  }
-};
-</script>
-
-<p>&nbsp;</p>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></div>
+</code></pre></div>
         </section>
 
     </div>
