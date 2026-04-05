@@ -1,4 +1,4 @@
-# Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
+## Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
 
 This is a [LAMMPS](https://www.lammps.org/)-based implementation of a [Physiochemical Population Balance Model (PBM)](https://en.wikipedia.org/wiki/Population_balance_equation) using [Dissipative Particle Dynamics (DPD)](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [Transition State Theory (TST)](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
 
@@ -39,15 +39,15 @@ Chemical reaction rates are calculated using the Arrhenius-like Transition State
 k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)
 
 **Physical Constants:**      
-- k<sub>B</sub>: Boltzmann constant ($3.2976 \times 10^{-27}$ kcal/K)      
-- h: Planck constant ($2.51 \times 10^{-38}$ kcal$\cdot$s)      
-- N<sub>A</sub>: Avogadro constant ($6.0221 \times 10^{23}$ /mol)      
-- R<sub>g</sub>: Gas constant ($1.987 \times 10^{-3}$ kcal/K$\cdot$mol)      
+- k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)      
+- h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)      
+- N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)      
+- R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)      
 
-The activation energy barriers ($E_a$) are defined in [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp) for every birth (B) and death (D) event for clusters AA, BB, and AB.
+The activation energy barriers (E<sub>a</sub>) are defined in [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp) for every birth (B) and death (D) event for clusters AA, BB, and AB.
 
 **Population Balance Logic (PBM)**      
-The number of chemical events ($n$) performed at each iteration is calculated using the following discrete logic:      
+The number of chemical events (n) performed at each iteration is calculated using the following discrete logic:      
 
 - **Monomer Birth (forming clusters AA or BB)**:      
 n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋
@@ -73,29 +73,28 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋
 | **21–23** | **BB1–BB3** | B-B Homoclusters | 412.570 | ~9.5 |
 
 **Execution Flow**
-1. **Setup**: Initializes 23 atom types and constants.      
-2. **Equilibration**: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.          
-3. **PBM-DYNAMICS Loop**:      
-   - Updates k rates based on current T.      
-   - Measures species populations (N<sub>i</sub>).      
-   - Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.      
-   - Executes reactions via `create_atoms` (Birth) and `delete_atoms` (Death).      
-   - Updates DPD interaction parameters based on new populations.      
-   - Runs N<sub>DYN</sub> steps of mechanical dynamics.      
+- **Setup**: Initializes 23 atom types and constants.      
+- **Equilibration**: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.          
+- **PBM-DYNAMICS Loop**:      
+   -- Updates k rates based on current T.      
+   -- Measures species populations (N<sub>i</sub>).      
+   -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.      
+   -- Executes reactions via `create_atoms` (Birth) and `delete_atoms` (Death).      
+   -- Updates DPD interaction parameters based on new populations.      
+   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.      
 
-**Usage Instructions**
-
-**Prerequisites**
+**Usage Instructions**      
+**Prerequisites**      
 - **LAMMPS**: Must be compiled with `DPD` and `ASPHERE` packages.      
 - **Units**: The script uses `real` units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).      
 
-**Running the Simulation**
-Execute the main input script from the terminal:
-```bash
-lmp -in Main.lmp
+**Running the Simulation**      
+Execute the main input script from the terminal:      
+```bash      
+lmp -in Main.lmp      
 ```
 
-**Key Input Files**
+**Key Input Files**      
 - [`Main.lmp`](Scrapbook_20200101_PBMwDPD_Main.lmp): Main control script.      
 - [`fingerprints_xij.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp): Matrix of interaction fingerprints.      
 - [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp): Kinetic barriers for all species.      
