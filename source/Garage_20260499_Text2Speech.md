@@ -1,8 +1,6 @@
 # Text-to-Speech (Google TTS) Script
 
-A command-line Python script that reads a plain-text (`.txt`) file encoded in UTF-8 and synthesises it into an MP3 audio file using the **Google Text-to-Speech (gTTS)** API. The script is self-bootstrapping: it detects whether `gTTS` is installed at runtime and, if not, installs it silently before proceeding.
-
-> This script is the second stage of a two-script pipeline. It is designed to consume the `.txt` output produced by `pdf2text_via_PDFplumber.py`, but it accepts any valid UTF-8 `.txt` file as input.
+A command-line Python script that reads a plain-text (`.txt`) file encoded in UTF-8 and synthesises it into an MP3 audio file using the **Google Text-to-Speech (gTTS)** API. 
 
 ## Code (with inline comments)
 
@@ -82,7 +80,7 @@ except Exception as e:
 - Python 3.x installed and reachable on the system `PATH`.
 - An **active internet connection** is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.
 - No manual package installation is required — the script installs `gTTS` automatically on first run if it is absent.
-- A UTF-8 encoded `.txt` file. If using the companion script `pdf2text_via_PDFplumber.py`, its output is UTF-8 by construction.
+- A UTF-8 encoded `.txt` file.
 
 ### Running the Script
 
