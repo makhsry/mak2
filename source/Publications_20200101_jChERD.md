@@ -1,3 +1,10 @@
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 ## Falling Film Mass Transfer & Penetration Theory
 
 In the paper [**Revisiting ‘penetration depth’ in falling film mass transfer**](https://www.sciencedirect.com/science/article/pii/S0263876219305994), we calculated mass transfer characteristics in falling liquid films. We compared the **Infinite Penetration** (Higbie's theory) and **Finite Penetration** models to determine how deep a solute penetrates a moving film under various physical conditions.
@@ -252,3 +259,10 @@ L = 1         # Wall length (m)
 gamma = 0.05  # Film flow rate (kg/m.s)
 cAi = 0.0366  # Interfacial concentration
 ``` 
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
