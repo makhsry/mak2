@@ -2,6 +2,22 @@
 
 A command-line Python script that reads a plain-text (`.txt`) file encoded in UTF-8 and synthesises it into an MP3 audio file using the **Google Text-to-Speech (gTTS)** API. 
 
+**Usage Instructions**     
+**Prerequisites**         
+
+- Python 3.x installed and reachable on the system `PATH`.
+- An **active internet connection** is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.
+- No manual package installation is required — the script installs `gTTS` automatically on first run if it is absent.
+- A UTF-8 encoded `.txt` file.
+
+**Running the Script**
+
+```bash
+python text2speech_via_Google_TTS.py <path_to_txt_file>
+```
+
+`<path_to_txt_file>` must be the path (absolute or relative to CWD) of an existing file whose name ends in `.txt` (case-insensitive). The output MP3 is always written to the **current working directory**, not the directory of the input file.
+
 **Code (with inline comments)**
 
 ```python
@@ -58,20 +74,3 @@ except Exception as e:
     print(f"Error converting to speech: {e}")
     sys.exit(1)
 ```
-
-**Usage Instructions**
-
-**Prerequisites**
-
-- Python 3.x installed and reachable on the system `PATH`.
-- An **active internet connection** is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.
-- No manual package installation is required — the script installs `gTTS` automatically on first run if it is absent.
-- A UTF-8 encoded `.txt` file.
-
-**Running the Script**
-
-```bash
-python text2speech_via_Google_TTS.py <path_to_txt_file>
-```
-
-`<path_to_txt_file>` must be the path (absolute or relative to CWD) of an existing file whose name ends in `.txt` (case-insensitive). The output MP3 is always written to the **current working directory**, not the directory of the input file.

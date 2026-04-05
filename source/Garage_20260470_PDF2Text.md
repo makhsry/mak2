@@ -2,6 +2,21 @@
 
 A command-line Python script that opens a PDF file, extracts all textual content page-by-page using **PDFplumber**, and writes the result as a UTF-8 encoded plain-text (`.txt`) file. 
 
+**Usage Instructions**       
+**Prerequisites**
+
+- Python 3.x installed and reachable on the system `PATH`.
+- No manual package installation is required — the script installs `pdfplumber` automatically on first run if it is absent.
+- A UTF-8 encoded `.pdf` file.
+
+**Running the Script**
+
+```bash
+python pdf2text_via_PDFplumber.py <path_to_pdf_file>
+```
+
+`<path_to_pdf_file>` must be the path (absolute or relative to CWD) of an existing file whose name ends in `.pdf` (case-insensitive). The output `.txt` is always written to the **current working directory**, not the directory of the input file.
+
 **Code (with inline comments)**
 
 ```python
@@ -62,19 +77,3 @@ except Exception as e:
     print(f"Error saving text file: {e}")
     sys.exit(1)
 ```
-
-**Usage Instructions**
-
-**Prerequisites**
-
-- Python 3.x installed and reachable on the system `PATH`.
-- No manual package installation is required — the script installs `pdfplumber` automatically on first run if it is absent.
-- A UTF-8 encoded `.pdf` file.
-
-**Running the Script**
-
-```bash
-python pdf2text_via_PDFplumber.py <path_to_pdf_file>
-```
-
-`<path_to_pdf_file>` must be the path (absolute or relative to CWD) of an existing file whose name ends in `.pdf` (case-insensitive). The output `.txt` is always written to the **current working directory**, not the directory of the input file.
