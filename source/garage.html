@@ -31,6 +31,7 @@
 <li>Speech-to-Text via OpenAI Whisper</li>
 <li>Text-to-Speech (Google TTS) Script</li>
 <li>Extract Text from PDF via PDFplumber</li>
+<li>Nanotube Builder and Mesher</li>
 <li>Blind Audio Source Separation</li>
 <li>COSMO-SAC Activity Coefficient Model</li>
 </ul></div>
@@ -1288,6 +1289,132 @@ except Exception as e:
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
+            <div class="card-content"><h2>Nanotube Builder and Mesher</h2>
+<p>&nbsp;</p>
+<p>An interactive browser-based tool for parametric design and 3D visualization of nanochannel geometries, mesh generation in real time, and export. </p>
+<p>&nbsp;</p>
+<p><a href="Garage_20260101_Nanotube.html"><strong>Click here to access the tool</strong></a>.</p>
+<p>&nbsp;</p>
+<p>The channel profile is described by two wall functions over the axial coordinate ξ:</p>
+<p>&nbsp;</p>
+<p>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)   <br />
+w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
+<p>&nbsp;</p>
+<p>The local channel radius at any point along the axis is:</p>
+<p>&nbsp;</p>
+<p>r(ξ) = (w₂ − w₁) / 2</p>
+<p>&nbsp;</p>
+<p>The centerline position is the midpoint between w₁ and w₂, producing a tube whose axis can curve and whose radius varies continuously along its length.</p>
+<p>&nbsp;</p>
+<p><strong>Parameters</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Range</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">α₁</td>
+<td style="text-align: left;">[0, 1]</td>
+<td style="text-align: left;">Asymmetry amplitude — shifts the centerline, producing a curved or off-axis channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">α₂</td>
+<td style="text-align: left;">[0, 1]</td>
+<td style="text-align: left;">Corrugation amplitude — modulates the radius periodically, creating constrictions and expansions</td>
+</tr>
+<tr>
+<td style="text-align: left;">α₃</td>
+<td style="text-align: left;">[0.5, 4]</td>
+<td style="text-align: left;">Wavenumber multiplier — controls the spatial frequency of the α₁ modulation</td>
+</tr>
+<tr>
+<td style="text-align: left;">r₀</td>
+<td style="text-align: left;">[0.2, 2]</td>
+<td style="text-align: left;">Minimum base radius — sets the baseline channel width</td>
+</tr>
+<tr>
+<td style="text-align: left;">L</td>
+<td style="text-align: left;">[2, 40]</td>
+<td style="text-align: left;">Tube length in the ξ domain</td>
+</tr>
+<tr>
+<td style="text-align: left;">Nₐ</td>
+<td style="text-align: left;">&gt;20</td>
+<td style="text-align: left;">Axial mesh points — higher values give a smoother profile along the length</td>
+</tr>
+<tr>
+<td style="text-align: left;">Nᵣ</td>
+<td style="text-align: left;">&gt;8</td>
+<td style="text-align: left;">Radial mesh points — higher values give a rounder cross-section</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Each parameter has a <strong>slider</strong> for quick exploration and a <strong>number input</strong> for precise entry. Press Enter or leave the field to apply a typed value.</p>
+<p>&nbsp;</p>
+<p>Live vertex, face, and estimated file size statistics update automatically as you adjust these values.</p>
+<p>&nbsp;</p>
+<p><strong>Viewport Navigation</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Left-click drag</td>
+<td style="text-align: left;">Pan — recenters the view</td>
+</tr>
+<tr>
+<td style="text-align: left;">Right-click drag</td>
+<td style="text-align: left;">Rotate the channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Shift + drag</td>
+<td style="text-align: left;">Rotate the channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scroll wheel</td>
+<td style="text-align: left;">Zoom in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;">Pinch (touch)</td>
+<td style="text-align: left;">Zoom in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;">Single finger (touch)</td>
+<td style="text-align: left;">Pan</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>+</code> / <code>−</code> buttons</td>
+<td style="text-align: left;">Step zoom in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>RST</code> button</td>
+<td style="text-align: left;">Reset zoom, pan, and rotation to defaults</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Select a format, check the estimated file size, then click <strong>Download</strong>.</p>
+<p>&nbsp;</p>
+<ul>
+<li><code>surface</code> — <code>outer</code> or <code>inner</code></li>
+<li><code>face_indices</code> — semicolon-separated list of all face IDs the vertex belongs to</li>
+<li><code>nx, ny, nz</code> — surface normal vector</li>
+<li><code>u, v</code> — UV texture coordinates</li>
+</ul></div>
+        </section>
+
+        <section class="card span-2">
             <div class="card-content"><h2>Blind Audio Source Separation</h2>
 <p>&nbsp;</p>
 <p>Two scripts are available for decomposing a single mixed audio recording into its constituent spectral or acoustic components. They differ fundamentally in their underlying algorithm, computational backend, and the number of separated streams they produce. Both scripts contain a runtime dependency check at module level.  </p>
@@ -1353,7 +1480,9 @@ except Exception as e:
 <p>&nbsp;</p>
 <p><strong>Note</strong>: The NMF is run with <code>init='nndsvda</code>, <code>solver='mu</code> (multiplicative updates), <code>beta_loss='kullback-leibler</code>, <code>max_iter=500</code>, <code>random_state=0</code>. These settings are identical for both the component-selection loop and the final separation run.</p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Activity Coefficient Model</h2>
 <p>&nbsp;</p>
@@ -1460,7 +1589,6 @@ The final activity coefficient for component n is the exponential sum of the res
 - <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated sigma-densities and profiles for each component.<br />
 - <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions (x), activity coefficients (γ), and ln γ.</p></div>
         </section>
-        <section class="card span-1 empty"></section>
 
     </div>
 </body>
