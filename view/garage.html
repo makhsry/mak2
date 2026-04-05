@@ -90,15 +90,11 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <p>&nbsp;</p>
 <pre><code>max_route_width  = graph_width  × scale_factor_x
 max_route_height = graph_height × scale_factor_y
-
-&amp;nbsp;
-
+#
 width_scale  = max_route_width  / img_width
 height_scale = max_route_height / img_height
 final_scale  = min(width_scale, height_scale)   ← preserves aspect ratio
-
-&amp;nbsp;
-
+#
 new_width  = img_width  × final_scale
 new_height = img_height × final_scale
 </code></pre>
@@ -109,9 +105,7 @@ new_height = img_height × final_scale
 route_left   = route_right − new_width
 route_bottom = graph_ylim[0] + (graph_height × position_offset_y)
 route_top    = route_bottom + new_height
-
-&amp;nbsp;
-
+#
 reference_center = ( (route_left + route_right) / 2,
                      (route_bottom + route_top) / 2 )
 </code></pre>
@@ -125,9 +119,7 @@ reference_center = ( (route_left + route_right) / 2,
 <p>&nbsp;</p>
 <pre><code>lon_per_pixel = (right − left) / width
 lat_per_pixel = (top − bottom) / height
-
-&amp;nbsp;
-
+#
 longitude = left + (x + 0.5) × lon_per_pixel
 latitude  = top  − (y + 0.5) × lat_per_pixel
 </code></pre>
@@ -348,67 +340,47 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>&nbsp;</p>
 <h2>Code (with inline comments)</h2>
 <p>&nbsp;</p>
-<pre><code class="language-python">
-&amp;nbsp;
-
+<pre><code class="language-python">#
 import subprocess
 import sys
 import os
-
-&amp;nbsp;
-
+#
 def install_package(package):
     &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
     subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
-
-&amp;nbsp;
-
+#
 # Check and install required packages
 required_packages = {
     'gtts': 'gTTS'
 }
-
-&amp;nbsp;
-
+#
 for import_name, package_name in required_packages.items():
     try:
         __import__(import_name)
     except ImportError:
         print(f&quot;Installing {package_name}...&quot;)
         install_package(package_name)
-
-&amp;nbsp;
-
+#
 from gtts import gTTS
-
-&amp;nbsp;
-
+#
 # Check if file path is provided as command-line argument
 if len(sys.argv) &lt; 2:
     print(&quot;Usage: python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;&quot;)
     sys.exit(1)
-
-&amp;nbsp;
-
+#
 # Get file path from command-line argument
 file_path = sys.argv[1]
-
-&amp;nbsp;
-
+#
 # Check if file exists
 if not os.path.exists(file_path):
     print(f&quot;Error: File '{file_path}' not found.&quot;)
     sys.exit(1)
-
-&amp;nbsp;
-
+#
 # Check if file is a .txt file
 if not file_path.lower().endswith('.txt'):
     print(&quot;Error: File must be a .txt file.&quot;)
     sys.exit(1)
-
-&amp;nbsp;
-
+#
 # Read text from file
 print(f&quot;Reading text from '{file_path}'...&quot;)
 try:
@@ -417,19 +389,13 @@ try:
 except Exception as e:
     print(f&quot;Error reading text file: {e}&quot;)
     sys.exit(1)
-
-&amp;nbsp;
-
+#
 # Print text length to verify reading
 print(f&quot;Text length: {len(text)} characters&quot;)
-
-&amp;nbsp;
-
+#
 # Generate output filename based on input filename
 output_file = os.path.splitext(os.path.basename(file_path))[0] + &quot;.mp3&quot;
-
-&amp;nbsp;
-
+#
 # Convert text to .mp3
 print(f&quot;Converting text to speech...&quot;)
 try:
@@ -439,9 +405,7 @@ try:
 except Exception as e:
     print(f&quot;Error converting to speech: {e}&quot;)
     sys.exit(1)
-
-&amp;nbsp;
-
+#
 </code></pre>
 <p>&nbsp;</p>
 <h2>Usage Instructions</h2>
