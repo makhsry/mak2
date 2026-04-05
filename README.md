@@ -1,4 +1,4 @@
-# Portfolio Site Generator
+**Portfolio Site Generator**
 
 A Python-based static site generator that converts structured Markdown files into a professional, multi-page portfolio website with an alternating grid layout.
 

@@ -36,3 +36,5 @@ INSTRUCTIONS FOR NEW ENTRIES:
 - [Task 1]
 - [Task 2]
 - [Task 3]
+
+![MEDIA TEXT](MEDIA_FILE_NAME)

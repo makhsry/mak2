@@ -49,3 +49,5 @@ YYYY Month. - YYYY Month.
 4. **Project**: Clearly state the project title. Include the supervisor's name with a link to their academic profile (e.g., Google Scholar).
 5. **Bold Key Terms**: Use **bold text** within the Project Goal and Tasks Performed to highlight key technologies, methodologies, or outcomes (e.g., **Aspen HYSYS**, **Finite Element Modeling**, **retrofitting**).
 6. **Task List**: Use a bulleted list for specific technical tasks and achievements.
+
+![MEDIA TEXT](MEDIA_FILE_NAME)
