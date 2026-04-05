@@ -19,14 +19,27 @@
     <div class="container">
 
         <section class="card span-2">
-            <div class="card-content"><h1>Drawing to GPX (Route Pattern Mapper — Python Application)</h1>
+            <div class="card-content"><h1>Table of Contents: Garage</h1>
+<p>&nbsp;</p>
+<ul>
+<li>Drawing to GPX (Route Pattern Mapper — Python Application)</li>
+<li>Speech-to-Text via OpenAI Whisper</li>
+<li>Text-to-Speech (Google TTS) Script</li>
+<li>Extract Text from PDF via PDFplumber</li>
+</ul></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h2>Drawing to GPX (Route Pattern Mapper — Python Application)</h2>
 <p>&nbsp;</p>
 <p>A Google Colab notebook that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from OpenStreetMap, extracts GPS coordinates for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to use in any GPS-capable navigation app or fitness tracker.</p>
 <p>&nbsp;</p>
-<p><a href="Garage_99999999_RoutPlannerPython.ipynb"><strong>Downalod the code here</strong> (save as .ipynb file)</a> </p>
+<p><a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>Downalod the code here</strong> (save as .ipynb file)</a> </p>
 <p>&nbsp;</p>
-<h2>What It Does</h2>
-<p>The notebook performs the following stages in order:<br />
+<p><strong>What It Does</strong>   <br />
+The notebook performs the following stages in order:   <br />
 1. <strong>Downloads a city's street network</strong> from OpenStreetMap<br />
 2. <strong>Loads a pattern image</strong> and converts it to HSV color space<br />
 3. <strong>Detects which colors are present</strong> in the image above a minimum threshold<br />
@@ -37,8 +50,8 @@
 8. <strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)<br />
 9. <strong>Exports one <code>.gpx</code> file per color</strong> layer</p>
 <p>&nbsp;</p>
-<h2>Pipeline Detail</h2>
-<h3>Stage 1 — Street Network Download</h3>
+<p><strong>Pipeline Detail</strong>   <br />
+<strong>Stage 1 — Street Network Download</strong>     </p>
 <p>&nbsp;</p>
 <pre><code class="language-python">place_name = &quot;Vancouver, BC, Canada&quot;
 network_type = 'bike'
@@ -47,7 +60,7 @@ G = ox.graph_from_place(place_name, network_type=network_type)
 <p>&nbsp;</p>
 <p>Uses <code>osmnx</code> to fetch the road/path graph for a named city. <code>network_type</code> can be <code>'bike'</code>, <code>'walk'</code>, <code>'drive'</code>, etc.</p>
 <p>&nbsp;</p>
-<h3>Stage 2 — Image Loading and Color Space Conversion</h3>
+<p><strong>Stage 2 — Image Loading and Color Space Conversion</strong>     </p>
 <p>&nbsp;</p>
 <pre><code class="language-python">img = Image.open(filename).convert('RGB')
 img_np = np.array(img)
@@ -56,7 +69,8 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <p>&nbsp;</p>
 <p>The image is opened as RGB then converted to <strong>HSV (Hue, Saturation, Value)</strong> space. HSV is used because it separates color identity (Hue) from brightness (Value) and intensity (Saturation), making color segmentation more robust than raw RGB thresholding.</p>
 <p>&nbsp;</p>
-<h3>Stage 3 — Color Detection</h3>
+<p><strong>Stage 3 — Color Detection</strong>     </p>
+<p>&nbsp;</p>
 <p>Each named color in <code>color_ranges</code> is defined by an HSV lower-bound and upper-bound pair <code>[H, S, V]</code>:<br />
 - <strong>Black</strong> is detected in grayscale: pixels with grayscale value <code>≤ 10</code> (via <code>cv2.THRESH_BINARY_INV</code>)<br />
 - <strong>White</strong> is detected in grayscale: pixels with grayscale value <code>≥ 245</code> (via <code>cv2.THRESH_BINARY</code>)<br />
@@ -70,10 +84,12 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <p>&nbsp;</p>
 <p>where <code>total_pixels = image_height × image_width</code>. This 0.1% floor filters out noise and compression artifacts. Black and white are removed from the final detected list after this step, since they are used as background/border and not as route colors.</p>
 <p>&nbsp;</p>
-<h3>Stage 4 — Binary Mask Generation</h3>
+<p><strong>Stage 4 — Binary Mask Generation</strong>     </p>
+<p>&nbsp;</p>
 <p>For each detected color, a binary mask is produced where matching pixels = <code>255</code> and all others = <code>0</code>. These masks are stored in a dictionary keyed by color name.</p>
 <p>&nbsp;</p>
-<h3>Stage 5 — Contour Extraction and Boundary Skeletonization</h3>
+<p><strong>Stage 5 — Contour Extraction and Boundary Skeletonization</strong>     </p>
+<p>&nbsp;</p>
 <p>For each color mask:<br />
 - <strong>Morphological cleaning</strong> is applied using a <code>3×3</code> structuring element:<br />
   - <code>MORPH_CLOSE</code> (dilation then erosion) fills small holes and gaps<br />
@@ -83,10 +99,11 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 - The contour is drawn onto a blank image with <strong>thickness = 1</strong>, producing a single-pixel-wide outline.<br />
 - A final <code>MORPH_CLOSE</code> with a <code>2×2</code> kernel closes any remaining small gaps in the outline to ensure path continuity.</p>
 <p>&nbsp;</p>
-<h3>Stage 6 — Overlay onto Street Map</h3>
+<p><strong>Stage 6 — Overlay onto Street Map</strong>     </p>
+<p>&nbsp;</p>
 <p>The pattern is scaled and positioned on top of the <code>osmnx</code> map axes.</p>
 <p>&nbsp;</p>
-<p><strong>Scale calculation:</strong></p>
+<p><strong>Scale calculation:</strong>     </p>
 <p>&nbsp;</p>
 <pre><code>max_route_width  = graph_width  × scale_factor_x
 max_route_height = graph_height × scale_factor_y
@@ -99,7 +116,7 @@ new_width  = img_width  × final_scale
 new_height = img_height × final_scale
 </code></pre>
 <p>&nbsp;</p>
-<p><strong>Positioning</strong> (bottom-right anchor, first color only):</p>
+<p><strong>Positioning</strong> (bottom-right anchor, first color only):     </p>
 <p>&nbsp;</p>
 <pre><code>route_right  = graph_xlim[1] − (graph_width  × position_offset_x)
 route_left   = route_right − new_width
@@ -114,8 +131,9 @@ reference_center = ( (route_left + route_right) / 2,
 <p>&nbsp;</p>
 <p>The user iterates on <code>scale_factor_x</code>, <code>scale_factor_y</code>, <code>position_offset_x</code>, and <code>position_offset_y</code> until the pattern fits visually within the street network.</p>
 <p>&nbsp;</p>
-<h3>Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering</h3>
-<p><strong>Pixel → geographic coordinate mapping:</strong></p>
+<p><strong>Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering</strong>     </p>
+<p>&nbsp;</p>
+<p><strong>Pixel → geographic coordinate mapping:</strong>     </p>
 <p>&nbsp;</p>
 <pre><code>lon_per_pixel = (right − left) / width
 lat_per_pixel = (top − bottom) / height
@@ -134,7 +152,8 @@ All non-background pixels belonging to each color are collected. Starting from t
 <p>&nbsp;</p>
 <p>At each step, all remaining pixels are sorted by Euclidean distance from the current pixel. The closest pixel within a 2-pixel radius is chosen as the next step. If no pixel falls within that radius (i.e., a gap exists in the skeleton), the globally nearest remaining pixel is used as a fallback. This produces an ordered sequence that approximates a continuous traversal of the boundary.</p>
 <p>&nbsp;</p>
-<h3>Stage 8 — GPX Export</h3>
+<p><strong>Stage 8 — GPX Export</strong>     </p>
+<p>&nbsp;</p>
 <p>For each color, a GPX track is created using <code>gpxpy</code>:</p>
 <p>&nbsp;</p>
 <pre><code>GPX → GPXTrack → GPXTrackSegment → [GPXTrackPoint(lat, lon), ...]
@@ -147,7 +166,7 @@ All non-background pixels belonging to each color are collected. Starting from t
 <p>&nbsp;</p>
 <p>One <code>.gpx</code> file is produced per detected color layer.</p>
 <p>&nbsp;</p>
-<h2>Dependencies</h2>
+<p><strong>Dependencies</strong>     </p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -197,8 +216,9 @@ All non-background pixels belonging to each color are collected. Starting from t
 <pre><code class="language-bash">pip install osmnx gpxpy
 </code></pre>
 <p>&nbsp;</p>
-<h2>Usage Instructions</h2>
-<h3>1. Environment Setup (Google Colab)</h3>
+<p><strong>Usage Instructions</strong>     </p>
+<p>&nbsp;</p>
+<p><strong>Environment Setup (Google Colab)</strong>     </p>
 <p>&nbsp;</p>
 <ul>
 <li>Open the notebook in <a href="https://colab.research.google.com/">Google Colab</a>.</li>
@@ -224,20 +244,21 @@ All non-background pixels belonging to each color are collected. Starting from t
   !pip install osmnx -q
   !pip install gpxpy -q</code></p>
 <p>&nbsp;</p>
-<h3>2. Configure the City and Network Type</h3>
+<p><strong>Configure the City and Network Type</strong>     </p>
 <p>&nbsp;</p>
 <pre><code class="language-python">place_name = &quot;Vancouver, BC, Canada&quot;   # Any OSM-recognized place name
 network_type = 'bike'                   # 'bike', 'walk', 'drive', 'all'
 </code></pre>
 <p>&nbsp;</p>
-<h3>3. Set the Input Image</h3>
+<p><strong>Set the Input Image</strong>     </p>
 <p>&nbsp;</p>
 <pre><code class="language-python">filename = 'AzadiSq.png'   # Your pattern image (PNG recommended)
 </code></pre>
 <p>&nbsp;</p>
 <p>The image should be a <strong>color-coded flat design</strong> where each distinct region uses a solid, distinguishable color. Gradients and photographic images will produce unpredictable results.</p>
 <p>&nbsp;</p>
-<h3>4. Identify the Outermost Color</h3>
+<p><strong>Identify the Outermost Color</strong>     </p>
+<p>&nbsp;</p>
 <p>After the color detection cell runs, inspect the <code>detected_colors</code> list printed to output, then set:</p>
 <p>&nbsp;</p>
 <pre><code class="language-python">outermost_color = 'yellow'   # The color forming the outermost boundary of your pattern
@@ -245,7 +266,7 @@ network_type = 'bike'                   # 'bike', 'walk', 'drive', 'all'
 <p>&nbsp;</p>
 <p>This color is moved to the front of the processing order so it establishes the reference position for all inner layers.</p>
 <p>&nbsp;</p>
-<h3>5. Tune Scale and Position (Trial and Error)</h3>
+<p><strong>Tune Scale and Position (Trial and Error)</strong>     </p>
 <p>&nbsp;</p>
 <pre><code class="language-python">scale_factor_y     = 0.5    # Pattern height as a fraction of map height (0.0–1.0)
 scale_factor_x     = 0.5    # Pattern width as a fraction of map width  (0.0–1.0)
@@ -255,16 +276,18 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>&nbsp;</p>
 <p>Run the overlay cell and visually inspect the result. Adjust these four values until the pattern sits fully within the street network, then re-run.</p>
 <p>&nbsp;</p>
-<h3>6. Run the Production Step</h3>
+<p><strong>Run the Production Step</strong>     </p>
+<p>&nbsp;</p>
 <p>Once the overlay looks correct, run the production cells. The notebook will:<br />
 - Compute GPS coordinates for every boundary pixel of every color layer<br />
 - Plot the final coordinate paths on the map<br />
 - Save one <code>.gpx</code> file per color to the current working directory</p>
 <p>&nbsp;</p>
-<h3>7. Use the GPX Files</h3>
+<p><strong>Use the GPX Files</strong>     </p>
+<p>&nbsp;</p>
 <p>Import the <code>.gpx</code> files into any GPS application (Garmin Connect, Komoot, Strava, Google Maps, etc.) or load them onto a GPS device to navigate the pattern as a real-world route.</p>
 <p>&nbsp;</p>
-<h2>Key Parameters Reference</h2>
+<p><strong>Key Parameters Reference</strong>     </p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -318,7 +341,8 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </tbody>
 </table>
 <p>&nbsp;</p>
-<h2>Notes and Limitations</h2>
+<p><strong>Notes and Limitations</strong>     </p>
+<p>&nbsp;</p>
 <ul>
 <li><strong>Color range definitions</strong> use single-unit HSV hue bins (e.g., H=3 for yellow). These bins are very narrow and may need widening in <code>color_ranges</code> if the pattern image uses slightly off-hue colors.</li>
 <li>The <strong>nearest-neighbor pixel ordering</strong> is an O(n²) algorithm. For large or high-resolution images with many boundary pixels, this step can be slow.</li>
@@ -326,11 +350,9 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <li>The notebook is designed for <strong>Google Colab</strong> and relies on Google Drive for file access. Adapting it to a local Jupyter environment requires removing the Drive mount cells and adjusting file paths.</li>
 </ul></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h1>Speech-to-Text via OpenAI Whisper</h1>
+            <div class="card-content"><h2>Speech-to-Text via OpenAI Whisper</h2>
 <p>&nbsp;</p>
 <p>Two Python scripts (<a href="#cpu-script">CPU version</a> and <a href="#gpu-script">GPU version</a>) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.</p>
 <p>&nbsp;</p>
@@ -397,20 +419,18 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </tbody>
 </table>
 <p>&nbsp;</p>
-<h2>Usage Instructions</h2>
-<h3>Prerequisites</h3>
-<ol>
-<li><strong>Python 3.8+</strong> — required by <code>openai-whisper</code>.</li>
-<li><strong>ffmpeg</strong> — must be on <code>PATH</code>. The scripts will exit with an error and installation hints if it is not found.</li>
-<li><strong>pip</strong> — standard Python package installer (required for the auto-install logic).</li>
-<li><strong>(GPU script only) CUDA-capable NVIDIA GPU</strong> with a compatible CUDA driver — optional; the script falls back to CPU automatically.</li>
-</ol>
+<p><strong>Usage Instructions</strong>    <br />
+<strong>Prerequisites</strong>    <br />
+1. <strong>Python 3.8+</strong> — required by <code>openai-whisper</code>.<br />
+2. <strong>ffmpeg</strong> — must be on <code>PATH</code>. The scripts will exit with an error and installation hints if it is not found.<br />
+3. <strong>pip</strong> — standard Python package installer (required for the auto-install logic).<br />
+4. <strong>(GPU script only) CUDA-capable NVIDIA GPU</strong> with a compatible CUDA driver — optional; the script falls back to CPU automatically.</p>
 <p>&nbsp;</p>
-<p>For CPU script:</p>
+<p><strong>For CPU script:</strong></p>
 <pre><code class="language-bash">python speech2text_via_OpenAI_Whisper.py &lt;audio_file&gt; [model_size] [language]
 </code></pre>
 <p>&nbsp;</p>
-<p><strong>Positional argument (required):</strong></p>
+<p><strong>- Positional argument (required):</strong></p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -429,7 +449,7 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p><strong>Positional arguments (optional, must appear in order):</strong></p>
+<p><strong>- Positional arguments (optional, must appear in order):</strong></p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -456,11 +476,11 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p>For GPU script:</p>
+<p><strong>For GPU script:</strong></p>
 <pre><code class="language-bash">python speech2text_via_OpenAI_Whisper_GPU.py &lt;audio_file&gt; [model_size] [language] [device]
 </code></pre>
 <p>&nbsp;</p>
-<p>All arguments from the CPU script apply. One additional optional argument is added:</p>
+<p><strong>- All arguments from the CPU script apply. One additional optional argument is added:</strong></p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -481,14 +501,14 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </tbody>
 </table>
 <p>&nbsp;</p>
-<blockquote>
-<p><strong>Note:</strong> When <code>device</code> is required but <code>language</code> should remain auto-detected, there is no way to skip <code>language</code> positionally. You must either pass <code>None</code> as the literal string for <code>language</code> (the script will pass it as the string <code>"None"</code> to Whisper, which may not behave as expected), or edit the script to use <code>argparse</code>. If you want GPU with auto-detected language, omit both arguments and let the auto-detection handle both:<br />
-<code>bash
-python speech2text_via_OpenAI_Whisper_GPU.py audio.mp3 base</code><br />
-This will auto-detect language and select CUDA automatically.</p>
-</blockquote>
+<p><strong>Note:</strong> When <code>device</code> is required but <code>language</code> should remain auto-detected, there is no way to skip <code>language</code> positionally. You must either pass <code>None</code> as the literal string for <code>language</code> (the script will pass it as the string <code>"None"</code> to Whisper, which may not behave as expected), or edit the script to use <code>argparse</code>. If you want GPU with auto-detected language, omit both arguments and let the auto-detection handle both:</p>
 <p>&nbsp;</p>
-<h2>CPU Script</h2>
+<pre><code class="language-bash">python speech2text_via_OpenAI_Whisper_GPU.py audio.mp3 base
+</code></pre>
+<p>&nbsp;</p>
+<p>This will auto-detect language and select CUDA automatically.</p>
+<p>&nbsp;</p>
+<p><strong>CPU Script</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-python"># Import required libraries with auto-installation
 import subprocess
@@ -602,7 +622,7 @@ if __name__ == &quot;__main__&quot;:
         sys.exit(1)
 </code></pre>
 <p>&nbsp;</p>
-<h2>GPU Script</h2>
+<p><strong>GPU Script</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-python"># Import required libraries with auto-installation
 import subprocess
@@ -656,7 +676,6 @@ install_ffmpeg()
 # Now import the libraries
 import whisper
 import torch
-#
 def transcribe_audio(audio_file, model_size=&quot;base&quot;, language=None, device=None):
     &quot;&quot;&quot;
     Transcribe audio file using Whisper
@@ -677,7 +696,6 @@ def transcribe_audio(audio_file, model_size=&quot;base&quot;, language=None, dev
     else:
         result = model.transcribe(audio_file)
     return result
-#
 def save_transcription(result, output_file=&quot;transcription.txt&quot;):
     &quot;&quot;&quot;Save transcription to file&quot;&quot;&quot;
     # Full text
@@ -746,55 +764,47 @@ if __name__ == &quot;__main__&quot;:
         sys.exit(1)
 </code></pre></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h1>Text-to-Speech (Google TTS) Script</h1>
+            <div class="card-content"><h2>Text-to-Speech (Google TTS) Script</h2>
 <p>&nbsp;</p>
 <p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
 <p>&nbsp;</p>
-<h2>Code (with inline comments)</h2>
+<p><strong>Code (with inline comments)</strong></p>
 <p>&nbsp;</p>
-<pre><code class="language-python">#
-import subprocess
+<pre><code class="language-python">import subprocess
 import sys
 import os
-#
 def install_package(package):
     &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
     subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
-#
 # Check and install required packages
 required_packages = {
     'gtts': 'gTTS'
 }
-#
 for import_name, package_name in required_packages.items():
     try:
         __import__(import_name)
     except ImportError:
         print(f&quot;Installing {package_name}...&quot;)
         install_package(package_name)
-#
 from gtts import gTTS
-#
 # Check if file path is provided as command-line argument
 if len(sys.argv) &lt; 2:
     print(&quot;Usage: python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;&quot;)
     sys.exit(1)
-#
 # Get file path from command-line argument
 file_path = sys.argv[1]
-#
 # Check if file exists
 if not os.path.exists(file_path):
     print(f&quot;Error: File '{file_path}' not found.&quot;)
     sys.exit(1)
-#
 # Check if file is a .txt file
 if not file_path.lower().endswith('.txt'):
     print(&quot;Error: File must be a .txt file.&quot;)
     sys.exit(1)
-#
 # Read text from file
 print(f&quot;Reading text from '{file_path}'...&quot;)
 try:
@@ -803,13 +813,10 @@ try:
 except Exception as e:
     print(f&quot;Error reading text file: {e}&quot;)
     sys.exit(1)
-#
 # Print text length to verify reading
 print(f&quot;Text length: {len(text)} characters&quot;)
-#
 # Generate output filename based on input filename
 output_file = os.path.splitext(os.path.basename(file_path))[0] + &quot;.mp3&quot;
-#
 # Convert text to .mp3
 print(f&quot;Converting text to speech...&quot;)
 try:
@@ -819,12 +826,11 @@ try:
 except Exception as e:
     print(f&quot;Error converting to speech: {e}&quot;)
     sys.exit(1)
-#
 </code></pre>
 <p>&nbsp;</p>
-<h2>Usage Instructions</h2>
+<p><strong>Usage Instructions</strong></p>
 <p>&nbsp;</p>
-<h3>Prerequisites</h3>
+<p><strong>Prerequisites</strong></p>
 <p>&nbsp;</p>
 <ul>
 <li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
@@ -833,22 +839,20 @@ except Exception as e:
 <li>A UTF-8 encoded <code>.txt</code> file.</li>
 </ul>
 <p>&nbsp;</p>
-<h3>Running the Script</h3>
+<p><strong>Running the Script</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-bash">python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;
 </code></pre>
 <p>&nbsp;</p>
 <p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h1>Extract Text from PDF via PDFplumber</h1>
+            <div class="card-content"><h2>Extract Text from PDF via PDFplumber</h2>
 <p>&nbsp;</p>
 <p>A command-line Python script that opens a PDF file, extracts all textual content page-by-page using <strong>PDFplumber</strong>, and writes the result as a UTF-8 encoded plain-text (<code>.txt</code>) file. </p>
 <p>&nbsp;</p>
-<h2>Code (with inline comments)</h2>
+<p><strong>Code (with inline comments)</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-python">import subprocess
 import sys
@@ -857,43 +861,34 @@ import os
 def install_package(package):
     &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
     subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
-#
 # Check and install required packages
 required_packages = {
     'pdfplumber': 'pdfplumber'
 }
-#
 for import_name, package_name in required_packages.items():
     try:
         __import__(import_name)
     except ImportError:
         print(f&quot;Installing {package_name}...&quot;)
-        install_package(package_name)
-#
+        install_package(package_name)  
 import pdfplumber
-#
 # Check if file path is provided as command-line argument
 if len(sys.argv) &lt; 2:
     print(&quot;Usage: python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;&quot;)
     sys.exit(1)
-#
 # Get file path from command-line argument
 file_path = sys.argv[1]
-#
 # Check if file exists
 if not os.path.exists(file_path):
     print(f&quot;Error: File '{file_path}' not found.&quot;)
     sys.exit(1)
-#
 # Check if file is a PDF
 if not file_path.lower().endswith('.pdf'):
     print(&quot;Error: File must be a PDF.&quot;)
     sys.exit(1)
-#
 # Extract PDF text
 print(f&quot;Extracting text from '{file_path}'...&quot;)
 text = &quot;&quot;
-#   
 try:
     with pdfplumber.open(file_path) as pdf:
         for page in pdf.pages:
@@ -903,13 +898,10 @@ try:
 except Exception as e:
     print(f&quot;Error extracting text from PDF: {e}&quot;)
     sys.exit(1)
-#
 # Print text length to verify extraction
 print(f&quot;Extracted text length: {len(text)} characters&quot;)
-#
 # Generate output filename based on input filename
 output_file = os.path.splitext(os.path.basename(file_path))[0] + &quot;.txt&quot;
-#   
 # Save extracted text to .txt file
 try:
     with open(output_file, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
@@ -920,9 +912,9 @@ except Exception as e:
     sys.exit(1)
 </code></pre>
 <p>&nbsp;</p>
-<h2>Usage Instructions</h2>
+<p><strong>Usage Instructions</strong></p>
 <p>&nbsp;</p>
-<h3>Prerequisites</h3>
+<p><strong>Prerequisites</strong></p>
 <p>&nbsp;</p>
 <ul>
 <li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
@@ -930,13 +922,14 @@ except Exception as e:
 <li>A UTF-8 encoded <code>.pdf</code> file.</li>
 </ul>
 <p>&nbsp;</p>
-<h3>Running the Script</h3>
+<p><strong>Running the Script</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-bash">python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;
 </code></pre>
 <p>&nbsp;</p>
 <p><code>&lt;path_to_pdf_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.pdf</code> (case-insensitive). The output <code>.txt</code> is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
