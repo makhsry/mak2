@@ -26,23 +26,18 @@
 <p><a href="https://github.com/makhsry/drawing2gpx.ipynb"><strong>Link to Code</strong></a></p>
 <p>&nbsp;</p>
 <h2>What It Does</h2>
-<p>&nbsp;</p>
-<p>The notebook performs the following stages in order:</p>
-<p>&nbsp;</p>
-<ol>
-<li><strong>Downloads a city's street network</strong> from OpenStreetMap</li>
-<li><strong>Loads a pattern image</strong> and converts it to HSV color space</li>
-<li><strong>Detects which colors are present</strong> in the image above a minimum threshold</li>
-<li><strong>Creates binary masks</strong> for each detected color</li>
-<li><strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary</li>
-<li><strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position</li>
-<li><strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal</li>
-<li><strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)</li>
-<li><strong>Exports one <code>.gpx</code> file per color</strong> layer</li>
-</ol>
+<p>The notebook performs the following stages in order:<br />
+1. <strong>Downloads a city's street network</strong> from OpenStreetMap<br />
+2. <strong>Loads a pattern image</strong> and converts it to HSV color space<br />
+3. <strong>Detects which colors are present</strong> in the image above a minimum threshold<br />
+4. <strong>Creates binary masks</strong> for each detected color<br />
+5. <strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary<br />
+6. <strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position<br />
+7. <strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal<br />
+8. <strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)<br />
+9. <strong>Exports one <code>.gpx</code> file per color</strong> layer</p>
 <p>&nbsp;</p>
 <h2>Pipeline Detail</h2>
-<p>&nbsp;</p>
 <h3>Stage 1 — Street Network Download</h3>
 <p>&nbsp;</p>
 <pre><code class="language-python">place_name = &quot;Vancouver, BC, Canada&quot;
@@ -62,15 +57,11 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <p>The image is opened as RGB then converted to <strong>HSV (Hue, Saturation, Value)</strong> space. HSV is used because it separates color identity (Hue) from brightness (Value) and intensity (Saturation), making color segmentation more robust than raw RGB thresholding.</p>
 <p>&nbsp;</p>
 <h3>Stage 3 — Color Detection</h3>
-<p>&nbsp;</p>
-<p>Each named color in <code>color_ranges</code> is defined by an HSV lower-bound and upper-bound pair <code>[H, S, V]</code>:</p>
-<p>&nbsp;</p>
-<ul>
-<li><strong>Black</strong> is detected in grayscale: pixels with grayscale value <code>≤ 10</code> (via <code>cv2.THRESH_BINARY_INV</code>)</li>
-<li><strong>White</strong> is detected in grayscale: pixels with grayscale value <code>≥ 245</code> (via <code>cv2.THRESH_BINARY</code>)</li>
-<li><strong>Red</strong> is handled specially because red <strong>wraps around</strong> the HSV hue circle (H ≈ 0° and H ≈ 180°); two separate ranges are combined: <code>[0,100,20]–[10,255,255]</code> and <code>[160,100,20]–[180,255,255]</code>, and the masks are summed</li>
-<li>All <strong>other colors</strong> are matched with a single <code>cv2.inRange(hsv_img, lower, upper)</code> call</li>
-</ul>
+<p>Each named color in <code>color_ranges</code> is defined by an HSV lower-bound and upper-bound pair <code>[H, S, V]</code>:<br />
+- <strong>Black</strong> is detected in grayscale: pixels with grayscale value <code>≤ 10</code> (via <code>cv2.THRESH_BINARY_INV</code>)<br />
+- <strong>White</strong> is detected in grayscale: pixels with grayscale value <code>≥ 245</code> (via <code>cv2.THRESH_BINARY</code>)<br />
+- <strong>Red</strong> is handled specially because red <strong>wraps around</strong> the HSV hue circle (H ≈ 0° and H ≈ 180°); two separate ranges are combined: <code>[0,100,20]–[10,255,255]</code> and <code>[160,100,20]–[180,255,255]</code>, and the masks are summed<br />
+- All <strong>other colors</strong> are matched with a single <code>cv2.inRange(hsv_img, lower, upper)</code> call</p>
 <p>&nbsp;</p>
 <p>A color is considered <strong>present</strong> in the image if the number of matching pixels exceeds the minimum threshold:</p>
 <p>&nbsp;</p>
@@ -80,37 +71,19 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <p>where <code>total_pixels = image_height × image_width</code>. This 0.1% floor filters out noise and compression artifacts. Black and white are removed from the final detected list after this step, since they are used as background/border and not as route colors.</p>
 <p>&nbsp;</p>
 <h3>Stage 4 — Binary Mask Generation</h3>
-<p>&nbsp;</p>
 <p>For each detected color, a binary mask is produced where matching pixels = <code>255</code> and all others = <code>0</code>. These masks are stored in a dictionary keyed by color name.</p>
 <p>&nbsp;</p>
 <h3>Stage 5 — Contour Extraction and Boundary Skeletonization</h3>
-<p>&nbsp;</p>
-<p>For each color mask:</p>
-<p>&nbsp;</p>
-<ol>
-<li><strong>Morphological cleaning</strong> is applied using a <code>3×3</code> structuring element:</li>
-<li><code>MORPH_CLOSE</code> (dilation then erosion) fills small holes and gaps</li>
-<li><code>MORPH_OPEN</code> (erosion then dilation) removes small noise blobs</li>
-</ol>
-<p>&nbsp;</p>
-<ol>
-<li><strong>External contours</strong> are found with <code>cv2.findContours(..., cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)</code>. <code>CHAIN_APPROX_NONE</code> stores every single contour point (no compression), giving a dense boundary.</li>
-</ol>
-<p>&nbsp;</p>
-<ol>
-<li>The <strong>largest contour by area</strong> is selected: <code>max(contours, key=cv2.contourArea)</code></li>
-</ol>
-<p>&nbsp;</p>
-<ol>
-<li>The contour is drawn onto a blank image with <strong>thickness = 1</strong>, producing a single-pixel-wide outline.</li>
-</ol>
-<p>&nbsp;</p>
-<ol>
-<li>A final <code>MORPH_CLOSE</code> with a <code>2×2</code> kernel closes any remaining small gaps in the outline to ensure path continuity.</li>
-</ol>
+<p>For each color mask:<br />
+- <strong>Morphological cleaning</strong> is applied using a <code>3×3</code> structuring element:<br />
+  - <code>MORPH_CLOSE</code> (dilation then erosion) fills small holes and gaps<br />
+  - <code>MORPH_OPEN</code> (erosion then dilation) removes small noise blobs<br />
+- <strong>External contours</strong> are found with <code>cv2.findContours(..., cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)</code>. <code>CHAIN_APPROX_NONE</code> stores every single contour point (no compression), giving a dense boundary.<br />
+- The <strong>largest contour by area</strong> is selected: <code>max(contours, key=cv2.contourArea)</code><br />
+- The contour is drawn onto a blank image with <strong>thickness = 1</strong>, producing a single-pixel-wide outline.<br />
+- A final <code>MORPH_CLOSE</code> with a <code>2×2</code> kernel closes any remaining small gaps in the outline to ensure path continuity.</p>
 <p>&nbsp;</p>
 <h3>Stage 6 — Overlay onto Street Map</h3>
-<p>&nbsp;</p>
 <p>The pattern is scaled and positioned on top of the <code>osmnx</code> map axes.</p>
 <p>&nbsp;</p>
 <p><strong>Scale calculation:</strong></p>
@@ -148,7 +121,6 @@ reference_center = ( (route_left + route_right) / 2,
 <p>The user iterates on <code>scale_factor_x</code>, <code>scale_factor_y</code>, <code>position_offset_x</code>, and <code>position_offset_y</code> until the pattern fits visually within the street network.</p>
 <p>&nbsp;</p>
 <h3>Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering</h3>
-<p>&nbsp;</p>
 <p><strong>Pixel → geographic coordinate mapping:</strong></p>
 <p>&nbsp;</p>
 <pre><code>lon_per_pixel = (right − left) / width
@@ -162,9 +134,8 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 <p>&nbsp;</p>
 <p>The <code>+ 0.5</code> offset places the sample point at the pixel center. Note that the y-axis is inverted: image row 0 is at the top, but geographic latitude increases upward, so latitude is computed by subtracting from <code>top</code>.</p>
 <p>&nbsp;</p>
-<p><strong>Nearest-neighbor path ordering:</strong></p>
-<p>&nbsp;</p>
-<p>All non-background pixels belonging to each color are collected. Starting from the leftmost pixel (minimum x), the path is built greedily:</p>
+<p><strong>Nearest-neighbor path ordering:</strong><br />
+All non-background pixels belonging to each color are collected. Starting from the leftmost pixel (minimum x), the path is built greedily:</p>
 <p>&nbsp;</p>
 <pre><code>dist(current, candidate) = √( (Δx)² + (Δy)² )
 </code></pre>
@@ -172,7 +143,6 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 <p>At each step, all remaining pixels are sorted by Euclidean distance from the current pixel. The closest pixel within a 2-pixel radius is chosen as the next step. If no pixel falls within that radius (i.e., a gap exists in the skeleton), the globally nearest remaining pixel is used as a fallback. This produces an ordered sequence that approximates a continuous traversal of the boundary.</p>
 <p>&nbsp;</p>
 <h3>Stage 8 — GPX Export</h3>
-<p>&nbsp;</p>
 <p>For each color, a GPX track is created using <code>gpxpy</code>:</p>
 <p>&nbsp;</p>
 <pre><code>GPX → GPXTrack → GPXTrackSegment → [GPXTrackPoint(lat, lon), ...]
@@ -231,27 +201,36 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 </table>
 <p>&nbsp;</p>
 <p>Install non-default Colab packages:</p>
+<p>&nbsp;</p>
 <pre><code class="language-bash">pip install osmnx gpxpy
 </code></pre>
 <p>&nbsp;</p>
 <h2>Usage Instructions</h2>
-<p>&nbsp;</p>
 <h3>1. Environment Setup (Google Colab)</h3>
 <p>&nbsp;</p>
-<ol>
+<ul>
 <li>Open the notebook in <a href="https://colab.research.google.com/">Google Colab</a>.</li>
-<li>Mount your Google Drive:<br />
-<code>python
-   from google.colab import drive
-   drive.mount('/content/drive')</code></li>
-<li>Navigate to the directory containing your pattern image:<br />
-<code>python
-   %cd /content/drive/My Drive/GPX/</code></li>
-<li>Install required packages:<br />
-<code>bash
-   !pip install osmnx -q
-   !pip install gpxpy -q</code></li>
-</ol>
+<li>Mount your Google Drive:</li>
+</ul>
+<p>&nbsp;</p>
+<p><code>python
+  from google.colab import drive
+  drive.mount('/content/drive')</code></p>
+<p>&nbsp;</p>
+<ul>
+<li>Navigate to the directory containing your pattern image:</li>
+</ul>
+<p>&nbsp;</p>
+<p><code>python
+  %cd /content/drive/My Drive/GPX/</code></p>
+<p>&nbsp;</p>
+<ul>
+<li>Install required packages:</li>
+</ul>
+<p>&nbsp;</p>
+<p><code>bash
+  !pip install osmnx -q
+  !pip install gpxpy -q</code></p>
 <p>&nbsp;</p>
 <h3>2. Configure the City and Network Type</h3>
 <p>&nbsp;</p>
@@ -267,7 +246,6 @@ network_type = 'bike'                   # 'bike', 'walk', 'drive', 'all'
 <p>The image should be a <strong>color-coded flat design</strong> where each distinct region uses a solid, distinguishable color. Gradients and photographic images will produce unpredictable results.</p>
 <p>&nbsp;</p>
 <h3>4. Identify the Outermost Color</h3>
-<p>&nbsp;</p>
 <p>After the color detection cell runs, inspect the <code>detected_colors</code> list printed to output, then set:</p>
 <p>&nbsp;</p>
 <pre><code class="language-python">outermost_color = 'yellow'   # The color forming the outermost boundary of your pattern
@@ -286,14 +264,12 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>Run the overlay cell and visually inspect the result. Adjust these four values until the pattern sits fully within the street network, then re-run.</p>
 <p>&nbsp;</p>
 <h3>6. Run the Production Step</h3>
-<p>&nbsp;</p>
 <p>Once the overlay looks correct, run the production cells. The notebook will:<br />
 - Compute GPS coordinates for every boundary pixel of every color layer<br />
 - Plot the final coordinate paths on the map<br />
 - Save one <code>.gpx</code> file per color to the current working directory</p>
 <p>&nbsp;</p>
 <h3>7. Use the GPX Files</h3>
-<p>&nbsp;</p>
 <p>Import the <code>.gpx</code> files into any GPS application (Garmin Connect, Komoot, Strava, Google Maps, etc.) or load them onto a GPS device to navigate the pattern as a real-world route.</p>
 <p>&nbsp;</p>
 <h2>Key Parameters Reference</h2>
@@ -351,7 +327,6 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </table>
 <p>&nbsp;</p>
 <h2>Notes and Limitations</h2>
-<p>&nbsp;</p>
 <ul>
 <li><strong>Color range definitions</strong> use single-unit HSV hue bins (e.g., H=3 for yellow). These bins are very narrow and may need widening in <code>color_ranges</code> if the pattern image uses slightly off-hue colors.</li>
 <li>The <strong>nearest-neighbor pixel ordering</strong> is an O(n²) algorithm. For large or high-resolution images with many boundary pixels, this step can be slow.</li>
