@@ -109,5 +109,5 @@ v = ((ρ<sub>01</sub> − ρ<sub>03</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) J
 Components 1 and 2 evolve according to:         
 ω<sub>i</sub><sup>t+Δt</sup> = ω<sub>i</sub><sup>t</sup> − ( (1/ρ)(∂J<sub>i</sub>/∂z) + v(∂ω<sub>i</sub>/∂z) ) Δt      
 
-**- Spatial Discretization [`MESHS.m`](Publications_20170501_JMS_MESHS.m)**      
+**- Spatial Discretization ([`MESHS.m`](Publications_20170501_JMS_MESHS.m))**      
 The spatial derivatives are discretized using the GUFDM non-uniform grid.
