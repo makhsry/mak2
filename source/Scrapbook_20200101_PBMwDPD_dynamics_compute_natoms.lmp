@@ -1,0 +1,28 @@
+# compute_natoms
+#
+#------------------------------------------------------
+variable nA0 atom type==1
+variable nB0 atom type==2
+variable nAA10 atom type==3
+variable nAA20 atom type==4
+variable nAA30 atom type==5
+variable nAA40 atom type==6 
+variable nAA50 atom type==7 
+variable nAA60 atom type==8 
+variable nAA70 atom type==9 
+variable nAA80 atom type==10 
+variable nAA90 atom type==11 
+variable nAB10 atom type==12
+variable nAB20 atom type==13 
+variable nAB30 atom type==14 
+variable nAB40 atom type==15 
+variable nAB50 atom type==16 
+variable nAB60 atom type==17
+variable nAB70 atom type==18 
+variable nAB80 atom type==19 
+variable nAB90 atom type==20 
+variable nBB10 atom type==21 
+variable nBB20 atom type==22
+variable nBB30 atom type==23
+variable nTot equal atoms 
+#------------------------------------------------------

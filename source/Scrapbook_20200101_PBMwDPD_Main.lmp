@@ -1,0 +1,150 @@
+# main  
+#------------------------------------------------------
+units real 
+# 			mass = grams/mole
+# 			distance = Angstroms
+# 			time = femtoseconds
+# 			energy = kcal/mol
+# 			velocity = Angstroms/femtosecond
+# 			force = (kcal/mol)/Angstrom
+# 			torque = kcal/mol
+# 			temperature = Kelvin
+# 			pressure = atmospheres
+# 			density = g/cm^3
+#------------------------------------------------------
+timer full 
+variable start timer
+#------------------------------------------------------
+variable dt equal 1
+timestep ${dt}
+dimension 3
+boundary p p p
+#------------------------------------------------------
+atom_style hybrid atomic sphere dpd
+atom_modify map array sort 1 100
+#------------------------------------------------------
+newton on
+#------------------------------------------------------
+variable T equal 300.0 
+variable P equal 1.0 
+#------------------------------------------------------
+variable RcG equal 12.5
+variable RcGc equal 10*${RcG}
+#------------------------------------------------------
+variable seed equal 20240526
+#------------------------------------------------------
+variable dampP equal 500  
+variable dampT equal 100  
+variable dumping equal 1000 
+variable thermoing equal 100  
+variable nDYN equal 100000    
+#------------------------------------------------------
+comm_modify vel yes cutoff ${RcGc}
+neighbor ${RcG} nsq
+neigh_modify delay 0 every 1 check yes binsize ${RcGc}
+#------------------------------------------------------
+include setup_constant.lmp
+include fingerprints_xij.lmp
+include fingerprints_aij.lmp
+#------------------------------------------------------
+include setup_n0.lmp
+#------------------------------------------------------
+variable L equal 1000 # gets updated during NPT
+#------------------------------------------------------
+variable box_xhi equal ${L}/2 
+variable box_xlo equal -${L}/2 
+variable box_yhi equal ${L}/2
+variable box_ylo equal -${L}/2
+variable box_zhi equal ${L}/2
+variable box_zlo equal -${L}/2
+#------------------------------------------------------
+region BOX block ${box_xlo} ${box_xhi} ${box_ylo} ${box_yhi} ${box_zlo} ${box_zhi}
+#------------------------------------------------------
+create_box 23 BOX
+#------------------------------------------------------
+pair_style dpd ${T} ${RcG} ${seed}
+#------------------------------------------------------
+include setup_potential.lmp
+#------------------------------------------------------
+create_atoms 1 random ${n0_1} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${n0_2} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+include fingerprints_mass.lmp
+include fingerprints_diameter.lmp
+include fingerprints_label.lmp
+#------------------------------------------------------
+velocity all create ${T} ${seed} 
+run 0
+velocity all scale ${T} 
+#------------------------------------------------------
+minimize 1.0e-6 1.0e-8 1000 10000 
+#------------------------------------------------------
+dump DUMP all custom ${dumping} pre.* id type mass diameter x y z vx vy vz fx fy fz
+#------------------------------------------------------
+fix NPT all npt temp ${T} ${T} ${dampT} iso ${P} ${P} ${dampP}
+#------------------------------------------------------
+thermo ${thermoing}
+thermo_style custom step atoms temp press density
+#------------------------------------------------------
+run ${nDYN}
+#------------------------------------------------------
+unfix NPT
+undump DUMP 
+#------------------------------------------------------
+variable dumping equal 100
+variable thermoing equal 10  
+variable nDYN equal 1000
+#------------------------------------------------------
+dump DUMP all custom ${dumping} post.* id type mass diameter x y z vx vy vz fx fy fz
+#------------------------------------------------------
+thermo ${thermoing}
+thermo_style custom step atoms temp press density
+#------------------------------------------------------
+fix NVE all nve
+fix fixP all box/relax iso ${P}
+#fix NVT all nvt temp ${T} ${T} 10
+#------------------------------------------------------
+reset_timestep 0
+#------------------------------------------------------
+variable iterations equal 0
+variable iterationsMAX equal ${nDYN}
+#--------------------------------------------- ---------
+include fingerprints_barrier_n.lmp
+#------------------------------------------------------
+label DYN 
+variable iterations equal ${iterations}+1
+#------------------------------------------------------
+include dynamics_compute_kinetic.lmp
+#------------------------------------------------------
+include dynamics_create_groups.lmp
+#------------------------------------------------------
+include dynamics_compute_n_groups.lmp
+#------------------------------------------------------
+include dynamics_compute_events.lmp
+#------------------------------------------------------
+include dynamics_clean_groups.lmp
+#------------------------------------------------------ 
+include dynamics_create_groups.lmp
+#------------------------------------------------------
+include dynamics_compute_n_groups.lmp
+#------------------------------------------------------
+include dynamics_clean_groups.lmp
+#------------------------------------------------------
+delete_atoms overlap 0.5 all all
+reset_atoms id sort yes
+#------------------------------------------------------
+if ${iterations}>=${iterationsMAX} then 'jump SELF END'
+#------------------------------------------------------ 
+velocity all scale ${T} 
+#------------------------------------------------------
+run ${nDYN}
+#------------------------------------------------------
+jump SELF DYN 
+#------------------------------------------------------
+label END
+#------------------------------------------------------
+variable stop timer
+print "Elapsed time: $(v_stop-v_start:%.6f)"
+print "ALL DONE" 
+#------------------------------------------------------
+# End of file

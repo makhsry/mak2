@@ -1,0 +1,9 @@
+# inputs_constant
+#
+#------------------------------------------------------
+variable kB equal 3.297623483e-27	#kcal/K
+variable h equal 1.054571817e-34 #J.s
+variable h equal ${h}*0.000239006 #kcal.s
+variable Rg equal 1.98720425864083e-3 #kcal/(K.mol)
+variable nAv equal 6.02214076e23 #/mol
+#------------------------------------------------------

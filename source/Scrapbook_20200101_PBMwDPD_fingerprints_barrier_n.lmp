@@ -1,0 +1,50 @@
+# inputs_barrier
+# values in kcal/mol
+#
+#------------------------------------------------------
+
+variable BB1eB equal -0.737801637078771
+variable BB2eB equal -0.8979483363452747
+variable BB3eB equal -0.7440735622408844
+variable BB1eD equal 0.21948571428571428
+variable BB2eD equal -0.8983735516105027
+variable BB3eD equal -0.8895503348570212
+#---
+variable AA1eB equal 0.012
+variable AA2eB equal -0.894280854682683
+variable AA3eB equal -0.8803550547464654
+variable AA4eB equal -0.9012969065589453
+variable AA5eB equal 0.0025142857142857133
+variable AA6eB equal 0.0
+variable AA7eB equal 0.00028571428571428595
+variable AA8eB equal 0.005714285714285714
+variable AA9eB equal -0.8795046242160092
+variable AA1eD equal 0.11542857142857144
+variable AA2eD equal -0.9882002763899224
+variable AA3eD equal -0.9839481237376421
+variable AA4eD equal -0.9555118528755182
+variable AA5eD equal 0.20977142857142855
+variable AA6eD equal 0.9073142857142859
+variable AA7eD equal 0.6710285714285714
+variable AA8eD equal 0.6920571428571429
+variable AA9eD equal -1.0
+#---                        
+variable AB1eB equal -0.0
+variable AB2eB equal -0.7216434570001062
+variable AB3eB equal -0.8377803763155096
+variable AB4eB equal 0.05182857142857143
+variable AB5eB equal -0.6771553098756244
+variable AB6eB equal 0.09228571428571429
+variable AB7eB equal 0.014114285714285713
+variable AB8eB equal -0.7530030828106727
+variable AB9eB equal -0.793823748272563
+variable AB1eD equal -0.7845221643456999
+variable AB2eD equal 0.9423428571428571
+variable AB3eD equal 0.26542857142857146
+variable AB4eD equal 1.0
+variable AB5eD equal 0.8278285714285715
+variable AB6eD equal 0.019714285714285712
+variable AB7eD equal 0.9756571428571428
+variable AB8eD equal 0.7879428571428572
+variable AB9eD equal 0.5866857142857144
+#------------------------------------------------------

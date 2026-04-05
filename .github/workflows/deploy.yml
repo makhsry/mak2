@@ -34,6 +34,7 @@ jobs:
           cd source
           python3 build_toc.py Garage --output Garage_99999999_TOC.md
           python3 build_toc.py Publications --output Publications_99999999_TOC.md
+          python3 build_toc.py Scrapbook --output Scrapbook_99999999_TOC.md
           python3 build_site.py
 
       - name: Commit and Push Generated Files

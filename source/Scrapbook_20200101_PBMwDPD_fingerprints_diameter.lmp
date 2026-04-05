@@ -1,0 +1,28 @@
+# inputs_diameter
+# values in Angstroms
+#
+#------------------------------------------------------
+set atom 1 diameter 5.97750435
+set atom 2 diameter 7.527140692
+set atom 3 diameter 7.555461624
+set atom 4 diameter 7.55813719
+set atom 5 diameter 7.577145998
+set atom 6 diameter 7.559808456
+set atom 7 diameter 7.559362858
+set atom 8 diameter 7.496453246
+set atom 9 diameter 7.535558436
+set atom 10 diameter 7.562258312
+set atom 11 diameter 7.552560956
+set atom 12 diameter 8.62901177
+set atom 13 diameter 8.585012618
+set atom 14 diameter 8.637553154
+set atom 15 diameter 8.640879718
+set atom 16 diameter 8.62370761
+set atom 17 diameter 8.657389314
+set atom 18 diameter 8.67273602
+set atom 19 diameter 8.645737018
+set atom 20 diameter 8.657304374
+set atom 21 diameter 9.525393326
+set atom 22 diameter 9.543391444
+set atom 23 diameter 9.552469752
+#------------------------------------------------------

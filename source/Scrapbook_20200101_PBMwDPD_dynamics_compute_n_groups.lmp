@@ -1,0 +1,27 @@
+# compute_n_groups
+#
+#------------------------------------------------------
+variable nA0 equal count(nA)
+variable nB0 equal count(nB)  
+variable nAA10 equal count(nAA1)  
+variable nAA20 equal count(nAA2)  
+variable nAA30 equal count(nAA3) 
+variable nAA40 equal count(nAA4)  
+variable nAA50 equal count(nAA5)  
+variable nAA60 equal count(nAA6) 
+variable nAA70 equal count(nAA7)  
+variable nAA80 equal count(nAA8)  
+variable nAA90 equal count(nAA9)  
+variable nAB10 equal count(nAB1)  
+variable nAB20 equal count(nAB2)  
+variable nAB30 equal count(nAB3)  
+variable nAB40 equal count(nAB4)  
+variable nAB50 equal count(nAB5) 
+variable nAB60 equal count(nAB6)  
+variable nAB70 equal count(nAB7)  
+variable nAB80 equal count(nAB8) 
+variable nAB90 equal count(nAB9) 
+variable nBB10 equal count(nBB1) 
+variable nBB20 equal count(nBB2)  
+variable nBB30 equal count(nBB3)  
+#------------------------------------------------------

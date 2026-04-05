@@ -1,0 +1,373 @@
+# compute_events
+#
+#---------------------------------------------------------------------------------------
+#--- AA1 --- B
+variable nAA1_B equal round(${kAA1eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA1_B}>${nA0} then 'variable nAA1_B equal ${nA0}'
+create_atoms 3 random ${nAA1_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA1_B} yes nA NULL ${seed} compress yes
+#--- AA1 --- D 
+variable nAA1_D equal round(${kAA1eD}*(${nAA10})*(step*dt))
+variable dummy equal ${nAA10}+${nAA1_B}
+if ${nAA1_D}>${dummy} then 'variable nAA1_D equal ${dummy}'
+delete_atoms random count ${nAA1_D} yes nAA1 NULL ${seed} compress yes
+create_atoms 1 random ${nAA1_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA2 --- B
+variable nAA2_B equal round(${kAA2eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA2_B}>${nA0} then 'variable nAA2_B equal ${nA0}'
+create_atoms 4 random ${nAA2_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA2_B} yes nA NULL ${seed} compress yes
+#--- AA2 --- D 
+variable nAA2_D equal round(${kAA2eD}*(${nAA20})*(step*dt))
+variable dummy equal ${nAA20}+${nAA2_B}
+if ${nAA2_D}>${dummy} then 'variable nAA2_D equal ${dummy}'
+delete_atoms random count ${nAA2_D} yes nAA2 NULL ${seed} compress yes
+create_atoms 1 random ${nAA2_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA3 --- B
+variable nAA3_B equal round(${kAA3eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA3_B}>${nA0} then 'variable nAA3_B equal ${nA0}'
+create_atoms 5 random ${nAA3_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA3_B} yes nA NULL ${seed} compress yes
+#--- AA3 --- D 
+variable nAA3_D equal round(${kAA3eD}*(${nAA30})*(step*dt))
+variable dummy equal ${nAA30}+${nAA3_B}
+if ${nAA3_D}>${dummy} then 'variable nAA3_D equal ${dummy}'
+delete_atoms random count ${nAA3_D} yes nAA3 NULL ${seed} compress yes
+create_atoms 1 random ${nAA3_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA4 --- B
+variable nAA4_B equal round(${kAA4eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA4_B}>${nA0} then 'variable nAA4_B equal ${nA0}'
+create_atoms 6 random ${nAA4_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA4_B} yes nA NULL ${seed} compress yes
+#--- AA4 --- D 
+variable nAA4_D equal round(${kAA4eD}*(${nAA40})*(step*dt))
+variable dummy equal ${nAA40}+${nAA4_B}
+if ${nAA4_D}>${dummy} then 'variable nAA4_D equal ${dummy}'
+delete_atoms random count ${nAA4_D} yes nAA4 NULL ${seed} compress yes
+create_atoms 1 random ${nAA4_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA5 --- B
+variable nAA5_B equal round(${kAA5eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA5_B}>${nA0} then 'variable nAA5_B equal ${nA0}'
+create_atoms 7 random ${nAA5_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA5_B} yes nA NULL ${seed} compress yes
+#--- AA5 --- D 
+variable nAA5_D equal round(${kAA5eD}*(${nAA50})*(step*dt))
+variable dummy equal ${nAA50}+${nAA5_B}
+if ${nAA5_D}>${dummy} then 'variable nAA5_D equal ${dummy}'
+delete_atoms random count ${nAA5_D} yes nAA5 NULL ${seed} compress yes
+create_atoms 1 random ${nAA5_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA6 --- B
+variable nAA6_B equal round(${kAA6eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA6_B}>${nA0} then 'variable nAA6_B equal ${nA0}'
+create_atoms 8 random ${nAA6_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA6_B} yes nA NULL ${seed} compress yes
+#--- AA6 --- D 
+variable nAA6_D equal round(${kAA6eD}*(${nAA60})*(step*dt))
+variable dummy equal ${nAA60}+${nAA6_B}
+if ${nAA6_D}>${dummy} then 'variable nAA6_D equal ${dummy}'
+delete_atoms random count ${nAA6_D} yes nAA6 NULL ${seed} compress yes
+create_atoms 1 random ${nAA6_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA7 --- B
+variable nAA7_B equal round(${kAA7eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA7_B}>${nA0} then 'variable nAA7_B equal ${nA0}'
+create_atoms 9 random ${nAA7_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA7_B} yes nA NULL ${seed} compress yes
+#--- AA7 --- D 
+variable nAA7_D equal round(${kAA7eD}*(${nAA70})*(step*dt))
+variable dummy equal ${nAA70}+${nAA7_B}
+if ${nAA7_D}>${dummy} then 'variable nAA7_D equal ${dummy}'
+delete_atoms random count ${nAA7_D} yes nAA7 NULL ${seed} compress yes
+create_atoms 1 random ${nAA7_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA8 --- B
+variable nAA8_B equal round(${kAA8eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA8_B}>${nA0} then 'variable nAA8_B equal ${nA0}'
+create_atoms 10 random ${nAA8_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA8_B} yes nA NULL ${seed} compress yes
+#--- AA8 --- D 
+variable nAA8_D equal round(${kAA8eD}*(${nAA80})*(step*dt))
+variable dummy equal ${nAA80}+${nAA8_B}
+if ${nAA8_D}>${dummy} then 'variable nAA8_D equal ${dummy}'
+delete_atoms random count ${nAA8_D} yes nAA8 NULL ${seed} compress yes
+create_atoms 1 random ${nAA8_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AA9 --- B
+variable nAA9_B equal round(${kAA9eB}*(${nA0})*(${nA0})*(step*dt))
+if ${nAA9_B}>${nA0} then 'variable nAA9_B equal ${nA0}'
+create_atoms 11 random ${nAA9_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nAA9_B} yes nA NULL ${seed} compress yes
+#--- AA9 --- D 
+variable nAA9_D equal round(${kAA9eD}*(${nAA90})*(step*dt))
+variable dummy equal ${nAA90}+${nAA9_B}
+if ${nAA9_D}>${dummy} then 'variable nAA9_D equal ${dummy}'
+delete_atoms random count ${nAA9_D} yes nAA9 NULL ${seed} compress yes
+create_atoms 1 random ${nAA9_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- BB1 --- B
+variable nBB1_B equal round(${kBB1eB}*(${nB0})*(${nB0})*(step*dt))
+if ${nBB1_B}>${nB0} then 'variable nBB1_B equal ${nB0}'
+create_atoms 21 random ${nBB1_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nBB1_B} yes nB NULL ${seed} compress yes
+#--- BB1 --- D 
+variable nBB1_D equal round(${kBB1eD}*(${nBB10})*(step*dt))
+variable dummy equal ${nBB10}+${nBB1_B}
+if ${nBB1_D}>${dummy} then 'variable nBB1_D equal ${dummy}'
+delete_atoms random count ${nBB1_D} yes nBB1 NULL ${seed} compress yes
+create_atoms 2 random ${nBB1_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- BB2 --- B
+variable nBB2_B equal round(${kBB2eB}*(${nB0})*(${nB0})*(step*dt))
+if ${nBB2_B}>${nB0} then 'variable nBB2_B equal ${nB0}'
+create_atoms 22 random ${nBB2_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nBB2_B} yes nB NULL ${seed} compress yes
+#--- BB2 --- D 
+variable nBB2_D equal round(${kBB2eD}*(${nBB20})*(step*dt))
+variable dummy equal ${nBB20}+${nBB2_B}
+if ${nBB2_D}>${dummy} then 'variable nBB2_D equal ${dummy}'
+delete_atoms random count ${nBB2_D} yes nBB2 NULL ${seed} compress yes
+create_atoms 2 random ${nBB2_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- BB3 --- B
+variable nBB3_B equal round(${kBB3eB}*(${nB0})*(${nB0})*(step*dt))
+if ${nBB3_B}>${nB0} then 'variable nBB3_B equal ${nB0}'
+create_atoms 23 random ${nBB3_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+delete_atoms random count ${nBB3_B} yes nB NULL ${seed} compress yes
+#--- BB3 --- D 
+variable nBB3_D equal round(${kBB3eD}*(${nBB30})*(step*dt))
+variable dummy equal ${nBB30}+${nBB3_B}
+if ${nBB3_D}>${dummy} then 'variable nBB3_D equal ${dummy}'
+delete_atoms random count ${nBB3_D} yes nBB3 NULL ${seed} compress yes
+create_atoms 2 random ${nBB3_D} ${seed} NULL overlap ${RcG} maxtry 1000000
+
+#------------------------------------------------------
+#--- AB1 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB1_B equal round(${kAB1eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB1_B}>${stuSUM} then 'variable nAB1_B equal ${stuSUM}'
+create_atoms 12 random ${nAB1_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB1_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB1 --- D 
+variable nAB1_D equal round(${kAB1eD}*(${nAB10})*(step*dt))
+variable dummy equal ${nAB10}+${nAB1_B}
+if ${nAB1_D}>${dummy} then 'variable nAB1_D equal ${dummy}'
+delete_atoms random count ${nAB1_D} yes nAB1 NULL ${seed} compress yes
+variable dummy equal round(${nAB1_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB2 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB2_B equal round(${kAB2eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB2_B}>${stuSUM} then 'variable nAB2_B equal ${stuSUM}'
+create_atoms 13 random ${nAB2_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB2_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB2 --- D 
+variable nAB2_D equal round(${kAB2eD}*(${nAB20})*(step*dt))
+variable dummy equal ${nAB20}+${nAB2_B}
+if ${nAB2_D}>${dummy} then 'variable nAB2_D equal ${dummy}'
+delete_atoms random count ${nAB2_D} yes nAB2 NULL ${seed} compress yes
+variable dummy equal round(${nAB2_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB3 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB3_B equal round(${kAB3eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB3_B}>${stuSUM} then 'variable nAB3_B equal ${stuSUM}'
+create_atoms 14 random ${nAB3_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB3_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB3 --- D 
+variable nAB3_D equal round(${kAB3eD}*(${nAB30})*(step*dt))
+variable dummy equal ${nAB30}+${nAB3_B}
+if ${nAB3_D}>${dummy} then 'variable nAB3_D equal ${dummy}'
+delete_atoms random count ${nAB3_D} yes nAB3 NULL ${seed} compress yes
+variable dummy equal round(${nAB3_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB4 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB4_B equal round(${kAB4eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB4_B}>${stuSUM} then 'variable nAB4_B equal ${stuSUM}'
+create_atoms 15 random ${nAB4_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB4_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB4 --- D 
+variable nAB4_D equal round(${kAB4eD}*(${nAB40})*(step*dt))
+variable dummy equal ${nAB40}+${nAB4_B}
+if ${nAB4_D}>${dummy} then 'variable nAB4_D equal ${dummy}'
+delete_atoms random count ${nAB4_D} yes nAB4 NULL ${seed} compress yes
+variable dummy equal round(${nAB4_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB5 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB5_B equal round(${kAB5eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB5_B}>${stuSUM} then 'variable nAB5_B equal ${stuSUM}'
+create_atoms 16 random ${nAB5_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB5_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB5 --- D 
+variable nAB5_D equal round(${kAB5eD}*(${nAB50})*(step*dt))
+variable dummy equal ${nAB50}+${nAB5_B}
+if ${nAB5_D}>${dummy} then 'variable nAB5_D equal ${dummy}'
+delete_atoms random count ${nAB5_D} yes nAB5 NULL ${seed} compress yes
+variable dummy equal round(${nAB5_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB6 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB6_B equal round(${kAB6eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB6_B}>${stuSUM} then 'variable nAB6_B equal ${stuSUM}'
+create_atoms 17 random ${nAB6_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB6_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB6 --- D 
+variable nAB6_D equal round(${kAB6eD}*(${nAB60})*(step*dt))
+variable dummy equal ${nAB60}+${nAB6_B}
+if ${nAB6_D}>${dummy} then 'variable nAB6_D equal ${dummy}'
+delete_atoms random count ${nAB6_D} yes nAB6 NULL ${seed} compress yes
+variable dummy equal round(${nAB6_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB7 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB7_B equal round(${kAB7eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB7_B}>${stuSUM} then 'variable nAB7_B equal ${stuSUM}'
+create_atoms 18 random ${nAB7_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB7_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB7 --- D 
+variable nAB7_D equal round(${kAB7eD}*(${nAB70})*(step*dt))
+variable dummy equal ${nAB70}+${nAB7_B}
+if ${nAB7_D}>${dummy} then 'variable nAB7_D equal ${dummy}'
+delete_atoms random count ${nAB7_D} yes nAB7 NULL ${seed} compress yes
+variable dummy equal round(${nAB7_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB8 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB8_B equal round(${kAB8eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB8_B}>${stuSUM} then 'variable nAB8_B equal ${stuSUM}'
+create_atoms 19 random ${nAB8_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB8_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB8 --- D 
+variable nAB8_D equal round(${kAB8eD}*(${nAB80})*(step*dt))
+variable dummy equal ${nAB80}+${nAB8_B}
+if ${nAB8_D}>${dummy} then 'variable nAB8_D equal ${dummy}'
+delete_atoms random count ${nAB8_D} yes nAB8 NULL ${seed} compress yes
+variable dummy equal round(${nAB8_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------
+#--- AB9 --- B
+variable STU equal ${nA0}
+if ${nA0}>${nB0} then 'variable STU equal ${nB0}'
+variable stuSUM equal 2*${STU}
+if ${nB0}>${nA0} then 'variable STU equal ${nA0}'
+variable stuSUM equal 2*${STU}
+variable nAB9_B equal round(${kAB9eB}*(${nA0})*(${nB0})*(step*dt))
+if ${nAB9_B}>${stuSUM} then 'variable nAB9_B equal ${stuSUM}'
+create_atoms 20 random ${nAB9_B} ${seed} NULL overlap ${RcG} maxtry 1000000
+variable dummy equal round(${nAB9_B}/2)
+variable DEL equal ${dummy}
+if ${dummy}>${nA0} then 'variable DEL equal ${nA0}'
+delete_atoms random count ${DEL} yes nA NULL ${seed} compress yes
+variable DEL equal ${dummy}
+if ${dummy}>${nB0} then 'variable DEL equal ${nB0}'
+delete_atoms random count ${DEL} yes nB NULL ${seed} compress yes
+#--- AB9 --- D 
+variable nAB9_D equal round(${kAB9eD}*(${nAB90})*(step*dt))
+variable dummy equal ${nAB90}+${nAB9_B}
+if ${nAB9_D}>${dummy} then 'variable nAB9_D equal ${dummy}'
+delete_atoms random count ${nAB9_D} yes nAB9 NULL ${seed} compress yes
+variable dummy equal round(${nAB9_D}/2)
+create_atoms 1 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+create_atoms 2 random ${dummy} ${seed} NULL overlap ${RcG} maxtry 1000000
+#------------------------------------------------------

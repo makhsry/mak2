@@ -23,9 +23,7 @@ The physical constants are defined in `CONSTANTS.m`. For the default Water (1) /
 **- Mixture Density**
 The density ρ is calculated using a mole-fraction based mixing rule from the equation of state:      
 
-rρ = ω<sub>1</sub> · ((ρ<sub>03</sub> − ρ<sub>01</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>))
-    + ω<sub>2</sub> · ((ρ<sub>03</sub> − ρ<sub>02</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>))
-    + 1 / ρ<sub>03</sub>            
+rρ = ω<sub>1</sub> · ((ρ<sub>03</sub> − ρ<sub>01</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) + ω<sub>2</sub> · ((ρ<sub>03</sub> − ρ<sub>02</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>)) + 1 / ρ<sub>03</sub>            
 
 ρ = 1 / (rρ)         
 
@@ -93,17 +91,16 @@ CF<sub>12</sub>G<sub>12</sub> = (ω<sub>1</sub>ω<sub>2</sub>M<sub>w1</sub>M<sub
 
 **- Final Transport Coefficients ([`COEFFICIENTS.m`](Publications_20170501_JMS_COEFFICIENTS.m))**           
 The final Fickian-like coefficients F<sub>1</sub>, F<sub>2</sub>, G<sub>1</sub>, G<sub>2</sub> are, where σ<sub>ij</sub> = (∂μ<sub>i</sub>)/(∂ω<sub>j</sub>) (computed in `DMiOi.m`):               
-F<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>11</sub> + B σ<sub>21</sub>)<br>     
-F<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>11</sub> + A σ<sub>21</sub>)<br>             
-G<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>12</sub> + B σ<sub>22</sub>)<br>            
+F<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>11</sub> + B σ<sub>21</sub>)         
+F<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>11</sub> + A σ<sub>21</sub>)                    
+G<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>12</sub> + B σ<sub>22</sub>)           
 G<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>12</sub> + A σ<sub>22</sub>)         
 
 **PDE & Velocity Execution ([`MainGUFDM.m`](Publications_20170501_JMS_MainGUFDM.m) & [`VELOCITY.m`](Publications_20170501_JMS_VELOCITY.m))**           
 
 **- Reference Velocity**        
 The center-of-mass velocity $v$ ensures volumetric consistency, where J<sub>i</sub><sup>'</sup> is the bracketed part of the flux J<sub>i</sub> = -ρ J<sub>i</sub><sup>'</sup>.             
-v = ((ρ<sub>01</sub> − ρ<sub>03</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) J<sub>1</sub><sup>'</sup>
-  + ((ρ<sub>02</sub> − ρ<sub>03</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>)) J<sub>2</sub><sup>'</sup>
+v = ((ρ<sub>01</sub> − ρ<sub>03</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) J<sub>1</sub><sup>'</sup> + ((ρ<sub>02</sub> − ρ<sub>03</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>)) J<sub>2</sub><sup>'</sup>
 
 **- Time Evolution**      
 Components 1 and 2 evolve according to:         

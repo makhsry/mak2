@@ -1,0 +1,27 @@
+# clean_groups
+#
+#------------------------------------------------------
+group nA delete
+group nB delete
+group nAA1 delete
+group nAA2 delete
+group nAA3 delete
+group nAA4 delete
+group nAA5 delete
+group nAA6 delete
+group nAA7 delete
+group nAA8 delete
+group nAA9 delete
+group nAB1 delete
+group nAB2 delete
+group nAB3 delete
+group nAB4 delete
+group nAB5 delete
+group nAB6 delete
+group nAB7 delete
+group nAB8 delete
+group nAB9 delete
+group nBB1 delete
+group nBB2 delete
+group nBB3 delete
+#------------------------------------------------------

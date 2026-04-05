@@ -1,0 +1,27 @@
+# inputs_label
+#
+#------------------------------------------------------
+labelmap atom 1 A
+labelmap atom 2 B
+labelmap atom 3 AA1
+labelmap atom 4 AA2
+labelmap atom 5 AA3
+labelmap atom 6 AA4
+labelmap atom 7 AA5
+labelmap atom 8 AA6
+labelmap atom 9 AA7
+labelmap atom 10 AA8
+labelmap atom 11 AA9
+labelmap atom 12 AB1
+labelmap atom 13 AB2
+labelmap atom 14 AB3
+labelmap atom 15 AB4
+labelmap atom 16 AB5
+labelmap atom 17 AB6
+labelmap atom 18 AB7
+labelmap atom 19 AB8
+labelmap atom 20 AB9
+labelmap atom 21 BB1
+labelmap atom 22 BB2
+labelmap atom 23 BB3
+#------------------------------------------------------
