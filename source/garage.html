@@ -332,11 +332,7 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
         <section class="card span-2">
             <div class="card-content"><h1>Text-to-Speech (Google TTS) Script</h1>
 <p>&nbsp;</p>
-<p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. The script is self-bootstrapping: it detects whether <code>gTTS</code> is installed at runtime and, if not, installs it silently before proceeding.</p>
-<p>&nbsp;</p>
-<blockquote>
-<p>This script is the second stage of a two-script pipeline. It is designed to consume the <code>.txt</code> output produced by <code>pdf2text_via_PDFplumber.py</code>, but it accepts any valid UTF-8 <code>.txt</code> file as input.</p>
-</blockquote>
+<p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
 <p>&nbsp;</p>
 <h2>Code (with inline comments)</h2>
 <p>&nbsp;</p>
@@ -416,7 +412,7 @@ except Exception as e:
 <li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
 <li>An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.</li>
 <li>No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.</li>
-<li>A UTF-8 encoded <code>.txt</code> file. If using the companion script <code>pdf2text_via_PDFplumber.py</code>, its output is UTF-8 by construction.</li>
+<li>A UTF-8 encoded <code>.txt</code> file.</li>
 </ul>
 <p>&nbsp;</p>
 <h3>Running the Script</h3>
@@ -426,6 +422,102 @@ except Exception as e:
 <p>&nbsp;</p>
 <p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
         </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h1>Extract Text from PDF via PDFplumber</h1>
+<p>&nbsp;</p>
+<p>A command-line Python script that opens a PDF file, extracts all textual content page-by-page using <strong>PDFplumber</strong>, and writes the result as a UTF-8 encoded plain-text (<code>.txt</code>) file. </p>
+<p>&nbsp;</p>
+<h2>Code (with inline comments)</h2>
+<p>&nbsp;</p>
+<pre><code class="language-python">import subprocess
+import sys
+import os
+#
+def install_package(package):
+    &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
+    subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
+#
+# Check and install required packages
+required_packages = {
+    'pdfplumber': 'pdfplumber'
+}
+#
+for import_name, package_name in required_packages.items():
+    try:
+        __import__(import_name)
+    except ImportError:
+        print(f&quot;Installing {package_name}...&quot;)
+        install_package(package_name)
+#
+import pdfplumber
+#
+# Check if file path is provided as command-line argument
+if len(sys.argv) &lt; 2:
+    print(&quot;Usage: python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;&quot;)
+    sys.exit(1)
+#
+# Get file path from command-line argument
+file_path = sys.argv[1]
+#
+# Check if file exists
+if not os.path.exists(file_path):
+    print(f&quot;Error: File '{file_path}' not found.&quot;)
+    sys.exit(1)
+#
+# Check if file is a PDF
+if not file_path.lower().endswith('.pdf'):
+    print(&quot;Error: File must be a PDF.&quot;)
+    sys.exit(1)
+#
+# Extract PDF text
+print(f&quot;Extracting text from '{file_path}'...&quot;)
+text = &quot;&quot;
+#   
+try:
+    with pdfplumber.open(file_path) as pdf:
+        for page in pdf.pages:
+            extracted = page.extract_text()
+            if extracted is not None:
+                text += extracted + &quot; &quot;
+except Exception as e:
+    print(f&quot;Error extracting text from PDF: {e}&quot;)
+    sys.exit(1)
+#
+# Print text length to verify extraction
+print(f&quot;Extracted text length: {len(text)} characters&quot;)
+#
+# Generate output filename based on input filename
+output_file = os.path.splitext(os.path.basename(file_path))[0] + &quot;.txt&quot;
+#   
+# Save extracted text to .txt file
+try:
+    with open(output_file, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        f.write(text)
+    print(f&quot;Text saved as '{output_file}'&quot;)
+except Exception as e:
+    print(f&quot;Error saving text file: {e}&quot;)
+    sys.exit(1)
+</code></pre>
+<p>&nbsp;</p>
+<h2>Usage Instructions</h2>
+<p>&nbsp;</p>
+<h3>Prerequisites</h3>
+<p>&nbsp;</p>
+<ul>
+<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
+<li>No manual package installation is required — the script installs <code>pdfplumber</code> automatically on first run if it is absent.</li>
+<li>A UTF-8 encoded <code>.pdf</code> file.</li>
+</ul>
+<p>&nbsp;</p>
+<h3>Running the Script</h3>
+<p>&nbsp;</p>
+<pre><code class="language-bash">python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;
+</code></pre>
+<p>&nbsp;</p>
+<p><code>&lt;path_to_pdf_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.pdf</code> (case-insensitive). The output <code>.txt</code> is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
+        </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
