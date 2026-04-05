@@ -47,8 +47,6 @@ def convert_md_to_html(content, images_rel_path):
 
     return markdown.markdown(content, extensions=['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br'])
 
-    return markdown.markdown(content, extensions=['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br'])
-
 def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
     def sort_key(x):
         p = x['priority']
