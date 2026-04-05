@@ -36,11 +36,21 @@ def convert_md_to_html(content, images_rel_path):
     def fix_img_path(match):
         alt = match.group(1)
         url = match.group(2)
-        if not url.startswith(("http://", "https://", "/", "mailto:")):
+        if not url.startswith(("http://", "https://", "/", "mailto:", "#")):
             return f'![{alt}]({images_rel_path}/{url})'
         return match.group(0)
 
+    # Fix regular links: [text](file.pdf) -> [text](assets/file.pdf)
+    def fix_link_path(match):
+        text = match.group(1)
+        url = match.group(2)
+        if not url.startswith(("http://", "https://", "/", "mailto:", "#")):
+            return f'[{text}]({images_rel_path}/{url})'
+        return match.group(0)
+
     content = re.sub(r'!\[(.*?)\]\((.*?)\)', fix_img_path, content)
+    # Use negative lookbehind to avoid matching image markdown which is already handled
+    content = re.sub(r'(?<!\!)\[(.*?)\]\((.*?)\)', fix_link_path, content)
     
     # Pre-process content to treat multiple blank lines as literal empty lines
     content = re.sub(r'\n\s*\n', '\n\n&nbsp;\n\n', content)
@@ -148,12 +158,12 @@ def main():
     assets_output = output_path / "assets"
     assets_output.mkdir(exist_ok=True)
     
-    # Simple image extension check
-    img_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp')
-    for img_file in source_path.iterdir():
-        if img_file.suffix.lower() in img_extensions:
-            shutil.copy(img_file, assets_output / img_file.name)
-            print(f"Copied asset: {img_file.name}")
+    # Copy images and other assets to view/assets
+    asset_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.ipynb', '.pdf', '.zip', '.xlsx', '.csv', '.docx', '.pptx')
+    for asset_file in source_path.iterdir():
+        if asset_file.suffix.lower() in asset_extensions:
+            shutil.copy(asset_file, assets_output / asset_file.name)
+            print(f"Copied asset: {asset_file.name}")
 
     md_files = get_md_files(args.source)
     tabs = {}
