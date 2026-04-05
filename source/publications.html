@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publications</title>
     <link rel="stylesheet" href="main.css">
+    <!-- MathJax for Equation Rendering -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\(', '\)']],
+        displayMath: [['$$', '$$'], ['\[', '\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav>
@@ -23,18 +39,18 @@
             <div class="card-content"><h2>Table of Contents</h2>
 <p>&nbsp;</p>
 <ul>
-<li>Falling Film Mass Transfer &amp; Penetration Theory (Python)</li>
+<li>Falling Film Mass Transfer &amp; Penetration Theory</li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h2>Falling Film Mass Transfer &amp; Penetration Theory (Python)</h2>
+            <div class="card-content"><h2>Falling Film Mass Transfer &amp; Penetration Theory</h2>
 <p>&nbsp;</p>
 <p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0263876219305994">Revisiting ‘penetration depth’ in falling film mass transfer</a>, we calculated mass transfer characteristics in falling liquid films. We compared the <strong>Infinite Penetration</strong> (Higbie's theory) and <strong>Finite Penetration</strong> models to determine how deep a solute penetrates a moving film under various physical conditions.</p>
 <p>&nbsp;</p>
-<p><img alt="Falling Film Mass Transfer &amp; Penetration Theory (Python)" src="Publications_20200101_jChERD.png" /></p>
+<p><img alt="Falling Film Mass Transfer &amp; Penetration Theory" src="Publications_20200101_jChERD.png" /></p>
 <p>&nbsp;</p>
 <p>Two python scripts are provided to calculate the mass transfer characteristics in falling liquid films. The scripts are written in Python 3.x and use the NumPy library for numerical calculations. The scripts solve the governing equations for convective mass transfer in a laminar falling film.</p>
 <p>&nbsp;</p>
