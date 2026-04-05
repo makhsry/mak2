@@ -78,7 +78,7 @@ To successfully submit a job, follow this functional walkthrough:
 - **Submission Trial**: Executes `sbatch --test-only` to verify the Slurm scheduler will accept the job before final submission.      
 - **Execution**: Runs `sbatch submit_job.sh` and displays the current state of the queue (`squeue -u $username`).      
 
-**Cluster Options** 
+**Cluster Options**    
 
 | Flag/Control | Cluster | Action |
 | :--- | :--- | :--- |
@@ -88,6 +88,7 @@ To successfully submit a job, follow this functional walkthrough:
 | `openjdk/11.0.20.1_1` | Sockeye| Loads the required Java runtime for the COMSOL backend. |
 
 **- Sockeye (UBC ARC)**   
+
 | Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | 6 GB | 192G | 32 | Skylake | | |
@@ -101,7 +102,8 @@ To successfully submit a job, follow this functional walkthrough:
 | Login | 8 GB | 192G | 16 | Skylake | | login node |
 | Data | 8 GB | 192G | 16 | Skylake | | data node |
 
-**- Narval (Compute Canada)**      
+**- Narval (Compute Canada)**       
+
 | Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | 3.8 GB | 249G | 64 | Rome | | |
@@ -110,6 +112,7 @@ To successfully submit a job, follow this functional walkthrough:
 | 4 | 7.7 GB | 498G | 48 | Milan | Yes | Not supported yet |
 
 **- Beluga (Compute Canada)**      
+
 | Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | 2.3 GB | 92G | 40 | Skylake | | |
@@ -118,6 +121,7 @@ To successfully submit a job, follow this functional walkthrough:
 | 4 | 4.65 GB | 186G | 40 | Skylake | Yes | Not supported yet |
 
 **- Cedar (Compute Canada)**      
+
 | Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | 3.9 GB | 125G | 32 | Broadwell | | |
@@ -133,6 +137,7 @@ To successfully submit a job, follow this functional walkthrough:
 | 11 | 3.8 GB | 187G | 48 | Cascade | | |
 
 **- Graham (Compute Canada)**      
+
 | Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | 3.9 GB | 125G | 32 | Broadwell | | |
@@ -150,4 +155,5 @@ To successfully submit a job, follow this functional walkthrough:
 | 13 | 1.95 GB | 125G | 64 | EPYC | Yes | Not supported yet |
 
 **- Niagara (Compute Canada)**      
+
 *Preset Configuration*: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      
