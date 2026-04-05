@@ -30,6 +30,7 @@
 <li>Speech-to-Text via OpenAI Whisper</li>
 <li>Text-to-Speech (Google TTS) Script</li>
 <li>Extract Text from PDF via PDFplumber</li>
+<li>An Interactive Local Python Notebook</li>
 <li>COSMO-SAC Activity Coefficient Model</li>
 </ul></div>
         </section>
@@ -41,7 +42,9 @@
 <p>&nbsp;</p>
 <p>A Google Colab notebook that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from OpenStreetMap, extracts GPS coordinates for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to use in any GPS-capable navigation app or fitness tracker.</p>
 <p>&nbsp;</p>
-<p><a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>Downalod the code here</strong></a> </p>
+<p><a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>Download the code here</strong></a> </p>
+<p>&nbsp;</p>
+<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
 <p>&nbsp;</p>
 <p><strong>What It Does</strong>   <br />
 The notebook performs the following stages in order:   <br />
@@ -1019,8 +1022,11 @@ To successfully submit a job, follow this functional walkthrough:</p>
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>    <br />
-<strong>Prerequisites</strong>    <br />
+<p><strong>Usage Instructions</strong>      </p>
+<p>&nbsp;</p>
+<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<p>&nbsp;</p>
+<p><strong>Prerequisites</strong>     <br />
 1. <strong>Python 3.8+</strong> — required by <code>openai-whisper</code>.<br />
 2. <strong>ffmpeg</strong> — must be on <code>PATH</code>. The scripts will exit with an error and installation hints if it is not found.<br />
 3. <strong>pip</strong> — standard Python package installer (required for the auto-install logic).<br />
@@ -1114,15 +1120,15 @@ To successfully submit a job, follow this functional walkthrough:</p>
 <p>&nbsp;</p>
 <p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>   <br />
-<strong>Prerequisites</strong>         </p>
+<p><strong>Usage Instructions</strong>     </p>
 <p>&nbsp;</p>
-<ul>
-<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
-<li>An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.</li>
-<li>No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.</li>
-<li>A UTF-8 encoded <code>.txt</code> file.</li>
-</ul>
+<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<p>&nbsp;</p>
+<p><strong>Prerequisites</strong>            <br />
+- Python 3.x installed and reachable on the system <code>PATH</code>.<br />
+- An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.<br />
+- No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.<br />
+- A UTF-8 encoded <code>.txt</code> file.</p>
 <p>&nbsp;</p>
 <p><strong>Running the Script</strong></p>
 <p>&nbsp;</p>
@@ -1195,14 +1201,14 @@ except Exception as e:
 <p>&nbsp;</p>
 <p>A command-line Python script that opens a PDF file, extracts all textual content page-by-page using <strong>PDFplumber</strong>, and writes the result as a UTF-8 encoded plain-text (<code>.txt</code>) file. </p>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>     <br />
-<strong>Prerequisites</strong></p>
+<p><strong>Usage Instructions</strong>     </p>
 <p>&nbsp;</p>
-<ul>
-<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
-<li>No manual package installation is required — the script installs <code>pdfplumber</code> automatically on first run if it is absent.</li>
-<li>A UTF-8 encoded <code>.pdf</code> file.</li>
-</ul>
+<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<p>&nbsp;</p>
+<p><strong>Prerequisites</strong>   <br />
+- Python 3.x installed and reachable on the system <code>PATH</code>.<br />
+- No manual package installation is required — the script installs <code>pdfplumber</code> automatically on first run if it is absent.<br />
+- A UTF-8 encoded <code>.pdf</code> file.</p>
 <p>&nbsp;</p>
 <p><strong>Running the Script</strong></p>
 <p>&nbsp;</p>
@@ -1272,6 +1278,14 @@ except Exception as e:
 </code></pre></div>
         </section>
 
+        <section class="card span-2">
+            <div class="card-content"><h2>An Interactive Local Python Notebook</h2>
+<p>&nbsp;</p>
+<p>This is an interactive local Python notebook to mimic a <code>Jupyter Notebook</code>. It can be dowwladed from <a href="Garage_20260405_ipynb.html"><strong>here</strong></a>. </p></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Activity Coefficient Model</h2>
 <p>&nbsp;</p>
@@ -1378,7 +1392,6 @@ The final activity coefficient for component n is the exponential sum of the res
 - <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated sigma-densities and profiles for each component.<br />
 - <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions (x), activity coefficients (γ), and ln γ.</p></div>
         </section>
-        <section class="card span-1 empty"></section>
 
     </div>
 </body>
