@@ -31,17 +31,7 @@ def get_md_files(source_dir):
             })
     return md_files
 
-def convert_md_to_html(content, images_rel_path):
-    # Fix both image and regular links: find any ](url) where url is local 
-    # and prefix it with the assets path.
-    def fix_path(match):
-        url = match.group(1)
-        if not url.startswith(("http://", "https://", "/", "mailto:", "#")):
-            return f']({images_rel_path}/{url})'
-        return match.group(0)
-
-    content = re.sub(r'\]\((.*?)\)', fix_path, content)
-    
+def convert_md_to_html(content):
     # Pre-process content to treat multiple blank lines as literal empty lines
     content = re.sub(r'\n\s*\n', '\n\n&nbsp;\n\n', content)
 
@@ -92,8 +82,8 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
         with open(file_info['filepath'], 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # Points to the 'assets' folder in the final view directory
-        body_html = convert_md_to_html(content, "assets")
+        # Points to the same folder where the Markdown files and assets are
+        body_html = convert_md_to_html(content)
 
         # Alternating A/B Grid Layout
         if i % 2 == 0:
@@ -128,32 +118,11 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
 def main():
     parser = argparse.ArgumentParser(description="Portfolio Site Generator - Alternating Layout")
     parser.add_argument("--source", default=".", help="Source directory")
-    parser.add_argument("--output", default="../view", help="Output directory")
+    parser.add_argument("--output", default=None, help="Output directory (defaults to source)")
     args = parser.parse_args()
 
     source_path = Path(args.source)
-    output_path = Path(args.output)
-    if output_path.exists():
-        shutil.rmtree(output_path)
-        print(f"Cleaned output directory: {output_path}")
-    output_path.mkdir(parents=True, exist_ok=True)
-
-    # 1. Copy main.css to output directory
-    css_source = source_path / "main.css"
-    if css_source.exists():
-        shutil.copy(css_source, output_path / "main.css")
-        print(f"Copied {css_source} to {output_path}/main.css")
-
-    # 2. Copy images/assets to view/assets
-    assets_output = output_path / "assets"
-    assets_output.mkdir(exist_ok=True)
-    
-    # Copy images and other assets to view/assets
-    asset_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.ipynb', '.pdf', '.zip', '.xlsx', '.csv', '.docx', '.pptx')
-    for asset_file in source_path.iterdir():
-        if asset_file.suffix.lower() in asset_extensions:
-            shutil.copy(asset_file, assets_output / asset_file.name)
-            print(f"Copied asset: {asset_file.name}")
+    output_path = Path(args.output) if args.output else source_path
 
     md_files = get_md_files(args.source)
     tabs = {}
@@ -162,7 +131,7 @@ def main():
 
     all_tabs = list(tabs.keys())
     for tab_name, files in tabs.items():
-        generate_tab_page(tab_name, files, args.source, args.output, all_tabs)
+        generate_tab_page(tab_name, files, args.source, output_path, all_tabs)
 
 if __name__ == "__main__":
     main()
