@@ -4,8 +4,6 @@ A Google Colab notebook that takes a **color-coded pattern image** (e.g., a desi
 
 [**Link to Code**](https://github.com/makhsry/drawing2gpx.ipynb)
 
----
-
 ## What It Does
 
 The notebook performs the following stages in order:
@@ -20,8 +18,6 @@ The notebook performs the following stages in order:
 8. **Converts pixel positions to GPS coordinates** (latitude/longitude)
 9. **Exports one `.gpx` file per color** layer
 
----
-
 ## Pipeline Detail
 
 ### Stage 1 — Street Network Download
@@ -34,8 +30,6 @@ G = ox.graph_from_place(place_name, network_type=network_type)
 
 Uses `osmnx` to fetch the road/path graph for a named city. `network_type` can be `'bike'`, `'walk'`, `'drive'`, etc.
 
----
-
 ### Stage 2 — Image Loading and Color Space Conversion
 
 ```python
@@ -45,8 +39,6 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 ```
 
 The image is opened as RGB then converted to **HSV (Hue, Saturation, Value)** space. HSV is used because it separates color identity (Hue) from brightness (Value) and intensity (Saturation), making color segmentation more robust than raw RGB thresholding.
-
----
 
 ### Stage 3 — Color Detection
 
@@ -65,13 +57,9 @@ min_pixels_threshold = total_pixels × 0.001
 
 where `total_pixels = image_height × image_width`. This 0.1% floor filters out noise and compression artifacts. Black and white are removed from the final detected list after this step, since they are used as background/border and not as route colors.
 
----
-
 ### Stage 4 — Binary Mask Generation
 
 For each detected color, a binary mask is produced where matching pixels = `255` and all others = `0`. These masks are stored in a dictionary keyed by color name.
-
----
 
 ### Stage 5 — Contour Extraction and Boundary Skeletonization
 
@@ -88,8 +76,6 @@ For each color mask:
 4. The contour is drawn onto a blank image with **thickness = 1**, producing a single-pixel-wide outline.
 
 5. A final `MORPH_CLOSE` with a `2×2` kernel closes any remaining small gaps in the outline to ensure path continuity.
-
----
 
 ### Stage 6 — Overlay onto Street Map
 
@@ -125,8 +111,6 @@ All subsequent color layers use the same `reference_center` so every color is co
 
 The user iterates on `scale_factor_x`, `scale_factor_y`, `position_offset_x`, and `position_offset_y` until the pattern fits visually within the street network.
 
----
-
 ### Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering
 
 **Pixel → geographic coordinate mapping:**
@@ -151,8 +135,6 @@ dist(current, candidate) = √( (Δx)² + (Δy)² )
 
 At each step, all remaining pixels are sorted by Euclidean distance from the current pixel. The closest pixel within a 2-pixel radius is chosen as the next step. If no pixel falls within that radius (i.e., a gap exists in the skeleton), the globally nearest remaining pixel is used as a fallback. This produces an ordered sequence that approximates a continuous traversal of the boundary.
 
----
-
 ### Stage 8 — GPX Export
 
 For each color, a GPX track is created using `gpxpy`:
@@ -168,8 +150,6 @@ The output file is named:
 ```
 
 One `.gpx` file is produced per detected color layer.
-
----
 
 ## Dependencies
 
@@ -188,8 +168,6 @@ Install non-default Colab packages:
 ```bash
 pip install osmnx gpxpy
 ```
-
----
 
 ## Usage Instructions
 
@@ -258,8 +236,6 @@ Once the overlay looks correct, run the production cells. The notebook will:
 
 Import the `.gpx` files into any GPS application (Garmin Connect, Komoot, Strava, Google Maps, etc.) or load them onto a GPS device to navigate the pattern as a real-world route.
 
----
-
 ## Key Parameters Reference
 
 | Parameter | Location | Effect |
@@ -272,8 +248,6 @@ Import the `.gpx` files into any GPS application (Garmin Connect, Komoot, Strava
 | `scale_factor_x/y` | Stage 6 | Pattern size relative to map extent |
 | `position_offset_x/y` | Stage 6 | Pattern placement offset from bottom-right corner |
 | `threshold_val` | Stage 6 | Defined but available for custom threshold extensions |
-
----
 
 ## Notes and Limitations
 
