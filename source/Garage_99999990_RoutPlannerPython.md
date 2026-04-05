@@ -144,7 +144,7 @@ One `.gpx` file is produced per detected color layer.
 **Dependencies**     
 
 | Package | Purpose |
-|---|---|
+|:---|:---|
 | `osmnx` | Download OpenStreetMap street networks |
 | `gpxpy` | Create and export GPX track files |
 | `opencv-python` (`cv2`) | HSV conversion, masking, morphology, contours |
@@ -235,7 +235,7 @@ Import the `.gpx` files into any GPS application (Garmin Connect, Komoot, Strava
 **Key Parameters Reference**     
 
 | Parameter | Location | Effect |
-|---|---|---|
+|:---|:---|:---|
 | `place_name` | Stage 1 | City/region for the street network |
 | `network_type` | Stage 1 | Road type filter (`bike`, `walk`, `drive`) |
 | `filename` | Stage 2 | Input pattern image path |
