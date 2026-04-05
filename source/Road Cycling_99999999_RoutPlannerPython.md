@@ -5,9 +5,7 @@ A Google Colab notebook that takes a **color-coded pattern image** (e.g., a desi
 [**Link to Code**](https://github.com/makhsry/drawing2gpx.ipynb)
 
 ## What It Does
-
 The notebook performs the following stages in order:
-
 1. **Downloads a city's street network** from OpenStreetMap
 2. **Loads a pattern image** and converts it to HSV color space
 3. **Detects which colors are present** in the image above a minimum threshold
@@ -19,7 +17,6 @@ The notebook performs the following stages in order:
 9. **Exports one `.gpx` file per color** layer
 
 ## Pipeline Detail
-
 ### Stage 1 — Street Network Download
 
 ```python
@@ -41,9 +38,7 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 The image is opened as RGB then converted to **HSV (Hue, Saturation, Value)** space. HSV is used because it separates color identity (Hue) from brightness (Value) and intensity (Saturation), making color segmentation more robust than raw RGB thresholding.
 
 ### Stage 3 — Color Detection
-
 Each named color in `color_ranges` is defined by an HSV lower-bound and upper-bound pair `[H, S, V]`:
-
 - **Black** is detected in grayscale: pixels with grayscale value `≤ 10` (via `cv2.THRESH_BINARY_INV`)
 - **White** is detected in grayscale: pixels with grayscale value `≥ 245` (via `cv2.THRESH_BINARY`)
 - **Red** is handled specially because red **wraps around** the HSV hue circle (H ≈ 0° and H ≈ 180°); two separate ranges are combined: `[0,100,20]–[10,255,255]` and `[160,100,20]–[180,255,255]`, and the masks are summed
@@ -58,27 +53,19 @@ min_pixels_threshold = total_pixels × 0.001
 where `total_pixels = image_height × image_width`. This 0.1% floor filters out noise and compression artifacts. Black and white are removed from the final detected list after this step, since they are used as background/border and not as route colors.
 
 ### Stage 4 — Binary Mask Generation
-
 For each detected color, a binary mask is produced where matching pixels = `255` and all others = `0`. These masks are stored in a dictionary keyed by color name.
 
 ### Stage 5 — Contour Extraction and Boundary Skeletonization
-
 For each color mask:
-
-1. **Morphological cleaning** is applied using a `3×3` structuring element:
-   - `MORPH_CLOSE` (dilation then erosion) fills small holes and gaps
-   - `MORPH_OPEN` (erosion then dilation) removes small noise blobs
-
-2. **External contours** are found with `cv2.findContours(..., cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)`. `CHAIN_APPROX_NONE` stores every single contour point (no compression), giving a dense boundary.
-
-3. The **largest contour by area** is selected: `max(contours, key=cv2.contourArea)`
-
-4. The contour is drawn onto a blank image with **thickness = 1**, producing a single-pixel-wide outline.
-
-5. A final `MORPH_CLOSE` with a `2×2` kernel closes any remaining small gaps in the outline to ensure path continuity.
+- **Morphological cleaning** is applied using a `3×3` structuring element:
+  - `MORPH_CLOSE` (dilation then erosion) fills small holes and gaps
+  - `MORPH_OPEN` (erosion then dilation) removes small noise blobs
+- **External contours** are found with `cv2.findContours(..., cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)`. `CHAIN_APPROX_NONE` stores every single contour point (no compression), giving a dense boundary.
+- The **largest contour by area** is selected: `max(contours, key=cv2.contourArea)`
+- The contour is drawn onto a blank image with **thickness = 1**, producing a single-pixel-wide outline.
+- A final `MORPH_CLOSE` with a `2×2` kernel closes any remaining small gaps in the outline to ensure path continuity.
 
 ### Stage 6 — Overlay onto Street Map
-
 The pattern is scaled and positioned on top of the `osmnx` map axes.
 
 **Scale calculation:**
@@ -112,7 +99,6 @@ All subsequent color layers use the same `reference_center` so every color is co
 The user iterates on `scale_factor_x`, `scale_factor_y`, `position_offset_x`, and `position_offset_y` until the pattern fits visually within the street network.
 
 ### Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering
-
 **Pixel → geographic coordinate mapping:**
 
 ```
@@ -126,7 +112,6 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 The `+ 0.5` offset places the sample point at the pixel center. Note that the y-axis is inverted: image row 0 is at the top, but geographic latitude increases upward, so latitude is computed by subtracting from `top`.
 
 **Nearest-neighbor path ordering:**
-
 All non-background pixels belonging to each color are collected. Starting from the leftmost pixel (minimum x), the path is built greedily:
 
 ```
@@ -136,7 +121,6 @@ dist(current, candidate) = √( (Δx)² + (Δy)² )
 At each step, all remaining pixels are sorted by Euclidean distance from the current pixel. The closest pixel within a 2-pixel radius is chosen as the next step. If no pixel falls within that radius (i.e., a gap exists in the skeleton), the globally nearest remaining pixel is used as a fallback. This produces an ordered sequence that approximates a continuous traversal of the boundary.
 
 ### Stage 8 — GPX Export
-
 For each color, a GPX track is created using `gpxpy`:
 
 ```
@@ -165,29 +149,34 @@ One `.gpx` file is produced per detected color layer.
 | `scipy` | `ndimage` (imported, available for extension) |
 
 Install non-default Colab packages:
+
 ```bash
 pip install osmnx gpxpy
 ```
 
 ## Usage Instructions
-
 ### 1. Environment Setup (Google Colab)
 
-1. Open the notebook in [Google Colab](https://colab.research.google.com/).
-2. Mount your Google Drive:
-   ```python
-   from google.colab import drive
-   drive.mount('/content/drive')
-   ```
-3. Navigate to the directory containing your pattern image:
-   ```python
-   %cd /content/drive/My Drive/GPX/
-   ```
-4. Install required packages:
-   ```bash
-   !pip install osmnx -q
-   !pip install gpxpy -q
-   ```
+- Open the notebook in [Google Colab](https://colab.research.google.com/).
+- Mount your Google Drive:
+
+  ```python
+  from google.colab import drive
+  drive.mount('/content/drive')
+  ```
+
+- Navigate to the directory containing your pattern image:
+
+  ```python
+  %cd /content/drive/My Drive/GPX/
+  ```
+
+- Install required packages:
+
+  ```bash
+  !pip install osmnx -q
+  !pip install gpxpy -q
+  ```
 
 ### 2. Configure the City and Network Type
 
@@ -205,7 +194,6 @@ filename = 'AzadiSq.png'   # Your pattern image (PNG recommended)
 The image should be a **color-coded flat design** where each distinct region uses a solid, distinguishable color. Gradients and photographic images will produce unpredictable results.
 
 ### 4. Identify the Outermost Color
-
 After the color detection cell runs, inspect the `detected_colors` list printed to output, then set:
 
 ```python
@@ -226,14 +214,12 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 Run the overlay cell and visually inspect the result. Adjust these four values until the pattern sits fully within the street network, then re-run.
 
 ### 6. Run the Production Step
-
 Once the overlay looks correct, run the production cells. The notebook will:
 - Compute GPS coordinates for every boundary pixel of every color layer
 - Plot the final coordinate paths on the map
 - Save one `.gpx` file per color to the current working directory
 
 ### 7. Use the GPX Files
-
 Import the `.gpx` files into any GPS application (Garmin Connect, Komoot, Strava, Google Maps, etc.) or load them onto a GPS device to navigate the pattern as a real-world route.
 
 ## Key Parameters Reference
@@ -250,7 +236,6 @@ Import the `.gpx` files into any GPS application (Garmin Connect, Komoot, Strava
 | `threshold_val` | Stage 6 | Defined but available for custom threshold extensions |
 
 ## Notes and Limitations
-
 - **Color range definitions** use single-unit HSV hue bins (e.g., H=3 for yellow). These bins are very narrow and may need widening in `color_ranges` if the pattern image uses slightly off-hue colors.
 - The **nearest-neighbor pixel ordering** is an O(n²) algorithm. For large or high-resolution images with many boundary pixels, this step can be slow.
 - The **GPX output does not snap to streets**. Coordinates reflect the geometric shape of the pattern scaled to the map extent. For street-snapped routing, post-process the GPX in a routing engine.
