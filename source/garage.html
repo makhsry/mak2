@@ -26,6 +26,7 @@
 <p>&nbsp;</p>
 <ul>
 <li>Drawing to GPX (Route Pattern Mapper — Python Application)</li>
+<li>HPC Job Management Tools</li>
 <li>Speech-to-Text via OpenAI Whisper</li>
 <li>Text-to-Speech (Google TTS) Script</li>
 <li>Extract Text from PDF via PDFplumber</li>
@@ -356,6 +357,194 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
         </section>
 
         <section class="card span-2">
+            <div class="card-content"><h2>HPC Job Management Tools</h2>
+<p>&nbsp;</p>
+<p>This script is a <strong><code>Bash</code></strong>-based utility designed to automate the configuration and submission of <a href="https://slurm.schedmd.com/"><strong><code>Slurm</code></strong></a>-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery. </p>
+<p>&nbsp;</p>
+<p>The <strong><code>bash</code></strong> script is available at <a href="Garage_99999980_SubmitHPC.sh"><strong>here</strong></a>. <br />
+An <strong><code>html</code></strong> version of this script is available at <a href="Garage_99999980_SubmitHPC.html"><strong>here</strong></a>. </p>
+<p>&nbsp;</p>
+<p>It is specifically tailored for <a href="https://www.comsol.com/products/multiphysics/"><strong>COMSOL Multiphysics</strong></a> simulations. The script primaryly manages the entire workflow from environment validation to job submission on various <a href="https://www.alliancecan.ca/en/about"><strong>Canadian HPC clusters</strong></a> (before the migration to new systems).  </p>
+<p>&nbsp;</p>
+<p>The script builds the final <strong>COMSOL call</strong> as a concatenated string of the following components:      </p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">${CALL_COMSOL_AS} batch -mpibootstrap slurm \
+    -inputfile ${inputmph} \
+    -outputfile ${outputmph} \
+    -batchlog ${logfilepath} \
+    -tmpdir ${TMPDIR} \
+    -recoverydir ${RECDIR} \
+    -alivetime 15 \
+    ${COMSOL_EXTRA_} \    # Integrated study tags
+    ${COMSOL_CONTINUE_} \ # Recovery flags
+    ${COMSOL_PARAMS_} \   # Parametric sweep arguments
+    ${COMSOL_METHOD_}     # Custom method calls
+</code></pre>
+<p>&nbsp;</p>
+<p>The script implements a deterministic allocation of resources based on the selected cluster's hardware profile. It maps user-selected options to specific Slurm assignments for N<sub>cpu</sub> (cores), M<sub>total</sub> (RAM), and Arch (microarchitecture).  </p>
+<p>&nbsp;</p>
+<p>The script follows a strictly sequential multi-stage execution model to ensure all dependencies (files, environment modules, and Slurm accounts) are validated before the job is committed to the scheduler.    </p>
+<p>&nbsp;</p>
+<p><strong>Interactive Usage Walkthrough (Step-by-Step)</strong>    <br />
+To successfully submit a job, follow this functional walkthrough:</p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Prepare Workspace</strong>: Place your <code>.mph</code> file in the directory. Create a subdirectory for the script or run it directly.</li>
+<li><strong>Identity Confirmation</strong>: Confirm the detected username. If incorrect, enter your Slurm-associated username manually.</li>
+<li><strong>Account Selection</strong>: Provide the exact Slurm allocation name (e.g., <code>st-amadiseh-1</code> for UBC or <code>def-madiseh-ab</code> for CC). The script will verify this against <code>sacctmgr</code>.</li>
+<li><strong>Cluster Discovery</strong>: The script automatically detects the cluster (e.g., Narval). Confirm this to load the appropriate hardware menu.</li>
+<li><strong>Configure Monitoring</strong>:<ul>
+<li><strong>Option 1</strong>: Manual wall-time (e.g., <code>24-00</code> for 24 hours).</li>
+<li><strong>Option 2 (Watch Mode)</strong>: Manual wall-time, but enables automatic resume logic if the job fails due to timeout.</li>
+</ul>
+</li>
+<li><strong>Select Hardware Profile</strong>: Pick a number from the menu (e.g., Option 3 for high-memory). Ensure you note if the option includes GPU support as identified in the <code>isGPU</code> column.</li>
+<li><strong>Finalize &amp; Submit</strong>:<ul>
+<li>Provide the exact input filename (must be in the parent directory).</li>
+<li>Select a <code>study tag</code> (e.g., <code>std1</code>) or type <code>no</code> for a full problem solve.</li>
+<li>Review the "test-only" submission feedback. If successful, the job will be queued immediately.</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p><strong>Execution Workflow Architecture</strong>      <br />
+<strong>Stage 1: Pre-flight Verification   (<code>is_under_scratch</code>)</strong>       <br />
+- <strong>Logic</strong>: Environment audit.    <br />
+- <strong>Action</strong>: Immediately terminates if the current working directory does not contain "scratch" to protect home directory quotas and performance.    <br />
+- <strong>Timestamping</strong>: Captures <code>$(date +"%Y%m%d_%H%M%S")</code> to initialize the temporary workspace.      </p>
+<p>&nbsp;</p>
+<p><strong>Stage 2: Job Context Selection (<code>New</code> vs. <code>Resume</code>)</strong>    <br />
+- <strong>New Job (<code>this_is_new_job</code>)</strong>:<br />
+    1.  <strong>Directory Setup</strong>: Creates a root folder named after the timestamp. Inside, it initializes <code>tmp/</code> and <code>rec/</code> subdirectories.<br />
+    2.  <strong>Environment Cleaning</strong>: Offers to wipe stale <code>.comsol</code> settings from both <code>$HOME</code> and <code>$SCRATCH</code>.<br />
+    3.  <strong>Identity Mapping</strong>: Validates Slurm user and account membership via <code>sacctmgr</code>.<br />
+    4.  <strong>Hardware Profiling</strong>: Presents cluster-specific menus (GPU/CPU/RAM) and calculates Slurm resource requests.<br />
+- <strong>Resume/Recovery (<code>this_is_resume_job</code>)</strong>:<br />
+    1.  <strong>Re-linking</strong>: Prompts for existing <code>recoverydir</code> and <code>temporarydir</code> relative paths to re-attach to a failed or timed-out session.<br />
+    2.  <strong>State Continuity</strong>: Appends <code>-recover -continue</code> flags to the final batch command.</p>
+<p>&nbsp;</p>
+<p><strong>Stage 3: File System Orchestration</strong>    <br />
+- <strong>Relative Path Constraint</strong>: The script assumes the input <code>.mph</code> file is located at <code>../</code> (parent directory).    <br />
+- <strong>Duplication</strong>: It creates a 1:1 copy of the input file into the timestamped directory to ensure the original remains untouched by the simulation process.    <br />
+- <strong>Permissions</strong>: Recursively sets <code>chmod 755</code> on the workspace to ensure all compute nodes can read/write to the temporary and recovery folders.      </p>
+<p>&nbsp;</p>
+<p><strong>Stage 4: Slurm Script Generation (<code>initiate_sh_submit</code>)</strong>    <br />
+- <strong>Dynamic Writing</strong>: Writes the <code>submit_job.sh</code> file with validated <code>#SBATCH</code> headers.    <br />
+- <strong>System Tuning</strong>: Includes <code>ulimit -s unlimited</code> to prevent stack overflow issues in memory-intensive multiphysics solves.    <br />
+- <strong>Cluster Specializations</strong>: Loads environment modules (e.g., <code>StdEnv/2023</code>, <code>comsol/6.2</code>, <code>openjdk</code>) based on the cluster name (<code>sockeye</code> vs. <code>Compute Canada</code>).      </p>
+<p>&nbsp;</p>
+<p><strong>Stage 5: Parametric &amp; Method Injection</strong>    <br />
+- <strong>Parametric Sweeps (<code>running_for_specific_parameter</code>)</strong>: Builds <code>-pname</code> (comma-separated parameter names) and <code>-plist</code> (comma-separated value lists) for on-the-fly model overrides.<br />
+- <strong>Method Calls (<code>calling_a_method</code>)</strong>: Appends specific Java method names to the batch command for custom logic execution.</p>
+<p>&nbsp;</p>
+<p><strong>Stage 6: Final Submission &amp; Housekeeping</strong>    <br />
+- <strong>Renaming Logic</strong>: Renames the timestamped directory to <code>[JobName]_[Timestamp]</code> to provide human-readable folder names.    <br />
+- <strong>Submission Trial</strong>: Executes <code>sbatch --test-only</code> to verify the Slurm scheduler will accept the job before final submission.    <br />
+- <strong>Execution</strong>: Runs <code>sbatch submit_job.sh</code> and displays the current state of the queue (<code>squeue -u $username</code>).      </p>
+<p>&nbsp;</p>
+<p><strong>Cluster Options</strong> </p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag/Control</th>
+<th style="text-align: left;">Cluster</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ulimit -s unlimited</code></td>
+<td style="text-align: left;">ALL</td>
+<td style="text-align: left;">Removes memory stack limits for MPI safety.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>I_MPI_COLL_EXTERNAL=0</code></td>
+<td style="text-align: left;">Narval</td>
+<td style="text-align: left;">Disables external MPI collective communication for performance.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>CCEnv</code> / <code>StdEnv</code></td>
+<td style="text-align: left;">CC</td>
+<td style="text-align: left;">Dynamically loads the Compute Canada standard software environments.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>openjdk/11.0.20.1_1</code></td>
+<td style="text-align: left;">Sockeye</td>
+<td style="text-align: left;">Loads the required Java runtime for the COMSOL backend.</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>- Sockeye (UBC ARC)</strong> <br />
+| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
+| 1 | 6 GB | 192G | 32 | Skylake | | |<br />
+| 2 | 12 GB | 384G | 32 | Skylake | | |<br />
+| 3 | 24 GB | 768G | 32 | Skylake | | |<br />
+| 4 | 8 GB | 192G | 24 | Skylake | Yes | Not supported yet |<br />
+| 5 | 4.8 GB | 192G | 40 | Cascade | | |<br />
+| 6 | 9.6 GB | 384G | 40 | Cascade | | |<br />
+| 7 | 19.2 GB | 768G | 40 | Cascade | | |<br />
+| 8 | 8 GB | 192G | 24 | Cascade | Yes | Not supported yet |<br />
+| Login | 8 GB | 192G | 16 | Skylake | | login node |<br />
+| Data | 8 GB | 192G | 16 | Skylake | | data node |</p>
+<p>&nbsp;</p>
+<p><strong>- Narval (Compute Canada)</strong>    <br />
+| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
+| 1 | 3.8 GB | 249G | 64 | Rome | | |<br />
+| 2 | 31.3 GB | 2009G | 64 | Rome | | |<br />
+| 3 | 62.5 GB | 4000G | 64 | Rome | | |<br />
+| 4 | 7.7 GB | 498G | 48 | Milan | Yes | Not supported yet |</p>
+<p>&nbsp;</p>
+<p><strong>- Beluga (Compute Canada)</strong>    <br />
+| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
+| 1 | 2.3 GB | 92G | 40 | Skylake | | |<br />
+| 2 | 4.65 GB | 186G | 40 | Skylake | | |<br />
+| 3 | 18.8 GB | 752G | 40 | Skylake | | |<br />
+| 4 | 4.65 GB | 186G | 40 | Skylake | Yes | Not supported yet |</p>
+<p>&nbsp;</p>
+<p><strong>- Cedar (Compute Canada)</strong>    <br />
+| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
+| 1 | 3.9 GB | 125G | 32 | Broadwell | | |<br />
+| 2 | 7.8 GB | 250G | 32 | Broadwell | | |<br />
+| 3 | 15.6 GB | 502G | 32 | Broadwell | | |<br />
+| 4 | 47.18 GB | 1510G | 32 | Broadwell | | |<br />
+| 5 | 125 GB | 4000G | 32 | EPYC | | |<br />
+| 6 | 150 GB | 6000G | 40 | Cascade | | |<br />
+| 7 | 5.2 GB | 125G | 24 | Broadwell | Yes | Not supported yet |<br />
+| 8 | 10.4 GB | 250G | 24 | Broadwell | Yes | Not supported yet |<br />
+| 9 | 5.8 GB | 187G | 32 | Cascade | Yes | Not supported yet |<br />
+| 10 | 3.8 GB | 187G | 48 | Skylake | | |<br />
+| 11 | 3.8 GB | 187G | 48 | Cascade | | |</p>
+<p>&nbsp;</p>
+<p><strong>- Graham (Compute Canada)</strong>    <br />
+| Option | RAM/CPU | M<sub>total</sub> | N<sub>cpu</sub> | Arch | isGPU | Note |<br />
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |<br />
+| 1 | 3.9 GB | 125G | 32 | Broadwell | | |<br />
+| 2 | 15.6 GB | 502G | 32 | Broadwell | | |<br />
+| 3 | 7.8 GB | 250G | 32 | Broadwell | | |<br />
+| 4 | 47.2 GB | 3022G | 64 | Broadwell | | |<br />
+| 5 | 3.8 GB | 124G | 32 | Broadwell | Yes | Not supported yet |<br />
+| 6 | 6.6 GB | 187G | 28 | Skylake | Yes | Not supported yet |<br />
+| 7 | 9.4 GB | 377G | 40 | Cascade | Yes | Not supported yet |<br />
+| 8 | 11.6 GB | 187G | 16 | Skylake | Yes | Not supported yet |<br />
+| 9 | 4.25 GB | 187G | 44 | Cascade | Yes | Not supported yet |<br />
+| 10 | 4.25 GB | 187G | 44 | Cascade | | |<br />
+| 11 | 15.6 GB | 2000G | 128 | EPYC | Yes | Not supported yet |<br />
+| 12 | 8 GB | 256G | 32 | Cascade | Yes | Not supported yet |<br />
+| 13 | 1.95 GB | 125G | 64 | EPYC | Yes | Not supported yet |</p>
+<p>&nbsp;</p>
+<p><strong>- Niagara (Compute Canada)</strong>    <br />
+<em>Preset Configuration</em>: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      </p></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
             <div class="card-content"><h2>Speech-to-Text via OpenAI Whisper</h2>
 <p>&nbsp;</p>
 <p>Two Python scripts (<a href="Garage_20260490_Speech2Text_cpu.py">CPU version</a> and <a href="Garage_20260490_Speech2Text_gpu.py">GPU version</a>) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.</p>
@@ -512,9 +701,7 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>&nbsp;</p>
 <p>This will auto-detect language and select CUDA automatically.</p></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h2>Text-to-Speech (Google TTS) Script</h2>
 <p>&nbsp;</p>
@@ -593,7 +780,9 @@ except Exception as e:
     sys.exit(1)
 </code></pre></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h2>Extract Text from PDF via PDFplumber</h2>
 <p>&nbsp;</p>
@@ -675,9 +864,7 @@ except Exception as e:
     sys.exit(1)
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Activity Coefficient Model</h2>
 <p>&nbsp;</p>
@@ -784,6 +971,7 @@ The final activity coefficient for component n is the exponential sum of the res
 - <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated sigma-densities and profiles for each component.<br />
 - <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions (x), activity coefficients (γ), and ln γ.</p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
