@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrapbook</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html">About</a>
+            <a href="educations.html">Educations</a>
+            <a href="experiences.html">Experiences</a>
+            <a href="garage.html">Garage</a>
+            <a href="publications.html">Publications</a>
+            <a href="scrapbook.html" class="active">Scrapbook</a>
+
+        </div>
+    </nav>
+    <div class="container">
+
+        <section class="card span-2">
+            <div class="card-content"><h2>Table of Contents</h2>
+<p>&nbsp;</p>
+<ul>
+<li>Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS</li>
+</ul></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h1>Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS</h1>
+<p>&nbsp;</p>
+<p>This is a <a href="https://www.lammps.org/">LAMMPS</a>-based implementation of a <a href="https://en.wikipedia.org/wiki/Population_balance_equation">Physiochemical Population Balance Model (PBM)</a> using <a href="https://en.wikipedia.org/wiki/Dissipative_particle_dynamics">Dissipative Particle Dynamics (DPD)</a> for structural evolution and <a href="https://en.wikipedia.org/wiki/Transition_state_theory">Transition State Theory (TST)</a> for chemical kinetics.</p>
+<p>&nbsp;</p>
+<p>The simulation models the formation and dissociation of chemical clusters (species types 3–23) from two primary monomer species (types 1 and 2). It employs a hybrid approach:         <br />
+- <strong>Mechanical Dynamics</strong>: DPD potential accounts for thermal and structural behavior.<br />
+- <strong>Physiochemical Kinetics</strong>: TST-based rate constants determine the probability of species transformation events (Birth and Death).      <br />
+- <strong>Population Balance</strong>: Discrete "event" counters are calculated per timestep to modify the particle population in-situ while preserving bead numbers or chemical stoichiometry.</p>
+<p>&nbsp;</p>
+<p><strong>Mathematical Models</strong>     <br />
+<strong>DPD Force Field</strong>  <br />
+The interaction between any two particles i and j is governed by three pairwise additive forces:</p>
+<p>&nbsp;</p>
+<p><strong>F</strong><sub>ij</sub> = <strong>F</strong><sub>ij</sub><sup>C</sup> + <strong>F</strong><sub>ij</sub><sup>D</sup> + <strong>F</strong><sub>ij</sub><sup>R</sup></p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Conservative Force</strong>:    <br />
+<strong>F</strong><sup>C</sup><sub>ij</sub> = A<sub>ij</sub> w(r<sub>ij</sub>) <strong>r̂</strong><sub>ij</sub></li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Dissipative Force</strong>:    <br />
+<strong>F</strong><sup>D</sup><sub>ij</sub> = -γ w<sup>2</sup>(r<sub>ij</sub>) (<strong>r̂</strong><sub>ij</sub> · <strong>v</strong><sub>ij</sub>) <strong>r̂</strong><sub>ij</sub>     </li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Random Force</strong>:    <br />
+<strong>F</strong><sup>R</sup><sub>ij</sub> = σ w(r<sub>ij</sub>) ζ Δt<sup>-1/2</sup> <strong>r̂</strong><sub>ij</sub>     </li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Weighting Function</strong>:    <br />
+w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> &lt; R<sub>c</sub>    <br />
+w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub></li>
+</ul>
+<p>&nbsp;</p>
+<p>Where A<sub>ij</sub> is the maximum repulsion, γ is the friction coefficient, σ is the noise amplitude (related to γ by σ<sup>2</sup> = 2γ k<sub>B</sub> T), and R<sub>c</sub> is the cutoff radius.</p>
+<p>&nbsp;</p>
+<p><strong>Interaction Parameters (a<sub>ij</sub>)</strong>    <br />
+The repulsive parameters a<sub>ij</sub> used for the conservative force are derived from interaction "fingerprints" (X<sub>ij</sub>) stored in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>:   <br />
+a<sub>ij</sub> = V<sub>1</sub> + V<sub>2</sub> · X<sub>ij</sub></p>
+<p>&nbsp;</p>
+<p>In the current implementation, V<sub>1</sub> = 1.0 and V<sub>2</sub> = 1.0, mapping energy values directly to force units.</p>
+<p>&nbsp;</p>
+<p><strong>Transition State Theory (TST) Kinetics</strong>    <br />
+Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:    <br />
+k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)</p>
+<p>&nbsp;</p>
+<p><strong>Physical Constants:</strong>    <br />
+- k<sub>B</sub>: Boltzmann constant ($3.2976 \times 10^{-27}$ kcal/K)    <br />
+- h: Planck constant ($2.51 \times 10^{-38}$ kcal$\cdot$s)    <br />
+- N<sub>A</sub>: Avogadro constant ($6.0221 \times 10^{23}$ /mol)    <br />
+- R<sub>g</sub>: Gas constant ($1.987 \times 10^{-3}$ kcal/K$\cdot$mol)      </p>
+<p>&nbsp;</p>
+<p>The activation energy barriers ($E_a$) are defined in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a> for every birth (B) and death (D) event for clusters AA, BB, and AB.</p>
+<p>&nbsp;</p>
+<p><strong>Population Balance Logic (PBM)</strong>    <br />
+The number of chemical events ($n$) performed at each iteration is calculated using the following discrete logic:      </p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Monomer Birth (forming clusters AA or BB)</strong>:    <br />
+n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Cluster Death (dissociating AA or BB)</strong>:    <br />
+n<sub>death</sub> = ⌊k<sub>D</sub> · N<sub>cluster</sub> · Δt · step⌋</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Mixed Birth (forming AB clusters)</strong>:    <br />
+n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · Δt · step⌋</li>
+</ul>
+<p>&nbsp;</p>
+<p><em>Constraint Enforcement:</em> n<sub>mixed birth</sub> ≤ 2 · min(N<sub>A</sub>, N<sub>B</sub>) to prevent local population exhaustion.      </p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Mixed Death (dissociating AB clusters)</strong>:    <br />
+n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Species Classification</strong>      <br />
+| Type | Label | Description | Mass (g/mol) | Diameter (Å) |<br />
+| :--- | :--- | :--- | :--- | :--- |<br />
+| <strong>1</strong> | <strong>A</strong> | Primary Monomer A | 122.127 | 5.9775 |<br />
+| <strong>2</strong> | <strong>B</strong> | Primary Monomer B | 206.285 | 7.5271 |<br />
+| <strong>3–11</strong> | <strong>AA1–AA9</strong> | A-A Homoclusters | 244.254 | ~7.5 |<br />
+| <strong>12–20</strong> | <strong>AB1–AB9</strong> | A-B Heteroclusters | 328.412 | ~8.6 |<br />
+| <strong>21–23</strong> | <strong>BB1–BB3</strong> | B-B Homoclusters | 412.570 | ~9.5 |</p>
+<p>&nbsp;</p>
+<p><strong>Execution Flow</strong><br />
+1. <strong>Setup</strong>: Initializes 23 atom types and constants.    <br />
+2. <strong>Equilibration</strong>: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.        <br />
+3. <strong>PBM-DYNAMICS Loop</strong>:    <br />
+   - Updates k rates based on current T.    <br />
+   - Measures species populations (N<sub>i</sub>).    <br />
+   - Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.    <br />
+   - Executes reactions via <code>create_atoms</code> (Birth) and <code>delete_atoms</code> (Death).    <br />
+   - Updates DPD interaction parameters based on new populations.    <br />
+   - Runs N<sub>DYN</sub> steps of mechanical dynamics.      </p>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong></p>
+<p>&nbsp;</p>
+<p><strong>Prerequisites</strong><br />
+- <strong>LAMMPS</strong>: Must be compiled with <code>DPD</code> and <code>ASPHERE</code> packages.    <br />
+- <strong>Units</strong>: The script uses <code>real</code> units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).      </p>
+<p>&nbsp;</p>
+<p><strong>Running the Simulation</strong><br />
+Execute the main input script from the terminal:</p>
+<pre><code class="language-bash">lmp -in Main.lmp
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Key Input Files</strong><br />
+- <a href="Scrapbook_20200101_PBMwDPD_Main.lmp"><code>Main.lmp</code></a>: Main control script.    <br />
+- <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>: Matrix of interaction fingerprints.    <br />
+- <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a>: Kinetic barriers for all species.    <br />
+- <a href="Scrapbook_20200101_PBMwDPD_setup_constant.lmp"><code>setup_constant.lmp</code></a>: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).    <br />
+- <a href="Scrapbook_20200101_PBMwDPD_dynamics_compute_events.lmp"><code>dynamics_compute_events.lmp</code></a>: Implementation of the PBM transformation logic.      </p>
+<p>&nbsp;</p>
+<p>© 2020 Physiochemical PBM Simulation Project (Part of CoCryM project)      </p></div>
+        </section>
+
+    </div>
+</body>
+</html>
