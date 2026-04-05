@@ -330,6 +330,424 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
+            <div class="card-content"><h1>Speech-to-Text via OpenAI Whisper</h1>
+<p>&nbsp;</p>
+<p>Two Python scripts (<a href="#cpu-script">CPU version</a> and <a href="#gpu-script">GPU version</a>) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.</p>
+<p>&nbsp;</p>
+<p>Whisper is a sequence-to-sequence Transformer trained on 680,000 hours of labelled speech. The <code>model_size</code> argument selects one of five pre-trained checkpoints. <code>whisper.load_model(model_size)</code> downloads (on first run) and caches the corresponding checkpoint and returns a <code>Whisper</code> object whose <code>transcribe</code> method drives the full inference pipeline.</p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th><code>model_size</code></th>
+<th>Parameters</th>
+<th>Encoder layers</th>
+<th>Decoder layers</th>
+<th>d_model</th>
+<th>Heads</th>
+<th>Download size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tiny</code></td>
+<td>39 M</td>
+<td>4</td>
+<td>4</td>
+<td>384</td>
+<td>6</td>
+<td>~75 MB</td>
+</tr>
+<tr>
+<td><code>base</code></td>
+<td>74 M</td>
+<td>6</td>
+<td>6</td>
+<td>512</td>
+<td>8</td>
+<td>~145 MB</td>
+</tr>
+<tr>
+<td><code>small</code></td>
+<td>244 M</td>
+<td>12</td>
+<td>12</td>
+<td>768</td>
+<td>12</td>
+<td>~465 MB</td>
+</tr>
+<tr>
+<td><code>medium</code></td>
+<td>769 M</td>
+<td>24</td>
+<td>24</td>
+<td>1024</td>
+<td>16</td>
+<td>~1.5 GB</td>
+</tr>
+<tr>
+<td><code>large</code></td>
+<td>1550 M</td>
+<td>32</td>
+<td>32</td>
+<td>1280</td>
+<td>20</td>
+<td>~2.9 GB</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<h2>Usage Instructions</h2>
+<h3>Prerequisites</h3>
+<ol>
+<li><strong>Python 3.8+</strong> — required by <code>openai-whisper</code>.</li>
+<li><strong>ffmpeg</strong> — must be on <code>PATH</code>. The scripts will exit with an error and installation hints if it is not found.</li>
+<li><strong>pip</strong> — standard Python package installer (required for the auto-install logic).</li>
+<li><strong>(GPU script only) CUDA-capable NVIDIA GPU</strong> with a compatible CUDA driver — optional; the script falls back to CPU automatically.</li>
+</ol>
+<p>&nbsp;</p>
+<p>For CPU script:</p>
+<pre><code class="language-bash">python speech2text_via_OpenAI_Whisper.py &lt;audio_file&gt; [model_size] [language]
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Positional argument (required):</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>audio_file</code></td>
+<td>Path to the input audio file (any format supported by ffmpeg: <code>.mp3</code>, <code>.mp4</code>, <code>.wav</code>, <code>.flac</code>, <code>.ogg</code>, <code>.m4a</code>, etc.)</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>Positional arguments (optional, must appear in order):</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Name</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td><code>model_size</code></td>
+<td><code>base</code></td>
+<td>Whisper model size: <code>tiny</code>, <code>base</code>, <code>small</code>, <code>medium</code>, <code>large</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>language</code></td>
+<td><em>(auto-detect)</em></td>
+<td>ISO 639-1 language code, e.g., <code>en</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>zh</code>, <code>ar</code></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>For GPU script:</p>
+<pre><code class="language-bash">python speech2text_via_OpenAI_Whisper_GPU.py &lt;audio_file&gt; [model_size] [language] [device]
+</code></pre>
+<p>&nbsp;</p>
+<p>All arguments from the CPU script apply. One additional optional argument is added:</p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Name</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td><code>device</code></td>
+<td><em>(auto-detect)</em></td>
+<td><code>cuda</code> to force GPU, <code>cpu</code> to force CPU</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<blockquote>
+<p><strong>Note:</strong> When <code>device</code> is required but <code>language</code> should remain auto-detected, there is no way to skip <code>language</code> positionally. You must either pass <code>None</code> as the literal string for <code>language</code> (the script will pass it as the string <code>"None"</code> to Whisper, which may not behave as expected), or edit the script to use <code>argparse</code>. If you want GPU with auto-detected language, omit both arguments and let the auto-detection handle both:<br />
+<code>bash
+python speech2text_via_OpenAI_Whisper_GPU.py audio.mp3 base</code><br />
+This will auto-detect language and select CUDA automatically.</p>
+</blockquote>
+<p>&nbsp;</p>
+<h2>CPU Script</h2>
+<p>&nbsp;</p>
+<pre><code class="language-python"># Import required libraries with auto-installation
+import subprocess
+import sys
+import os
+def install_package(package):
+    &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
+    try:
+        subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
+    except subprocess.CalledProcessError as e:
+        print(f&quot;Error installing {package}: {e}&quot;)
+        sys.exit(1)
+def install_ffmpeg():
+    &quot;&quot;&quot;Check if ffmpeg is installed, provide instructions if not&quot;&quot;&quot;
+    try:
+        subprocess.check_call([&quot;ffmpeg&quot;, &quot;-version&quot;], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print(&quot;ffmpeg is not installed.&quot;)
+        print(&quot;Please install ffmpeg:&quot;)
+        print(&quot;  - Ubuntu/Debian: sudo apt-get install ffmpeg&quot;)
+        print(&quot;  - macOS: brew install ffmpeg&quot;)
+        print(&quot;  - Windows: Download from https://ffmpeg.org/download.html&quot;)
+        sys.exit(1)
+# Check and install required packages
+required_packages = {
+    'whisper': 'openai-whisper'
+}
+for import_name, package_name in required_packages.items():
+    try:
+        __import__(import_name)
+    except ImportError:
+        print(f&quot;Installing {package_name}...&quot;)
+        install_package(package_name)
+# Check ffmpeg
+install_ffmpeg()
+# Now import the libraries
+import whisper
+def transcribe_audio(audio_file, model_size=&quot;base&quot;, language=None):
+    &quot;&quot;&quot;
+    Transcribe audio file using Whisper
+    Parameters:
+    - audio_file: path to audio file
+    - model_size: 'tiny', 'base', 'small', 'medium', 'large'
+    - language: e.g., 'en', 'es', 'fr' (None for auto-detect)
+    &quot;&quot;&quot;
+    print(f&quot;Loading {model_size} model...&quot;)
+    model = whisper.load_model(model_size)
+    print(&quot;Transcribing audio...&quot;)
+    if language:
+        result = model.transcribe(audio_file, language=language)
+    else:
+        result = model.transcribe(audio_file)
+    return result
+def save_transcription(result, output_file=&quot;transcription.txt&quot;):
+    &quot;&quot;&quot;Save transcription to file&quot;&quot;&quot;
+    # Full text
+    full_text = result[&quot;text&quot;]
+    # Create detailed output
+    output = &quot;=&quot; * 50 + &quot;\n&quot;
+    output += &quot;FULL TRANSCRIPTION\n&quot;
+    output += &quot;=&quot; * 50 + &quot;\n\n&quot;
+    output += full_text + &quot;\n\n&quot;
+    output += &quot;=&quot; * 50 + &quot;\n&quot;
+    output += &quot;TIMESTAMPED SEGMENTS\n&quot;
+    output += &quot;=&quot; * 50 + &quot;\n\n&quot;
+    for segment in result[&quot;segments&quot;]:
+        start = segment[&quot;start&quot;]
+        end = segment[&quot;end&quot;]
+        text = segment[&quot;text&quot;].strip()
+        output += f&quot;[{start:.2f}s - {end:.2f}s] {text}\n&quot;
+    # Detected language
+    if &quot;language&quot; in result:
+        output += f&quot;\n\nDetected Language: {result['language']}\n&quot;
+    # Save to file
+    with open(output_file, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        f.write(output)
+    print(f&quot;Transcription saved to {output_file}&quot;)
+    return full_text
+# Main execution
+if __name__ == &quot;__main__&quot;:
+    # Check if file path is provided as command-line argument
+    if len(sys.argv) &lt; 2:
+        print(&quot;Usage: python speech2text.py &lt;path_to_audio_file&gt; [model_size] [language]&quot;)
+        print(&quot;\nModel sizes: tiny, base (default), small, medium, large&quot;)
+        print(&quot;Language: en, es, fr, etc. (optional, auto-detect by default)&quot;)
+        print(&quot;\nExample: python speech2text.py audio.mp3 base en&quot;)
+        sys.exit(1)
+    # Get file path from command-line argument
+    audio_file = sys.argv[1]
+    # Get optional model size (default: base)
+    model_size = sys.argv[2] if len(sys.argv) &gt; 2 else &quot;base&quot;
+    # Get optional language (default: None for auto-detect)
+    language = sys.argv[3] if len(sys.argv) &gt; 3 else None
+    # Check if file exists
+    if not os.path.exists(audio_file):
+        print(f&quot;Error: File '{audio_file}' not found.&quot;)
+        sys.exit(1)
+    # Transcribe
+    try:
+        result = transcribe_audio(audio_file, model_size=model_size, language=language)
+        # Display results
+        print(&quot;\n&quot; + &quot;=&quot; * 50)
+        print(&quot;TRANSCRIPTION:&quot;)
+        print(&quot;=&quot; * 50)
+        print(result[&quot;text&quot;])
+        # Save transcription
+        output_filename = os.path.splitext(os.path.basename(audio_file))[0] + &quot;_transcription.txt&quot;
+        save_transcription(result, output_filename)
+    except Exception as e:
+        print(f&quot;Error during transcription: {e}&quot;)
+        sys.exit(1)
+</code></pre>
+<p>&nbsp;</p>
+<h2>GPU Script</h2>
+<p>&nbsp;</p>
+<pre><code class="language-python"># Import required libraries with auto-installation
+import subprocess
+import sys
+import os
+def install_package(package):
+    &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
+    try:
+        subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
+    except subprocess.CalledProcessError as e:
+        print(f&quot;Error installing {package}: {e}&quot;)
+        sys.exit(1)
+def install_ffmpeg():
+    &quot;&quot;&quot;Check if ffmpeg is installed, provide instructions if not&quot;&quot;&quot;
+    try:
+        subprocess.check_call([&quot;ffmpeg&quot;, &quot;-version&quot;], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print(&quot;ffmpeg is not installed.&quot;)
+        print(&quot;Please install ffmpeg:&quot;)
+        print(&quot;  - Ubuntu/Debian: sudo apt-get install ffmpeg&quot;)
+        print(&quot;  - macOS: brew install ffmpeg&quot;)
+        print(&quot;  - Windows: Download from https://ffmpeg.org/download.html&quot;)
+        sys.exit(1)
+def check_gpu():
+    &quot;&quot;&quot;Check if GPU (CUDA) is available&quot;&quot;&quot;
+    try:
+        import torch
+        if torch.cuda.is_available():
+            gpu_name = torch.cuda.get_device_name(0)
+            print(f&quot;GPU detected: {gpu_name}&quot;)
+            return True
+        else:
+            print(&quot;No GPU detected, using CPU&quot;)
+            return False
+    except ImportError:
+        print(&quot;PyTorch not found, using CPU&quot;)
+        return False
+# Check and install required packages
+required_packages = {
+    'whisper': 'openai-whisper',
+    'torch': 'torch'
+}
+for import_name, package_name in required_packages.items():
+    try:
+        __import__(import_name)
+    except ImportError:
+        print(f&quot;Installing {package_name}...&quot;)
+        install_package(package_name)
+# Check ffmpeg
+install_ffmpeg()
+# Now import the libraries
+import whisper
+import torch
+#
+def transcribe_audio(audio_file, model_size=&quot;base&quot;, language=None, device=None):
+    &quot;&quot;&quot;
+    Transcribe audio file using Whisper
+    Parameters:
+    - audio_file: path to audio file
+    - model_size: 'tiny', 'base', 'small', 'medium', 'large'
+    - language: e.g., 'en', 'es', 'fr' (None for auto-detect)
+    - device: 'cuda' for GPU, 'cpu' for CPU (None for auto-detect)
+    &quot;&quot;&quot;
+    # Auto-detect device if not specified
+    if device is None:
+        device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+    print(f&quot;Loading {model_size} model on {device.upper()}...&quot;)
+    model = whisper.load_model(model_size, device=device)
+    print(&quot;Transcribing audio...&quot;)
+    if language:
+        result = model.transcribe(audio_file, language=language)
+    else:
+        result = model.transcribe(audio_file)
+    return result
+#
+def save_transcription(result, output_file=&quot;transcription.txt&quot;):
+    &quot;&quot;&quot;Save transcription to file&quot;&quot;&quot;
+    # Full text
+    full_text = result[&quot;text&quot;]
+    # Create detailed output
+    output = &quot;=&quot; * 50 + &quot;\n&quot;
+    output += &quot;FULL TRANSCRIPTION\n&quot;
+    output += &quot;=&quot; * 50 + &quot;\n\n&quot;
+    output += full_text + &quot;\n\n&quot;
+    output += &quot;=&quot; * 50 + &quot;\n&quot;
+    output += &quot;TIMESTAMPED SEGMENTS\n&quot;
+    output += &quot;=&quot; * 50 + &quot;\n\n&quot;
+    for segment in result[&quot;segments&quot;]:
+        start = segment[&quot;start&quot;]
+        end = segment[&quot;end&quot;]
+        text = segment[&quot;text&quot;].strip()
+        output += f&quot;[{start:.2f}s - {end:.2f}s] {text}\n&quot;
+    # Detected language
+    if &quot;language&quot; in result:
+        output += f&quot;\n\nDetected Language: {result['language']}\n&quot;
+    # Save to file
+    with open(output_file, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        f.write(output)
+    print(f&quot;Transcription saved to {output_file}&quot;)
+    return full_text
+# Main execution
+if __name__ == &quot;__main__&quot;:
+    # Check if file path is provided as command-line argument
+    if len(sys.argv) &lt; 2:
+        print(&quot;Usage: python speech2text.py &lt;path_to_audio_file&gt; [model_size] [language] [device]&quot;)
+        print(&quot;\nModel sizes: tiny, base (default), small, medium, large&quot;)
+        print(&quot;Language: en, es, fr, etc. (optional, auto-detect by default)&quot;)
+        print(&quot;Device: cuda, cpu (optional, auto-detect by default)&quot;)
+        print(&quot;\nExamples:&quot;)
+        print(&quot;  python speech2text.py audio.mp3&quot;)
+        print(&quot;  python speech2text.py audio.mp3 base en&quot;)
+        print(&quot;  python speech2text.py audio.mp3 large en cuda&quot;)
+        sys.exit(1)
+    # Get file path from command-line argument
+    audio_file = sys.argv[1]
+    # Get optional model size (default: base)
+    model_size = sys.argv[2] if len(sys.argv) &gt; 2 else &quot;base&quot;
+    # Get optional language (default: None for auto-detect)
+    language = sys.argv[3] if len(sys.argv) &gt; 3 else None
+    # Get optional device (default: None for auto-detect)
+    device = sys.argv[4] if len(sys.argv) &gt; 4 else None
+    # Check if file exists
+    if not os.path.exists(audio_file):
+        print(f&quot;Error: File '{audio_file}' not found.&quot;)
+        sys.exit(1)
+    # Check GPU availability
+    check_gpu()
+    # Transcribe
+    try:
+        result = transcribe_audio(audio_file, model_size=model_size, language=language, device=device)
+        # Display results
+        print(&quot;\n&quot; + &quot;=&quot; * 50)
+        print(&quot;TRANSCRIPTION:&quot;)
+        print(&quot;=&quot; * 50)
+        print(result[&quot;text&quot;])
+        # Save transcription
+        output_filename = os.path.splitext(os.path.basename(audio_file))[0] + &quot;_transcription.txt&quot;
+        save_transcription(result, output_filename)
+    except Exception as e:
+        print(f&quot;Error during transcription: {e}&quot;)
+        sys.exit(1)
+</code></pre></div>
+        </section>
+
+        <section class="card span-2">
             <div class="card-content"><h1>Text-to-Speech (Google TTS) Script</h1>
 <p>&nbsp;</p>
 <p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
@@ -422,7 +840,9 @@ except Exception as e:
 <p>&nbsp;</p>
 <p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h1>Extract Text from PDF via PDFplumber</h1>
 <p>&nbsp;</p>
@@ -517,7 +937,6 @@ except Exception as e:
 <p>&nbsp;</p>
 <p><code>&lt;path_to_pdf_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.pdf</code> (case-insensitive). The output <code>.txt</code> is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
         </section>
-        <section class="card span-1 empty"></section>
 
     </div>
 </body>
