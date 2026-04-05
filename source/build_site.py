@@ -133,6 +133,9 @@ def main():
 
     source_path = Path(args.source)
     output_path = Path(args.output)
+    if output_path.exists():
+        shutil.rmtree(output_path)
+        print(f"Cleaned output directory: {output_path}")
     output_path.mkdir(parents=True, exist_ok=True)
 
     # 1. Copy main.css to output directory
