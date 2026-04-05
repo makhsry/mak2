@@ -2,7 +2,7 @@
 
 A Google Colab notebook that takes a **color-coded pattern image** (e.g., a design, logo, or artwork), overlays it onto a real city street network from OpenStreetMap, extracts GPS coordinates for each color layer, and exports the result as one or more **GPX track files** — ready to use in any GPS-capable navigation app or fitness tracker.
 
-[**Downalod the code here** (save as .ipynb file)](Garage_99999990_RoutPlannerPython.ipynb) 
+[**Downalod the code here**](Garage_99999990_RoutPlannerPython.ipynb) 
 
 **What It Does**     
 The notebook performs the following stages in order:     

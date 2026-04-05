@@ -4,7 +4,7 @@ In the paper [**Revisiting ‘penetration depth’ in falling film mass transfer
 
 ![Falling Film Mass Transfer & Penetration Theory](Publications_20200101_jChERD.png)
  
-Two python scripts are provided to calculate the mass transfer characteristics in falling liquid films. The scripts are written in Python 3.x and use the NumPy library for numerical calculations. The scripts solve the governing equations for convective mass transfer in a laminar falling film. One analyzes how different diffusion coefficients impact the penetration depth and flux ([click here (save as .py)](Publications_20200101_jChERD_varD.py)). The other analyzes the effect of film flow rate on mass transfer efficiency ([click here (save as .py)](Publications_20200101_jChERD_varG.py)).
+Two python scripts are provided to calculate the mass transfer characteristics in falling liquid films. The scripts are written in Python 3.x and use the NumPy library for numerical calculations. The scripts solve the governing equations for convective mass transfer in a laminar falling film. One analyzes how different diffusion coefficients impact the penetration depth and flux ([click here](Publications_20200101_jChERD_varD.py)). The other analyzes the effect of film flow rate on mass transfer efficiency ([click here](Publications_20200101_jChERD_varG.py)).
 
 **Film Hydrodynamics**
 The film thickness (δ) and average velocity (u) are calculated based on the film flow rate (Γ) and fluid properties (density ρ, viscosity μ):

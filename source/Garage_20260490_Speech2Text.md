@@ -1,6 +1,6 @@
 ## Speech-to-Text via OpenAI Whisper
 
-Two Python scripts ([CPU version (save as .py)](Garage_20260490_Speech2Text_cpu.py) and [GPU version (save as .py)](Garage_20260490_Speech2Text_gpu.py)) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.
+Two Python scripts ([CPU version](Garage_20260490_Speech2Text_cpu.py) and [GPU version](Garage_20260490_Speech2Text_gpu.py)) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.
 
 Whisper is a sequence-to-sequence Transformer trained on 680,000 hours of labelled speech. The `model_size` argument selects one of five pre-trained checkpoints. `whisper.load_model(model_size)` downloads (on first run) and caches the corresponding checkpoint and returns a `Whisper` object whose `transcribe` method drives the full inference pipeline.
 
