@@ -1,9 +1,17 @@
 <script>
 window.MathJax = {
-  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  chtml: {
+    scale: 1,
+    mtextInheritFont: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
 };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 ## Falling Film Mass Transfer & Penetration Theory
 
@@ -262,7 +270,15 @@ cAi = 0.0366  # Interfacial concentration
 
 <script>
 window.MathJax = {
-  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  chtml: {
+    scale: 1,
+    mtextInheritFont: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
 };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
