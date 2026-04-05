@@ -9,6 +9,16 @@ Two python scripts are provided to calculate the mass transfer characteristics i
 **Film Hydrodynamics**        
 The film thickness ($\delta$) and average velocity ($u$) are calculated based on the film flow rate ($\Gamma$) and fluid properties (density $\rho$, viscosity $\mu$):
 
+
+<div>
+
+$$
+\delta = \left( \frac{3 \mu \Gamma}{\rho^2 g} \right)^{1/3}
+$$
+
+</div>
+
+
 <span>$$\delta = \left( \frac{3 \mu \Gamma}{\rho^2 g} \right)^{1/3}$$</span>
 
 
