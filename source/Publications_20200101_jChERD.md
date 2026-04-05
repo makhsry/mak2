@@ -1,71 +1,11 @@
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$','$$'], ['\\[','\\]']]
-  },
-  svg: {
-    fontCache: 'global'
-  },
-  options: {
-    skipHtmlTags: ['script','noscript','style','textarea','pre','code']
-  }
-};
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-
-<style>
-mjx-container {
-  margin: 0 !important;
-}
-</style>
-
 ## Falling Film Mass Transfer & Penetration Theory
 
-In the paper [**Revisiting ‘penetration depth’ in falling film mass transfer**](https://www.sciencedirect.com/science/article/pii/S0263876219305994), we calculated mass transfer characteristics in falling liquid films. We compared the **Infinite Penetration** (Higbie's theory) and **Finite Penetration** models to determine how deep a solute penetrates a moving film under various physical conditions.
+In the paper [**Revisiting ‘penetration depth’ in falling film mass transfer**](https://www.sciencedirect.com/science/article/pii/S0263876219305994), we calculated mass transfer characteristics in falling liquid films. We compared the **Infinite Penetration** (Higbie's theory) and **Finite Penetration** models to determine how deep a solute penetrates a moving film under various physical conditions.        
 
 ![Falling Film Mass Transfer & Penetration Theory](Publications_20200101_jChERD.png)
  
 Two python scripts are provided to calculate the mass transfer characteristics in falling liquid films. The scripts are written in Python 3.x and use the NumPy library for numerical calculations. The scripts solve the governing equations for convective mass transfer in a laminar falling film.
 
-**Film Hydrodynamics**        
-The film thickness ($\delta$) and average velocity ($u$) are calculated based on the film flow rate ($\Gamma$) and fluid properties (density $\rho$, viscosity $\mu$):
-
-
-<div>
-
-$$
-\delta = \left( \frac{3 \mu \Gamma}{\rho^2 g} \right)^{1/3}
-$$
-
-</div>
-
-
-<span>$$\delta = \left( \frac{3 \mu \Gamma}{\rho^2 g} \right)^{1/3}$$</span>
-
-
-
-$$\delta = \left( \frac{3 \mu \Gamma}{\rho^2 g} \right)^{1/3}$$
-$$u = \frac{\Gamma}{\rho \delta}$$
-
-**Infinite Penetration Model**      
-For short contact times or thick films, the solute is assumed not to reach the wall. The local mass transfer coefficient ($k_c$) is:
-
-$$k_c(y) = \sqrt{\frac{3 u D}{2 \pi y}}$$
-
-**Finite Penetration Model**        
-When the solute reaches the wall (finite depth), the concentration profile is solved using a Fourier series expansion. The code determines a characteristic parameter ($\xi$) by solving for the root of the error function:
- 
-$$\text{Error} = \left( \sum_{n=0}^{\infty} \frac{(-1)^n}{2n+1} \exp\left( - \left[ \frac{(2n+1)\pi}{2\xi} \right]^2 \cdot \frac{D y}{u} \right) \right) - \frac{\pi}{4}$$
- 
-**Mass Flux Calculation ($N_A$)**        
-The local mass flux at the interface is determined by:
-
-$$N_A = k_c \cdot (c_{Ai} - c_{A0})$$
-
-Where $c_{Ai}$ is the interfacial concentration and $c_{A0}$ is the bulk concentration.
- 
 **Python Scripts**    
 
 **1. Impact of Diffusivity ($D$)**    
