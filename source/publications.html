@@ -25,15 +25,16 @@
 <ul>
 <li>Variable Density Mass Transfer Correction R<sub>n</sub></li>
 <li>Falling Film Mass Transfer &amp; Penetration Theory</li>
+<li>Thermokinetic Model of Phase Inversion</li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h1>Variable Density Mass Transfer Correction R<sub>n</sub></h1>
+            <div class="card-content"><h2>Variable Density Mass Transfer Correction R<sub>n</sub></h2>
 <p>&nbsp;</p>
-<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0735193320302050">A note on the composition-dependency of the density within the mass transfer layer</a>, we derived the equation for the mass transfer correction factor R<sub>n</sub>, which accounts for the effect of varying density (ρ) in a binary mixture. The model is particularly relevant for high-flux gas absorption or evaporation where the standard constant-density assumptions fail. </p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0735193320302050"><strong>A note on the composition-dependency of the density within the mass transfer layer</strong></a>, we derived the equation for the mass transfer correction factor R<sub>n</sub>, which accounts for the effect of varying density (ρ) in a binary mixture. The model is particularly relevant for high-flux gas absorption or evaporation where the standard constant-density assumptions fail. </p>
 <p>&nbsp;</p>
 <p><img alt="Variable Density Mass Transfer Correction R&lt;sub&gt;n&lt;/sub&gt;" src="Publications_20200701_jICHMT.png" /></p>
 <p>&nbsp;</p>
@@ -133,6 +134,164 @@ cAi = 0.0366  # Interfacial concentration
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h2>Thermokinetic Model of Phase Inversion</h2>
+<p>&nbsp;</p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0376738817306889"><strong>On the search of rigorous thermo-kinetic model for wet phase inversion technique</strong></a>, we developed a rigorous thermo-kinetic model for the wet phase inversion process, with special emphasis on the role of the diffusion-thermo effect at the interface. The model provides a comprehensive mathematical derivation and mapping of the logic implemented in this phase inversion simulation project.   </p>
+<p>&nbsp;</p>
+<p><img alt="Thermokinetic Model of Phase Inversion" src="Publications_20170501_JMS.png" /></p>
+<p>&nbsp;</p>
+<p><strong>System Constants &amp; Parameters</strong><br />
+The physical constants are defined in <code>CONSTANTS.m</code>. For the default Water (1) / Acetone (2) / Polymer (3) system:</p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Constant</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">ρ<sub>01</sub></td>
+<td style="text-align: left;">Density of Water</td>
+<td style="text-align: left;">1.0 g/cm³</td>
+</tr>
+<tr>
+<td style="text-align: left;">ρ<sub>02</sub></td>
+<td style="text-align: left;">Density of Acetone</td>
+<td style="text-align: left;">0.7857 g/cm³</td>
+</tr>
+<tr>
+<td style="text-align: left;">ρ<sub>03</sub></td>
+<td style="text-align: left;">Density of Polymer</td>
+<td style="text-align: left;">1.31 g/cm³</td>
+</tr>
+<tr>
+<td style="text-align: left;">M<sub>w1</sub></td>
+<td style="text-align: left;">Molecular weight (nonsolvent)</td>
+<td style="text-align: left;">18.0 g/mol</td>
+</tr>
+<tr>
+<td style="text-align: left;">M<sub>w2</sub></td>
+<td style="text-align: left;">Molecular weight (solvent)</td>
+<td style="text-align: left;">58.08 g/mol</td>
+</tr>
+<tr>
+<td style="text-align: left;">M<sub>w3</sub></td>
+<td style="text-align: left;">Molecular weight (polymer)</td>
+<td style="text-align: left;">40,000 g/mol</td>
+</tr>
+<tr>
+<td style="text-align: left;">v<sub>i</sub></td>
+<td style="text-align: left;">Specific volume of component $i$</td>
+<td style="text-align: left;">$1/\rho_{0i}$</td>
+</tr>
+<tr>
+<td style="text-align: left;">V<sub>i</sub></td>
+<td style="text-align: left;">Molar volume of component $i$</td>
+<td style="text-align: left;">$v_i \cdot M_{wi}$</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>Solution Properties</strong> (<a href="Publications_20170501_JMS_DENSTY.m"><code>DENSTY.m</code></a> &amp; <a href="Publications_20170501_JMS_PHIs.m"><code>PHIs.m</code></a>)</p>
+<p>&nbsp;</p>
+<p><strong>- Mixture Density</strong><br />
+The density ρ is calculated using a mole-fraction based mixing rule from the equation of state:      </p>
+<p>&nbsp;</p>
+<p>rρ = ω<sub>1</sub> · ((ρ<sub>03</sub> − ρ<sub>01</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>))<br />
+    + ω<sub>2</sub> · ((ρ<sub>03</sub> − ρ<sub>02</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>))<br />
+    + 1 / ρ<sub>03</sub>            </p>
+<p>&nbsp;</p>
+<p>ρ = 1 / (rρ)         </p>
+<p>&nbsp;</p>
+<p><strong>- Volume Fraction Conversion</strong><br />
+The volume fractions φ are converted from mass fractions ω using the following logic:</p>
+<p>&nbsp;</p>
+<p>D = α ω<sub>1</sub> + β ω<sub>2</sub> + γ           </p>
+<p>&nbsp;</p>
+<p>Where:<br />
+- α = V<sub>1</sub>/M<sub>w1</sub> - V<sub>3</sub>/M<sub>w3</sub>     <br />
+- β = V<sub>2</sub>/M<sub>w2</sub> - V<sub>3</sub>/M<sub>w3</sub>       <br />
+- γ = V<sub>3</sub>/M<sub>w3</sub>        </p>
+<p>&nbsp;</p>
+<p>Then:</p>
+<p>&nbsp;</p>
+<p>φ<sub>1</sub> = (V<sub>1</sub>/M<sub>w1</sub>) ω<sub>1</sub> / D          <br />
+φ<sub>2</sub> = (V<sub>2</sub>/M<sub>w2</sub>) ω<sub>2</sub> / D              <br />
+φ<sub>3</sub> = (V<sub>3</sub>/M<sub>w3</sub>) (1 − ω<sub>1</sub> − ω<sub>2</sub>) / D           </p>
+<p>&nbsp;</p>
+<p><strong>Thermodynamic Logic</strong> (<a href="Publications_20170501_JMS_FLORYHOGGINSCOEFF.m"><code>FLORYHOGGINSCOEFF.m</code></a> &amp; <a href="Publications_20170501_JMS_FGcomponents.m"><code>FGcomponents.m</code></a>)      </p>
+<p>&nbsp;</p>
+<p><strong>- Flory-Huggins Interaction Parameters</strong><br />
+Parameters G<sub>ij</sub> are concentration-dependent. Let u<sub>2</sub> be the solvent volume fraction on a polymer-free basis: u<sub>2</sub> = \frac{\phi_2}{\phi_1 + \phi_2}.</p>
+<p>&nbsp;</p>
+<p><strong>- Interaction G<sub>12</sub> (Nonsolvent-Solvent):</strong>         <br />
+G<sub>12</sub> = 0.661 + (0.417 / (1 − 0.755 u<sub>2</sub>))            <br />
+∂G<sub>12</sub>/∂u<sub>2</sub> = (0.417 · 0.755) / (1 − 0.755 u<sub>2</sub>)<sup>2</sup></p>
+<p>&nbsp;</p>
+<p><strong>- Interaction G<sub>23</sub> (Solvent-Polymer):</strong>         <br />
+G<sub>23</sub> = 0.535 + 0.11 \phi_3    <br />
+∂G<sub>23</sub>/∂\phi<sub>3</sub> = 0.11</p>
+<p>&nbsp;</p>
+<p><strong>- Interaction G<sub>13</sub> (Nonsolvent-Polymer):</strong>         <br />
+G<sub>13</sub> = 1.4</p>
+<p>&nbsp;</p>
+<p><strong>- Thermodynamic Gains (Q<sub>1</sub>, Q<sub>2</sub>, S<sub>1</sub>, S<sub>2</sub>)</strong><br />
+These terms represent the derivatives of chemical potentials ∂μ<sub>i</sub>/∂φ<sub>j</sub> (excluding the RT factor):  </p>
+<p>&nbsp;</p>
+<p>Q<sub>1</sub> =<br />
+1/φ<sub>1</sub> − 1 + V<sub>13</sub> + φ<sub>2</sub>(V<sub>12</sub>G<sub>23</sub> − G<sub>12</sub>) − (φ<sub>2</sub> + 2φ<sub>3</sub>)G<sub>13</sub> + (φ<sub>1</sub> − 2u<sub>2</sub>)u<sub>2</sub><sup>2</sup> (∂G<sub>12</sub>/∂u<sub>2</sub>) + 3V<sub>12</sub>φ<sub>2</sub>φ<sub>3</sub> (∂G<sub>23</sub>/∂φ<sub>3</sub>) + u<sub>1</sub>u<sub>2</sub><sup>3</sup> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + V<sub>12</sub>φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)             </p>
+<p>&nbsp;</p>
+<p>Q<sub>2</sub> =<br />
+−V<sub>12</sub> + V<sub>13</sub> + (φ<sub>2</sub> + φ<sub>3</sub>)(G<sub>12</sub> − G<sub>13</sub>) + V<sub>12</sub>(φ<sub>2</sub> − φ<sub>3</sub>)G<sub>23</sub> + u<sub>1</sub>u<sub>2</sub>(u<sub>2</sub> − u<sub>1</sub> − φ<sub>1</sub>) (∂G<sub>12</sub>/∂u<sub>2</sub>) + V<sub>12</sub>φ<sub>3</sub>(3φ<sub>2</sub> − φ<sub>3</sub>) (∂G<sub>23</sub>/∂φ<sub>3</sub>) − (u<sub>1</sub>u<sub>2</sub>)<sup>2</sup> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + V<sub>12</sub>φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)               </p>
+<p>&nbsp;</p>
+<p>S<sub>1</sub> =<br />
+−V<sub>21</sub> + V<sub>23</sub> + (φ<sub>1</sub> + φ<sub>3</sub>)(V<sub>21</sub>G<sub>12</sub> − G<sub>23</sub>) + V<sub>21</sub>(φ<sub>1</sub> − φ<sub>3</sub>)G<sub>13</sub> + V<sub>21</sub>u<sub>1</sub>u<sub>2</sub>(φ<sub>2</sub> + u<sub>2</sub> − u<sub>1</sub>) (∂G<sub>12</sub>/∂u<sub>2</sub>) + φ<sub>3</sub>(3φ<sub>2</sub> − 1) (∂G<sub>23</sub>/∂φ<sub>3</sub>) − V<sub>21</sub>(u<sub>1</sub>u<sub>2</sub>)<sup>2</sup> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)            </p>
+<p>&nbsp;</p>
+<p>S<sub>2</sub> =<br />
+1/φ<sub>2</sub> − 1 + V<sub>23</sub> + V<sub>21</sub>φ<sub>1</sub>(G<sub>13</sub> − G<sub>12</sub>) − (φ<sub>1</sub> + 2φ<sub>3</sub>)G<sub>13</sub> + V<sub>21</sub>u<sub>1</sub><sup>2</sup>(2u<sub>1</sub> − φ<sub>2</sub>) (∂G<sub>12</sub>/∂u<sub>2</sub>) + φ<sub>3</sub>(4φ<sub>2</sub> + φ<sub>1</sub> − 2) (∂G<sub>23</sub>/∂φ<sub>3</sub>) + V<sub>21</sub>u<sub>1</sub><sup>3</sup>u<sub>2</sub> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)                  </p>
+<p>&nbsp;</p>
+<p><strong>Continuity &amp; Flux Logic (<a href="Publications_20170501_JMS_COEFFICIENTS.m"><code>COEFFICIENTS.m</code></a>, <a href="Publications_20170501_JMS_ABCD.m"><code>ABCD.m</code></a>, <a href="Publications_20170501_JMS_BDCA.m"><code>BDCA.m</code></a>)</strong>          <br />
+<strong>- Kinetic Mobility</strong> <br />
+Friction coefficients ξ<sub>ij</sub> are calculated from self-diffusion coefficients D<sub>i</sub><sup><em></sup>, where D<sub>2</sub><sup></em></sup> is given by the solvent self-diffusion in <code>FRICTIONCOEF.m</code>.                              <br />
+ξ<sub>23</sub> = (ρ<sub>03</sub> M<sub>w3</sub>) / D<sub>2</sub><sup>*</sup>         </p>
+<p>&nbsp;</p>
+<p><strong>- Mobility Matrix Elements (<a href="Publications_20170501_JMS_ABCD.m"><code>ABCD.m</code></a>)</strong>   <br />
+The elements A, B, C, D facilitate the inversion of the friction matrix:    <br />
+A = (ω<sub>2</sub>ξ<sub>12</sub>)/(M<sub>w2</sub>ω<sub>1</sub>) + (ξ<sub>13</sub>(1 − ω<sub>2</sub>))/(M<sub>w3</sub>ω<sub>1</sub>)          <br />
+B = ξ<sub>12</sub>/M<sub>w2</sub> − ξ<sub>13</sub>/M<sub>w3</sub>        <br />
+C = (ω<sub>1</sub>ξ<sub>12</sub>)/(M<sub>w1</sub>ω<sub>2</sub>) + (ξ<sub>23</sub>(1 − ω<sub>1</sub>))/(M<sub>w3</sub>ω<sub>2</sub>)         <br />
+D = ξ<sub>12</sub>/M<sub>w1</sub> − ξ<sub>23</sub>/M<sub>w3</sub>           </p>
+<p>&nbsp;</p>
+<p><strong>- Reciprocal Scaling Term (<a href="Publications_20170501_JMS_BDCA.m"><code>BDCA.m</code></a>)</strong>          <br />
+CF<sub>12</sub>G<sub>12</sub> = (ω<sub>1</sub>ω<sub>2</sub>M<sub>w1</sub>M<sub>w2</sub>M<sub>w3</sub><sup>3</sup>)/(M<sub>w1</sub>M<sub>w3</sub>ξ<sub>12</sub>ξ<sub>23</sub>ω<sub>2</sub> + M<sub>w2</sub>M<sub>w3</sub>ξ<sub>13</sub>ξ<sub>12</sub>ω<sub>1</sub> + M<sub>w1</sub>M<sub>w2</sub>ξ<sub>13</sub>ξ<sub>23</sub>ω<sub>3</sub>)</p>
+<p>&nbsp;</p>
+<p><strong>- Final Transport Coefficients (<a href="Publications_20170501_JMS_COEFFICIENTS.m"><code>COEFFICIENTS.m</code></a>)</strong>         <br />
+The final Fickian-like coefficients F<sub>1</sub>, F<sub>2</sub>, G<sub>1</sub>, G<sub>2</sub> are, where σ<sub>ij</sub> = (∂μ<sub>i</sub>)/(∂ω<sub>j</sub>) (computed in <code>DMiOi.m</code>):             <br />
+F<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>11</sub> + B σ<sub>21</sub>)<br>   <br />
+F<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>11</sub> + A σ<sub>21</sub>)<br>           <br />
+G<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>12</sub> + B σ<sub>22</sub>)<br>          <br />
+G<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>12</sub> + A σ<sub>22</sub>)         </p>
+<p>&nbsp;</p>
+<p><strong>PDE &amp; Velocity Execution (<a href="Publications_20170501_JMS_MainGUFDM.m"><code>MainGUFDM.m</code></a> &amp; <a href="Publications_20170501_JMS_VELOCITY.m"><code>VELOCITY.m</code></a>)</strong>           </p>
+<p>&nbsp;</p>
+<p><strong>- Reference Velocity</strong>      <br />
+The center-of-mass velocity $v$ ensures volumetric consistency, where J<sub>i</sub><sup>'</sup> is the bracketed part of the flux J<sub>i</sub> = -ρ J<sub>i</sub><sup>'</sup>.           <br />
+v = ((ρ<sub>01</sub> − ρ<sub>03</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) J<sub>1</sub><sup>'</sup><br />
+  + ((ρ<sub>02</sub> − ρ<sub>03</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>)) J<sub>2</sub><sup>'</sup></p>
+<p>&nbsp;</p>
+<p><strong>- Time Evolution</strong>    <br />
+Components 1 and 2 evolve according to:       <br />
+ω<sub>i</sub><sup>t+Δt</sup> = ω<sub>i</sub><sup>t</sup> − ( (1/ρ)(∂J<sub>i</sub>/∂z) + v(∂ω<sub>i</sub>/∂z) ) Δt      </p>
+<p>&nbsp;</p>
+<p><strong>- Spatial Discretization <a href="Publications_20170501_JMS_MESHS.m"><code>MESHS.m</code></a></strong>    <br />
+The spatial derivatives are discretized using the GUFDM non-uniform grid.</p></div>
+        </section>
 
     </div>
 </body>
