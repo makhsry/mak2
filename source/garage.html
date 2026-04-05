@@ -517,6 +517,23 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>&nbsp;</p>
 <p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
 <p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>   <br />
+<strong>Prerequisites</strong>         </p>
+<p>&nbsp;</p>
+<ul>
+<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
+<li>An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.</li>
+<li>No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.</li>
+<li>A UTF-8 encoded <code>.txt</code> file.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Running the Script</strong></p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;
+</code></pre>
+<p>&nbsp;</p>
+<p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p>
+<p>&nbsp;</p>
 <p><strong>Code (with inline comments)</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-python">import subprocess
@@ -571,31 +588,29 @@ try:
 except Exception as e:
     print(f&quot;Error converting to speech: {e}&quot;)
     sys.exit(1)
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong></p>
-<p>&nbsp;</p>
-<p><strong>Prerequisites</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
-<li>An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.</li>
-<li>No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.</li>
-<li>A UTF-8 encoded <code>.txt</code> file.</li>
-</ul>
-<p>&nbsp;</p>
-<p><strong>Running the Script</strong></p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;
-</code></pre>
-<p>&nbsp;</p>
-<p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
+</code></pre></div>
         </section>
 
         <section class="card span-2">
             <div class="card-content"><h2>Extract Text from PDF via PDFplumber</h2>
 <p>&nbsp;</p>
 <p>A command-line Python script that opens a PDF file, extracts all textual content page-by-page using <strong>PDFplumber</strong>, and writes the result as a UTF-8 encoded plain-text (<code>.txt</code>) file. </p>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>     <br />
+<strong>Prerequisites</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
+<li>No manual package installation is required — the script installs <code>pdfplumber</code> automatically on first run if it is absent.</li>
+<li>A UTF-8 encoded <code>.pdf</code> file.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Running the Script</strong></p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;
+</code></pre>
+<p>&nbsp;</p>
+<p><code>&lt;path_to_pdf_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.pdf</code> (case-insensitive). The output <code>.txt</code> is always written to the <strong>current working directory</strong>, not the directory of the input file.</p>
 <p>&nbsp;</p>
 <p><strong>Code (with inline comments)</strong></p>
 <p>&nbsp;</p>
@@ -655,24 +670,7 @@ try:
 except Exception as e:
     print(f&quot;Error saving text file: {e}&quot;)
     sys.exit(1)
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong></p>
-<p>&nbsp;</p>
-<p><strong>Prerequisites</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
-<li>No manual package installation is required — the script installs <code>pdfplumber</code> automatically on first run if it is absent.</li>
-<li>A UTF-8 encoded <code>.pdf</code> file.</li>
-</ul>
-<p>&nbsp;</p>
-<p><strong>Running the Script</strong></p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;
-</code></pre>
-<p>&nbsp;</p>
-<p><code>&lt;path_to_pdf_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.pdf</code> (case-insensitive). The output <code>.txt</code> is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
+</code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
 
