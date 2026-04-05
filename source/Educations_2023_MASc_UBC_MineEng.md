@@ -19,3 +19,5 @@ Inspected and evaluated, experimentally and numerically (via Finite Element Mode
 - Performed experimental and numerical analysis of **mineral drying behavior under microwave exposure**. 
 - Utilized **finite element modeling** (FEM) to simulate heat and mass transfer during drying at various microwave power levels and **mineral types**. 
 - Conducted comprehensive **energy demand analysis** to evaluate **potential savings** compared to traditional kiln operations.   
+
+![MASc. Mining Engineering](Educations_2023_MASc_UBC_MineEng.jpg)
