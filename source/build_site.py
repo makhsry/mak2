@@ -35,12 +35,7 @@ def convert_md_to_html(content):
     # Pre-process content to treat multiple blank lines as literal empty lines
     content = re.sub(r'\n\s*\n', '\n\n&nbsp;\n\n', content)
 
-    # Use a set of extensions that are robust for math
-    # arithmatex is best if available, but we'll stick to 'extra' and rely on MathJax configuration
-    # unless we want to try importing it.
-    extensions = ['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br']
-    
-    return markdown.markdown(content, extensions=extensions)
+    return markdown.markdown(content, extensions=['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br'])
 
 def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
     def sort_key(x):
@@ -73,22 +68,6 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{tab_name}</title>
     <link rel="stylesheet" href="{css_filename}">
-    <!-- MathJax for Equation Rendering -->
-    <script>
-    window.MathJax = {{
-      tex: {{
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true,
-        processEnvironments: true
-      }},
-      options: {{
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-      }}
-    }};
-    </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav>
