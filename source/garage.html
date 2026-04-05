@@ -31,6 +31,7 @@
 <li>Speech-to-Text via OpenAI Whisper</li>
 <li>Text-to-Speech (Google TTS) Script</li>
 <li>Extract Text from PDF via PDFplumber</li>
+<li>Blind Audio Source Separation</li>
 <li>COSMO-SAC Activity Coefficient Model</li>
 </ul></div>
         </section>
@@ -1287,6 +1288,73 @@ except Exception as e:
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
+            <div class="card-content"><h2>Blind Audio Source Separation</h2>
+<p>&nbsp;</p>
+<p>Two scripts are available for decomposing a single mixed audio recording into its constituent spectral or acoustic components. They differ fundamentally in their underlying algorithm, computational backend, and the number of separated streams they produce. Both scripts contain a runtime dependency check at module level.  </p>
+<p>&nbsp;</p>
+<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>. </p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: left;"><a href="Garage_20251201_NMF.py"><strong>NMF version</strong></a></th>
+<th style="text-align: left;"><a href="Garage_20251201_Demucs.py"><strong>Demucs version</strong></a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Algorithm</strong></td>
+<td style="text-align: left;">Classical non-negative matrix factorization on the STFT magnitude spectrogram</td>
+<td style="text-align: left;">End-to-end deep neural network trained on music/speech datasets</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Number of outputs</strong></td>
+<td style="text-align: left;">Flexible: 2–6 (auto) or user-specified</td>
+<td style="text-align: left;">Fixed by model architecture (4 stems for <code>htdemucs</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>No GPU required</strong></td>
+<td style="text-align: left;">Fully functional on CPU; CuPy optional</td>
+<td style="text-align: left;">GPU strongly recommended; runs on CPU but is very slow</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>First-run download</strong></td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">~300 MB Demucs model weights</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Best suited for</strong></td>
+<td style="text-align: left;">Arbitrary noise decomposition, stationary spectra, machine hum, tonal interference</td>
+<td style="text-align: left;">Music stem separation (drums/bass/other/vocals) or speech separation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Phase coherence</strong></td>
+<td style="text-align: left;">Yes — uses masked complex STFT (phase preserved from input)</td>
+<td style="text-align: left;">Yes — waveform-domain model, no explicit phase manipulation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Memory scaling</strong></td>
+<td style="text-align: left;">Linear in spectrogram size; feasible for long files</td>
+<td style="text-align: left;">Chunked to bound GPU memory; chunk size is user-tunable</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Labelling</strong></td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">Heuristic (spectral centroid + RMS thresholds)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Usage</strong></td>
+<td style="text-align: left;"><code>python NMF.py &lt;input_audio_file&gt; [n_components (optional range 2–6)]</code></td>
+<td style="text-align: left;"><code>python Demucs.py &lt;input_audio_file&gt; [model] [chunk_seconds] [overlap (must be &lt; chunk_seconds)]</code></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>Note</strong>: The NMF is run with <code>init='nndsvda</code>, <code>solver='mu</code> (multiplicative updates), <code>beta_loss='kullback-leibler</code>, <code>max_iter=500</code>, <code>random_state=0</code>. These settings are identical for both the component-selection loop and the final separation run.</p></div>
+        </section>
+
+        <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Activity Coefficient Model</h2>
 <p>&nbsp;</p>
 <p>This is a MATLAB implementation of the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. The code calculates the thermodynamic activity coefficients of components in chemical mixtures based on their molecular surface charge distributions, known as sigma-profiles. An <code>.html</code> version of the calculator can be found <a href="Garage_20150101_COSMO-SAC_Calculator.html">here</a>.</p>
@@ -1392,6 +1460,7 @@ The final activity coefficient for component n is the exponential sum of the res
 - <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated sigma-densities and profiles for each component.<br />
 - <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions (x), activity coefficients (γ), and ln γ.</p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
