@@ -336,6 +336,133 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
         </section>
         <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h1>Text-to-Speech (Google TTS) Script</h1>
+<p>&nbsp;</p>
+<p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. The script is self-bootstrapping: it detects whether <code>gTTS</code> is installed at runtime and, if not, installs it silently before proceeding.</p>
+<p>&nbsp;</p>
+<blockquote>
+<p>This script is the second stage of a two-script pipeline. It is designed to consume the <code>.txt</code> output produced by <code>pdf2text_via_PDFplumber.py</code>, but it accepts any valid UTF-8 <code>.txt</code> file as input.</p>
+</blockquote>
+<p>&nbsp;</p>
+<h2>Code (with inline comments)</h2>
+<p>&nbsp;</p>
+<pre><code class="language-python">
+&amp;nbsp;
+
+import subprocess
+import sys
+import os
+
+&amp;nbsp;
+
+def install_package(package):
+    &quot;&quot;&quot;Silently install a package if not already installed&quot;&quot;&quot;
+    subprocess.check_call([sys.executable, &quot;-m&quot;, &quot;pip&quot;, &quot;install&quot;, package, &quot;-q&quot;])
+
+&amp;nbsp;
+
+# Check and install required packages
+required_packages = {
+    'gtts': 'gTTS'
+}
+
+&amp;nbsp;
+
+for import_name, package_name in required_packages.items():
+    try:
+        __import__(import_name)
+    except ImportError:
+        print(f&quot;Installing {package_name}...&quot;)
+        install_package(package_name)
+
+&amp;nbsp;
+
+from gtts import gTTS
+
+&amp;nbsp;
+
+# Check if file path is provided as command-line argument
+if len(sys.argv) &lt; 2:
+    print(&quot;Usage: python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;&quot;)
+    sys.exit(1)
+
+&amp;nbsp;
+
+# Get file path from command-line argument
+file_path = sys.argv[1]
+
+&amp;nbsp;
+
+# Check if file exists
+if not os.path.exists(file_path):
+    print(f&quot;Error: File '{file_path}' not found.&quot;)
+    sys.exit(1)
+
+&amp;nbsp;
+
+# Check if file is a .txt file
+if not file_path.lower().endswith('.txt'):
+    print(&quot;Error: File must be a .txt file.&quot;)
+    sys.exit(1)
+
+&amp;nbsp;
+
+# Read text from file
+print(f&quot;Reading text from '{file_path}'...&quot;)
+try:
+    with open(file_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+        text = f.read()
+except Exception as e:
+    print(f&quot;Error reading text file: {e}&quot;)
+    sys.exit(1)
+
+&amp;nbsp;
+
+# Print text length to verify reading
+print(f&quot;Text length: {len(text)} characters&quot;)
+
+&amp;nbsp;
+
+# Generate output filename based on input filename
+output_file = os.path.splitext(os.path.basename(file_path))[0] + &quot;.mp3&quot;
+
+&amp;nbsp;
+
+# Convert text to .mp3
+print(f&quot;Converting text to speech...&quot;)
+try:
+    tts = gTTS(text, lang='en')
+    tts.save(output_file)
+    print(f&quot;Audio file saved as '{output_file}'&quot;)
+except Exception as e:
+    print(f&quot;Error converting to speech: {e}&quot;)
+    sys.exit(1)
+
+&amp;nbsp;
+
+</code></pre>
+<p>&nbsp;</p>
+<h2>Usage Instructions</h2>
+<p>&nbsp;</p>
+<h3>Prerequisites</h3>
+<p>&nbsp;</p>
+<ul>
+<li>Python 3.x installed and reachable on the system <code>PATH</code>.</li>
+<li>An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.</li>
+<li>No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.</li>
+<li>A UTF-8 encoded <code>.txt</code> file. If using the companion script <code>pdf2text_via_PDFplumber.py</code>, its output is UTF-8 by construction.</li>
+</ul>
+<p>&nbsp;</p>
+<h3>Running the Script</h3>
+<p>&nbsp;</p>
+<pre><code class="language-bash">python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;
+</code></pre>
+<p>&nbsp;</p>
+<p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p></div>
+        </section>
+
     </div>
 </body>
 </html>
