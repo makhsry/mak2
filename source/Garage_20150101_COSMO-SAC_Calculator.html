@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COSMO-SAC Activity Coefficient Calculator</title>
+  <meta name="description"
+    content="Browser-based COSMO-SAC activity coefficient calculator for binary liquid mixtures. Upload your inputQM.xlsx and compute ln γ vs composition." />
+
+  <!-- SheetJS for Excel parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Chart.js for plots -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg: #0b0f1a;
+      --surface: #111827;
+      --surface2: #1a2236;
+      --border: rgba(99, 179, 237, .15);
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #34d399;
+      --danger: #f87171;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, .5);
+      --glow: 0 0 24px rgba(56, 189, 248, .18);
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ─── Layout ────────────────────────────────────────────────────── */
+    .wrapper {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    /* ─── Header ────────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0f1e3d 0%, #0b0f1a 60%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 30% 40%, rgba(56, 189, 248, .07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 60%, rgba(129, 140, 248, .06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: .25rem .75rem;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, .12);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, .25);
+      margin-bottom: .75rem;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #e2e8f0 30%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: .5rem;
+      font-size: .95rem;
+      max-width: 620px;
+    }
+
+    /* ─── Card ──────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      transition: border-color .3s;
+    }
+
+    .card:hover {
+      border-color: rgba(99, 179, 237, .3);
+    }
+
+    .card-title {
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── Grid Layouts ──────────────────────────────────────────────── */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+    }
+
+    /* ─── Upload Zone ───────────────────────────────────────────────── */
+    #upload-zone {
+      margin-top: 1.75rem;
+      border: 2px dashed rgba(99, 179, 237, .3);
+      border-radius: var(--radius);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .3s;
+      background: rgba(56, 189, 248, .03);
+      position: relative;
+    }
+
+    #upload-zone:hover,
+    #upload-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, .07);
+      box-shadow: var(--glow);
+    }
+
+    #upload-zone .upload-icon {
+      font-size: 2.5rem;
+      margin-bottom: .75rem;
+      display: block;
+    }
+
+    #upload-zone p {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    #upload-zone strong {
+      color: var(--text);
+    }
+
+    #file-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* ─── Form Controls ─────────────────────────────────────────────── */
+    label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: .6rem .9rem;
+      font-size: .9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color .25s, box-shadow .25s;
+      -webkit-appearance: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, .12);
+    }
+
+    select option {
+      background: var(--surface2);
+    }
+
+    /* ─── Buttons ───────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .7rem 1.5rem;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all .25s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(3, 105, 161, .4);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, .4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, .08);
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      align-items: center;
+    }
+
+    /* ─── Progress / Status ─────────────────────────────────────────── */
+    #status-bar {
+      margin-top: 1.25rem;
+      padding: .8rem 1.1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      display: none;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    #status-bar.info {
+      background: rgba(56, 189, 248, .1);
+      border: 1px solid rgba(56, 189, 248, .25);
+      color: var(--accent);
+      display: flex;
+    }
+
+    #status-bar.error {
+      background: rgba(248, 113, 113, .1);
+      border: 1px solid rgba(248, 113, 113, .25);
+      color: var(--danger);
+      display: flex;
+    }
+
+    #status-bar.success {
+      background: rgba(52, 211, 153, .1);
+      border: 1px solid rgba(52, 211, 153, .25);
+      color: var(--accent3);
+      display: flex;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ─── Progress Bar ──────────────────────────────────────────────── */
+    #progress-wrap {
+      margin-top: .75rem;
+      display: none;
+    }
+
+    #progress-bar-bg {
+      background: var(--surface2);
+      border-radius: 99px;
+      height: 6px;
+      overflow: hidden;
+    }
+
+    #progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+      transition: width .3s;
+    }
+
+    #progress-label {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: .3rem;
+    }
+
+    /* ─── Charts ────────────────────────────────────────────────────── */
+    .chart-wrap {
+      position: relative;
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+
+    /* ─── Results Table ─────────────────────────────────────────────── */
+    #results-section {
+      display: none;
+      margin-top: 1.75rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+
+    thead tr {
+      background: var(--surface2);
+    }
+
+    th {
+      padding: .65rem 1rem;
+      text-align: right;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: .75rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th:first-child {
+      text-align: center;
+    }
+
+    td {
+      padding: .55rem 1rem;
+      text-align: right;
+      border-bottom: 1px solid rgba(99, 179, 237, .07);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+    }
+
+    td:first-child {
+      text-align: center;
+      color: var(--muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    tr:hover td {
+      background: rgba(56, 189, 248, .04);
+    }
+
+    /* ─── Stats Cards ───────────────────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: .75rem;
+      margin-top: 1.25rem;
+    }
+
+    .stat-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+    }
+
+    .stat-label {
+      font-size: .72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-top: .2rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-value.blue {
+      color: var(--accent);
+    }
+
+    .stat-value.purple {
+      color: var(--accent2);
+    }
+
+    .stat-value.green {
+      color: var(--accent3);
+    }
+
+    /* ─── Equation Hint Box ─────────────────────────────────────────── */
+    .eq-box {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: .9rem 1.1rem;
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.8;
+    }
+
+    .eq-box span {
+      color: var(--text);
+    }
+
+    /* ─── Header Pills ───────────────────────────────────────────────── */
+    .header-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: 1.25rem;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: .3rem .85rem;
+      border-radius: 99px;
+      font-size: .75rem;
+      font-weight: 500;
+      background: rgba(129, 140, 248, .1);
+      color: var(--accent2);
+      border: 1px solid rgba(129, 140, 248, .2);
+      letter-spacing: .02em;
+    }
+
+    /* ─── Background / Theory Section ───────────────────────────────── */
+    .bg-section {
+      margin-top: 3rem;
+      padding-bottom: 1rem;
+    }
+
+    .bg-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .bg-section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1.2em;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+    }
+
+    .theory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .theory-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem;
+      transition: border-color .3s;
+    }
+
+    .theory-card:hover {
+      border-color: rgba(99, 179, 237, .3);
+    }
+
+    .theory-card-icon {
+      font-size: 1.6rem;
+      margin-bottom: .6rem;
+      display: block;
+    }
+
+    .theory-card h3 {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: .55rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .theory-card p {
+      font-size: .84rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .theory-card .formula {
+      margin-top: .75rem;
+      background: var(--surface2);
+      border-left: 2px solid var(--accent2);
+      border-radius: 0 6px 6px 0;
+      padding: .6rem .85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .76rem;
+      color: var(--text);
+      line-height: 1.9;
+      overflow-x: auto;
+    }
+
+    .file-table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-top: .75rem;
+    }
+
+    .file-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .83rem;
+    }
+
+    .file-table thead tr {
+      background: var(--surface2);
+    }
+
+    .file-table th {
+      padding: .6rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: .75rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .file-table td {
+      padding: .55rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(99, 179, 237, .07);
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .file-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent3);
+      font-size: .78rem;
+      text-align: left;
+    }
+
+    .file-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .file-table tr:hover td {
+      background: rgba(56, 189, 248, .04);
+    }
+
+    .usage-steps {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin-top: .75rem;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+
+    .usage-steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: .85rem;
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .usage-steps li::before {
+      content: counter(step);
+      flex-shrink: 0;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, .12);
+      border: 1px solid rgba(56, 189, 248, .3);
+      color: var(--accent);
+      font-size: .72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: .1rem;
+    }
+
+    .output-chip {
+      display: inline-block;
+      padding: .15rem .6rem;
+      border-radius: 5px;
+      background: rgba(52, 211, 153, .1);
+      border: 1px solid rgba(52, 211, 153, .25);
+      color: var(--accent3);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────────────── */
+    footer {
+      margin-top: 4rem;
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ─── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .btn-row {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="badge">Thermodynamics · COSMO-SAC</div>
+      <h1>COSMO-SAC Activity Coefficient Model</h1>
+      <p class="subtitle">
+        A browser-based implementation of the <strong style="color:var(--text)">COSMO-SAC (COSMO Segment Activity
+          Coefficient)</strong> model.
+        Calculates thermodynamic activity coefficients of components in binary liquid mixtures
+        based on their molecular surface charge distributions (σ-profiles) — all computation
+        runs locally in your browser, no server or MATLAB license required.
+      </p>
+      <div class="header-pills">
+        <span class="pill">⚡ Electrostatic Misfit Energy</span>
+        <span class="pill">🔗 Hydrogen Bonding</span>
+        <span class="pill">📐 Staverman–Guggenheim Combinatorial</span>
+        <span class="pill">📊 σ-Profile Visualization</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ MAIN -->
+  <main class="wrapper">
+
+    <!-- Step 1: Upload -->
+    <div style="margin-top:2rem" class="card" id="step-upload">
+      <div class="card-title">① Upload Quantum-Chemistry Data</div>
+      <p style="color:var(--muted);font-size:.88rem">
+        Upload your <strong style="color:var(--text)">inputQM.xlsx</strong> file. Each sheet must correspond to one
+        compound
+        and must follow the standard column layout used by this COSMO-SAC implementation
+        (columns C–I: PosX, PosY, PosZ [AU], Charge, Area, Charge/Area, Potential;
+        cell L2: NUMSEGMENT, L3: VolCavity [Å³], L4: AreaCavity [Å²]).
+      </p>
+
+      <div id="upload-zone" role="button" aria-label="Upload inputQM.xlsx">
+        <input type="file" id="file-input" accept=".xlsx,.xls" />
+        <span class="upload-icon">📂</span>
+        <p><strong>Click or drag &amp; drop</strong> your inputQM.xlsx here</p>
+        <p style="margin-top:.35rem;font-size:.78rem">Accepts .xlsx / .xls</p>
+      </div>
+
+      <div id="sheet-list" style="margin-top:1rem;font-size:.82rem;color:var(--muted);display:none">
+        ✅ Loaded sheets: <span id="sheet-names" style="color:var(--accent3)"></span>
+      </div>
+    </div>
+
+    <!-- Step 2: Settings -->
+    <div class="card" style="margin-top:1.25rem" id="step-settings">
+      <div class="card-title">② Configure Binary Mixture</div>
+
+      <div class="grid-3">
+        <div>
+          <label for="comp1-select">Component 1 (Solvent)</label>
+          <select id="comp1-select">
+            <option value="">— upload file first —</option>
+          </select>
+        </div>
+        <div>
+          <label for="comp2-select">Component 2 (Solute)</label>
+          <select id="comp2-select">
+            <option value="">— upload file first —</option>
+          </select>
+        </div>
+        <div>
+          <label for="temp-input">System Temperature (K)</label>
+          <input type="number" id="temp-input" value="298.15" min="150" max="600" step="0.01" />
+        </div>
+      </div>
+
+      <div class="eq-box">
+        <span>ΔW(σᵢ,σⱼ)</span> = (α′/2)(σᵢ+σⱼ)² + c<sub>hb</sub>·max(0, σ<sub>acc</sub>−σ<sub>hb</sub>)·min(0,
+        σ<sub>don</sub>+σ<sub>hb</sub>)<br />
+        <span>ln Γₛ(σᵢ)</span> = −ln[Σⱼ pₛ(σⱼ)·Γₛ(σⱼ)·exp(−ΔW/RT)]<br />
+        <span>ln γᵢ</span> = Σₛ (nₛ/Aeff)·[ln Γmix(σₛ) − ln Γᵢ(σₛ)] + ln γᵢˢᵍ <em>(Staverman–Guggenheim)</em>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="run-btn" disabled>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M3 2l10 6-10 6V2z" />
+          </svg>
+          Run COSMO-SAC
+        </button>
+        <button class="btn btn-secondary" id="reset-btn">↺ Reset</button>
+      </div>
+
+      <div id="status-bar"></div>
+      <div id="progress-wrap">
+        <div id="progress-bar-bg">
+          <div id="progress-bar-fill"></div>
+        </div>
+        <div id="progress-label">Initialising…</div>
+      </div>
+    </div>
+
+    <!-- Step 3: Results -->
+    <div id="results-section">
+
+      <!-- Stat summary -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+          <div class="card-title" style="margin-bottom:0">③ Summary Statistics</div>
+          <div class="btn-row" style="margin-top:0">
+            <button class="btn btn-primary" id="view-dissolved-btn" style="padding:.4rem 1rem">Phase A
+              (Dissolved)</button>
+            <button class="btn btn-secondary" id="view-solute-btn" style="padding:.4rem 1rem">Phase B (Solute)</button>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">Temperature</div>
+            <div class="stat-value blue" id="stat-T">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">γ₁ at x₁→0 (∞ dil.)</div>
+            <div class="stat-value purple" id="stat-g1inf">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">γ₂ at x₂→0 (∞ dil.)</div>
+            <div class="stat-value purple" id="stat-g2inf">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">max |ln γ₁|</div>
+            <div class="stat-value green" id="stat-maxlng1">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">max |ln γ₂|</div>
+            <div class="stat-value green" id="stat-maxlng2">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Composition Points</div>
+            <div class="stat-value blue" id="stat-pts">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Activity Coefficient vs Composition</div>
+          <div class="chart-wrap"><canvas id="chart-gamma" height="280"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">ln γ vs Composition</div>
+          <div class="chart-wrap"><canvas id="chart-lng" height="280"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">σ-Profile — Component 1</div>
+          <div class="chart-wrap"><canvas id="chart-sp1" height="260"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">σ-Profile — Component 2</div>
+          <div class="chart-wrap"><canvas id="chart-sp2" height="260"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Data table -->
+      <div class="card" style="margin-top:1.25rem">
+        <div class="card-title">Full Results Table</div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:.75rem;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-secondary" id="export-sp-btn">⬇ Export sProfiles.xlsx</button>
+          <button class="btn btn-primary" id="export-mix-btn" style="box-shadow:none">⬇ Export MixGamma.xlsx</button>
+        </div>
+        <div class="table-wrap">
+          <table id="results-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>x₁</th>
+                <th>γ₁</th>
+                <th>ln γ₁</th>
+                <th>x₂</th>
+                <th>γ₂</th>
+                <th>ln γ₂</th>
+              </tr>
+            </thead>
+            <tbody id="results-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════ BACKGROUND & THEORY SECTION -->
+  <section class="wrapper bg-section" aria-label="Scientific Background">
+
+    <div class="bg-section-title">Scientific Background &amp; Model Description</div>
+
+    <!-- Overview paragraph -->
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title">Overview</div>
+      <p style="color:var(--muted);font-size:.88rem;line-height:1.8">
+        The <strong style="color:var(--text)">COSMO-SAC</strong> model predicts the non-ideal behavior of liquid
+        mixtures
+        by analyzing the interaction energies between molecular surface segments derived from quantum-chemical
+        (QM) calculations. Unlike group-contribution methods, COSMO-SAC operates directly on the
+        <em>σ-profile</em> — the molecular surface area distribution as a function of
+        screening charge density σ — making it applicable to any molecule for which a COSMO
+        calculation has been performed, without requiring fitted binary interaction parameters.
+        It accounts for three distinct physical phenomena:
+      </p>
+      <div class="theory-grid" style="margin-top:1rem">
+        <div class="theory-card">
+          <span class="theory-card-icon">⚡</span>
+          <h3>Electrostatic Misfit Energy</h3>
+          <p>Segments with different charge densities repel one another. The misfit energy is
+            proportional to α′ and the square of the sum of the two interacting charge densities.</p>
+        </div>
+        <div class="theory-card">
+          <span class="theory-card-icon">🔗</span>
+          <h3>Hydrogen Bonding</h3>
+          <p>An additional attractive term activates when the acceptor segment charge exceeds
+            σ<sub>hb</sub> = 0.0084 e/Å² and the donor charge is below −σ<sub>hb</sub>.
+            Governed by the coefficient c<sub>hb</sub> = 85 580 Kcal·Å⁴/mol·e².</p>
+        </div>
+        <div class="theory-card">
+          <span class="theory-card-icon">📐</span>
+          <h3>Combinatorial (Size &amp; Shape)</h3>
+          <p>The Staverman–Guggenheim term corrects for differences in molecular size (r = V/V<sub>norm</sub>)
+            and shape (q = A/A<sub>norm</sub>) using a coordination number z = 10.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mathematical Logic -->
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title">Mathematical Workflow</div>
+
+      <div class="theory-grid">
+
+        <div class="theory-card">
+          <h3>Step 1 — σ-Profile Calculation</h3>
+          <p>
+            Raw QM segment charges are spatially averaged using a Gaussian-weighted kernel
+            with an effective averaging radius R<sub>eff</sub> = 0.817642 Å.
+            The averaged charge density for segment <em>i</em> is:
+          </p>
+          <div class="formula">
+            σ<sub>new,i</sub> = Σⱼ σⱼ · (Rⱼ²·R<sub>eff</sub>² / D) · exp(−d²/D)<br />
+            ─────────────────────────────────────────<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Σⱼ (Rⱼ²·R<sub>eff</sub>²·D) · exp(−d²/D)<br />
+            <br />
+            where D = Rⱼ² + R<sub>eff</sub>²,&nbsp; d = |rᵢ − rⱼ|
+          </div>
+          <p style="margin-top:.65rem">
+            The averaged σ values are binned into a discrete histogram from −0.025 to +0.025 e/Å²
+            in steps of 0.001, weighted by the segment area to give the σ-profile p(σ).
+          </p>
+        </div>
+
+        <div class="theory-card">
+          <h3>Step 2 — Segment Interaction Energy ΔW</h3>
+          <p>
+            The exchange energy between any pair of surface segments (σᵢ, σⱼ) decomposes into
+            a misfit term and an H-bond term:
+          </p>
+          <div class="formula">
+            ΔW(σᵢ,σⱼ) = (α′/2)(σᵢ+σⱼ)²<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+
+            c<sub>hb</sub>·max(0,σ<sub>acc</sub>−σ<sub>hb</sub>)<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·min(0,σ<sub>don</sub>+σ<sub>hb</sub>)
+          </div>
+          <p style="margin-top:.65rem">
+            σ<sub>acc</sub> = max(σᵢ,σⱼ), σ<sub>don</sub> = min(σᵢ,σⱼ).
+            The polarisation factor F<sub>pol</sub> = (ε−1)/(ε+0.5) with ε = 3.667
+            scales α into α′ = F<sub>pol</sub>·α.
+          </p>
+        </div>
+
+        <div class="theory-card">
+          <h3>Step 3 — Segment Activity Coefficients Γ</h3>
+          <p>
+            Solved self-consistently by iteration (convergence &lt; 10⁻⁶) for both the
+            pure species (<em>SEGGAMMAPR</em>) and the mixture (<em>SEGGAMMA</em>):
+          </p>
+          <div class="formula">
+            ln Γₛ(σᵢ) = −ln[ Σⱼ p(σⱼ)·Γₛ(σⱼ)·exp(−ΔW<sub>ij</sub>/RT) ]<br />
+            <br />
+            Successive substitution with damping:<br />
+            Γ<sub>new</sub> = (Γ<sub>calc</sub> + Γ<sub>old</sub>) / 2
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h3>Step 4 — Total Activity Coefficient γ</h3>
+          <p>
+            The final ln γ is the sum of the residual contribution (segment interactions)
+            and the Staverman–Guggenheim combinatorial term:
+          </p>
+          <div class="formula">
+            ln γᵢ = Σₛ [pᵢ(σₛ)/A<sub>eff</sub>]·[ln Γ<sub>mix</sub>(σₛ) − ln Γᵢ(σₛ)]<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ln(Φᵢ/xᵢ) + (z/2)·qᵢ·ln(Θᵢ/Φᵢ)<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Lᵢ − (Φᵢ/xᵢ)·Σ xₖLₖ<br />
+            <br />
+            Lᵢ = (z/2)(rᵢ−qᵢ) − (rᵢ−1),&nbsp; z = 10
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- File Structure -->
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title">Module / File Structure</div>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:.75rem">
+        The original MATLAB codebase is organised into seven focused functions,
+        all of which have been faithfully ported into the JavaScript engine of this tool.
+      </p>
+      <div class="file-table-wrap">
+        <table class="file-table">
+          <thead>
+            <tr>
+              <th>MATLAB File</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>eqCOSMO.m</td>
+              <td>Top-level driver for two-phase equilibrium; sets temperature and component list.</td>
+            </tr>
+            <tr>
+              <td>Binary.m</td>
+              <td>Primary calculation loop — iterates over all mole fractions x₁ ∈ [0.005, 0.995] and returns the γ
+                matrix.</td>
+            </tr>
+            <tr>
+              <td>SimgaProfileCalculator.m</td>
+              <td>Manages the Gaussian segment-charge averaging and calls the sorting routine to produce p(σ).</td>
+            </tr>
+            <tr>
+              <td>Library.m</td>
+              <td>Reads per-segment geometry (x,y,z), charge, and area data from <code>inputQM.xlsx</code> for a named
+                compound sheet.</td>
+            </tr>
+            <tr>
+              <td>paraCOSMO.m</td>
+              <td>Returns all universal COSMO-SAC constants: R, c<sub>hb</sub>, σ<sub>hb</sub>, A<sub>eff</sub>,
+                V<sub>norm</sub>, A<sub>norm</sub>, α′, …</td>
+            </tr>
+            <tr>
+              <td>SortSimgaProfile.m</td>
+              <td>Bins the averaged σ values into a discrete histogram from −0.025 to +0.025 e/Å² (step 0.001) weighted
+                by area.</td>
+            </tr>
+            <tr>
+              <td>ConvertAU2A.m</td>
+              <td>Converts QM output coordinates from Bohr (atomic units) to Ångströms via the factor 0.529177249.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Usage -->
+    <div class="card">
+      <div class="card-title">Data Format &amp; Usage Instructions</div>
+      <div class="grid-2" style="gap:1.25rem">
+
+        <div>
+          <p style="color:var(--muted);font-size:.85rem;margin-bottom:.75rem">
+            This tool is a direct browser replacement for the MATLAB workflow.
+            The only prerequisite is your <strong style="color:var(--text)">inputQM.xlsx</strong> file
+            produced by a COSMO quantum-chemistry calculation.
+          </p>
+          <h3
+            style="font-size:.8rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem">
+            Excel File Layout</h3>
+          <p style="color:var(--muted);font-size:.82rem;line-height:1.7">
+            Each compound occupies one sheet named after the substance (e.g. <code
+              style="color:var(--accent3);font-size:.78rem">67-63-0-2d</code>).
+            Required cells:
+          </p>
+          <div class="eq-box" style="margin-top:.65rem">
+            <span>L2</span> → NUMSEGMENT (number of surface segments)<br />
+            <span>L3</span> → VolCavity (Å³) — COSMO cavity volume<br />
+            <span>L4</span> → AreaCavity (Å²) — COSMO cavity area<br />
+            <span>C4:C(N+3)</span> → X positions (atomic units)<br />
+            <span>D4:D(N+3)</span> → Y positions (atomic units)<br />
+            <span>E4:E(N+3)</span> → Z positions (atomic units)<br />
+            <span>F4:F(N+3)</span> → Charge (e)<br />
+            <span>G4:G(N+3)</span> → Area (Å²)<br />
+            <span>H4:H(N+3)</span> → Charge/Area = σ (e/Å²)<br />
+            <span>I4:I(N+3)</span> → Potential
+          </div>
+        </div>
+
+        <div>
+          <h3
+            style="font-size:.8rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem">
+            Workflow Steps</h3>
+          <ol class="usage-steps">
+            <li>Upload your <strong style="color:var(--text)">inputQM.xlsx</strong> using the drag-and-drop zone above.
+              The tool will automatically detect all compound sheets.</li>
+            <li>Select <strong style="color:var(--text)">Component 1</strong> and <strong
+                style="color:var(--text)">Component 2</strong> from the detected sheet names.</li>
+            <li>Set the <strong style="color:var(--text)">system temperature</strong> in Kelvin (default 298.15 K).</li>
+            <li>Click <strong style="color:var(--text)">Run COSMO-SAC</strong>. The engine will compute σ-profiles,
+              build the ΔW matrix, iterate for segment activity coefficients, and evaluate γ at 991 composition points.
+            </li>
+            <li>Review the interactive charts (γ vs x₁, ln γ vs x₁, σ-profiles) and summary statistics.</li>
+            <li>Click <strong style="color:var(--text)">Export CSV</strong> to download the full results matrix
+              equivalent to <span class="output-chip">MixGamma.xlsx</span> from the original MATLAB code.</li>
+          </ol>
+          <div
+            style="margin-top:1rem;padding:.85rem 1rem;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:8px;font-size:.82rem;color:var(--muted)">
+            💡 <strong style="color:var(--text)">Tip:</strong> Infinite-dilution activity coefficients (γ₁∞, γ₂∞) are
+            read directly from
+            the Summary Statistics panel — γ₁ at x₁ → 0.005 and γ₂ at x₂ → 0.005.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    COSMO-SAC Activity Coefficient Model ·
+    Lin &amp; Sandler, <em>Ind. Eng. Chem. Res.</em> 2002, 41, 899–913 ·
+    Browser port — all computation runs locally · No data leaves your machine.
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ SCRIPT -->
+  <script>
+    /* =========================================================================
+       COSMO-SAC Browser Implementation
+       Faithfully ported from the MATLAB codebase by gamaCOSMO_matlab1
+       ========================================================================= */
+
+    // ── Globals ────────────────────────────────────────────────────────────────
+    let workbook = null;          // parsed XLSX workbook
+    let sheetNames = [];
+    let matrixDissolved = null;
+    let matrixSolute = null;
+    let currentView = 'dissolved';
+    let sp1Data = null, sp2Data = null;
+    let chartGamma = null, chartLng = null, chartSP1 = null, chartSP2 = null;
+
+    // ── COSMO-SAC Parameters  (paraCOSMO) ─────────────────────────────────────
+    function paraCOSMO() {
+      const EO = 2.395e-4;     // permittivity vacuum  (e²·mol / Kcal·Å)
+      const AEFFPRIME = 7.5;          // effective surface area (Å²)
+      const RGAS = 0.001987;     // gas constant (Kcal / mol·K)
+      const VNORM = 66.69;        // volume normalisation (Å³)
+      const ANORM = 79.53;        // area normalisation   (Å²)
+      const COMPSEG = 51;           // sigma profile intervals
+      const EPS = 3.667;        // relative permittivity
+      const COORD = 10.0;         // coordination number
+      const SIGMAHB = 0.0084;       // H-bond cut-off (e/Å²)
+      const CHB = 85580.0;      // H-bond coefficient (Kcal·Å⁴ / mol·e²)
+      const FPOL = (EPS - 1.0) / (EPS + 0.5);
+      const ALPHA = (0.3 * AEFFPRIME ** 1.5) / EO;
+      const ALPHAPRIME = FPOL * ALPHA;
+      return { EO, AEFFPRIME, RGAS, VNORM, ANORM, COMPSEG, EPS, COORD, SIGMAHB, CHB, FPOL, ALPHA, ALPHAPRIME };
+    }
+
+    // ── ConvertAU2A ────────────────────────────────────────────────────────────
+    function convertAU2A(POSXAU, POSYAU, POSZAU, Area) {
+      const conv = 0.529177249;
+      const PI = Math.PI;
+      const POSXA = POSXAU.map(v => v * conv);
+      const POSYA = POSYAU.map(v => v * conv);
+      const POSZA = POSZAU.map(v => v * conv);
+      const RAD = Area.map(v => Math.sqrt(v / PI));
+      return { POSXA, POSYA, POSZA, RAD };
+    }
+
+    // ── Library: read one sheet from workbook ──────────────────────────────────
+    function readLibrary(wb, sheetChar) {
+      const ws = wb.Sheets[sheetChar];
+      if (!ws) throw new Error(`Sheet "${sheetChar}" not found in workbook.`);
+
+      function cellVal(addr) {
+        const c = ws[addr];
+        return c ? c.v : 0;
+      }
+      function colRange(col, start, end) {
+        const arr = [];
+        for (let r = start; r <= end; r++) {
+          const c = ws[col + r];
+          arr.push(c ? Number(c.v) : 0);
+        }
+        return arr;
+      }
+
+      const NUMSEGMENT = Math.round(cellVal('L2'));
+      const VolCavity = cellVal('L3');
+      const AreaCavity = cellVal('L4');
+      const endRow = NUMSEGMENT + 4 - 1;  // 1-indexed rows: row 4 to row (NUMSEG+3)
+      // MATLAB: 'C4':['C' num2str(NUMSEGMENT+4)]  → rows 4..NUMSEGMENT+3 (0-based: 3..NUMSEG+2)
+      // XLSX xlsread range 'C4:C<N+4>' in MATLAB means rows 4 through N+3 (N items)
+      const startRow = 4;
+      const lastRow = NUMSEGMENT + 3;
+
+      const POSXAU = colRange('C', startRow, lastRow);
+      const POSYAU = colRange('D', startRow, lastRow);
+      const POSZAU = colRange('E', startRow, lastRow);
+      const Charge = colRange('F', startRow, lastRow);
+      const Area = colRange('G', startRow, lastRow);
+      const ChargePerArea = colRange('H', startRow, lastRow);
+      const Potential = colRange('I', startRow, lastRow);
+
+      return { NUMSEGMENT, VolCavity, AreaCavity, Charge, Area, ChargePerArea, Potential, POSXAU, POSYAU, POSZAU };
+    }
+
+    // ── SortSigmaProfile ───────────────────────────────────────────────────────
+    function sortSigmaProfile(SigmaNEW, Area) {
+      const SigmaDensity = [];
+      for (let v = -0.025; v <= 0.025 + 1e-9; v += 1e-3) {
+        SigmaDensity.push(parseFloat(v.toFixed(6)));
+      }
+      const N = SigmaDensity.length;
+      const SigmaProfile = new Float64Array(N);   // zeros
+
+      for (let idPart = 0; idPart < N - 1; idPart++) {
+        let sum = 0;
+        const lo = SigmaDensity[idPart];
+        const hi = SigmaDensity[idPart + 1];
+        for (let k = 0; k < SigmaNEW.length; k++) {
+          if (SigmaNEW[k] > lo && SigmaNEW[k] < hi) {
+            // neighbouring segment index: MATLAB uses idParSigmaNEW+1 (1-based next)
+            // In MATLAB: TempData = |SigmaNEW(idx) - SigmaNEW(idx+1)| * Area(idx)
+            // We replicate by taking abs diff with next element (clamp at last)
+            const next = Math.min(k + 1, SigmaNEW.length - 1);
+            sum += Math.abs(SigmaNEW[k] - SigmaNEW[next]) * Area[k];
+          }
+        }
+        SigmaProfile[idPart] = sum;
+      }
+      return { SigmaDensity, SigmaProfile };
+    }
+
+    // ── SigmaProfileCalculator ─────────────────────────────────────────────────
+    function sigmaProfileCalculator(wb, sheetChar) {
+      const REFF = 0.81764200000000;
+
+      const lib = readLibrary(wb, sheetChar);
+      const { NUMSEGMENT, VolCavity, Area, ChargePerArea, POSXAU, POSYAU, POSZAU } = lib;
+      const { POSXA, POSYA, POSZA, RAD } = convertAU2A(POSXAU, POSYAU, POSZAU, Area);
+
+      const Sigma = ChargePerArea;
+      const SigmaNEW = new Float64Array(NUMSEGMENT);
+      const NormSum = new Float64Array(NUMSEGMENT);
+
+      for (let i = 0; i < NUMSEGMENT; i++) {
+        let sN = 0, nS = 0;
+        for (let j = 0; j < NUMSEGMENT; j++) {
+          const dx = POSXA[j] - POSXA[i];
+          const dy = POSYA[j] - POSYA[i];
+          const dz = POSZA[j] - POSZA[i];
+          const Term1 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          const rj2 = RAD[j] * RAD[j];
+          const reff2 = REFF * REFF;
+          const denom = rj2 + reff2;
+          const expArg = -(Term1 * Term1) / denom;
+          const Term2 = Sigma[j] * ((rj2 * reff2) / denom) * Math.exp(expArg);
+          const Term3 = (rj2 * reff2 * denom) * Math.exp(expArg);
+          sN += Term2;
+          nS += Term3;
+        }
+        SigmaNEW[i] = sN / nS;
+      }
+
+      const { SigmaDensity, SigmaProfile } = sortSigmaProfile(Array.from(SigmaNEW), Area);
+      return { SigmaDensity, SigmaProfile, VolCavity };
+    }
+
+    // ── Main Binary Calculation ────────────────────────────────────────────────
+    // Returns array of rows: [x1, gamma1, lngamma1, x2, gamma2, lngamma2]
+    async function runBinary(wb, SYSTEMP, sheetComp1, sheetComp2, onProgress) {
+      const p = paraCOSMO();
+      const { AEFFPRIME, RGAS, VNORM, ANORM, COORD, SIGMAHB, CHB, ALPHAPRIME } = p;
+
+      onProgress(5, 'Computing σ-profile for component 1…');
+      await yieldToUI();
+      const sp1 = sigmaProfileCalculator(wb, sheetComp1);
+
+      onProgress(25, 'Computing σ-profile for component 2…');
+      await yieldToUI();
+      const sp2 = sigmaProfileCalculator(wb, sheetComp2);
+
+      const { SigmaDensity } = sp1;
+      const NS = SigmaDensity.length;
+
+      // Molecular surface areas (sum of sigma profile)
+      const ACOSMO = [
+        sp1.SigmaProfile.reduce((a, v) => a + v, 0),
+        sp2.SigmaProfile.reduce((a, v) => a + v, 0),
+      ];
+      const VCOSMO = [sp1.VolCavity, sp2.VolCavity];
+
+      const RNORM = VCOSMO.map(v => v / VNORM);
+      const QNORM = ACOSMO.map(v => v / ANORM);
+
+      // Sigma profiles matrix [NS x 2]
+      const SigmaProfiles = [
+        Array.from(sp1.SigmaProfile),
+        Array.from(sp2.SigmaProfile),
+      ];
+
+      // Mole fractions: 0.005 : 0.001 : 0.995
+      const x1arr = [];
+      for (let x1 = 0.005; x1 <= 0.995 + 1e-9; x1 += 0.001) {
+        x1arr.push(parseFloat(x1.toFixed(4)));
+      }
+
+      // Pre-compute delta W matrix [NS x NS]
+      onProgress(35, 'Building ΔW interaction matrix…');
+      await yieldToUI();
+      const DELTAW = new Float64Array(NS * NS);
+      for (let i = 0; i < NS; i++) {
+        for (let j = 0; j < NS; j++) {
+          const si = SigmaDensity[i];
+          const sj = SigmaDensity[j];
+          const SIGMAACC = si >= sj ? si : sj;
+          const SIGMADON = si >= sj ? sj : si;
+          const misfit = (ALPHAPRIME / 2.0) * (si + sj) ** 2;
+          const hb = CHB * Math.max(0, SIGMAACC - SIGMAHB) * Math.min(0, SIGMADON + SIGMAHB);
+          DELTAW[i * NS + j] = misfit + hb;
+        }
+      }
+
+      // --- Segment activity coefficients for PURE components (x-independent) ---
+      onProgress(45, 'Computing pure-component segment activity coefficients…');
+      await yieldToUI();
+
+      // SEGGAMMAPR[comp][i]
+      const SEGGAMMAPR = [new Float64Array(NS).fill(1), new Float64Array(NS).fill(1)];
+      const RT = RGAS * SYSTEMP;
+
+      for (let n = 0; n < 2; n++) {
+        const pn = SigmaProfiles[n];
+        const An = ACOSMO[n];
+        let converged = false;
+        let iter = 0;
+        while (!converged && iter < 10000) {
+          iter++;
+          const oldGamma = new Float64Array(SEGGAMMAPR[n]);
+          let maxDiff = 0;
+          for (let i = 0; i < NS; i++) {
+            let sum = 0;
+            for (let j = 0; j < NS; j++) {
+              sum += (pn[j] / An) * oldGamma[j] * Math.exp(-DELTAW[i * NS + j] / RT);
+            }
+            let newG = 1.0 / sum;
+            newG = (newG + oldGamma[i]) / 2.0;   // damping
+            SEGGAMMAPR[n][i] = newG;
+            const diff = Math.abs((newG - oldGamma[i]) / (oldGamma[i] || 1e-12));
+            if (diff > maxDiff) maxDiff = diff;
+          }
+          if (maxDiff < 1e-6) converged = true;
+        }
+      }
+
+      // --- Loop over compositions ---
+      onProgress(60, 'Iterating over compositions…');
+      const MATrix = [];
+      const TOTAL = x1arr.length;
+
+      // Pre-compute exp table for mixture loop reuse per fraction
+      for (let xi = 0; xi < TOTAL; xi++) {
+        const x1 = x1arr[xi];
+        const x2 = 1.0 - x1;
+
+        // Mixture sigma profile  p_mix(σ) = [x1·p1(σ) + x2·p2(σ)] / [x1·A1 + x2·A2]
+        const denom_mix = x1 * ACOSMO[0] + x2 * ACOSMO[1];
+        const MixSP = new Float64Array(NS);
+        for (let i = 0; i < NS; i++) {
+          MixSP[i] = (x1 * SigmaProfiles[0][i] + x2 * SigmaProfiles[1][i]) / denom_mix;
+        }
+
+        // Mixture segment activity coefficients (iterative)
+        const SEGGAMMA = new Float64Array(NS).fill(1);
+        let converged = false;
+        let iter = 0;
+        while (!converged && iter < 10000) {
+          iter++;
+          const oldG = new Float64Array(SEGGAMMA);
+          let maxDiff = 0;
+          for (let i = 0; i < NS; i++) {
+            let sum = 0;
+            for (let j = 0; j < NS; j++) {
+              sum += MixSP[j] * oldG[j] * Math.exp(-DELTAW[i * NS + j] / RT);
+            }
+            let ng = 1.0 / sum;
+            ng = (ng + oldG[i]) / 2.0;
+            SEGGAMMA[i] = ng;
+            const diff = Math.abs((ng - oldG[i]) / (oldG[i] || 1e-12));
+            if (diff > maxDiff) maxDiff = diff;
+          }
+          if (maxDiff < 1e-6) converged = true;
+        }
+
+        // Staverman-Guggenheim combinatorial term
+        const BOTTHETA = x1 * QNORM[0] + x2 * QNORM[1];
+        const BOTPHI = x1 * RNORM[0] + x2 * RNORM[1];
+        const THETA = [x1 * QNORM[0] / BOTTHETA, x2 * QNORM[1] / BOTTHETA];
+        const PHI = [x1 * RNORM[0] / BOTPHI, x2 * RNORM[1] / BOTPHI];
+        const L = [
+          (COORD / 2.0) * (RNORM[0] - QNORM[0]) - (RNORM[0] - 1.0),
+          (COORD / 2.0) * (RNORM[1] - QNORM[1]) - (RNORM[1] - 1.0),
+        ];
+        const xL = x1 * L[0] + x2 * L[1];
+
+        const GAMMASG = [
+          Math.log(PHI[0] / x1) + (COORD / 2) * QNORM[0] * Math.log(THETA[0] / PHI[0]) + L[0] - (PHI[0] / x1) * xL,
+          Math.log(PHI[1] / x2) + (COORD / 2) * QNORM[1] * Math.log(THETA[1] / PHI[1]) + L[1] - (PHI[1] / x2) * xL,
+        ];
+
+        // Residual contribution: sum over segments
+        const SUMGAMMA = [0, 0];
+        for (let n = 0; n < 2; n++) {
+          let s = 0;
+          for (let i = 0; i < NS; i++) {
+            if (SigmaProfiles[n][i] !== 0) {
+              s += (SigmaProfiles[n][i] / AEFFPRIME) * (Math.log(SEGGAMMA[i]) - Math.log(SEGGAMMAPR[n][i]));
+            }
+          }
+          SUMGAMMA[n] = s;
+        }
+
+        const LNGAMMA = [SUMGAMMA[0] + GAMMASG[0], SUMGAMMA[1] + GAMMASG[1]];
+        const GAMMA = [Math.exp(LNGAMMA[0]), Math.exp(LNGAMMA[1])];
+
+        MATrix.push([x1, GAMMA[0], LNGAMMA[0], x2, GAMMA[1], LNGAMMA[1]]);
+
+        // Update progress bar every 50 steps
+        if (xi % 50 === 0) {
+          onProgress(60 + Math.round((xi / TOTAL) * 38), `Processing x₁=${x1.toFixed(3)} (${xi + 1}/${TOTAL})…`);
+          await yieldToUI();
+        }
+      }
+
+      return { matrix: MATrix, sp1, sp2 };
+    }
+
+    // Yield control to browser between heavy computation chunks
+    function yieldToUI() {
+      return new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    // ── UI Helpers ─────────────────────────────────────────────────────────────
+    function setStatus(type, msg, showSpinner = false) {
+      const bar = document.getElementById('status-bar');
+      bar.className = type;
+      bar.innerHTML = (showSpinner ? '<div class="spinner"></div>' : '') + `<span>${msg}</span>`;
+    }
+    function clearStatus() {
+      const bar = document.getElementById('status-bar');
+      bar.className = '';
+      bar.style.display = 'none';
+    }
+    function setProgress(pct, label) {
+      document.getElementById('progress-wrap').style.display = 'block';
+      document.getElementById('progress-bar-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = label;
+    }
+    function hideProgress() {
+      document.getElementById('progress-wrap').style.display = 'none';
+    }
+
+    // ── Chart Helpers ──────────────────────────────────────────────────────────
+    const CHART_DEFAULTS = {
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+        tooltip: {
+          mode: 'index', intersect: false,
+          backgroundColor: '#1a2236', titleColor: '#e2e8f0', bodyColor: '#94a3b8', borderColor: '#38bdf8', borderWidth: 1
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: 'rgba(99,179,237,.07)' } },
+        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(99,179,237,.07)' } },
+      }
+    };
+
+    function buildGammaChart(matrix) {
+      const x1 = matrix.map(r => r[0]);
+      const g1 = matrix.map(r => r[1]);
+      const g2 = matrix.map(r => r[4]);
+      const ctx = document.getElementById('chart-gamma').getContext('2d');
+      if (chartGamma) chartGamma.destroy();
+      chartGamma = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: x1.map(v => v.toFixed(3)),
+          datasets: [
+            { label: 'γ₁', data: g1, borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,.08)', borderWidth: 2, pointRadius: 0, tension: .35 },
+            { label: 'γ₂', data: g2, borderColor: '#818cf8', backgroundColor: 'rgba(129,140,248,.08)', borderWidth: 2, pointRadius: 0, tension: .35 },
+          ]
+        },
+        options: {
+          ...CHART_DEFAULTS,
+          plugins: { ...CHART_DEFAULTS.plugins, tooltip: { ...CHART_DEFAULTS.plugins.tooltip } },
+          scales: {
+            ...CHART_DEFAULTS.scales,
+            x: { ...CHART_DEFAULTS.scales.x, title: { display: true, text: 'x₁', color: '#94a3b8' } },
+            y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: 'γ', color: '#94a3b8' } },
+          }
+        }
+      });
+    }
+
+    function buildLngChart(matrix) {
+      const x1 = matrix.map(r => r[0]);
+      const lg1 = matrix.map(r => r[2]);
+      const lg2 = matrix.map(r => r[5]);
+      const ctx = document.getElementById('chart-lng').getContext('2d');
+      if (chartLng) chartLng.destroy();
+      chartLng = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: x1.map(v => v.toFixed(3)),
+          datasets: [
+            { label: 'ln γ₁', data: lg1, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,.08)', borderWidth: 2, pointRadius: 0, tension: .35 },
+            { label: 'ln γ₂', data: lg2, borderColor: '#f472b6', backgroundColor: 'rgba(244,114,182,.08)', borderWidth: 2, pointRadius: 0, tension: .35 },
+          ]
+        },
+        options: {
+          ...CHART_DEFAULTS,
+          scales: {
+            ...CHART_DEFAULTS.scales,
+            x: { ...CHART_DEFAULTS.scales.x, title: { display: true, text: 'x₁', color: '#94a3b8' } },
+            y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: 'ln γ', color: '#94a3b8' } },
+          }
+        }
+      });
+    }
+
+    function buildSPChart(canvasId, chartRef, sp, label, color) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      if (chartRef) chartRef.destroy();
+      return new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sp.SigmaDensity.map(v => v.toFixed(3)),
+          datasets: [{
+            label: `p(σ) — ${label}`,
+            data: Array.from(sp.SigmaProfile),
+            backgroundColor: color + '55',
+            borderColor: color,
+            borderWidth: 1,
+          }]
+        },
+        options: {
+          ...CHART_DEFAULTS,
+          scales: {
+            ...CHART_DEFAULTS.scales,
+            x: { ...CHART_DEFAULTS.scales.x, title: { display: true, text: 'σ (e/Å²)', color: '#94a3b8' }, ticks: { maxTicksLimit: 10, color: '#64748b' } },
+            y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: 'p(σ) (Å²)', color: '#94a3b8' } },
+          },
+          plugins: { ...CHART_DEFAULTS.plugins, legend: { ...CHART_DEFAULTS.plugins.legend } }
+        }
+      });
+    }
+
+    function updateViewButtons() {
+      const btnD = document.getElementById('view-dissolved-btn');
+      const btnS = document.getElementById('view-solute-btn');
+      if (currentView === 'dissolved') {
+        btnD.className = 'btn btn-primary'; btnS.className = 'btn btn-secondary';
+      } else {
+        btnD.className = 'btn btn-secondary'; btnS.className = 'btn btn-primary';
+      }
+    }
+
+    // ── Results Rendering ──────────────────────────────────────────────────────
+    function renderResults(T) {
+      updateViewButtons();
+      const matrix = currentView === 'dissolved' ? matrixDissolved : matrixSolute;
+      const c1 = currentView === 'dissolved' ? document.getElementById('comp1-select').value : document.getElementById('comp2-select').value;
+      const c2 = document.getElementById('comp2-select').value;
+
+      // Stats
+      document.getElementById('stat-T').textContent = T.toFixed(2) + ' K';
+      document.getElementById('stat-g1inf').textContent = matrix[0][1].toFixed(4);
+      document.getElementById('stat-g2inf').textContent = matrix[matrix.length - 1][4].toFixed(4);
+      document.getElementById('stat-maxlng1').textContent = Math.max(...matrix.map(r => Math.abs(r[2]))).toFixed(4);
+      document.getElementById('stat-maxlng2').textContent = Math.max(...matrix.map(r => Math.abs(r[5]))).toFixed(4);
+      document.getElementById('stat-pts').textContent = matrix.length;
+
+      // Charts
+      buildGammaChart(matrix);
+      buildLngChart(matrix);
+      if (currentView === 'dissolved') {
+        chartSP1 = buildSPChart('chart-sp1', chartSP1, sp1Data, c1, '#38bdf8');
+        chartSP2 = buildSPChart('chart-sp2', chartSP2, sp2Data, c2, '#818cf8');
+        document.getElementById('chart-sp1').parentElement.parentElement.style.display = 'block';
+        document.getElementById('chart-sp2').parentElement.parentElement.style.display = 'block';
+      } else {
+        // Solute pure phase is just c2 + c2
+        chartSP1 = buildSPChart('chart-sp1', chartSP1, sp2Data, c2, '#818cf8');
+        chartSP2 = buildSPChart('chart-sp2', chartSP2, sp2Data, c2, '#818cf8');
+        document.getElementById('chart-sp2').parentElement.parentElement.style.display = 'none'; // hide second duplicate chart
+        document.getElementById('chart-sp1').parentElement.parentElement.style.display = 'block';
+      }
+
+      // Table
+      const tbody = document.getElementById('results-tbody');
+      tbody.innerHTML = '';
+      matrix.forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+      <td>${idx + 1}</td>
+      <td>${row[0].toFixed(4)}</td>
+      <td>${row[1].toFixed(6)}</td>
+      <td>${row[2].toFixed(6)}</td>
+      <td>${row[3].toFixed(4)}</td>
+      <td>${row[4].toFixed(6)}</td>
+      <td>${row[5].toFixed(6)}</td>
+    `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('results-section').style.display = 'block';
+    }
+
+    // ── Excel Export (eqCOSMO / Binary replication) ────────────────────────────
+    function exportMixGamma() {
+      if (!matrixDissolved || !matrixSolute) return;
+      const wb = XLSX.utils.book_new();
+
+      const wsDissolved = XLSX.utils.aoa_to_sheet(matrixDissolved);
+      XLSX.utils.book_append_sheet(wb, wsDissolved, 'Dissolved');
+
+      const wsSolute = XLSX.utils.aoa_to_sheet(matrixSolute);
+      XLSX.utils.book_append_sheet(wb, wsSolute, 'Solute');
+
+      XLSX.writeFile(wb, 'MixGamma.xlsx');
+    }
+
+    function exportSProfiles() {
+      if (!sp1Data || !sp2Data) return;
+      const c1 = document.getElementById('comp1-select').value;
+      const c2 = document.getElementById('comp2-select').value;
+      const wb = XLSX.utils.book_new();
+
+      const formatSP = (spData) => {
+        const rows = [
+          ['SigmaDensity', 'SigmaProfile'],
+          ['', '']
+        ];
+        for (let i = 0; i < spData.SigmaDensity.length; i++) {
+          rows.push([spData.SigmaDensity[i], spData.SigmaProfile[i]]);
+        }
+        return rows;
+      };
+
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(formatSP(sp1Data)), c1.substring(0, 31));
+      if (c1 !== c2) {
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(formatSP(sp2Data)), c2.substring(0, 31));
+      }
+
+      XLSX.writeFile(wb, 'sProfiles.xlsx');
+    }
+
+    // ── File Upload ────────────────────────────────────────────────────────────
+    function handleFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          workbook = XLSX.read(e.target.result, { type: 'array' });
+          sheetNames = workbook.SheetNames;
+          populateSelects(sheetNames);
+          document.getElementById('sheet-names').textContent = sheetNames.join(', ');
+          document.getElementById('sheet-list').style.display = 'block';
+          document.getElementById('upload-zone').style.borderColor = 'var(--accent3)';
+          document.getElementById('run-btn').disabled = false;
+          setStatus('success', `✅ Loaded "${file.name}" — ${sheetNames.length} sheet(s) found.`);
+        } catch (err) {
+          setStatus('error', `❌ Failed to parse file: ${err.message}`);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function populateSelects(names) {
+      [document.getElementById('comp1-select'), document.getElementById('comp2-select')].forEach((sel, idx) => {
+        sel.innerHTML = '';
+        names.forEach((n, i) => {
+          const opt = document.createElement('option');
+          opt.value = n; opt.textContent = n;
+          if (i === idx && idx < names.length) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    // ── Event Wiring ───────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const fileInput = document.getElementById('file-input');
+      const uploadZone = document.getElementById('upload-zone');
+      const runBtn = document.getElementById('run-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const exportMixBtn = document.getElementById('export-mix-btn');
+      const exportSpBtn = document.getElementById('export-sp-btn');
+      const viewDbtn = document.getElementById('view-dissolved-btn');
+      const viewSbtn = document.getElementById('view-solute-btn');
+
+      // Drag & drop
+      uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+      uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+      uploadZone.addEventListener('drop', e => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+
+      // Toggles
+      viewDbtn.addEventListener('click', () => {
+        if (!matrixDissolved) return;
+        currentView = 'dissolved';
+        const T = parseFloat(document.getElementById('temp-input').value);
+        renderResults(T);
+      });
+
+      viewSbtn.addEventListener('click', () => {
+        if (!matrixSolute) return;
+        currentView = 'solute';
+        const T = parseFloat(document.getElementById('temp-input').value);
+        renderResults(T);
+      });
+
+      // Run
+      runBtn.addEventListener('click', async () => {
+        if (!workbook) { setStatus('error', '❌ Please upload a file first.'); return; }
+
+        const c1 = document.getElementById('comp1-select').value;
+        const c2 = document.getElementById('comp2-select').value;
+        const T = parseFloat(document.getElementById('temp-input').value);
+
+        if (!c1 || !c2) { setStatus('error', '❌ Please select both components.'); return; }
+        if (isNaN(T) || T <= 0) { setStatus('error', '❌ Enter a valid temperature (K).'); return; }
+
+        runBtn.disabled = true;
+        document.getElementById('results-section').style.display = 'none';
+        setStatus('info', 'Running COSMO-SAC computation…', true);
+
+        try {
+          // Phase A: Dissolved (c1 + c2)
+          setProgress(0, 'Starting Phase A (Dissolved)…');
+          const resA = await runBinary(workbook, T, c1, c2, (pct, label) => {
+            setProgress(pct * 0.5, 'Phase A: ' + label);
+          });
+          matrixDissolved = resA.matrix;
+          sp1Data = resA.sp1;
+          sp2Data = resA.sp2;
+
+          // Phase B: Solute (c2 + c2)
+          setProgress(50, 'Starting Phase B (Solute)…');
+          const resB = await runBinary(workbook, T, c2, c2, (pct, label) => {
+            setProgress(50 + pct * 0.5, 'Phase B: ' + label);
+          });
+          matrixSolute = resB.matrix;
+
+          currentView = 'dissolved';
+          renderResults(T);
+          document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          setStatus('success', `✅ Calculation complete — MixGamma and sProfiles ready for export.`);
+          hideProgress();
+        } catch (err) {
+          setStatus('error', `❌ Computation error: ${err.message}`);
+          hideProgress();
+          console.error(err);
+        } finally {
+          runBtn.disabled = false;
+        }
+      });
+
+      // Exports
+      exportMixBtn.addEventListener('click', exportMixGamma);
+      exportSpBtn.addEventListener('click', exportSProfiles);
+
+      // Reset
+      resetBtn.addEventListener('click', () => {
+        workbook = null; sheetNames = []; matrixDissolved = null; matrixSolute = null; sp1Data = null; sp2Data = null;
+        document.getElementById('file-input').value = '';
+        document.getElementById('upload-zone').style.borderColor = '';
+        document.getElementById('sheet-list').style.display = 'none';
+        document.getElementById('results-section').style.display = 'none';
+        document.getElementById('run-btn').disabled = true;
+        clearStatus(); hideProgress();
+        ['comp1-select', 'comp2-select'].forEach(id => {
+          const sel = document.getElementById(id);
+          sel.innerHTML = '<option value="">— upload file first —</option>';
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
