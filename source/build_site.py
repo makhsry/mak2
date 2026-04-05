@@ -32,28 +32,20 @@ def get_md_files(source_dir):
     return md_files
 
 def convert_md_to_html(content, images_rel_path):
-    # Fix image links: ![alt](image.jpg) -> ![alt](assets/image.jpg)
-    def fix_img_path(match):
-        alt = match.group(1)
-        url = match.group(2)
+    # Fix both image and regular links: find any ](url) where url is local 
+    # and prefix it with the assets path.
+    def fix_path(match):
+        url = match.group(1)
         if not url.startswith(("http://", "https://", "/", "mailto:", "#")):
-            return f'![{alt}]({images_rel_path}/{url})'
+            return f']({images_rel_path}/{url})'
         return match.group(0)
 
-    # Fix regular links: [text](file.pdf) -> [text](assets/file.pdf)
-    def fix_link_path(match):
-        text = match.group(1)
-        url = match.group(2)
-        if not url.startswith(("http://", "https://", "/", "mailto:", "#")):
-            return f'[{text}]({images_rel_path}/{url})'
-        return match.group(0)
-
-    content = re.sub(r'!\[(.*?)\]\((.*?)\)', fix_img_path, content)
-    # Use negative lookbehind to avoid matching image markdown which is already handled
-    content = re.sub(r'(?<!\!)\[(.*?)\]\((.*?)\)', fix_link_path, content)
+    content = re.sub(r'\]\((.*?)\)', fix_path, content)
     
     # Pre-process content to treat multiple blank lines as literal empty lines
     content = re.sub(r'\n\s*\n', '\n\n&nbsp;\n\n', content)
+
+    return markdown.markdown(content, extensions=['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br'])
 
     return markdown.markdown(content, extensions=['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br'])
 
