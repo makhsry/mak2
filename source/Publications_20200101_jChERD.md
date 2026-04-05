@@ -6,8 +6,30 @@ In the paper [**Revisiting ‘penetration depth’ in falling film mass transfer
  
 Two python scripts are provided to calculate the mass transfer characteristics in falling liquid films. The scripts are written in Python 3.x and use the NumPy library for numerical calculations. The scripts solve the governing equations for convective mass transfer in a laminar falling film.
 
-**Python Scripts**    
+**Film Hydrodynamics**
+The film thickness (δ) and average velocity (u) are calculated based on the film flow rate (Γ) and fluid properties (density ρ, viscosity μ):
 
+<p>δ = (3μΓ / ρ²g)<sup>1/3</sup></p>
+<p>u = Γ / (ρδ)</p>
+
+**Infinite Penetration Model**
+For short contact times or thick films, the solute is assumed not to reach the wall. The local mass transfer coefficient (k<sub>c</sub>) is:
+
+<p>k<sub>c</sub>(y) = (3uD / 2πy)<sup>1/2</sup></p>
+
+**Finite Penetration Model**
+When the solute reaches the wall (finite depth), the concentration profile is solved using a Fourier series expansion. The code determines a characteristic parameter (ξ) by solving for the root of the error function:
+
+<p>Error = ( Σ<sub>n=0</sub><sup>∞</sup> <sup>(-1)<sup>n</sup></sup>&frasl;<sub>2n+1</sub> exp( - [ <sup>(2n+1)π</sup>&frasl;<sub>2ξ</sub> ]<sup>2</sup> &middot; <sup>Dy</sup>&frasl;<sub>u</sub> ) ) - π&frasl;4</p>
+
+**Mass Flux Calculation (N<sub>A</sub>)**
+The local mass flux at the interface is determined by:
+
+<p>N<sub>A</sub> = k<sub>c</sub> &middot; (c<sub>Ai</sub> - c<sub>A0</sub>)</p>
+
+where c<sub>Ai</sub> is the interfacial concentration and c<sub>A0</sub> is the bulk concentration.     
+
+**Python Scripts**    
 **1. Impact of Diffusivity**    
 Analyzes how different diffusion coefficients impact the penetration depth and flux.
 
@@ -215,45 +237,3 @@ L = 1         # Wall length (m)
 gamma = 0.05  # Film flow rate (kg/m.s)
 cAi = 0.0366  # Interfacial concentration
 ``` 
-
-
-
-
-
-
-
-
-
-
-
-
----
-
-## Mathematical Logic
-
-The scripts solve the governing equations for convective mass transfer in a laminar falling film.
-
-### 1. Film Hydrodynamics
-The film thickness (δ) and average velocity (u) are calculated based on the film flow rate (Γ) and fluid properties (density ρ, viscosity μ):
-
-<p>δ = (3μΓ / ρ²g)<sup>1/3</sup></p>
-<p>u = Γ / (ρδ)</p>
-
-### 2. Infinite Penetration Model
-For short contact times or thick films, the solute is assumed not to reach the wall. The local mass transfer coefficient (k<sub>c</sub>) is:
-
-<p>k<sub>c</sub>(y) = (3uD / 2πy)<sup>1/2</sup></p>
-
-### 3. Finite Penetration Model
-When the solute reaches the wall (finite depth), the concentration profile is solved using a Fourier series expansion. The code determines a characteristic parameter (ξ) by solving for the root of the error function:
-
-<p>Error = ( Σ<sub>n=0</sub><sup>∞</sup> <sup>(-1)<sup>n</sup></sup>&frasl;<sub>2n+1</sub> exp( - [ <sup>(2n+1)π</sup>&frasl;<sub>2ξ</sub> ]<sup>2</sup> &middot; <sup>Dy</sup>&frasl;<sub>u</sub> ) ) - π&frasl;4</p>
-
-### 4. Mass Flux Calculation (N<sub>A</sub>)
-The local mass flux at the interface is determined by:
-
-<p>N<sub>A</sub> = k<sub>c</sub> &middot; (c<sub>Ai</sub> - c<sub>A0</sub>)</p>
-
-Where c<sub>Ai</sub> is the interfacial concentration and c<sub>A0</sub> is the bulk concentration.
-
----
