@@ -2,9 +2,11 @@
 
 A command-line Python script that opens a PDF file, extracts all textual content page-by-page using **PDFplumber**, and writes the result as a UTF-8 encoded plain-text (`.txt`) file. 
 
-**Usage Instructions**       
-**Prerequisites**
+**Usage Instructions**     
 
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
+**Prerequisites**     
 - Python 3.x installed and reachable on the system `PATH`.
 - No manual package installation is required — the script installs `pdfplumber` automatically on first run if it is absent.
 - A UTF-8 encoded `.pdf` file.

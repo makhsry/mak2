@@ -20,6 +20,8 @@ This equation adjusts the mass transfer driving force to account for the "bulk f
 
 **R<sub>n</sub> as β and ρ<sub>12</sub> vary**
 
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
 ```python
 import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -33,6 +35,8 @@ for BETTA in betta:
 
 **R<sub>n</sub> as β and ω<sub>1</sub> vary**
 
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
 ```python
 import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -45,6 +49,8 @@ for BETTA in betta:
 ```
 
 **R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary**
+
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
 
 ```python
 import numpy as np

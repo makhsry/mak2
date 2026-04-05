@@ -13,7 +13,10 @@ Whisper is a sequence-to-sequence Transformer trained on 680,000 hours of labell
 | `large`  | 1550 M | 32 | 32 | 1280 | 20 | ~2.9 GB
 
 **Usage Instructions**      
-**Prerequisites**      
+
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
+**Prerequisites**       
 1. **Python 3.8+** — required by `openai-whisper`.
 2. **ffmpeg** — must be on `PATH`. The scripts will exit with an error and installation hints if it is not found.
 3. **pip** — standard Python package installer (required for the auto-install logic).

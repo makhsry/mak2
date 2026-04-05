@@ -3,8 +3,10 @@
 A command-line Python script that reads a plain-text (`.txt`) file encoded in UTF-8 and synthesises it into an MP3 audio file using the **Google Text-to-Speech (gTTS)** API. 
 
 **Usage Instructions**     
-**Prerequisites**         
 
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
+**Prerequisites**              
 - Python 3.x installed and reachable on the system `PATH`.
 - An **active internet connection** is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.
 - No manual package installation is required — the script installs `gTTS` automatically on first run if it is absent.

@@ -30,6 +30,9 @@ The local mass flux at the interface is determined by:
 where c<sub>Ai</sub> is the interfacial concentration and c<sub>A0</sub> is the bulk concentration.     
 
 **Usage Instructions**    
+
+You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
 1. Open the desired script.
 2. Adjust the **Test Data** section to match your physical system:
 
