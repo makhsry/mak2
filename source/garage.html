@@ -172,42 +172,42 @@ All non-background pixels belonging to each color are collected. Starting from t
 <table>
 <thead>
 <tr>
-<th>Package</th>
-<th>Purpose</th>
+<th style="text-align: left;">Package</th>
+<th style="text-align: left;">Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>osmnx</code></td>
-<td>Download OpenStreetMap street networks</td>
+<td style="text-align: left;"><code>osmnx</code></td>
+<td style="text-align: left;">Download OpenStreetMap street networks</td>
 </tr>
 <tr>
-<td><code>gpxpy</code></td>
-<td>Create and export GPX track files</td>
+<td style="text-align: left;"><code>gpxpy</code></td>
+<td style="text-align: left;">Create and export GPX track files</td>
 </tr>
 <tr>
-<td><code>opencv-python</code> (<code>cv2</code>)</td>
-<td>HSV conversion, masking, morphology, contours</td>
+<td style="text-align: left;"><code>opencv-python</code> (<code>cv2</code>)</td>
+<td style="text-align: left;">HSV conversion, masking, morphology, contours</td>
 </tr>
 <tr>
-<td><code>Pillow</code> (<code>PIL</code>)</td>
-<td>Image loading and grayscale conversion</td>
+<td style="text-align: left;"><code>Pillow</code> (<code>PIL</code>)</td>
+<td style="text-align: left;">Image loading and grayscale conversion</td>
 </tr>
 <tr>
-<td><code>numpy</code></td>
-<td>Array operations and pixel math</td>
+<td style="text-align: left;"><code>numpy</code></td>
+<td style="text-align: left;">Array operations and pixel math</td>
 </tr>
 <tr>
-<td><code>matplotlib</code></td>
-<td>Visualization of map and overlay</td>
+<td style="text-align: left;"><code>matplotlib</code></td>
+<td style="text-align: left;">Visualization of map and overlay</td>
 </tr>
 <tr>
-<td><code>scikit-image</code></td>
-<td><code>skeletonize</code>, <code>measure</code> (imported, available for extension)</td>
+<td style="text-align: left;"><code>scikit-image</code></td>
+<td style="text-align: left;"><code>skeletonize</code>, <code>measure</code> (imported, available for extension)</td>
 </tr>
 <tr>
-<td><code>scipy</code></td>
-<td><code>ndimage</code> (imported, available for extension)</td>
+<td style="text-align: left;"><code>scipy</code></td>
+<td style="text-align: left;"><code>ndimage</code> (imported, available for extension)</td>
 </tr>
 </tbody>
 </table>
@@ -293,51 +293,51 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <table>
 <thead>
 <tr>
-<th>Parameter</th>
-<th>Location</th>
-<th>Effect</th>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Location</th>
+<th style="text-align: left;">Effect</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>place_name</code></td>
-<td>Stage 1</td>
-<td>City/region for the street network</td>
+<td style="text-align: left;"><code>place_name</code></td>
+<td style="text-align: left;">Stage 1</td>
+<td style="text-align: left;">City/region for the street network</td>
 </tr>
 <tr>
-<td><code>network_type</code></td>
-<td>Stage 1</td>
-<td>Road type filter (<code>bike</code>, <code>walk</code>, <code>drive</code>)</td>
+<td style="text-align: left;"><code>network_type</code></td>
+<td style="text-align: left;">Stage 1</td>
+<td style="text-align: left;">Road type filter (<code>bike</code>, <code>walk</code>, <code>drive</code>)</td>
 </tr>
 <tr>
-<td><code>filename</code></td>
-<td>Stage 2</td>
-<td>Input pattern image path</td>
+<td style="text-align: left;"><code>filename</code></td>
+<td style="text-align: left;">Stage 2</td>
+<td style="text-align: left;">Input pattern image path</td>
 </tr>
 <tr>
-<td><code>min_pixels_threshold</code></td>
-<td>Stage 3</td>
-<td><code>total_pixels × 0.001</code> — minimum pixel count to register a color</td>
+<td style="text-align: left;"><code>min_pixels_threshold</code></td>
+<td style="text-align: left;">Stage 3</td>
+<td style="text-align: left;"><code>total_pixels × 0.001</code> — minimum pixel count to register a color</td>
 </tr>
 <tr>
-<td><code>outermost_color</code></td>
-<td>Stage 6</td>
-<td>Color used to anchor position; processed first</td>
+<td style="text-align: left;"><code>outermost_color</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Color used to anchor position; processed first</td>
 </tr>
 <tr>
-<td><code>scale_factor_x/y</code></td>
-<td>Stage 6</td>
-<td>Pattern size relative to map extent</td>
+<td style="text-align: left;"><code>scale_factor_x/y</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Pattern size relative to map extent</td>
 </tr>
 <tr>
-<td><code>position_offset_x/y</code></td>
-<td>Stage 6</td>
-<td>Pattern placement offset from bottom-right corner</td>
+<td style="text-align: left;"><code>position_offset_x/y</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Pattern placement offset from bottom-right corner</td>
 </tr>
 <tr>
-<td><code>threshold_val</code></td>
-<td>Stage 6</td>
-<td>Defined but available for custom threshold extensions</td>
+<td style="text-align: left;"><code>threshold_val</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Defined but available for custom threshold extensions</td>
 </tr>
 </tbody>
 </table>
@@ -362,60 +362,60 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <table>
 <thead>
 <tr>
-<th><code>model_size</code></th>
-<th>Parameters</th>
-<th>Encoder layers</th>
-<th>Decoder layers</th>
-<th>d_model</th>
-<th>Heads</th>
-<th>Download size</th>
+<th style="text-align: left;"><code>model_size</code></th>
+<th style="text-align: left;">Parameters</th>
+<th style="text-align: left;">Encoder layers</th>
+<th style="text-align: left;">Decoder layers</th>
+<th style="text-align: left;">d_model</th>
+<th style="text-align: left;">Heads</th>
+<th style="text-align: left;">Download size</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>tiny</code></td>
-<td>39 M</td>
-<td>4</td>
-<td>4</td>
-<td>384</td>
-<td>6</td>
-<td>~75 MB</td>
+<td style="text-align: left;"><code>tiny</code></td>
+<td style="text-align: left;">39 M</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">384</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">~75 MB</td>
 </tr>
 <tr>
-<td><code>base</code></td>
-<td>74 M</td>
-<td>6</td>
-<td>6</td>
-<td>512</td>
-<td>8</td>
-<td>~145 MB</td>
+<td style="text-align: left;"><code>base</code></td>
+<td style="text-align: left;">74 M</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">512</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">~145 MB</td>
 </tr>
 <tr>
-<td><code>small</code></td>
-<td>244 M</td>
-<td>12</td>
-<td>12</td>
-<td>768</td>
-<td>12</td>
-<td>~465 MB</td>
+<td style="text-align: left;"><code>small</code></td>
+<td style="text-align: left;">244 M</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">768</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">~465 MB</td>
 </tr>
 <tr>
-<td><code>medium</code></td>
-<td>769 M</td>
-<td>24</td>
-<td>24</td>
-<td>1024</td>
-<td>16</td>
-<td>~1.5 GB</td>
+<td style="text-align: left;"><code>medium</code></td>
+<td style="text-align: left;">769 M</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">1024</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">~1.5 GB</td>
 </tr>
 <tr>
-<td><code>large</code></td>
-<td>1550 M</td>
-<td>32</td>
-<td>32</td>
-<td>1280</td>
-<td>20</td>
-<td>~2.9 GB</td>
+<td style="text-align: left;"><code>large</code></td>
+<td style="text-align: left;">1550 M</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">1280</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">~2.9 GB</td>
 </tr>
 </tbody>
 </table>
@@ -436,16 +436,16 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <table>
 <thead>
 <tr>
-<th>Position</th>
-<th>Name</th>
-<th>Description</th>
+<th style="text-align: left;">Position</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td><code>audio_file</code></td>
-<td>Path to the input audio file (any format supported by ffmpeg: <code>.mp3</code>, <code>.mp4</code>, <code>.wav</code>, <code>.flac</code>, <code>.ogg</code>, <code>.m4a</code>, etc.)</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>audio_file</code></td>
+<td style="text-align: left;">Path to the input audio file (any format supported by ffmpeg: <code>.mp3</code>, <code>.mp4</code>, <code>.wav</code>, <code>.flac</code>, <code>.ogg</code>, <code>.m4a</code>, etc.)</td>
 </tr>
 </tbody>
 </table>
@@ -455,24 +455,24 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <table>
 <thead>
 <tr>
-<th>Position</th>
-<th>Name</th>
-<th>Default</th>
-<th>Description</th>
+<th style="text-align: left;">Position</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>2</td>
-<td><code>model_size</code></td>
-<td><code>base</code></td>
-<td>Whisper model size: <code>tiny</code>, <code>base</code>, <code>small</code>, <code>medium</code>, <code>large</code></td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code>model_size</code></td>
+<td style="text-align: left;"><code>base</code></td>
+<td style="text-align: left;">Whisper model size: <code>tiny</code>, <code>base</code>, <code>small</code>, <code>medium</code>, <code>large</code></td>
 </tr>
 <tr>
-<td>3</td>
-<td><code>language</code></td>
-<td><em>(auto-detect)</em></td>
-<td>ISO 639-1 language code, e.g., <code>en</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>zh</code>, <code>ar</code></td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><code>language</code></td>
+<td style="text-align: left;"><em>(auto-detect)</em></td>
+<td style="text-align: left;">ISO 639-1 language code, e.g., <code>en</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>zh</code>, <code>ar</code></td>
 </tr>
 </tbody>
 </table>
@@ -486,18 +486,18 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <table>
 <thead>
 <tr>
-<th>Position</th>
-<th>Name</th>
-<th>Default</th>
-<th>Description</th>
+<th style="text-align: left;">Position</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>4</td>
-<td><code>device</code></td>
-<td><em>(auto-detect)</em></td>
-<td><code>cuda</code> to force GPU, <code>cpu</code> to force CPU</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><code>device</code></td>
+<td style="text-align: left;"><em>(auto-detect)</em></td>
+<td style="text-align: left;"><code>cuda</code> to force GPU, <code>cpu</code> to force CPU</td>
 </tr>
 </tbody>
 </table>
