@@ -25,8 +25,6 @@
 <p>&nbsp;</p>
 <p><a href="https://github.com/makhsry/drawing2gpx.ipynb"><strong>Link to Code</strong></a></p>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h2>What It Does</h2>
 <p>&nbsp;</p>
 <p>The notebook performs the following stages in order:</p>
@@ -43,8 +41,6 @@
 <li><strong>Exports one <code>.gpx</code> file per color</strong> layer</li>
 </ol>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h2>Pipeline Detail</h2>
 <p>&nbsp;</p>
 <h3>Stage 1 — Street Network Download</h3>
@@ -56,8 +52,6 @@ G = ox.graph_from_place(place_name, network_type=network_type)
 <p>&nbsp;</p>
 <p>Uses <code>osmnx</code> to fetch the road/path graph for a named city. <code>network_type</code> can be <code>'bike'</code>, <code>'walk'</code>, <code>'drive'</code>, etc.</p>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h3>Stage 2 — Image Loading and Color Space Conversion</h3>
 <p>&nbsp;</p>
 <pre><code class="language-python">img = Image.open(filename).convert('RGB')
@@ -66,8 +60,6 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 </code></pre>
 <p>&nbsp;</p>
 <p>The image is opened as RGB then converted to <strong>HSV (Hue, Saturation, Value)</strong> space. HSV is used because it separates color identity (Hue) from brightness (Value) and intensity (Saturation), making color segmentation more robust than raw RGB thresholding.</p>
-<p>&nbsp;</p>
-<hr />
 <p>&nbsp;</p>
 <h3>Stage 3 — Color Detection</h3>
 <p>&nbsp;</p>
@@ -87,13 +79,9 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <p>&nbsp;</p>
 <p>where <code>total_pixels = image_height × image_width</code>. This 0.1% floor filters out noise and compression artifacts. Black and white are removed from the final detected list after this step, since they are used as background/border and not as route colors.</p>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h3>Stage 4 — Binary Mask Generation</h3>
 <p>&nbsp;</p>
 <p>For each detected color, a binary mask is produced where matching pixels = <code>255</code> and all others = <code>0</code>. These masks are stored in a dictionary keyed by color name.</p>
-<p>&nbsp;</p>
-<hr />
 <p>&nbsp;</p>
 <h3>Stage 5 — Contour Extraction and Boundary Skeletonization</h3>
 <p>&nbsp;</p>
@@ -120,8 +108,6 @@ hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
 <ol>
 <li>A final <code>MORPH_CLOSE</code> with a <code>2×2</code> kernel closes any remaining small gaps in the outline to ensure path continuity.</li>
 </ol>
-<p>&nbsp;</p>
-<hr />
 <p>&nbsp;</p>
 <h3>Stage 6 — Overlay onto Street Map</h3>
 <p>&nbsp;</p>
@@ -161,8 +147,6 @@ reference_center = ( (route_left + route_right) / 2,
 <p>&nbsp;</p>
 <p>The user iterates on <code>scale_factor_x</code>, <code>scale_factor_y</code>, <code>position_offset_x</code>, and <code>position_offset_y</code> until the pattern fits visually within the street network.</p>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h3>Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering</h3>
 <p>&nbsp;</p>
 <p><strong>Pixel → geographic coordinate mapping:</strong></p>
@@ -187,8 +171,6 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 <p>&nbsp;</p>
 <p>At each step, all remaining pixels are sorted by Euclidean distance from the current pixel. The closest pixel within a 2-pixel radius is chosen as the next step. If no pixel falls within that radius (i.e., a gap exists in the skeleton), the globally nearest remaining pixel is used as a fallback. This produces an ordered sequence that approximates a continuous traversal of the boundary.</p>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h3>Stage 8 — GPX Export</h3>
 <p>&nbsp;</p>
 <p>For each color, a GPX track is created using <code>gpxpy</code>:</p>
@@ -202,8 +184,6 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 </code></pre>
 <p>&nbsp;</p>
 <p>One <code>.gpx</code> file is produced per detected color layer.</p>
-<p>&nbsp;</p>
-<hr />
 <p>&nbsp;</p>
 <h2>Dependencies</h2>
 <p>&nbsp;</p>
@@ -253,8 +233,6 @@ latitude  = top  − (y + 0.5) × lat_per_pixel
 <p>Install non-default Colab packages:</p>
 <pre><code class="language-bash">pip install osmnx gpxpy
 </code></pre>
-<p>&nbsp;</p>
-<hr />
 <p>&nbsp;</p>
 <h2>Usage Instructions</h2>
 <p>&nbsp;</p>
@@ -318,8 +296,6 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>&nbsp;</p>
 <p>Import the <code>.gpx</code> files into any GPS application (Garmin Connect, Komoot, Strava, Google Maps, etc.) or load them onto a GPS device to navigate the pattern as a real-world route.</p>
 <p>&nbsp;</p>
-<hr />
-<p>&nbsp;</p>
 <h2>Key Parameters Reference</h2>
 <p>&nbsp;</p>
 <table>
@@ -373,8 +349,6 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 </tr>
 </tbody>
 </table>
-<p>&nbsp;</p>
-<hr />
 <p>&nbsp;</p>
 <h2>Notes and Limitations</h2>
 <p>&nbsp;</p>
