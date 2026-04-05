@@ -3,9 +3,9 @@
 This is a MATLAB implementation of the **COSMO-SAC (COSMO Segment Activity Coefficient)** model. The code calculates the thermodynamic activity coefficients of components in chemical mixtures based on their molecular surface charge distributions, known as sigma-profiles. An `.html` version of the calculator can be found [here](Garage_20150101_COSMO-SAC_Calculator.html).
 
 The model predicts the non-ideal behavior of liquid mixtures by analyzing the interaction energies between molecular surface segments. It accounts for:
-* **Electrostatic Misfit Energy**: Interactions between segments with different charge densities.
-* **Hydrogen Bonding**: Specific attractions between highly polar surface regions based on a cutoff value.
-* **Combinatorial Effects**: Differences in molecular size and shape using the Staverman-Guggenheim term.
+- **Electrostatic Misfit Energy**: Interactions between segments with different charge densities.
+- **Hydrogen Bonding**: Specific attractions between highly polar surface regions based on a cutoff value.
+- **Combinatorial Effects**: Differences in molecular size and shape using the Staverman-Guggenheim term.
 
 The calculation follows a multi-step thermodynamic workflow derived from the source code:
 
@@ -16,8 +16,8 @@ For each molecule, the code calculates the surface area distribution as a functi
 (&sum;<sub>j</sub> σ<sub>j</sub> · (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) )) /(&sum;<sub>j</sub> (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) ))
 
 Where:
-* **Term1** is the Euclidean distance between surface segments i and j.
-* **REFF** is the effective averaging radius (0.817642 Å).
+- **Term1** is the Euclidean distance between surface segments i and j.
+- **REFF** is the effective averaging radius (0.817642 Å).
 
 **Interaction Energy (Δw)**      
 The exchange energy between two segments i and j is calculated as:
@@ -26,8 +26,8 @@ The exchange energy between two segments i and j is calculated as:
 (α'/2) · (σ<sub>i</sub> + σ<sub>j</sub>)<sup>2</sup> + c<sub>hb</sub>· max(0, σ<sub>acc</sub> - σ<sub>hb</sub>) · min(0, σ<sub>don</sub> + σ<sub>hb</sub>)
 
 Where:
-* **Misfit term**: Determined by `ALPHAPRIME` and the sum of charge densities.
-* **HB term**: Active when charge densities exceed the threshold `SIGMAHB` (0.0084 e/Å²).
+- **Misfit term**: Determined by `ALPHAPRIME` and the sum of charge densities.
+- **HB term**: Active when charge densities exceed the threshold `SIGMAHB` (0.0084 e/Å²).
 
 **Segment Activity Coefficients (Γs)**     
 The activity coefficient of a segment is solved iteratively until the change is less than 10<sup>-6</sup>:
@@ -42,8 +42,8 @@ The final activity coefficient for component n is the exponential sum of the res
 γ<sub>n</sub> = exp(ln γ<sub>n</sub><sup>res</sup> + ln γ<sub>n</sub><sup>sg</sup>)
 
 Where:
-* **Residual**: Calculated by summing the difference between mixture and pure segment activity coefficients weighted by the sigma profile.
-* **Combinatorial (SG)**: Uses `COORD` (coordination number), `RNORM` (normalized volume), and `QNORM` (normalized area) parameters.
+- **Residual**: Calculated by summing the difference between mixture and pure segment activity coefficients weighted by the sigma profile.
+- **Combinatorial (SG)**: Uses `COORD` (coordination number), `RNORM` (normalized volume), and `QNORM` (normalized area) parameters.
 
 Source code:      
 
