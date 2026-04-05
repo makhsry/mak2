@@ -27,6 +27,7 @@
 <li>Speech-to-Text via OpenAI Whisper</li>
 <li>Text-to-Speech (Google TTS) Script</li>
 <li>Extract Text from PDF via PDFplumber</li>
+<li>COSMO-SAC Activity Coefficient Model in MATLAB</li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
@@ -37,7 +38,7 @@
 <p>&nbsp;</p>
 <p>A Google Colab notebook that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from OpenStreetMap, extracts GPS coordinates for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to use in any GPS-capable navigation app or fitness tracker.</p>
 <p>&nbsp;</p>
-<p><a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>Downalod the code here</strong> (save as .ipynb file)</a> </p>
+<p><a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>Downalod the code here</strong></a> </p>
 <p>&nbsp;</p>
 <p><strong>What It Does</strong>   <br />
 The notebook performs the following stages in order:   <br />
@@ -355,7 +356,7 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
         <section class="card span-2">
             <div class="card-content"><h2>Speech-to-Text via OpenAI Whisper</h2>
 <p>&nbsp;</p>
-<p>Two Python scripts (<a href="Garage_20260490_Speech2Text_cpu.py">CPU version (save as .py)</a> and <a href="Garage_20260490_Speech2Text_gpu.py">GPU version (save as .py)</a>) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.</p>
+<p>Two Python scripts (<a href="Garage_20260490_Speech2Text_cpu.py">CPU version</a> and <a href="Garage_20260490_Speech2Text_gpu.py">GPU version</a>) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.</p>
 <p>&nbsp;</p>
 <p>Whisper is a sequence-to-sequence Transformer trained on 680,000 hours of labelled speech. The <code>model_size</code> argument selects one of five pre-trained checkpoints. <code>whisper.load_model(model_size)</code> downloads (on first run) and caches the corresponding checkpoint and returns a <code>Whisper</code> object whose <code>transcribe</code> method drives the full inference pipeline.</p>
 <p>&nbsp;</p>
@@ -673,6 +674,98 @@ except Exception as e:
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h2>COSMO-SAC Activity Coefficient Model in MATLAB</h2>
+<p>&nbsp;</p>
+<p>This is a MATLAB implementation of the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. The code calculates the thermodynamic activity coefficients of components in chemical mixtures based on their molecular surface charge distributions, known as sigma-profiles.</p>
+<p>&nbsp;</p>
+<p>The model predicts the non-ideal behavior of liquid mixtures by analyzing the interaction energies between molecular surface segments. It accounts for:<br />
+* <strong>Electrostatic Misfit Energy</strong>: Interactions between segments with different charge densities.<br />
+* <strong>Hydrogen Bonding</strong>: Specific attractions between highly polar surface regions based on a cutoff value.<br />
+* <strong>Combinatorial Effects</strong>: Differences in molecular size and shape using the Staverman-Guggenheim term.</p>
+<p>&nbsp;</p>
+<p>The calculation follows a multi-step thermodynamic workflow derived from the source code:</p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Sigma Profile Calculation (sigma-profile)</strong>    <br />
+For each molecule, the code calculates the surface area distribution as a function of charge density sigma. The local segment charge is averaged over a circular area to account for neighbor effects using the following logic: </li>
+</ol>
+<p>&nbsp;</p>
+<p>σ<sub>new, i</sub> = <br />
+(<br />
+  &sum;<sub>j</sub> σ<sub>j</sub> · (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) <br />
+  · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) )<br />
+) / <br />
+(<br />
+  &sum;<sub>j</sub> (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) <br />
+  · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) )<br />
+)</p>
+<p>&nbsp;</p>
+<p>Where:<br />
+* <strong>Term1</strong> is the Euclidean distance between surface segments $i$ and $j$.<br />
+* <strong>REFF</strong> is the effective averaging radius ($0.817642$ Å).</p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Interaction Energy (Δw)</strong>    <br />
+The exchange energy between two segments $i$ and $j$ is calculated as:</li>
+</ol>
+<p>&nbsp;</p>
+<p>Δw<sub>ij</sub> = <br />
+(α'/2) · (σ<sub>i</sub> + σ<sub>j</sub>)<sup>2</sup> <br />
++ c<sub>hb</sub> · max(0, σ<sub>acc</sub> - σ<sub>hb</sub>) <br />
+· min(0, σ<sub>don</sub> + σ<sub>hb</sub>)</p>
+<p>&nbsp;</p>
+<p>Where:<br />
+* <strong>Misfit term</strong>: Determined by <code>ALPHAPRIME</code> and the sum of charge densities.<br />
+* <strong>HB term</strong>: Active when charge densities exceed the threshold <code>SIGMAHB</code> ($0.0084$ e/Å²).</p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Segment Activity Coefficients (Γs)</strong>   <br />
+The activity coefficient of a segment is solved iteratively until the change is less than 10<sup>-6</sup>:</li>
+</ol>
+<p>&nbsp;</p>
+<p>ln Γ<sub>s</sub>(σ<sub>i</sub>) = -ln [ &sum;<sub>j</sub> P(σ<sub>j</sub>) Γ<sub>s</sub>(σ<sub>j</sub>) exp(-Δw<sub>ij</sub> / RT) ]</p>
+<p>&nbsp;</p>
+<p>The code computes this for both <strong>pure species</strong> (<code>SEGGAMMAPR</code>) and the <strong>mixture</strong> (<code>SEGGAMMA</code>).</p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Total Activity Coefficient (γ)</strong>   <br />
+The final activity coefficient for component $n$ is the exponential sum of the residual and combinatorial parts:</li>
+</ol>
+<p>&nbsp;</p>
+<p>γ<sub>n</sub> = exp(ln γ<sub>n</sub><sup>res</sup> + ln γ<sub>n</sub><sup>sg</sup>)</p>
+<p>&nbsp;</p>
+<p>Where:<br />
+* <strong>Residual</strong>: Calculated by summing the difference between mixture and pure segment activity coefficients weighted by the sigma profile.<br />
+* <strong>Combinatorial (SG)</strong>: Uses <code>COORD</code> (coordination number), <code>RNORM</code> (normalized volume), and <code>QNORM</code> (normalized area) parameters.</p>
+<p>&nbsp;</p>
+<p>Source code:<br />
+| File | Description |<br />
+| :--- | :--- |<br />
+| <a href="Garage_20150101_COSMO-SAC_eqCOSMO.m"><code>eqCOSMO.m</code></a> | Main script for Two Phase Equilibrium; defines temperature and components. |<br />
+| <a href="Garage_20150101_COSMO-SAC_Binary.m"><code>Binary.m</code></a> | Primary function calculating mole fractions, pure/mixture segment gammas, and final $\gamma$. |<br />
+| <a href="Garage_20150101_COSMO-SAC_SimgaProfileCalculator.m"><code>SimgaProfileCalculator.m</code></a> | Manages the averaging of surface charges and calls the sorting logic. |<br />
+| <a href="Garage_20150101_COSMO-SAC_Library.m"><code>Library.m</code></a> | Reads geometry, volume, and charge data from <code>inputQM.xlsx</code>. |<br />
+| <a href="Garage_20150101_COSMO-SAC_paraCOSMO.m"><code>paraCOSMO.m</code></a> | Provides universal constants ($R$, $c_{hb}$, $\sigma_{hb}$, $\alpha$, etc.). |<br />
+| <a href="Garage_20150101_COSMO-SAC_SortSimgaProfile.m"><code>SortSimgaProfile.m</code></a> | Bins segment data into a discrete density distribution from -0.025 to 0.025. |<br />
+| <a href="Garage_20150101_COSMO-SAC_ConvertAU2A.m"><code>ConvertAU2A.m</code></a> | Converts coordinates from Atomic Units to Angstroms. |<br />
+| <a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a> | Input file for the COSMO-SAC model. |</p>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>      <br />
+- The Excel file (<code>inputQM.xlsx</code>) must have sheets named after your components (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.</p>
+<p>&nbsp;</p>
+<p><strong>Execution</strong>    <br />
+- Open <code>eqCOSMO.m</code>.<br />
+- Set your desired <strong>SYSTEMP</strong> (Temperature in K).<br />
+- Update <strong>ListCOMP</strong> with the sheet names from your Excel file.<br />
+- Run the script.</p>
+<p>&nbsp;</p>
+<p><strong>Outputs</strong><br />
+- <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated $\sigma$-densities and profiles for each component.<br />
+- <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions ($x$), activity coefficients ($\gamma$), and $\ln \gamma$.</p></div>
+        </section>
 
     </div>
 </body>
