@@ -35,6 +35,7 @@
 <li>Blind Audio Source Separation</li>
 <li>COSMO-SAC Activity Coefficient Model</li>
 <li>COSMO-SAC Sigma Profile Generator</li>
+<li>COSMO-SAC Sigma Profile Processor</li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
@@ -1592,7 +1593,7 @@ The final activity coefficient for component n is the exponential sum of the res
         </section>
 
         <section class="card span-2">
-            <div class="card-content"><h1>COSMO-SAC Sigma Profile Generator</h1>
+            <div class="card-content"><h2>COSMO-SAC Sigma Profile Generator</h2>
 <p>&nbsp;</p>
 <p>This is a MATLAB code designed to process raw quantum mechanical (QM) surface data into <strong>sigma-profiles</strong>. These profiles represent the probability distribution of segment surface areas as a function of their local charge density, a critical input for calculating activity coefficients in chemical mixtures. </p>
 <p>&nbsp;</p>
@@ -1667,6 +1668,62 @@ exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</su
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h2>COSMO-SAC Sigma Profile Processor</h2>
+<p>&nbsp;</p>
+<p>This is a suite of <code>Shell</code> scripts designed to automate the extraction and processing of quantum mechanical (QM) data from <strong>DMol3</strong> outputs (specifically <strong>.cosmo</strong> and <strong>.outmol</strong> files) into <strong>sigma-profiles</strong>. </p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Set the Compound Name:</strong> </li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li>Edit the scripts to update the <code>compound</code> variable (e.g., <code>compound='75-85-4-2d'</code>).     </li>
+<li>Make Executable: <code>chmod +x *.sh</code></li>
+<li>Run the Pipeline: <code>./1_Dmol3COSMO.sh</code>, then <code>./2_Dmol3OUTMOL.sh</code>, then <code>./3_sProfile.sh</code>, then <code>./SortS.sh</code>. </li>
+</ul>
+<p>&nbsp;</p>
+<p>The scripts generate several intermediate <code>.cosmo.xyz</code> files and a final profile:<br />
+- <code>${compound}.cosmo.SigmaNonSrt</code>: The smoothed charge densities.<br />
+- <code>${compound}.cosmo.SigmaSrt</code>: The charge density bin identifiers.<br />
+- <code>${compound}.cosmo.PSigmaSrt</code>: The final sigma-profile area values.</p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">File (link)</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_1_Dmol3COSMO.sh"><code>1_Dmol3COSMO.sh</code></a></td>
+<td style="text-align: left;">Bash Script</td>
+<td style="text-align: left;">Extracts segment geometry and raw charges from <code>.cosmo</code> files.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_2_Dmol3OUTMOL.sh"><code>2_Dmol3OUTMOL.sh</code></a></td>
+<td style="text-align: left;">Bash Script</td>
+<td style="text-align: left;">Extracts cavity volume and average COSMO data from <code>.outmol</code> files.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_3_sProfile.sh"><code>3_sProfile.sh</code></a></td>
+<td style="text-align: left;">Bash Script</td>
+<td style="text-align: left;">Performs the N²-complexity Gaussian averaging of surface charges.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_SortS.sh"><code>SortS.sh</code></a></td>
+<td style="text-align: left;">Bash Script</td>
+<td style="text-align: left;">Generates the $P(\sigma)$ vs $\sigma$ distribution for thermodynamic modeling.</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Coordinates are converted from Atomic Units (au) to Angstroms (Å) using the conversion factor au = 0.529177249 Å.</p></div>
+        </section>
 
     </div>
 </body>
