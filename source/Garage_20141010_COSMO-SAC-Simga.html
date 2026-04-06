@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COSMO-SAC Sigma Profile Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #059669;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            line-height: 1.6; 
+            color: #1e293b; 
+            background-color: var(--bg);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            background: var(--card); 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+        }
+
+        header {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+        }
+
+        h1 { margin: 0; color: #1e3a8a; font-size: 1.875rem; }
+        p { color: var(--secondary); margin-top: 0.5rem; }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        .control-panel {
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+        }
+
+        .input-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem; }
+
+        input[type="file"], select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        button { 
+            width: 100%;
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 0.75rem; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        button:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        #status-container {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .status-running { background: #dbeafe; color: #1e40af; display: block !important; }
+        .status-success { background: #dcfce7; color: #166534; display: block !important; }
+
+        #plot-container {
+            min-height: 500px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>COSMO-SAC Sigma Profile Generator</h1>
+        <p>QM Surface Charge Processing & Distribution Visualizer</p>
+    </header>
+
+    <div class="dashboard">
+        <aside class="control-panel">
+            <div class="input-group">
+                <label>1. QM Data File (.xlsx)</label>
+                <input type="file" id="fileInput" accept=".xlsx, .xls" />
+            </div>
+
+            <div class="input-group">
+                <label>2. Select Compound (Sheet)</label>
+                <select id="sheetSelect" disabled>
+                    <option>Awaiting File...</option>
+                </select>
+            </div>
+
+            <button id="processBtn" disabled>Run Calculation</button>
+
+            <div id="status-container">
+                <div id="status-text">Ready</div>
+            </div>
+        </aside>
+
+        <main id="plot-container">
+            <div id="plot" style="width:100%; height:550px;"></div>
+        </main>
+    </div>
+</div>
+
+<script>
+    let workbook = null;
+    const REFF = 0.817642; //
+    const AU_TO_A = 0.529177249; //
+
+    const fileInput = document.getElementById('fileInput');
+    const sheetSelect = document.getElementById('sheetSelect');
+    const processBtn = document.getElementById('processBtn');
+    const statusContainer = document.getElementById('status-container');
+    const statusText = document.getElementById('status-text');
+
+    fileInput.addEventListener('change', (e) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const data = new Uint8Array(evt.target.result);
+            workbook = XLSX.read(data, { type: 'array' });
+            
+            sheetSelect.innerHTML = '';
+            workbook.SheetNames.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name; opt.innerText = name;
+                sheetSelect.appendChild(opt);
+            });
+            sheetSelect.disabled = false;
+            processBtn.disabled = false;
+            showStatus("File loaded successfully.", "success");
+        };
+        reader.readAsArrayBuffer(e.target.files[0]);
+    });
+
+    function showStatus(msg, type) {
+        statusContainer.className = type === 'success' ? 'status-success' : 'status-running';
+        statusText.innerHTML = type === 'running' ? `<div class="loader"></div>${msg}` : msg;
+    }
+
+    processBtn.addEventListener('click', async () => {
+        const sheetName = sheetSelect.value;
+        const sheet = workbook.Sheets[sheetName];
+        showStatus("Processing QM segments...", "running");
+
+        // IO Logic
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: "A" });
+        const rows = jsonData.slice(3); // Start at row 4
+        
+        const segments = rows.map(r => ({
+            x: parseFloat(r.C) * AU_TO_A, 
+            y: parseFloat(r.D) * AU_TO_A,
+            z: parseFloat(r.E) * AU_TO_A,
+            area: parseFloat(r.G),
+            sigma: parseFloat(r.H),
+            rad: Math.sqrt(parseFloat(r.G) / Math.PI) //
+        })).filter(s => !isNaN(s.x));
+
+        const n = segments.length;
+
+        // Execute Smoothing Calculation
+        setTimeout(() => {
+            const sigmaNew = new Array(n).fill(0);
+
+            for (let i = 0; i < n; i++) {
+                let sigmaSum = 0;
+                let normSum = 0;
+                const segI = segments[i];
+
+                for (let j = 0; j < n; j++) {
+                    const segJ = segments[j];
+                    const d2 = Math.pow(segJ.x - segI.x, 2) + 
+                               Math.pow(segJ.y - segI.y, 2) + 
+                               Math.pow(segJ.z - segI.z, 2);
+
+                    const r2 = Math.pow(segJ.rad, 2);
+                    const reff2 = Math.pow(REFF, 2);
+                    const expTerm = Math.exp(-d2 / (r2 + reff2));
+                    
+                    sigmaSum += segJ.sigma * ((r2 * reff2) / (r2 + reff2)) * expTerm;
+                    normSum += (r2 * reff2 * (r2 + reff2)) * expTerm;
+                }
+                sigmaNew[i] = sigmaSum / normSum;
+            }
+
+            // Binning Logic
+            const sigmaDensity = [];
+            for (let d = -0.025; d <= 0.025001; d += 0.001) sigmaDensity.push(d);
+
+            const sigmaProfile = new Array(sigmaDensity.length).fill(0);
+            for (let k = 0; k < sigmaDensity.length - 1; k++) {
+                let binAreaSum = 0;
+                for (let i = 0; i < n - 1; i++) {
+                    if (sigmaNew[i] > sigmaDensity[k] && sigmaNew[i] < sigmaDensity[k+1]) {
+                        binAreaSum += Math.abs(sigmaNew[i] - sigmaNew[i+1]) * segments[i].area;
+                    }
+                }
+                sigmaProfile[k] = binAreaSum;
+            }
+
+            showStatus("Profile Generated.", "success");
+            plotResult(sigmaDensity, sigmaProfile, sheetName);
+        }, 50);
+    });
+
+    function plotResult(x, y, name) {
+        const trace = {
+            x: x, y: y,
+            type: 'scatter', mode: 'lines',
+            name: name,
+            line: { color: '#2563eb', width: 3, shape: 'spline' },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(37, 99, 235, 0.1)'
+        };
+
+        const layout = {
+            title: { text: `<b>Sigma Profile: ${name}</b>`, font: { size: 20 } },
+            xaxis: { 
+                title: 'Charge Density σ (e/Å²)', 
+                gridcolor: '#f1f5f9',
+                zerolinecolor: '#94a3b8'
+            },
+            yaxis: { 
+                title: 'Area Contribution P(σ)', 
+                gridcolor: '#f1f5f9'
+            },
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white',
+            margin: { l: 60, r: 40, t: 80, b: 60 },
+            hovermode: 'x unified'
+        };
+
+        Plotly.newPlot('plot', [trace], layout, { responsive: true });
+    }
+</script>
+</body>
+</html>
