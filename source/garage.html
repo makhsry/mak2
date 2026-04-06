@@ -34,6 +34,7 @@
 <li>Nanotube Builder and Mesher</li>
 <li>Blind Audio Source Separation</li>
 <li>COSMO-SAC Activity Coefficient Model</li>
+<li>COSMO-SAC Sigma Profile Generator in MATLAB</li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
@@ -1589,6 +1590,83 @@ The final activity coefficient for component n is the exponential sum of the res
 - <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated sigma-densities and profiles for each component.<br />
 - <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions (x), activity coefficients (γ), and ln γ.</p></div>
         </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h1>COSMO-SAC Sigma Profile Generator in MATLAB</h1>
+<p>&nbsp;</p>
+<p>This is a MATLAB code designed to process raw quantum mechanical (QM) surface data into <strong>sigma-profiles</strong>. These profiles represent the probability distribution of segment surface areas as a function of their local charge density, a critical input for calculating activity coefficients in chemical mixtures. </p>
+<p>&nbsp;</p>
+<p>An <strong><code>html</code></strong> version of this document is available <a href="Garage_20141010_COSMO-SAC-Simga.html"><strong>here</strong></a>.</p>
+<p>&nbsp;</p>
+<p>The generator transforms discrete surface segment data (positions and charges) into a smoothed, continuous distribution. It accounts for neighbor-averaging effects to ensure the resulting profile accurately reflects the molecular surface environment.  </p>
+<p>&nbsp;</p>
+<p>To account for the influence of adjacent segments, the "raw" segment charge density (sigma<sub>i</sub>) is converted into a smoothed "effective" charge density (sigma<sub>new,i</sub>). The code uses a distance-weighted Gaussian averaging function:  </p>
+<p>&nbsp;</p>
+<p>σ<sub>new,i</sub> = (∑<sub>j</sub> σ<sub>j</sub><br />
+( (r<sub>j</sub><sup>2</sup> R<sub>eff</sub><sup>2</sup>) / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )<br />
+exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )<br />
+)/(∑<sub>j</sub>( (r<sub>j</sub><sup>2</sup> R<sub>eff</sub><sup>2</sup>(r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) ) / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )<br />
+exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>)))</p>
+<p>&nbsp;</p>
+<p>where:  <br />
+- d<sub>ij</sub> is the Euclidean distance between segments calculated from Cartesian coordinates (x, y, z).<br />
+- r<sub>j</sub> is the radius of the segment, derived from its surface area (RAD = sqrt(Area/π)).<br />
+- R<sub>eff</sub> is the fixed effective averaging radius (0.8176 Å).</p>
+<p>&nbsp;</p>
+<p>The smoothed charge densities (sigma<sub>new</sub>) are categorized into discrete bins to form the sigma-profile P(sigma).<br />
+- <strong>Range:</strong> The code defines a density spectrum from -0.025 to 0.025 e/Å<sup>2</sup>.<br />
+- <strong>Binning Logic:</strong> For every segment falling within a specific charge density interval, its area is weighted and summed:</p>
+<p>&nbsp;</p>
+<p>A(sigma<sub>bin</sub>) = sum<sub>i in bin</sub> | sigma<sub>new, i</sub> - sigma<sub>new, i+1</sub> | * Area<sub>i</sub></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">File</th>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_SimgaProfileCalculator.m"><code>SimgaProfileCalculator.m</code></a></td>
+<td style="text-align: left;"><strong>Core Engine</strong></td>
+<td style="text-align: left;">The main routine that calculates distances, performs Gaussian averaging, and yields the final profile.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_IOinDataBase.m"><code>IOinDataBase.m</code></a></td>
+<td style="text-align: left;"><strong>Data Handler</strong></td>
+<td style="text-align: left;">Manages input/output by reading QM data from <code>inputQM.xlsx</code> and writing processed profiles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_SortSimgaProfile.m"><code>SortSimgaProfile.m</code></a></td>
+<td style="text-align: left;"><strong>Binning Logic</strong></td>
+<td style="text-align: left;">Discretizes the continuous surface data into the specific $\sigma$-density intervals used by COSMO-SAC.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_ConvertAU2A.m"><code>ConvertAU2A.m</code></a></td>
+<td style="text-align: left;"><strong>Unit Converter</strong></td>
+<td style="text-align: left;">Converts spatial coordinates from Atomic Units (au) to Angstroms (Å) and calculates radii.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><code>inputQM.xlsx</code></a></td>
+<td style="text-align: left;"><strong>Input Data</strong></td>
+<td style="text-align: left;">The input file containing the QM data.</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>The Excel file named <code>inputQM.xlsx</code>, each sheet should correspond to a unique compound and contain:<br />
+- <strong>Columns C, D, E:</strong> X, Y, Z coordinates (Atomic Units).  <br />
+- <strong>Column G:</strong> Segment Area.  <br />
+- <strong>Column H:</strong> Charge per Area (Surface Charge Density).     </p>
+<p>&nbsp;</p>
+<p>Call the calculator function from the MATLAB command window:</p>
+<pre><code class="language-matlab">% Replace 'CompoundName' with the specific sheet name in your Excel file
+[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
