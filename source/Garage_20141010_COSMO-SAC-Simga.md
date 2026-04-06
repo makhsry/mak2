@@ -1,4 +1,4 @@
-# COSMO-SAC Sigma Profile Generator
+## COSMO-SAC Sigma Profile Generator
 
 This is a MATLAB code designed to process raw quantum mechanical (QM) surface data into **sigma-profiles**. These profiles represent the probability distribution of segment surface areas as a function of their local charge density, a critical input for calculating activity coefficients in chemical mixtures. 
 
