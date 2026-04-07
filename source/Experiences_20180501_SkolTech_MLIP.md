@@ -1,13 +1,9 @@
-## AI & ML in Material Sciences
+## AI & ML in Material Sciences (2018: May - Oct.)  
 
-**Workplace**
-[Skolkovo Institute of Science and Technology (SkolTech)](https://skoltech.ru/en/), Russia
-
-**Timeline**
-2018: May - Oct.
+[**Skolkovo Institute of Science and Technology (SkolTech)**](https://skoltech.ru/en/), Russia.
 
 **Project**    
-Machine Learning Interatomic Potentials for Materials Discovery, with [Dr. Alexander Shapeev](https://scholar.google.com/citations?hl=en&user=NMyIbIwAAAAJ).     
+Machine Learning Interatomic Potentials for Materials Discovery, with [**Dr. Alexander Shapeev**](https://scholar.google.com/citations?hl=en&user=NMyIbIwAAAAJ).     
 
 **Project Goal**        
 Aimed to **expedite the discovery and characterization** of hard materials for use in high-performance environments—such as aerospace, automotive, mining, and manufacturing—by developing and deploying **ML-driven interatomic potentials** for predictive modeling.  

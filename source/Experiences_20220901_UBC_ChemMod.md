@@ -1,13 +1,8 @@
-## Chemical Process Engineer 
+## Chemical Process Engineer (2022 Sept. - 2022 Dec.)
 
-**Workplace**
-[UBC Chemical and Biological Engineering Department](https://chbe.ubc.ca/), [University of British Columbia (UBC)](https://www.ubc.ca/), Canada
-
-**Timeline**
-2022: Sept. - Dec.                  
+[**Chemical and Biological Engineering Department**](https://chbe.ubc.ca/), [**University of British Columbia (UBC)**](https://www.ubc.ca/), Vancouver, Canada, as Teaching Assistant for **Modelling and Optimization in Chemical Engineering** with [**Dr. Simcha Srebnik**](https://scholar.google.com/citations?user=--v31HgAAAAJ&hl=en).  
 
 **Tasks Performed**     
-- with [Dr. Simcha Srebnik](https://scholar.google.com/citations?user=--v31HgAAAAJ&hl=en) as as Teaching Assistant for **Modelling and Optimization in Chemical Engineering**.   
 - Skilled in modeling and optimizing **industrial chemical processes**, with a focus on simulating chemical reactors, emphasizing heterogeneous systems in **Aspen** environments.                      
 - Applied **optimization techniques** within Aspen platforms to enhance **process performance** and **efficiency**.                    
 - Designed and simulated **crude oil distillation processes** using Aspen HYSYS.                        

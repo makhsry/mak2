@@ -1,18 +1,14 @@
-## Marie Sklodowska-Curie Postdoctoral Fellow                        
+## Marie Sklodowska-Curie Postdoctoral Fellow (2019 Oct. - 2022 Feb.)                        
 
-**Workplace**
-[Synthesis and Solid State Pharmaceutical Centre (SSPC)](https://sspc.ie/), [Bernal Institute](https://bernal.ul.ie/), [University of Limerick](https://www.ul.ie/), Ireland
-
-**Timeline**
-2019: Oct. - 2022: Feb.
+[**Synthesis and Solid State Pharmaceutical Centre (SSPC)**](https://sspc.ie/), [**Bernal Institute**](https://bernal.ul.ie/), [**University of Limerick**](https://www.ul.ie/), Limerick, Ireland.
 
 **Project**    
-Continueous Cocrystalization via Hot Melt Extrusion in Phamaceuticals, with [Dr. Gavin Walker](https://scholar.google.com/citations?user=h4O37BYAAAAJ&hl=en).    
+Continuous Cocrystalization via Hot Melt Extrusion in Phamaceuticals, with [**Dr. Gavin Walker**](https://scholar.google.com/citations?user=h4O37BYAAAAJ&hl=en).    
 
-**Project Goal**
-Developed a **data-driven digital twin framework** to address low-yield challenges in continuous crystallization, aiming to enhance product quality, optimize production, and reduce waste and operational costs in pharmaceutical manufacturing.                       
+**Project Goal**   
+Developed a **data-driven digital twin framework** to address low-yield challenges in continuous crystallization, aiming to enhance **product quality**, **optimize production**, and **reduce waste and operational costs** in pharmaceutical manufacturing.  
 
-**Tasks Performed**       
+**Tasks Performed**     
 - Conducted detailed **root-cause analysis** of unit operations to identify inefficiencies affecting yield and product purity in **continuous crystallization systems**.      
 - Evaluated the influence of **critical process parameters**—temperature, residence time, screw configuration, and rotation speed—on crystallization outcomes, using both experimental data and simulation insights.     
 - Designed and refined **process strategies** to maximize desired product formation, suppress by-product generation, and reduce procurement and disposal costs.            

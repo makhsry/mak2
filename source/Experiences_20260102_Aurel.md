@@ -1,16 +1,9 @@
-## Simulation Module Development Lead
+## Simulation Module Development Lead (2026: Jan - _Present_)
 
-**Workplace**  
-[Aurel Systems Inc.](https://www.aurelsystems.com/), Vancouver, BC, Canada  
-
-**Timeline**  
-2026: Jan - Present  
-
-**Project**     
-Development and implementation of **unit operation modules** for [Aurel's Process Simulation Software: CADSIM Plus](https://www.aurelsystems.com/process-simulation-software/), with an initial focus on **mineral processing applications** and **process digital twin technologies**.        
+[**Aurel Systems Inc.**](https://www.aurelsystems.com/), Vancouver, BC, Canada.       
 
 **Project Goal**     
-Contributing to the advancement of [Aurel's Process Simulation Software: CADSIM Plus](https://www.aurelsystems.com/process-simulation-software/) by creating **reliable and scalable simulation modules** that support **process improvement**, operational efficiency, and digital representation of industrial systems.  
+Contributing to the advancement of [**Aurel's Process Simulation Software: CADSIM Plus**](https://www.aurelsystems.com/process-simulation-software/) by creating **reliable and scalable simulation modules** that support **process improvement**, operational efficiency, and digital representation of industrial systems.  
 
 **Tasks Performed**     
 - Developing and implementing **unit operation simulation modules** for **CADSIM® Plus**, supporting modeling of mineral processing systems and industrial processes.  

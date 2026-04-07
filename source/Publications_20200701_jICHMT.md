@@ -1,26 +1,17 @@
 ## Variable Density Mass Transfer Correction R<sub>n</sub>
 
-In the paper [**A note on the composition-dependency of the density within the mass transfer layer**](https://www.sciencedirect.com/science/article/pii/S0735193320302050), we derived the equation for the mass transfer correction factor R<sub>n</sub>, which accounts for the effect of varying density (ρ) in a binary mixture. The model is particularly relevant for high-flux gas absorption or evaporation where the standard constant-density assumptions fail. 
+In the paper [**A note on the composition-dependency of the density within the mass transfer layer**](https://www.sciencedirect.com/science/article/pii/S0735193320302050), we derived the equation for the **mass transfer correction factor R<sub>n</sub>**, which accounts for the effect of **varying density (ρ) in a binary mixture**. The model is particularly relevant for **high-flux gas absorption or evaporation** where the standard **constant-density assumptions** fail. 
 
 ![Variable Density Mass Transfer Correction R<sub>n</sub>](Publications_20200701_jICHMT.png)
 
-The ratio of the density at the interface to the density in the bulk is modeled using a linear dependency parameter β and the mass fraction ω<sub>1</sub>:
+**Usage Instructions**  
 
-ρ<sub>12</sub> = 1 / (1 − β · ω<sub>1</sub>)
-
-where:
-- β: A parameter representing the normalized density difference between components.
-- ω<sub>1</sub>: The mass fraction of component 1.
-
-The calculation of R<sub>n</sub> relates the actual mass flux to the flux predicted by constant-density theories:
-
-R<sub>n</sub> = 1 + (1/ρ<sub>12</sub> - 1) · [1/ln(1/(1 - ω<sub>1</sub>)) - (1 - ω<sub>1</sub>)/ω<sub>1</sub>]
-
-This equation adjusts the mass transfer driving force to account for the "bulk flow" (Stefan flow) induced by the density gradient at the interface.
-
-**R<sub>n</sub> as β and ρ<sub>12</sub> vary**
+Save the script as `script_name.py` and run it from the terminal as: **`python script_name.py`**
 
 You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+
+
+- **R<sub>n</sub> as β and ρ<sub>12</sub> vary**
 
 ```python
 import numpy as np
@@ -33,9 +24,7 @@ for BETTA in betta:
         print (BETTA, RHO12, Rn)
 ```
 
-**R<sub>n</sub> as β and ω<sub>1</sub> vary**
-
-You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+- **R<sub>n</sub> as β and ω<sub>1</sub> vary**
 
 ```python
 import numpy as np
@@ -48,9 +37,7 @@ for BETTA in betta:
         print (BETTA, OMG1, Rn)
 ```
 
-**R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary**
-
-You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
+- **R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary**
 
 ```python
 import numpy as np

@@ -1,18 +1,14 @@
-## BASc. Chemical Engineering
+## BASc. Chemical Engineering (2007-2011) 
 
-**Workplace**
-[University of Tehran](https://ut.ac.ir/en), Tehran, Iran.
-
-**Timeline**
-2007: Sept. - 2011: Sept.
+[**University of Tehran**](https://ut.ac.ir/en), Tehran, Iran, 2007: Sept. - 2011: Sept.
 
 **Project**  
 Simulation and cost evaluation of hot section of BIPC olefin plant, with [Dr. Nasim Tahouni](https://scholar.google.com/citations?user=jWEhjFcAAAAJ&hl=en).     
 
-**Project Goal** 
+**Project Goal**   
 Used **Aspen Hysys** and **Aspen Plus** to evaluate **retrofitting** of industrial scale **petroleum refinery** complex by producing process flow diagram (**PFD**), piping/process & instrumentation diagram (**P&ID**), **cost** and **utility**, pinch and exergy.      
 
-**Tasks Performed**
+**Tasks Performed**    
 - Simulated existing and proposed **process configurations using Aspen HYSYS and Aspen Plus**, focusing on optimizing reactor and separation systems for olefin recovery.      
 - Developed and **documented detailed Process Flow Diagrams (PFDs) and Piping & Instrumentation Diagrams (P&IDs)** to map unit operations, control loops, and equipment connectivity.
 - Performed **equipment sizing and specification** for heat exchangers, reactors, compressors, and distillation columns based on simulated operating conditions.

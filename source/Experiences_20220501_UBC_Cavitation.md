@@ -1,13 +1,9 @@
-## Chemical Engineer
+## Chemical Engineer (2022 May - 2022 Dec.)
 
-**Workplace**
-[UBC Chemical and Biological Engineering Department](https://chbe.ubc.ca/), [University of British Columbia (UBC)](https://www.ubc.ca/), Canada
-
-**Timeline**
-2022: May - Dec.
+[**Chemical and Biological Engineering Department**](https://chbe.ubc.ca/), [**University of British Columbia (UBC)**](https://www.ubc.ca/), Vancouver, Canada.
 
 **Project**     
-Nanocavitation and its Mitigation in Fabricating Artificial Trees, with [Dr. Simcha Srebnik](https://scholar.google.com/citations?user=--v31HgAAAAJ&hl=en).         
+Nanocavitation and its Mitigation in Fabricating Artificial Trees, with [**Dr. Simcha Srebnik**](https://scholar.google.com/citations?user=--v31HgAAAAJ&hl=en).         
 
 **Project Goal**       
 Investigated nanoscale water flow mechanisms to reduce **nanobubble formation** and ensure stable, uninterrupted transport in **nanoporous channels**—critical for enhancing efficiency in advanced **evaporative cooling systems**.  

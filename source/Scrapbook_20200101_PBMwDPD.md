@@ -1,11 +1,11 @@
 ## Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
 
-This is a [LAMMPS](https://www.lammps.org/)-based implementation of a [Physiochemical Population Balance Model (PBM)](https://en.wikipedia.org/wiki/Population_balance_equation) using [Dissipative Particle Dynamics (DPD)](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [Transition State Theory (TST)](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
+This is a [**LAMMPS**](https://www.lammps.org/)-based implementation of a [**Physiochemical Population Balance Model (PBM)**](https://en.wikipedia.org/wiki/Population_balance_equation) using [**Dissipative Particle Dynamics (DPD)**](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [**Transition State Theory (TST)**](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
 
-The simulation models the formation and dissociation of chemical clusters (species types 3–23) from two primary monomer species (types 1 and 2). It employs a hybrid approach:           
-- **Mechanical Dynamics**: DPD potential accounts for thermal and structural behavior.
-- **Physiochemical Kinetics**: TST-based rate constants determine the probability of species transformation events (Birth and Death).        
-- **Population Balance**: Discrete "event" counters are calculated per timestep to modify the particle population in-situ while preserving bead numbers or chemical stoichiometry.
+The simulation models the **formation and dissociation of chemical clusters** (species types 3–23) from two primary **monomer species** (types 1 and 2). It employs a **hybrid approach**:           
+- **Mechanical Dynamics**: DPD potential accounts for **thermal and structural behavior**.
+- **Physiochemical Kinetics**: TST-based rate constants determine the probability of **species transformation events** (Birth and Death).        
+- **Population Balance**: Discrete "event" counters are calculated per timestep to modify the **particle population** in-situ while preserving bead numbers or chemical stoichiometry.
 
 **Mathematical Models**       
 **DPD Force Field**    
@@ -63,7 +63,8 @@ n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · 
 - **Mixed Death (dissociating AB clusters)**:      
 n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋
 
-**Species Classification**        
+**Species Classification**         
+  
 | Type | Label | Description | Mass (g/mol) | Diameter (Å) |
 | :--- | :--- | :--- | :--- | :--- |
 | **1** | **A** | Primary Monomer A | 122.127 | 5.9775 |
@@ -99,6 +100,4 @@ lmp -in Main.lmp
 - [`fingerprints_xij.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp): Matrix of interaction fingerprints.      
 - [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp): Kinetic barriers for all species.      
 - [`setup_constant.lmp`](Scrapbook_20200101_PBMwDPD_setup_constant.lmp): Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).      
-- [`dynamics_compute_events.lmp`](Scrapbook_20200101_PBMwDPD_dynamics_compute_events.lmp): Implementation of the PBM transformation logic.      
-
-© 2020 Physiochemical PBM Simulation Project (Part of CoCryM project)      
+- [`dynamics_compute_events.lmp`](Scrapbook_20200101_PBMwDPD_dynamics_compute_events.lmp): Implementation of the PBM transformation logic.           

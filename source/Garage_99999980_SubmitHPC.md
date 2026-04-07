@@ -2,10 +2,10 @@
 
 This script is a **`Bash`**-based utility designed to automate the configuration and submission of [**`Slurm`**](https://slurm.schedmd.com/)-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery. 
 
-The **`bash`** script is available at [**here**](Garage_99999980_SubmitHPC.sh). 
-An **`html`** version of this script is available at [**here**](Garage_99999980_SubmitHPC.html). 
+The **`bash`** script is available [**here**](Garage_99999980_SubmitHPC.sh). 
+An **`.html`** version is available [**here**](Garage_99999980_SubmitHPC.html). 
 
-It is specifically tailored for [**COMSOL Multiphysics**](https://www.comsol.com/products/multiphysics/) simulations. The script primaryly manages the entire workflow from environment validation to job submission on various [**Canadian HPC clusters**](https://www.alliancecan.ca/en/about) (before the migration to new systems).  
+It is specifically tailored for [**COMSOL Multiphysics**](https://www.comsol.com/products/multiphysics/) simulations. The script primaryly manages the entire workflow from environment validation to job submission on various [**Canadian HPC clusters**](https://www.alliancecan.ca/en/about) (_before their migration to new systems_).  
 
 The script builds the final **COMSOL call** as a concatenated string of the following components:      
 
@@ -23,69 +23,21 @@ ${CALL_COMSOL_AS} batch -mpibootstrap slurm \
     ${COMSOL_METHOD_}     # Custom method calls
 ```
 
-The script implements a deterministic allocation of resources based on the selected cluster's hardware profile. It maps user-selected options to specific Slurm assignments for N<sub>cpu</sub> (cores), M<sub>total</sub> (RAM), and Arch (microarchitecture).  
-
-The script follows a strictly sequential multi-stage execution model to ensure all dependencies (files, environment modules, and Slurm accounts) are validated before the job is committed to the scheduler.    
-
 **Interactive Usage Walkthrough (Step-by-Step)**      
-To successfully submit a job, follow this functional walkthrough:
-
-1.  **Prepare Workspace**: Place your `.mph` file in the directory. Create a subdirectory for the script or run it directly.
-2.  **Identity Confirmation**: Confirm the detected username. If incorrect, enter your Slurm-associated username manually.
-3.  **Account Selection**: Provide the exact Slurm allocation name (e.g., `st-amadiseh-1` for UBC or `def-madiseh-ab` for CC). The script will verify this against `sacctmgr`.
-4.  **Cluster Discovery**: The script automatically detects the cluster (e.g., Narval). Confirm this to load the appropriate hardware menu.
-5.  **Configure Monitoring**:
-    - **Option 1**: Manual wall-time (e.g., `24-00` for 24 hours).
-    - **Option 2 (Watch Mode)**: Manual wall-time, but enables automatic resume logic if the job fails due to timeout.
-6.  **Select Hardware Profile**: Pick a number from the menu (e.g., Option 3 for high-memory). Ensure you note if the option includes GPU support as identified in the `isGPU` column.
-7.  **Finalize & Submit**:
-    - Provide the exact input filename (must be in the parent directory).
-    - Select a `study tag` (e.g., `std1`) or type `no` for a full problem solve.
-    - Review the "test-only" submission feedback. If successful, the job will be queued immediately.
-
-**Execution Workflow Architecture**        
-**Stage 1: Pre-flight Verification   (`is_under_scratch`)**         
-- **Logic**: Environment audit.      
-- **Action**: Immediately terminates if the current working directory does not contain "scratch" to protect home directory quotas and performance.      
-- **Timestamping**: Captures `$(date +"%Y%m%d_%H%M%S")` to initialize the temporary workspace.      
-
-**Stage 2: Job Context Selection (`New` vs. `Resume`)**      
-- **New Job (`this_is_new_job`)**:
-    1.  **Directory Setup**: Creates a root folder named after the timestamp. Inside, it initializes `tmp/` and `rec/` subdirectories.
-    2.  **Environment Cleaning**: Offers to wipe stale `.comsol` settings from both `$HOME` and `$SCRATCH`.
-    3.  **Identity Mapping**: Validates Slurm user and account membership via `sacctmgr`.
-    4.  **Hardware Profiling**: Presents cluster-specific menus (GPU/CPU/RAM) and calculates Slurm resource requests.
-- **Resume/Recovery (`this_is_resume_job`)**:
-    1.  **Re-linking**: Prompts for existing `recoverydir` and `temporarydir` relative paths to re-attach to a failed or timed-out session.
-    2.  **State Continuity**: Appends `-recover -continue` flags to the final batch command.
-
-**Stage 3: File System Orchestration**      
-- **Relative Path Constraint**: The script assumes the input `.mph` file is located at `../` (parent directory).      
-- **Duplication**: It creates a 1:1 copy of the input file into the timestamped directory to ensure the original remains untouched by the simulation process.      
-- **Permissions**: Recursively sets `chmod 755` on the workspace to ensure all compute nodes can read/write to the temporary and recovery folders.      
-
-**Stage 4: Slurm Script Generation (`initiate_sh_submit`)**      
-- **Dynamic Writing**: Writes the `submit_job.sh` file with validated `#SBATCH` headers.      
-- **System Tuning**: Includes `ulimit -s unlimited` to prevent stack overflow issues in memory-intensive multiphysics solves.      
-- **Cluster Specializations**: Loads environment modules (e.g., `StdEnv/2023`, `comsol/6.2`, `openjdk`) based on the cluster name (`sockeye` vs. `Compute Canada`).      
-
-**Stage 5: Parametric & Method Injection**      
-- **Parametric Sweeps (`running_for_specific_parameter`)**: Builds `-pname` (comma-separated parameter names) and `-plist` (comma-separated value lists) for on-the-fly model overrides.
-- **Method Calls (`calling_a_method`)**: Appends specific Java method names to the batch command for custom logic execution.
-
-**Stage 6: Final Submission & Housekeeping**      
-- **Renaming Logic**: Renames the timestamped directory to `[JobName]_[Timestamp]` to provide human-readable folder names.      
-- **Submission Trial**: Executes `sbatch --test-only` to verify the Slurm scheduler will accept the job before final submission.      
-- **Execution**: Runs `sbatch submit_job.sh` and displays the current state of the queue (`squeue -u $username`).      
+- **Prepare Workspace**: Place the `.mph` file in the parent directory. Script creates a subdirectory for the script.
+- **Identity Confirmation**: Confirm the detected `username`. If incorrect, enter your Slurm-associated username manually.
+- **Account Selection**: Provide the exact Slurm `allocation` name (e.g., `st-amadiseh-1` for UBC or `def-madiseh-ab` for CC). The script will verify this `allocation` against `sacctmgr`.
+- **Cluster Discovery**: The script automatically detects the `cluster` (e.g., Narval). Confirm this to load the appropriate hardware menu.
+- **Configure Monitoring**:
+- - **Option 1**: Manual `wall-time` (e.g., `24-00` for 24 hours).
+- - **Option 2 (Watch Mode)**: Manual `wall-time`, but enables automatic resume logic if the job fails due to timeout.
+- **Select Hardware Profile**: Pick an `option` from the menu (e.g., Option `3` for high-memory). Ensure you note if the option includes `GPU` support as identified in the `isGPU` column.
+- **Finalize & Submit**:
+- - Provide the exact input `filename` (must be in the parent directory).
+- - Select a `study tag` (e.g., `std1`) or type `no` for a full problem solve.
+- - Review the `test-only` submission `feedback`. If successful, the job will be `queued` immediately.
 
 **Cluster Options**    
-
-| Flag/Control | Cluster | Action |
-| :--- | :--- | :--- |
-| `ulimit -s unlimited` | ALL | Removes memory stack limits for MPI safety. |
-| `I_MPI_COLL_EXTERNAL=0`| Narval | Disables external MPI collective communication for performance. |
-| `CCEnv` / `StdEnv` | CC | Dynamically loads the Compute Canada standard software environments. |
-| `openjdk/11.0.20.1_1` | Sockeye| Loads the required Java runtime for the COMSOL backend. |
 
 **- Sockeye (UBC ARC)**   
 
@@ -157,3 +109,12 @@ To successfully submit a job, follow this functional walkthrough:
 **- Niagara (Compute Canada)**      
 
 *Preset Configuration*: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      
+
+**Environment Variables**
+
+| Flag/Control | Cluster | Action |
+| :--- | :--- | :--- |
+| `ulimit -s unlimited` | ALL | Removes memory stack limits for MPI safety. |
+| `I_MPI_COLL_EXTERNAL=0`| Narval | Disables external MPI collective communication for performance. |
+| `CCEnv` / `StdEnv` | CC | Dynamically loads the Compute Canada standard software environments. |
+| `openjdk/11.0.20.1_1` | Sockeye| Loads the required Java runtime for the COMSOL backend. |

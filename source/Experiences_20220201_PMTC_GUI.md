@@ -1,13 +1,9 @@
-## Chemical Process Engineer
+## Chemical Process Engineer (2022 Feb. - 2022 May)
 
-**Workplace**
-[Pharmaceutical Manufacturing Technology Centre (PMTC)](https://www.pmtc.ie/), [Bernal Institute](https://bernal.ul.ie/), [University of Limerick](https://www.ul.ie/), Ireland
-
-**Timeline**
-2022: Feb - May
+[**Pharmaceutical Manufacturing Technology Centre (PMTC)**](https://www.pmtc.ie/), [**Bernal Institute**](https://bernal.ul.ie/), [**University of Limerick**](https://www.ul.ie/), Limerick, Ireland.
 
 **Project**     
-Fluid Bed Spray Dryer Process Monitoring and Engineering, with [Dr. Marcus O'Mahony](https://scholar.google.com/citations?user=zrrZoBkAAAAJ&hl=en).         
+Fluid Bed Spray Dryer Process Monitoring and Engineering, with [**Dr. Marcus O'Mahony**](https://scholar.google.com/citations?user=zrrZoBkAAAAJ&hl=en).         
 
 **Project Goal**     
 Designed and implemented a **data-driven graphical user interface** for real-time **monitoring** and **optimization** of a fluid bed spray drying process by integrating in-line/offline sensor data streams and advanced analytics into an interactive platform.  
