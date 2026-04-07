@@ -44,260 +44,23 @@
         <section class="card span-2">
             <div class="card-content"><h2>Drawing to GPX (Route Pattern Mapper — Python Application)</h2>
 <p>&nbsp;</p>
-<p>A Google Colab notebook that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from OpenStreetMap, extracts GPS coordinates for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to use in any GPS-capable navigation app or fitness tracker.</p>
+<p>A <strong>Python notebook</strong> that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from <strong>OpenStreetMap</strong>, extracts <strong>GPS coordinates</strong> for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to be used in any <strong>GPS-capable</strong> navigation app or <strong>fitness tracker</strong>.</p>
 <p>&nbsp;</p>
-<p><a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>Download the code here</strong></a> </p>
+<p><strong>Download</strong> the code <a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>here</strong></a> </p>
 <p>&nbsp;</p>
 <p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
 <p>&nbsp;</p>
 <p><strong>What It Does</strong>   <br />
 The notebook performs the following stages in order:   <br />
-1. <strong>Downloads a city's street network</strong> from OpenStreetMap<br />
-2. <strong>Loads a pattern image</strong> and converts it to HSV color space<br />
-3. <strong>Detects which colors are present</strong> in the image above a minimum threshold<br />
-4. <strong>Creates binary masks</strong> for each detected color<br />
-5. <strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary<br />
-6. <strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position<br />
-7. <strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal<br />
-8. <strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)<br />
-9. <strong>Exports one <code>.gpx</code> file per color</strong> layer</p>
-<p>&nbsp;</p>
-<p><strong>Pipeline Detail</strong>   <br />
-<strong>Stage 1 — Street Network Download</strong>     </p>
-<p>&nbsp;</p>
-<pre><code class="language-python">place_name = &quot;Vancouver, BC, Canada&quot;
-network_type = 'bike'
-G = ox.graph_from_place(place_name, network_type=network_type)
-</code></pre>
-<p>&nbsp;</p>
-<p>Uses <code>osmnx</code> to fetch the road/path graph for a named city. <code>network_type</code> can be <code>'bike'</code>, <code>'walk'</code>, <code>'drive'</code>, etc.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 2 — Image Loading and Color Space Conversion</strong>     </p>
-<p>&nbsp;</p>
-<pre><code class="language-python">img = Image.open(filename).convert('RGB')
-img_np = np.array(img)
-hsv_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2HSV)
-</code></pre>
-<p>&nbsp;</p>
-<p>The image is opened as RGB then converted to <strong>HSV (Hue, Saturation, Value)</strong> space. HSV is used because it separates color identity (Hue) from brightness (Value) and intensity (Saturation), making color segmentation more robust than raw RGB thresholding.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 3 — Color Detection</strong>     </p>
-<p>&nbsp;</p>
-<p>Each named color in <code>color_ranges</code> is defined by an HSV lower-bound and upper-bound pair <code>[H, S, V]</code>:<br />
-- <strong>Black</strong> is detected in grayscale: pixels with grayscale value <code>≤ 10</code> (via <code>cv2.THRESH_BINARY_INV</code>)<br />
-- <strong>White</strong> is detected in grayscale: pixels with grayscale value <code>≥ 245</code> (via <code>cv2.THRESH_BINARY</code>)<br />
-- <strong>Red</strong> is handled specially because red <strong>wraps around</strong> the HSV hue circle (H ≈ 0° and H ≈ 180°); two separate ranges are combined: <code>[0,100,20]–[10,255,255]</code> and <code>[160,100,20]–[180,255,255]</code>, and the masks are summed<br />
-- All <strong>other colors</strong> are matched with a single <code>cv2.inRange(hsv_img, lower, upper)</code> call</p>
-<p>&nbsp;</p>
-<p>A color is considered <strong>present</strong> in the image if the number of matching pixels exceeds the minimum threshold:</p>
-<p>&nbsp;</p>
-<pre><code>min_pixels_threshold = total_pixels × 0.001
-</code></pre>
-<p>&nbsp;</p>
-<p>where <code>total_pixels = image_height × image_width</code>. This 0.1% floor filters out noise and compression artifacts. Black and white are removed from the final detected list after this step, since they are used as background/border and not as route colors.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 4 — Binary Mask Generation</strong>     </p>
-<p>&nbsp;</p>
-<p>For each detected color, a binary mask is produced where matching pixels = <code>255</code> and all others = <code>0</code>. These masks are stored in a dictionary keyed by color name.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 5 — Contour Extraction and Boundary Skeletonization</strong>     </p>
-<p>&nbsp;</p>
-<p>For each color mask:<br />
-- <strong>Morphological cleaning</strong> is applied using a <code>3×3</code> structuring element:<br />
-  - <code>MORPH_CLOSE</code> (dilation then erosion) fills small holes and gaps<br />
-  - <code>MORPH_OPEN</code> (erosion then dilation) removes small noise blobs<br />
-- <strong>External contours</strong> are found with <code>cv2.findContours(..., cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)</code>. <code>CHAIN_APPROX_NONE</code> stores every single contour point (no compression), giving a dense boundary.<br />
-- The <strong>largest contour by area</strong> is selected: <code>max(contours, key=cv2.contourArea)</code><br />
-- The contour is drawn onto a blank image with <strong>thickness = 1</strong>, producing a single-pixel-wide outline.<br />
-- A final <code>MORPH_CLOSE</code> with a <code>2×2</code> kernel closes any remaining small gaps in the outline to ensure path continuity.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 6 — Overlay onto Street Map</strong>     </p>
-<p>&nbsp;</p>
-<p>The pattern is scaled and positioned on top of the <code>osmnx</code> map axes.</p>
-<p>&nbsp;</p>
-<p><strong>Scale calculation:</strong>     </p>
-<p>&nbsp;</p>
-<pre><code>max_route_width  = graph_width  × scale_factor_x
-max_route_height = graph_height × scale_factor_y
-#
-width_scale  = max_route_width  / img_width
-height_scale = max_route_height / img_height
-final_scale  = min(width_scale, height_scale)   ← preserves aspect ratio
-#
-new_width  = img_width  × final_scale
-new_height = img_height × final_scale
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Positioning</strong> (bottom-right anchor, first color only):     </p>
-<p>&nbsp;</p>
-<pre><code>route_right  = graph_xlim[1] − (graph_width  × position_offset_x)
-route_left   = route_right − new_width
-route_bottom = graph_ylim[0] + (graph_height × position_offset_y)
-route_top    = route_bottom + new_height
-#
-reference_center = ( (route_left + route_right) / 2,
-                     (route_bottom + route_top) / 2 )
-</code></pre>
-<p>&nbsp;</p>
-<p>All subsequent color layers use the same <code>reference_center</code> so every color is co-registered to the same position. Each color layer is rendered as an RGBA overlay (with <code>alpha=0.4</code>) and additionally dilated with a <code>5×5</code> kernel (<code>iterations=2</code>) for visual thickness on the map.</p>
-<p>&nbsp;</p>
-<p>The user iterates on <code>scale_factor_x</code>, <code>scale_factor_y</code>, <code>position_offset_x</code>, and <code>position_offset_y</code> until the pattern fits visually within the street network.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 7 — Pixel-to-GPS Coordinate Conversion and Path Ordering</strong>     </p>
-<p>&nbsp;</p>
-<p><strong>Pixel → geographic coordinate mapping:</strong>     </p>
-<p>&nbsp;</p>
-<pre><code>lon_per_pixel = (right − left) / width
-lat_per_pixel = (top − bottom) / height
-#
-longitude = left + (x + 0.5) × lon_per_pixel
-latitude  = top  − (y + 0.5) × lat_per_pixel
-</code></pre>
-<p>&nbsp;</p>
-<p>The <code>+ 0.5</code> offset places the sample point at the pixel center. Note that the y-axis is inverted: image row 0 is at the top, but geographic latitude increases upward, so latitude is computed by subtracting from <code>top</code>.</p>
-<p>&nbsp;</p>
-<p><strong>Nearest-neighbor path ordering:</strong><br />
-All non-background pixels belonging to each color are collected. Starting from the leftmost pixel (minimum x), the path is built greedily:</p>
-<p>&nbsp;</p>
-<pre><code>dist(current, candidate) = √( (Δx)² + (Δy)² )
-</code></pre>
-<p>&nbsp;</p>
-<p>At each step, all remaining pixels are sorted by Euclidean distance from the current pixel. The closest pixel within a 2-pixel radius is chosen as the next step. If no pixel falls within that radius (i.e., a gap exists in the skeleton), the globally nearest remaining pixel is used as a fallback. This produces an ordered sequence that approximates a continuous traversal of the boundary.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 8 — GPX Export</strong>     </p>
-<p>&nbsp;</p>
-<p>For each color, a GPX track is created using <code>gpxpy</code>:</p>
-<p>&nbsp;</p>
-<pre><code>GPX → GPXTrack → GPXTrackSegment → [GPXTrackPoint(lat, lon), ...]
-</code></pre>
-<p>&nbsp;</p>
-<p>The output file is named:</p>
-<p>&nbsp;</p>
-<pre><code>{image_filename_without_ext}_{color}_{YYYY-MM-DD_HH-MM-SS}.gpx
-</code></pre>
-<p>&nbsp;</p>
-<p>One <code>.gpx</code> file is produced per detected color layer.</p>
-<p>&nbsp;</p>
-<p><strong>Dependencies</strong>     </p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Package</th>
-<th style="text-align: left;">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>osmnx</code></td>
-<td style="text-align: left;">Download OpenStreetMap street networks</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>gpxpy</code></td>
-<td style="text-align: left;">Create and export GPX track files</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>opencv-python</code> (<code>cv2</code>)</td>
-<td style="text-align: left;">HSV conversion, masking, morphology, contours</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>Pillow</code> (<code>PIL</code>)</td>
-<td style="text-align: left;">Image loading and grayscale conversion</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>numpy</code></td>
-<td style="text-align: left;">Array operations and pixel math</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>matplotlib</code></td>
-<td style="text-align: left;">Visualization of map and overlay</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>scikit-image</code></td>
-<td style="text-align: left;"><code>skeletonize</code>, <code>measure</code> (imported, available for extension)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>scipy</code></td>
-<td style="text-align: left;"><code>ndimage</code> (imported, available for extension)</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p>Install non-default Colab packages:</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">pip install osmnx gpxpy
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>     </p>
-<p>&nbsp;</p>
-<p><strong>Environment Setup (Google Colab)</strong>     </p>
-<p>&nbsp;</p>
-<ul>
-<li>Open the notebook in <a href="https://colab.research.google.com/">Google Colab</a>.</li>
-<li>Mount your Google Drive:</li>
-</ul>
-<p>&nbsp;</p>
-<p><code>python
-  from google.colab import drive
-  drive.mount('/content/drive')</code></p>
-<p>&nbsp;</p>
-<ul>
-<li>Navigate to the directory containing your pattern image:</li>
-</ul>
-<p>&nbsp;</p>
-<p><code>python
-  %cd /content/drive/My Drive/GPX/</code></p>
-<p>&nbsp;</p>
-<ul>
-<li>Install required packages:</li>
-</ul>
-<p>&nbsp;</p>
-<p><code>bash
-  !pip install osmnx -q
-  !pip install gpxpy -q</code></p>
-<p>&nbsp;</p>
-<p><strong>Configure the City and Network Type</strong>     </p>
-<p>&nbsp;</p>
-<pre><code class="language-python">place_name = &quot;Vancouver, BC, Canada&quot;   # Any OSM-recognized place name
-network_type = 'bike'                   # 'bike', 'walk', 'drive', 'all'
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Set the Input Image</strong>     </p>
-<p>&nbsp;</p>
-<pre><code class="language-python">filename = 'AzadiSq.png'   # Your pattern image (PNG recommended)
-</code></pre>
-<p>&nbsp;</p>
-<p>The image should be a <strong>color-coded flat design</strong> where each distinct region uses a solid, distinguishable color. Gradients and photographic images will produce unpredictable results.</p>
-<p>&nbsp;</p>
-<p><strong>Identify the Outermost Color</strong>     </p>
-<p>&nbsp;</p>
-<p>After the color detection cell runs, inspect the <code>detected_colors</code> list printed to output, then set:</p>
-<p>&nbsp;</p>
-<pre><code class="language-python">outermost_color = 'yellow'   # The color forming the outermost boundary of your pattern
-</code></pre>
-<p>&nbsp;</p>
-<p>This color is moved to the front of the processing order so it establishes the reference position for all inner layers.</p>
-<p>&nbsp;</p>
-<p><strong>Tune Scale and Position (Trial and Error)</strong>     </p>
-<p>&nbsp;</p>
-<pre><code class="language-python">scale_factor_y     = 0.5    # Pattern height as a fraction of map height (0.0–1.0)
-scale_factor_x     = 0.5    # Pattern width as a fraction of map width  (0.0–1.0)
-position_offset_x  = 0.10   # Horizontal offset from the right edge of the map (fraction)
-position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (fraction)
-</code></pre>
-<p>&nbsp;</p>
-<p>Run the overlay cell and visually inspect the result. Adjust these four values until the pattern sits fully within the street network, then re-run.</p>
-<p>&nbsp;</p>
-<p><strong>Run the Production Step</strong>     </p>
-<p>&nbsp;</p>
-<p>Once the overlay looks correct, run the production cells. The notebook will:<br />
-- Compute GPS coordinates for every boundary pixel of every color layer<br />
-- Plot the final coordinate paths on the map<br />
-- Save one <code>.gpx</code> file per color to the current working directory</p>
-<p>&nbsp;</p>
-<p><strong>Use the GPX Files</strong>     </p>
-<p>&nbsp;</p>
-<p>Import the <code>.gpx</code> files into any GPS application (Garmin Connect, Komoot, Strava, Google Maps, etc.) or load them onto a GPS device to navigate the pattern as a real-world route.</p>
+- <strong>Downloads a city's street network</strong> from OpenStreetMap<br />
+- <strong>Loads a pattern image</strong> and converts it to HSV color space<br />
+- <strong>Detects which colors are present</strong> in the image above a minimum threshold<br />
+- <strong>Creates binary masks</strong> for each detected color<br />
+- <strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary<br />
+- <strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position<br />
+- <strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal<br />
+- <strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)<br />
+- <strong>Exports one <code>.gpx</code> file per color</strong> layer</p>
 <p>&nbsp;</p>
 <p><strong>Key Parameters Reference</strong>     </p>
 <p>&nbsp;</p>
@@ -356,17 +119,16 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p><strong>Notes and Limitations</strong>     </p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Color range definitions</strong> use single-unit HSV hue bins (e.g., H=3 for yellow). These bins are very narrow and may need widening in <code>color_ranges</code> if the pattern image uses slightly off-hue colors.</li>
-<li>The <strong>nearest-neighbor pixel ordering</strong> is an O(n²) algorithm. For large or high-resolution images with many boundary pixels, this step can be slow.</li>
-<li>The <strong>GPX output does not snap to streets</strong>. Coordinates reflect the geometric shape of the pattern scaled to the map extent. For street-snapped routing, post-process the GPX in a routing engine.</li>
-<li>The notebook is designed for <strong>Google Colab</strong> and relies on Google Drive for file access. Adapting it to a local Jupyter environment requires removing the Drive mount cells and adjusting file paths.</li>
+<li><strong>Color range definitions</strong> use single-unit HSV hue bins (e.g., H=3 for yellow) that are very narrow and may need widening in <code>color_ranges</code> if the pattern image uses slightly off-hue colors.</li>
+<li>The <strong>nearest-neighbor pixel ordering</strong> is an O(n²) algorithm, and for large or high-resolution images with many boundary pixels, this step can be slow.</li>
+<li>The <strong>GPX output does not snap to streets</strong> always.</li>
 </ul></div>
         </section>
 
         <section class="card span-2">
             <div class="card-content"><h2>An Interactive Local Python Notebook</h2>
 <p>&nbsp;</p>
-<p>This is an interactive local Python notebook to mimic a <code>Jupyter Notebook</code>. It can be dowwladed from <a href="Garage_20260405_ipynb.html"><strong>here</strong></a>. </p></div>
+<p>This is an <strong>interactive local Python notebook</strong> to mimic a <strong><code>Jupyter Notebook</code></strong>. It can be accessed from <a href="Garage_20260405_ipynb.html"><strong>here</strong></a>. </p></div>
         </section>
         <section class="card span-1 empty"></section>
 
@@ -376,10 +138,10 @@ position_offset_y  = 0.10   # Vertical offset from the bottom edge of the map (f
 <p>&nbsp;</p>
 <p>This script is a <strong><code>Bash</code></strong>-based utility designed to automate the configuration and submission of <a href="https://slurm.schedmd.com/"><strong><code>Slurm</code></strong></a>-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery. </p>
 <p>&nbsp;</p>
-<p>The <strong><code>bash</code></strong> script is available at <a href="Garage_99999980_SubmitHPC.sh"><strong>here</strong></a>. <br />
-An <strong><code>html</code></strong> version of this script is available at <a href="Garage_99999980_SubmitHPC.html"><strong>here</strong></a>. </p>
+<p>The <strong><code>bash</code></strong> script is available <a href="Garage_99999980_SubmitHPC.sh"><strong>here</strong></a>. <br />
+An <strong><code>.html</code></strong> version is available <a href="Garage_99999980_SubmitHPC.html"><strong>here</strong></a>. </p>
 <p>&nbsp;</p>
-<p>It is specifically tailored for <a href="https://www.comsol.com/products/multiphysics/"><strong>COMSOL Multiphysics</strong></a> simulations. The script primaryly manages the entire workflow from environment validation to job submission on various <a href="https://www.alliancecan.ca/en/about"><strong>Canadian HPC clusters</strong></a> (before the migration to new systems).  </p>
+<p>It is specifically tailored for <a href="https://www.comsol.com/products/multiphysics/"><strong>COMSOL Multiphysics</strong></a> simulations. The script primaryly manages the entire workflow from environment validation to job submission on various <a href="https://www.alliancecan.ca/en/about"><strong>Canadian HPC clusters</strong></a> (<em>before their migration to new systems</em>).  </p>
 <p>&nbsp;</p>
 <p>The script builds the final <strong>COMSOL call</strong> as a concatenated string of the following components:      </p>
 <p>&nbsp;</p>
@@ -396,100 +158,21 @@ An <strong><code>html</code></strong> version of this script is available at <a 
     ${COMSOL_METHOD_}     # Custom method calls
 </code></pre>
 <p>&nbsp;</p>
-<p>The script implements a deterministic allocation of resources based on the selected cluster's hardware profile. It maps user-selected options to specific Slurm assignments for N<sub>cpu</sub> (cores), M<sub>total</sub> (RAM), and Arch (microarchitecture).  </p>
-<p>&nbsp;</p>
-<p>The script follows a strictly sequential multi-stage execution model to ensure all dependencies (files, environment modules, and Slurm accounts) are validated before the job is committed to the scheduler.    </p>
-<p>&nbsp;</p>
 <p><strong>Interactive Usage Walkthrough (Step-by-Step)</strong>    <br />
-To successfully submit a job, follow this functional walkthrough:</p>
-<p>&nbsp;</p>
-<ol>
-<li><strong>Prepare Workspace</strong>: Place your <code>.mph</code> file in the directory. Create a subdirectory for the script or run it directly.</li>
-<li><strong>Identity Confirmation</strong>: Confirm the detected username. If incorrect, enter your Slurm-associated username manually.</li>
-<li><strong>Account Selection</strong>: Provide the exact Slurm allocation name (e.g., <code>st-amadiseh-1</code> for UBC or <code>def-madiseh-ab</code> for CC). The script will verify this against <code>sacctmgr</code>.</li>
-<li><strong>Cluster Discovery</strong>: The script automatically detects the cluster (e.g., Narval). Confirm this to load the appropriate hardware menu.</li>
-<li><strong>Configure Monitoring</strong>:<ul>
-<li><strong>Option 1</strong>: Manual wall-time (e.g., <code>24-00</code> for 24 hours).</li>
-<li><strong>Option 2 (Watch Mode)</strong>: Manual wall-time, but enables automatic resume logic if the job fails due to timeout.</li>
-</ul>
-</li>
-<li><strong>Select Hardware Profile</strong>: Pick a number from the menu (e.g., Option 3 for high-memory). Ensure you note if the option includes GPU support as identified in the <code>isGPU</code> column.</li>
-<li><strong>Finalize &amp; Submit</strong>:<ul>
-<li>Provide the exact input filename (must be in the parent directory).</li>
-<li>Select a <code>study tag</code> (e.g., <code>std1</code>) or type <code>no</code> for a full problem solve.</li>
-<li>Review the "test-only" submission feedback. If successful, the job will be queued immediately.</li>
-</ul>
-</li>
-</ol>
-<p>&nbsp;</p>
-<p><strong>Execution Workflow Architecture</strong>      <br />
-<strong>Stage 1: Pre-flight Verification   (<code>is_under_scratch</code>)</strong>       <br />
-- <strong>Logic</strong>: Environment audit.    <br />
-- <strong>Action</strong>: Immediately terminates if the current working directory does not contain "scratch" to protect home directory quotas and performance.    <br />
-- <strong>Timestamping</strong>: Captures <code>$(date +"%Y%m%d_%H%M%S")</code> to initialize the temporary workspace.      </p>
-<p>&nbsp;</p>
-<p><strong>Stage 2: Job Context Selection (<code>New</code> vs. <code>Resume</code>)</strong>    <br />
-- <strong>New Job (<code>this_is_new_job</code>)</strong>:<br />
-    1.  <strong>Directory Setup</strong>: Creates a root folder named after the timestamp. Inside, it initializes <code>tmp/</code> and <code>rec/</code> subdirectories.<br />
-    2.  <strong>Environment Cleaning</strong>: Offers to wipe stale <code>.comsol</code> settings from both <code>$HOME</code> and <code>$SCRATCH</code>.<br />
-    3.  <strong>Identity Mapping</strong>: Validates Slurm user and account membership via <code>sacctmgr</code>.<br />
-    4.  <strong>Hardware Profiling</strong>: Presents cluster-specific menus (GPU/CPU/RAM) and calculates Slurm resource requests.<br />
-- <strong>Resume/Recovery (<code>this_is_resume_job</code>)</strong>:<br />
-    1.  <strong>Re-linking</strong>: Prompts for existing <code>recoverydir</code> and <code>temporarydir</code> relative paths to re-attach to a failed or timed-out session.<br />
-    2.  <strong>State Continuity</strong>: Appends <code>-recover -continue</code> flags to the final batch command.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 3: File System Orchestration</strong>    <br />
-- <strong>Relative Path Constraint</strong>: The script assumes the input <code>.mph</code> file is located at <code>../</code> (parent directory).    <br />
-- <strong>Duplication</strong>: It creates a 1:1 copy of the input file into the timestamped directory to ensure the original remains untouched by the simulation process.    <br />
-- <strong>Permissions</strong>: Recursively sets <code>chmod 755</code> on the workspace to ensure all compute nodes can read/write to the temporary and recovery folders.      </p>
-<p>&nbsp;</p>
-<p><strong>Stage 4: Slurm Script Generation (<code>initiate_sh_submit</code>)</strong>    <br />
-- <strong>Dynamic Writing</strong>: Writes the <code>submit_job.sh</code> file with validated <code>#SBATCH</code> headers.    <br />
-- <strong>System Tuning</strong>: Includes <code>ulimit -s unlimited</code> to prevent stack overflow issues in memory-intensive multiphysics solves.    <br />
-- <strong>Cluster Specializations</strong>: Loads environment modules (e.g., <code>StdEnv/2023</code>, <code>comsol/6.2</code>, <code>openjdk</code>) based on the cluster name (<code>sockeye</code> vs. <code>Compute Canada</code>).      </p>
-<p>&nbsp;</p>
-<p><strong>Stage 5: Parametric &amp; Method Injection</strong>    <br />
-- <strong>Parametric Sweeps (<code>running_for_specific_parameter</code>)</strong>: Builds <code>-pname</code> (comma-separated parameter names) and <code>-plist</code> (comma-separated value lists) for on-the-fly model overrides.<br />
-- <strong>Method Calls (<code>calling_a_method</code>)</strong>: Appends specific Java method names to the batch command for custom logic execution.</p>
-<p>&nbsp;</p>
-<p><strong>Stage 6: Final Submission &amp; Housekeeping</strong>    <br />
-- <strong>Renaming Logic</strong>: Renames the timestamped directory to <code>[JobName]_[Timestamp]</code> to provide human-readable folder names.    <br />
-- <strong>Submission Trial</strong>: Executes <code>sbatch --test-only</code> to verify the Slurm scheduler will accept the job before final submission.    <br />
-- <strong>Execution</strong>: Runs <code>sbatch submit_job.sh</code> and displays the current state of the queue (<code>squeue -u $username</code>).      </p>
+- <strong>Prepare Workspace</strong>: Place the <code>.mph</code> file in the parent directory. Script creates a subdirectory for the script.<br />
+- <strong>Identity Confirmation</strong>: Confirm the detected <code>username</code>. If incorrect, enter your Slurm-associated username manually.<br />
+- <strong>Account Selection</strong>: Provide the exact Slurm <code>allocation</code> name (e.g., <code>st-amadiseh-1</code> for UBC or <code>def-madiseh-ab</code> for CC). The script will verify this <code>allocation</code> against <code>sacctmgr</code>.<br />
+- <strong>Cluster Discovery</strong>: The script automatically detects the <code>cluster</code> (e.g., Narval). Confirm this to load the appropriate hardware menu.<br />
+- <strong>Configure Monitoring</strong>:<br />
+- - <strong>Option 1</strong>: Manual <code>wall-time</code> (e.g., <code>24-00</code> for 24 hours).<br />
+- - <strong>Option 2 (Watch Mode)</strong>: Manual <code>wall-time</code>, but enables automatic resume logic if the job fails due to timeout.<br />
+- <strong>Select Hardware Profile</strong>: Pick an <code>option</code> from the menu (e.g., Option <code>3</code> for high-memory). Ensure you note if the option includes <code>GPU</code> support as identified in the <code>isGPU</code> column.<br />
+- <strong>Finalize &amp; Submit</strong>:<br />
+- - Provide the exact input <code>filename</code> (must be in the parent directory).<br />
+- - Select a <code>study tag</code> (e.g., <code>std1</code>) or type <code>no</code> for a full problem solve.<br />
+- - Review the <code>test-only</code> submission <code>feedback</code>. If successful, the job will be <code>queued</code> immediately.</p>
 <p>&nbsp;</p>
 <p><strong>Cluster Options</strong>    </p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Flag/Control</th>
-<th style="text-align: left;">Cluster</th>
-<th style="text-align: left;">Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>ulimit -s unlimited</code></td>
-<td style="text-align: left;">ALL</td>
-<td style="text-align: left;">Removes memory stack limits for MPI safety.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>I_MPI_COLL_EXTERNAL=0</code></td>
-<td style="text-align: left;">Narval</td>
-<td style="text-align: left;">Disables external MPI collective communication for performance.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>CCEnv</code> / <code>StdEnv</code></td>
-<td style="text-align: left;">CC</td>
-<td style="text-align: left;">Dynamically loads the Compute Canada standard software environments.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>openjdk/11.0.20.1_1</code></td>
-<td style="text-align: left;">Sockeye</td>
-<td style="text-align: left;">Loads the required Java runtime for the COMSOL backend.</td>
-</tr>
-</tbody>
-</table>
 <p>&nbsp;</p>
 <p><strong>- Sockeye (UBC ARC)</strong>   </p>
 <p>&nbsp;</p>
@@ -961,15 +644,57 @@ To successfully submit a job, follow this functional walkthrough:</p>
 <p>&nbsp;</p>
 <p><strong>- Niagara (Compute Canada)</strong>      </p>
 <p>&nbsp;</p>
-<p><em>Preset Configuration</em>: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      </p></div>
+<p><em>Preset Configuration</em>: 4.7 GB/CPU (approx 188G/40cores) on Skylake architecture.      </p>
+<p>&nbsp;</p>
+<p><strong>Environment Variables</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag/Control</th>
+<th style="text-align: left;">Cluster</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ulimit -s unlimited</code></td>
+<td style="text-align: left;">ALL</td>
+<td style="text-align: left;">Removes memory stack limits for MPI safety.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>I_MPI_COLL_EXTERNAL=0</code></td>
+<td style="text-align: left;">Narval</td>
+<td style="text-align: left;">Disables external MPI collective communication for performance.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>CCEnv</code> / <code>StdEnv</code></td>
+<td style="text-align: left;">CC</td>
+<td style="text-align: left;">Dynamically loads the Compute Canada standard software environments.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>openjdk/11.0.20.1_1</code></td>
+<td style="text-align: left;">Sockeye</td>
+<td style="text-align: left;">Loads the required Java runtime for the COMSOL backend.</td>
+</tr>
+</tbody>
+</table></div>
         </section>
 
         <section class="card span-2">
             <div class="card-content"><h2>Speech-to-Text via OpenAI Whisper</h2>
 <p>&nbsp;</p>
-<p>Two Python scripts (<a href="Garage_20260490_Speech2Text_cpu.py">CPU version</a> and <a href="Garage_20260490_Speech2Text_gpu.py">GPU version</a>) that perform automatic speech recognition (ASR) on audio files using OpenAI's Whisper model. One targets CPU-only environments; the other adds GPU (CUDA) acceleration via PyTorch.</p>
+<p>The Python scripts performs <strong>automatic speech recognition (ASR) on audio files using OpenAI's Whisper model</strong>. </p>
 <p>&nbsp;</p>
-<p>Whisper is a sequence-to-sequence Transformer trained on 680,000 hours of labelled speech. The <code>model_size</code> argument selects one of five pre-trained checkpoints. <code>whisper.load_model(model_size)</code> downloads (on first run) and caches the corresponding checkpoint and returns a <code>Whisper</code> object whose <code>transcribe</code> method drives the full inference pipeline.</p>
+<p><strong>Download</strong> the script from <a href="Garage_20260490_Speech2Text.py"><strong>here</strong></a>.</p>
+<p>&nbsp;</p>
+<p><strong>How to Use</strong><br />
+- to show help: <strong><code>python script_name.py --help</code></strong><br />
+- to auto-detect device (uses GPU if available): <strong><code>python script_name.py audio.mp3</code></strong><br />
+- to force GPU, large model, English: <strong><code>python script_name.py audio.mp3 --model large --lang en --device cuda</code></strong><br />
+- to force CPU, save to custom file: <strong><code>python script_name.py audio.mp3 --device cpu --output result.txt</code></strong></p>
+<p>&nbsp;</p>
+<p>The <strong><code>model_size</code></strong> argument selects one of five pre-trained checkpoints. <strong><code>whisper.load_model(model_size)</code></strong> downloads (on first run) and caches the corresponding checkpoint and returns a <strong><code>Whisper</code></strong> object whose <strong><code>transcribe</code></strong> method drives the full inference pipeline.</p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -1030,99 +755,7 @@ To successfully submit a job, follow this functional walkthrough:</p>
 <td style="text-align: left;">~2.9 GB</td>
 </tr>
 </tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>      </p>
-<p>&nbsp;</p>
-<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
-<p>&nbsp;</p>
-<p><strong>Prerequisites</strong>     <br />
-1. <strong>Python 3.8+</strong> — required by <code>openai-whisper</code>.<br />
-2. <strong>ffmpeg</strong> — must be on <code>PATH</code>. The scripts will exit with an error and installation hints if it is not found.<br />
-3. <strong>pip</strong> — standard Python package installer (required for the auto-install logic).<br />
-4. <strong>(GPU script only) CUDA-capable NVIDIA GPU</strong> with a compatible CUDA driver — optional; the script falls back to CPU automatically.</p>
-<p>&nbsp;</p>
-<p><strong>For CPU script:</strong></p>
-<pre><code class="language-bash">python speech2text_via_OpenAI_Whisper.py &lt;audio_file&gt; [model_size] [language]
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>- Positional argument (required):</strong></p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Position</th>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><code>audio_file</code></td>
-<td style="text-align: left;">Path to the input audio file (any format supported by ffmpeg: <code>.mp3</code>, <code>.mp4</code>, <code>.wav</code>, <code>.flac</code>, <code>.ogg</code>, <code>.m4a</code>, etc.)</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>- Positional arguments (optional, must appear in order):</strong></p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Position</th>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Default</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><code>model_size</code></td>
-<td style="text-align: left;"><code>base</code></td>
-<td style="text-align: left;">Whisper model size: <code>tiny</code>, <code>base</code>, <code>small</code>, <code>medium</code>, <code>large</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><code>language</code></td>
-<td style="text-align: left;"><em>(auto-detect)</em></td>
-<td style="text-align: left;">ISO 639-1 language code, e.g., <code>en</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>zh</code>, <code>ar</code></td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>For GPU script:</strong></p>
-<pre><code class="language-bash">python speech2text_via_OpenAI_Whisper_GPU.py &lt;audio_file&gt; [model_size] [language] [device]
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>- All arguments from the CPU script apply. One additional optional argument is added:</strong></p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Position</th>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Default</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;"><code>device</code></td>
-<td style="text-align: left;"><em>(auto-detect)</em></td>
-<td style="text-align: left;"><code>cuda</code> to force GPU, <code>cpu</code> to force CPU</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>Note:</strong> When <code>device</code> is required but <code>language</code> should remain auto-detected, there is no way to skip <code>language</code> positionally. You must either pass <code>None</code> as the literal string for <code>language</code> (the script will pass it as the string <code>"None"</code> to Whisper, which may not behave as expected), or edit the script to use <code>argparse</code>. If you want GPU with auto-detected language, omit both arguments and let the auto-detection handle both:</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">python speech2text_via_OpenAI_Whisper_GPU.py audio.mp3 base
-</code></pre>
-<p>&nbsp;</p>
-<p>This will auto-detect language and select CUDA automatically.</p></div>
+</table></div>
         </section>
         <section class="card span-1 empty"></section>
 
@@ -1130,24 +763,14 @@ To successfully submit a job, follow this functional walkthrough:</p>
         <section class="card span-2">
             <div class="card-content"><h2>Text-to-Speech (Google TTS) Script</h2>
 <p>&nbsp;</p>
-<p>A command-line Python script that reads a plain-text (<code>.txt</code>) file encoded in UTF-8 and synthesises it into an MP3 audio file using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>     </p>
+<p>The Python script below accepts a <strong>plain-text (<code>.txt</code>) file encoded in UTF-8</strong> and synthesises it into an <strong>MP3 audio file</strong> using the <strong>Google Text-to-Speech (gTTS)</strong> API. </p>
 <p>&nbsp;</p>
 <p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
 <p>&nbsp;</p>
-<p><strong>Prerequisites</strong>            <br />
-- Python 3.x installed and reachable on the system <code>PATH</code>.<br />
-- An <strong>active internet connection</strong> is required; gTTS transmits text to Google's servers and retrieves the audio stream over HTTPS.<br />
-- No manual package installation is required — the script installs <code>gTTS</code> automatically on first run if it is absent.<br />
-- A UTF-8 encoded <code>.txt</code> file.</p>
-<p>&nbsp;</p>
 <p><strong>Running the Script</strong></p>
 <p>&nbsp;</p>
-<pre><code class="language-bash">python text2speech_via_Google_TTS.py &lt;path_to_txt_file&gt;
-</code></pre>
-<p>&nbsp;</p>
-<p><code>&lt;path_to_txt_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.txt</code> (case-insensitive). The output MP3 is always written to the <strong>current working directory</strong>, not the directory of the input file.</p>
+<p>Save the script as <code>script_name.py</code> and run it from the terminal as:<br />
+<strong><code>python script_name.py &lt;path_to_txt_file&gt;</code></strong></p>
 <p>&nbsp;</p>
 <p><strong>Code (with inline comments)</strong></p>
 <p>&nbsp;</p>
@@ -1209,23 +832,13 @@ except Exception as e:
         <section class="card span-2">
             <div class="card-content"><h2>Extract Text from PDF via PDFplumber</h2>
 <p>&nbsp;</p>
-<p>A command-line Python script that opens a PDF file, extracts all textual content page-by-page using <strong>PDFplumber</strong>, and writes the result as a UTF-8 encoded plain-text (<code>.txt</code>) file. </p>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>     </p>
+<p>The Python script below accepts <strong>PDF file</strong>, extracts all <strong>textual content page-by-page</strong> using <strong>PDFplumber</strong>, and writes the result as a <strong>UTF-8 encoded plain-text (<code>.txt</code>) file</strong>. </p>
 <p>&nbsp;</p>
 <p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
 <p>&nbsp;</p>
-<p><strong>Prerequisites</strong>   <br />
-- Python 3.x installed and reachable on the system <code>PATH</code>.<br />
-- No manual package installation is required — the script installs <code>pdfplumber</code> automatically on first run if it is absent.<br />
-- A UTF-8 encoded <code>.pdf</code> file.</p>
-<p>&nbsp;</p>
-<p><strong>Running the Script</strong></p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">python pdf2text_via_PDFplumber.py &lt;path_to_pdf_file&gt;
-</code></pre>
-<p>&nbsp;</p>
-<p><code>&lt;path_to_pdf_file&gt;</code> must be the path (absolute or relative to CWD) of an existing file whose name ends in <code>.pdf</code> (case-insensitive). The output <code>.txt</code> is always written to the <strong>current working directory</strong>, not the directory of the input file.</p>
+<p><strong>Running the Script</strong><br />
+Save the script as <code>script_name.py</code> and run it from the terminal as:<br />
+<strong><code>python script_name.py &lt;path_to_pdf_file&gt;</code></strong></p>
 <p>&nbsp;</p>
 <p><strong>Code (with inline comments)</strong></p>
 <p>&nbsp;</p>
@@ -1293,20 +906,20 @@ except Exception as e:
         <section class="card span-2">
             <div class="card-content"><h2>Nanotube Builder and Mesher</h2>
 <p>&nbsp;</p>
-<p>An interactive browser-based tool for parametric design and 3D visualization of nanochannel geometries, mesh generation in real time, and export. </p>
+<p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>. </p>
 <p>&nbsp;</p>
 <p><a href="Garage_20260101_Nanotube.html"><strong>Click here to access the tool</strong></a>.</p>
 <p>&nbsp;</p>
-<p>The channel profile is described by two wall functions over the axial coordinate ξ:</p>
+<p>The channel profile is described by two <strong>wall functions</strong> over the <strong>axial coordinate</strong> ξ:</p>
 <p>&nbsp;</p>
 <p>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)   <br />
 w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
 <p>&nbsp;</p>
-<p>The local channel radius at any point along the axis is:</p>
+<p>The <strong>local channel radius</strong> at any point along the axis is:</p>
 <p>&nbsp;</p>
 <p>r(ξ) = (w₂ − w₁) / 2</p>
 <p>&nbsp;</p>
-<p>The centerline position is the midpoint between w₁ and w₂, producing a tube whose axis can curve and whose radius varies continuously along its length.</p>
+<p>The <strong>centerline position</strong> is the midpoint between w₁ and w₂, producing a tube whose axis can curve and whose radius varies continuously along its length.</p>
 <p>&nbsp;</p>
 <p><strong>Parameters</strong></p>
 <p>&nbsp;</p>
@@ -1320,46 +933,46 @@ w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">α₁</td>
+<td style="text-align: left;"><strong>α₁</strong></td>
 <td style="text-align: left;">[0, 1]</td>
-<td style="text-align: left;">Asymmetry amplitude — shifts the centerline, producing a curved or off-axis channel</td>
+<td style="text-align: left;"><strong>Asymmetry amplitude</strong> — shifts the centerline, producing a curved or off-axis channel</td>
 </tr>
 <tr>
-<td style="text-align: left;">α₂</td>
+<td style="text-align: left;"><strong>α₂</strong></td>
 <td style="text-align: left;">[0, 1]</td>
-<td style="text-align: left;">Corrugation amplitude — modulates the radius periodically, creating constrictions and expansions</td>
+<td style="text-align: left;"><strong>Corrugation amplitude</strong> — modulates the radius periodically, creating constrictions and expansions</td>
 </tr>
 <tr>
-<td style="text-align: left;">α₃</td>
+<td style="text-align: left;"><strong>α₃</strong></td>
 <td style="text-align: left;">[0.5, 4]</td>
-<td style="text-align: left;">Wavenumber multiplier — controls the spatial frequency of the α₁ modulation</td>
+<td style="text-align: left;"><strong>Wavenumber multiplier</strong> — controls the spatial frequency of the α₁ modulation</td>
 </tr>
 <tr>
-<td style="text-align: left;">r₀</td>
+<td style="text-align: left;"><strong>r₀</strong></td>
 <td style="text-align: left;">[0.2, 2]</td>
-<td style="text-align: left;">Minimum base radius — sets the baseline channel width</td>
+<td style="text-align: left;"><strong>Minimum base radius</strong> — sets the baseline channel width</td>
 </tr>
 <tr>
-<td style="text-align: left;">L</td>
+<td style="text-align: left;"><strong>L</strong></td>
 <td style="text-align: left;">[2, 40]</td>
-<td style="text-align: left;">Tube length in the ξ domain</td>
+<td style="text-align: left;"><strong>Tube length</strong> in the ξ domain</td>
 </tr>
 <tr>
-<td style="text-align: left;">Nₐ</td>
+<td style="text-align: left;"><strong>Nₐ</strong></td>
 <td style="text-align: left;">&gt;20</td>
-<td style="text-align: left;">Axial mesh points — higher values give a smoother profile along the length</td>
+<td style="text-align: left;"><strong>Axial mesh points</strong> — higher values give a smoother profile along the length</td>
 </tr>
 <tr>
-<td style="text-align: left;">Nᵣ</td>
+<td style="text-align: left;"><strong>Nᵣ</strong></td>
 <td style="text-align: left;">&gt;8</td>
-<td style="text-align: left;">Radial mesh points — higher values give a rounder cross-section</td>
+<td style="text-align: left;"><strong>Radial mesh points</strong> — higher values give a rounder cross-section</td>
 </tr>
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p>Each parameter has a <strong>slider</strong> for quick exploration and a <strong>number input</strong> for precise entry. Press Enter or leave the field to apply a typed value.</p>
+<p>Each parameter has a <strong>slider</strong> for quick exploration and a <strong>number input</strong> for precise entry. Press <strong>Enter</strong> or leave the field to <strong>apply</strong> a typed value.</p>
 <p>&nbsp;</p>
-<p>Live vertex, face, and estimated file size statistics update automatically as you adjust these values.</p>
+<p>Live <strong>vertex</strong>, <strong>face</strong>, and <strong>estimated file size</strong> statistics update automatically as you adjust these values.</p>
 <p>&nbsp;</p>
 <p><strong>Viewport Navigation</strong></p>
 <p>&nbsp;</p>
@@ -1373,47 +986,46 @@ w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
 <tbody>
 <tr>
 <td style="text-align: left;">Left-click drag</td>
-<td style="text-align: left;">Pan — recenters the view</td>
+<td style="text-align: left;"><strong>Pan</strong> — recenters the view</td>
 </tr>
 <tr>
 <td style="text-align: left;">Right-click drag</td>
-<td style="text-align: left;">Rotate the channel</td>
+<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
 </tr>
 <tr>
 <td style="text-align: left;">Shift + drag</td>
-<td style="text-align: left;">Rotate the channel</td>
+<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
 </tr>
 <tr>
 <td style="text-align: left;">Scroll wheel</td>
-<td style="text-align: left;">Zoom in / out</td>
+<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
 </tr>
 <tr>
 <td style="text-align: left;">Pinch (touch)</td>
-<td style="text-align: left;">Zoom in / out</td>
+<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
 </tr>
 <tr>
 <td style="text-align: left;">Single finger (touch)</td>
-<td style="text-align: left;">Pan</td>
+<td style="text-align: left;"><strong>Pan</strong></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>+</code> / <code>−</code> buttons</td>
-<td style="text-align: left;">Step zoom in / out</td>
+<td style="text-align: left;"><strong>Step zoom</strong> in / out</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>RST</code> button</td>
-<td style="text-align: left;">Reset zoom, pan, and rotation to defaults</td>
+<td style="text-align: left;"><strong>Reset</strong> zoom, pan, and rotation to defaults</td>
 </tr>
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p>Select a format, check the estimated file size, then click <strong>Download</strong>.</p>
+<p>Select a format, check the <strong>estimated file size</strong>, then click <strong>Download</strong>.</p>
 <p>&nbsp;</p>
-<ul>
-<li><code>surface</code> — <code>outer</code> or <code>inner</code></li>
-<li><code>face_indices</code> — semicolon-separated list of all face IDs the vertex belongs to</li>
-<li><code>nx, ny, nz</code> — surface normal vector</li>
-<li><code>u, v</code> — UV texture coordinates</li>
-</ul></div>
+<p>The exported file contains the following information: <br />
+- <code>surface</code> — <code>outer</code> or <code>inner</code><br />
+- <code>face_indices</code> — semicolon-separated list of all face IDs the vertex belongs to<br />
+- <code>nx, ny, nz</code> — surface normal vector<br />
+- <code>u, v</code> — UV texture coordinates</p></div>
         </section>
 
         <section class="card span-2">
@@ -1488,116 +1100,169 @@ w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
         <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Activity Coefficient Model</h2>
 <p>&nbsp;</p>
-<p>This is a MATLAB implementation of the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. The code calculates the thermodynamic activity coefficients of components in chemical mixtures based on their molecular surface charge distributions, known as sigma-profiles. An <code>.html</code> version of the calculator can be found <a href="Garage_20150101_COSMO-SAC_Calculator.html">here</a>.</p>
+<p>This is a MATLAB implementation of the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. </p>
 <p>&nbsp;</p>
-<p>The model predicts the non-ideal behavior of liquid mixtures by analyzing the interaction energies between molecular surface segments. It accounts for:<br />
-- <strong>Electrostatic Misfit Energy</strong>: Interactions between segments with different charge densities.<br />
-- <strong>Hydrogen Bonding</strong>: Specific attractions between highly polar surface regions based on a cutoff value.<br />
-- <strong>Combinatorial Effects</strong>: Differences in molecular size and shape using the Staverman-Guggenheim term.</p>
+<p>An <strong><code>.html</code></strong> version of the calculator can be found <a href="Garage_20150101_COSMO-SAC_Calculator.html"><strong>here</strong></a>.</p>
 <p>&nbsp;</p>
-<p>The calculation follows a multi-step thermodynamic workflow derived from the source code:</p>
+<p><strong>Usage Instructions</strong>      <br />
+- The Excel file (<strong><a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></strong>) must have sheets named after your <strong><code>components</code></strong> (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.</p>
 <p>&nbsp;</p>
-<p><strong>Sigma Profile Calculation (sigma-profile)</strong>    <br />
-For each molecule, the code calculates the surface area distribution as a function of charge density sigma. The local segment charge is averaged over a circular area to account for neighbor effects using the following logic: </p>
+<p><strong>Execution</strong>      <br />
+- Open <strong><code>eqCOSMO.m</code></strong>.<br />
+- Set your desired <strong><code>SYSTEMP</code></strong> (Temperature in <strong>Kelvin</strong>).<br />
+- Update <strong><code>ListCOMP</code></strong> with the sheet names from your <strong><code>inputQM.xlsx</code></strong> file.<br />
+- Run the script.</p>
 <p>&nbsp;</p>
-<p>σ<sub>new, i</sub> = <br />
-(&sum;<sub>j</sub> σ<sub>j</sub> · (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) )) /(&sum;<sub>j</sub> (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) ))</p>
+<p><strong>Outputs</strong> <br />
+- <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated <strong><code>sigma-densities</code></strong> and <strong><code>profiles</code></strong> for each component.<br />
+- <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing <strong><code>mole fractions (x)</code></strong>, <strong><code>activity coefficients (γ)</code></strong>, and <strong><code>ln γ</code></strong>.</p>
 <p>&nbsp;</p>
-<p>Where:<br />
-- <strong>Term1</strong> is the Euclidean distance between surface segments i and j.<br />
-- <strong>REFF</strong> is the effective averaging radius (0.817642 Å).</p>
-<p>&nbsp;</p>
-<p><strong>Interaction Energy (Δw)</strong>    <br />
-The exchange energy between two segments i and j is calculated as:</p>
-<p>&nbsp;</p>
-<p>Δw<sub>ij</sub> = <br />
-(α'/2) · (σ<sub>i</sub> + σ<sub>j</sub>)<sup>2</sup> + c<sub>hb</sub>· max(0, σ<sub>acc</sub> - σ<sub>hb</sub>) · min(0, σ<sub>don</sub> + σ<sub>hb</sub>)</p>
-<p>&nbsp;</p>
-<p>Where:<br />
-- <strong>Misfit term</strong>: Determined by <code>ALPHAPRIME</code> and the sum of charge densities.<br />
-- <strong>HB term</strong>: Active when charge densities exceed the threshold <code>SIGMAHB</code> (0.0084 e/Å²).</p>
-<p>&nbsp;</p>
-<p><strong>Segment Activity Coefficients (Γs)</strong>   <br />
-The activity coefficient of a segment is solved iteratively until the change is less than 10<sup>-6</sup>:</p>
-<p>&nbsp;</p>
-<p>ln Γ<sub>s</sub>(σ<sub>i</sub>) = -ln [ &sum;<sub>j</sub> P(σ<sub>j</sub>) Γ<sub>s</sub>(σ<sub>j</sub>) exp(-Δw<sub>ij</sub> / RT) ]</p>
-<p>&nbsp;</p>
-<p>The code computes this for both <strong>pure species</strong> (<code>SEGGAMMAPR</code>) and the <strong>mixture</strong> (<code>SEGGAMMA</code>).</p>
-<p>&nbsp;</p>
-<p><strong>Total Activity Coefficient (γ)</strong>   <br />
-The final activity coefficient for component n is the exponential sum of the residual and combinatorial parts:</p>
-<p>&nbsp;</p>
-<p>γ<sub>n</sub> = exp(ln γ<sub>n</sub><sup>res</sup> + ln γ<sub>n</sub><sup>sg</sup>)</p>
-<p>&nbsp;</p>
-<p>Where:<br />
-- <strong>Residual</strong>: Calculated by summing the difference between mixture and pure segment activity coefficients weighted by the sigma profile.<br />
-- <strong>Combinatorial (SG)</strong>: Uses <code>COORD</code> (coordination number), <code>RNORM</code> (normalized volume), and <code>QNORM</code> (normalized area) parameters.</p>
-<p>&nbsp;</p>
-<p>Source code:      </p>
+<p><strong>Files</strong>      </p>
 <p>&nbsp;</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">File (link)</th>
 <th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_eqCOSMO.m"><code>eqCOSMO.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_eqCOSMO.m"><strong><code>eqCOSMO.m</code></strong></a></td>
 <td style="text-align: left;">Main script for Two Phase Equilibrium; defines temperature and components.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_Binary.m"><code>Binary.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_Binary.m"><strong><code>Binary.m</code></strong></a></td>
 <td style="text-align: left;">Primary function calculating mole fractions, pure/mixture segment gammas, and final γ.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_SimgaProfileCalculator.m"><code>SimgaProfileCalculator.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_SimgaProfileCalculator.m"><strong><code>SimgaProfileCalculator.m</code></strong></a></td>
 <td style="text-align: left;">Manages the averaging of surface charges and calls the sorting logic.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_Library.m"><code>Library.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_Library.m"><strong><code>Library.m</code></strong></a></td>
 <td style="text-align: left;">Reads geometry, volume, and charge data from <code>inputQM.xlsx</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_paraCOSMO.m"><code>paraCOSMO.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_paraCOSMO.m"><strong><code>paraCOSMO.m</code></strong></a></td>
 <td style="text-align: left;">Provides universal constants (R, c<sub>hb</sub>, σ<sub>hb</sub>, α, etc.).</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_SortSimgaProfile.m"><code>SortSimgaProfile.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_SortSimgaProfile.m"><strong><code>SortSimgaProfile.m</code></strong></a></td>
 <td style="text-align: left;">Bins segment data into a discrete density distribution from -0.025 to 0.025.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_ConvertAU2A.m"><code>ConvertAU2A.m</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_ConvertAU2A.m"><strong><code>ConvertAU2A.m</code></strong></a></td>
 <td style="text-align: left;">Converts coordinates from Atomic Units to Angstroms.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></td>
+<td style="text-align: left;"><a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><strong><code>inputQM.xlsx</code></strong></a></td>
 <td style="text-align: left;">Input file for the COSMO-SAC model.</td>
 </tr>
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>      <br />
-- The Excel file (<code>inputQM.xlsx</code>) must have sheets named after your components (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.</p>
+<p><strong>Summary</strong></p>
 <p>&nbsp;</p>
-<p><strong>Execution</strong>    <br />
-- Open <code>eqCOSMO.m</code>.<br />
-- Set your desired <strong>SYSTEMP</strong> (Temperature in K).<br />
-- Update <strong>ListCOMP</strong> with the sheet names from your Excel file.<br />
-- Run the script.</p>
+<p>The code calculates the <strong>thermodynamic activity coefficients</strong> of components in <strong>chemical mixtures</strong> based on their <strong>molecular surface charge distributions</strong>, known as <strong>sigma-profiles</strong>. </p>
 <p>&nbsp;</p>
-<p><strong>Outputs</strong><br />
-- <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated sigma-densities and profiles for each component.<br />
-- <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing mole fractions (x), activity coefficients (γ), and ln γ.</p></div>
+<p>The model predicts the <strong>non-ideal behavior</strong> of liquid mixtures by analyzing the <strong>interaction energies</strong> between <strong>molecular surface segments</strong>. It accounts for:<br />
+- <strong>Electrostatic Misfit Energy</strong>: Interactions between segments with different charge densities.<br />
+- <strong>Hydrogen Bonding</strong>: Specific attractions between highly polar surface regions based on a cutoff value.<br />
+- <strong>Combinatorial Effects</strong>: Differences in molecular size and shape using the <strong>Staverman-Guggenheim term</strong>.</p>
+<p>&nbsp;</p>
+<p><strong>Sigma Profile Calculation (sigma-profile)</strong>    <br />
+For each molecule, the code calculates the <strong>surface area distribution</strong> as a function of <strong>charge density sigma</strong>. The <strong>local segment charge</strong> is averaged over a <strong>circular area</strong> to account for neighbor effects using the following logic: </p>
+<p>&nbsp;</p>
+<p>σ<sub>new, i</sub> = (&sum;<sub>j</sub> σ<sub>j</sub> · (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) )) /(&sum;<sub>j</sub> (RAD<sub>j</sub><sup>2</sup> REFF<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>)) · exp( - Term1<sup>2</sup> / (RAD<sub>j</sub><sup>2</sup> + REFF<sup>2</sup>) ))</p>
+<p>&nbsp;</p>
+<p>Where:<br />
+- <strong>Term1</strong> is the <strong>Euclidean distance</strong> between surface segments i and j.<br />
+- <strong>REFF</strong> is the <strong>effective averaging radius</strong> (0.817642 Å).</p>
+<p>&nbsp;</p>
+<p><strong>Interaction Energy (Δw)</strong>    <br />
+The <strong>exchange energy</strong> between two segments i and j is calculated as:</p>
+<p>&nbsp;</p>
+<p>Δw<sub>ij</sub> = (α'/2) · (σ<sub>i</sub> + σ<sub>j</sub>)<sup>2</sup> + c<sub>hb</sub>· max(0, σ<sub>acc</sub> - σ<sub>hb</sub>) · min(0, σ<sub>don</sub> + σ<sub>hb</sub>)</p>
+<p>&nbsp;</p>
+<p>Where:<br />
+- <strong>Misfit term</strong>: Determined by <strong><code>ALPHAPRIME</code></strong> and the sum of <strong><code>charge densities</code></strong>.<br />
+- <strong>HB term</strong>: Active when <strong><code>charge densities</code></strong> exceed the threshold <strong><code>SIGMAHB</code></strong> (0.0084 e/Å²).</p>
+<p>&nbsp;</p>
+<p><strong>Segment Activity Coefficients (Γs)</strong>   <br />
+The <strong>activity coefficient</strong> of a segment is solved iteratively until the change is less than 10<sup>-6</sup>:</p>
+<p>&nbsp;</p>
+<p>ln Γ<sub>s</sub>(σ<sub>i</sub>) = -ln [ &sum;<sub>j</sub> P(σ<sub>j</sub>) Γ<sub>s</sub>(σ<sub>j</sub>) exp(-Δw<sub>ij</sub> / RT) ]</p>
+<p>&nbsp;</p>
+<p>The code computes this for both <strong>pure species</strong> (<strong><code>SEGGAMMAPR</code></strong>) and the <strong>mixture</strong> (<strong><code>SEGGAMMA</code></strong>).</p>
+<p>&nbsp;</p>
+<p><strong>Total Activity Coefficient (γ)</strong>   <br />
+The <strong>final activity coefficient</strong> for component n is the <strong>exponential sum</strong> of the <strong>residual</strong> and <strong>combinatorial</strong> parts:</p>
+<p>&nbsp;</p>
+<p>γ<sub>n</sub> = exp(ln γ<sub>n</sub><sup>res</sup> + ln γ<sub>n</sub><sup>sg</sup>)</p>
+<p>&nbsp;</p>
+<p>Where:<br />
+- <strong>Residual</strong>: Calculated by summing the difference between <strong>mixture</strong> and <strong>pure segment activity coefficients</strong> weighted by the <strong>sigma profile</strong>.<br />
+- <strong>Combinatorial (SG)</strong>: Uses <strong><code>COORD</code></strong> (coordination number), <strong><code>RNORM</code></strong> (normalized volume), and <strong><code>QNORM</code></strong> (normalized area) parameters. </p></div>
         </section>
 
         <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Sigma Profile Generator</h2>
 <p>&nbsp;</p>
-<p>This is a MATLAB code designed to process raw quantum mechanical (QM) surface data into <strong>sigma-profiles</strong>. These profiles represent the probability distribution of segment surface areas as a function of their local charge density, a critical input for calculating activity coefficients in chemical mixtures. </p>
+<p>This is a MATLAB code designed to process raw quantum mechanical (QM) surface data into <strong>sigma-profiles</strong>. </p>
 <p>&nbsp;</p>
 <p>An <strong><code>html</code></strong> version of this document is available <a href="Garage_20141010_COSMO-SAC-Simga.html"><strong>here</strong></a>.</p>
+<p>&nbsp;</p>
+<p><strong>How to Use</strong><br />
+- Replace <code>CompoundName</code> with the specific sheet name in the Excel file. <br />
+- Call the calculator function from the MATLAB command window as <code>[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');</code>.</p>
+<p>&nbsp;</p>
+<p><strong>Files</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">File (link)</th>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_SimgaProfileCalculator.m"><strong><code>SimgaProfileCalculator.m</code></strong></a></td>
+<td style="text-align: left;"><strong>Core Engine</strong></td>
+<td style="text-align: left;">The main routine that calculates distances, performs Gaussian averaging, and yields the final profile.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_IOinDataBase.m"><strong><code>IOinDataBase.m</code></strong></a></td>
+<td style="text-align: left;"><strong>Data Handler</strong></td>
+<td style="text-align: left;">Manages input/output by reading QM data from <code>inputQM.xlsx</code> and writing processed profiles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_SortSimgaProfile.m"><strong><code>SortSimgaProfile.m</code></strong></a></td>
+<td style="text-align: left;"><strong>Binning Logic</strong></td>
+<td style="text-align: left;">Discretizes the continuous surface data into the specific $\sigma$-density intervals used by COSMO-SAC.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_ConvertAU2A.m"><strong><code>ConvertAU2A.m</code></strong></a></td>
+<td style="text-align: left;"><strong>Unit Converter</strong></td>
+<td style="text-align: left;">Converts spatial coordinates from Atomic Units (au) to Angstroms (Å) and calculates radii.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><strong><code>inputQM.xlsx</code></strong></a></td>
+<td style="text-align: left;"><strong>Input Data</strong></td>
+<td style="text-align: left;">The input file containing the QM data.</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>In the Excel file named <a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><strong><code>inputQM.xlsx</code></strong></a>, each sheet should correspond to a unique compound and contain:<br />
+- <strong>Columns C, D, E:</strong> X, Y, Z coordinates (Atomic Units).  <br />
+- <strong>Column G:</strong> Segment Area.  <br />
+- <strong>Column H:</strong> Charge per Area (Surface Charge Density).     </p>
+<p>&nbsp;</p>
+<p><strong>Summary</strong>  <br />
+These profiles represent the probability distribution of segment surface areas as a function of their local charge density, a critical input for calculating activity coefficients in chemical mixtures. </p>
 <p>&nbsp;</p>
 <p>The generator transforms discrete surface segment data (positions and charges) into a smoothed, continuous distribution. It accounts for neighbor-averaging effects to ensure the resulting profile accurately reflects the molecular surface environment.  </p>
 <p>&nbsp;</p>
@@ -1609,63 +1274,14 @@ exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</su
 )/(∑<sub>j</sub>( (r<sub>j</sub><sup>2</sup> R<sub>eff</sub><sup>2</sup>(r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) ) / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )<br />
 exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>)))</p>
 <p>&nbsp;</p>
-<p>where:  <br />
+<p>where:<br />
 - d<sub>ij</sub> is the Euclidean distance between segments calculated from Cartesian coordinates (x, y, z).<br />
 - r<sub>j</sub> is the radius of the segment, derived from its surface area (RAD = sqrt(Area/π)).<br />
 - R<sub>eff</sub> is the fixed effective averaging radius (0.8176 Å).</p>
 <p>&nbsp;</p>
-<p>The smoothed charge densities (sigma<sub>new</sub>) are categorized into discrete bins to form the sigma-profile P(sigma).<br />
-- <strong>Range:</strong> The code defines a density spectrum from -0.025 to 0.025 e/Å<sup>2</sup>.<br />
-- <strong>Binning Logic:</strong> For every segment falling within a specific charge density interval, its area is weighted and summed:</p>
+<p>The smoothed charge densities (sigma<sub>new</sub>) are categorized into discrete bins to form the sigma-profile P(sigma). The code defines a density spectrum from <strong>-0.025 to 0.025 e/Å<sup>2</sup></strong>. For every segment falling within a specific charge density interval, its area is weighted and summed:</p>
 <p>&nbsp;</p>
-<p>A(sigma<sub>bin</sub>) = sum<sub>i in bin</sub> | sigma<sub>new, i</sub> - sigma<sub>new, i+1</sub> | * Area<sub>i</sub></p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">File</th>
-<th style="text-align: left;">Function</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_SimgaProfileCalculator.m"><code>SimgaProfileCalculator.m</code></a></td>
-<td style="text-align: left;"><strong>Core Engine</strong></td>
-<td style="text-align: left;">The main routine that calculates distances, performs Gaussian averaging, and yields the final profile.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_IOinDataBase.m"><code>IOinDataBase.m</code></a></td>
-<td style="text-align: left;"><strong>Data Handler</strong></td>
-<td style="text-align: left;">Manages input/output by reading QM data from <code>inputQM.xlsx</code> and writing processed profiles.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_SortSimgaProfile.m"><code>SortSimgaProfile.m</code></a></td>
-<td style="text-align: left;"><strong>Binning Logic</strong></td>
-<td style="text-align: left;">Discretizes the continuous surface data into the specific $\sigma$-density intervals used by COSMO-SAC.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_ConvertAU2A.m"><code>ConvertAU2A.m</code></a></td>
-<td style="text-align: left;"><strong>Unit Converter</strong></td>
-<td style="text-align: left;">Converts spatial coordinates from Atomic Units (au) to Angstroms (Å) and calculates radii.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><code>inputQM.xlsx</code></a></td>
-<td style="text-align: left;"><strong>Input Data</strong></td>
-<td style="text-align: left;">The input file containing the QM data.</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p>The Excel file named <code>inputQM.xlsx</code>, each sheet should correspond to a unique compound and contain:<br />
-- <strong>Columns C, D, E:</strong> X, Y, Z coordinates (Atomic Units).  <br />
-- <strong>Column G:</strong> Segment Area.  <br />
-- <strong>Column H:</strong> Charge per Area (Surface Charge Density).     </p>
-<p>&nbsp;</p>
-<p>Call the calculator function from the MATLAB command window:</p>
-<pre><code class="language-matlab">% Replace 'CompoundName' with the specific sheet name in your Excel file
-[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');
-</code></pre></div>
+<p>A(sigma<sub>bin</sub>) = sum<sub>i in bin</sub> | sigma<sub>new, i</sub> - sigma<sub>new, i+1</sub> | * Area<sub>i</sub></p></div>
         </section>
         <section class="card span-1 empty"></section>
 
@@ -1673,56 +1289,23 @@ exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</su
         <section class="card span-2">
             <div class="card-content"><h2>COSMO-SAC Sigma Profile Processor</h2>
 <p>&nbsp;</p>
-<p>This is a suite of <code>Shell</code> scripts designed to automate the extraction and processing of quantum mechanical (QM) data from <strong>DMol3</strong> outputs (specifically <strong>.cosmo</strong> and <strong>.outmol</strong> files) into <strong>sigma-profiles</strong>. </p>
+<p>This is a suite of <code>Shell</code> scripts designed to automate the extraction and processing of quantum mechanical (QM) data from <strong>DMol3</strong> output files (specifically <strong>.cosmo</strong> and <strong>.outmol</strong>) into <strong>sigma-profiles</strong> for <strong>COSMO-SAC thermodynamic modeling</strong>. </p>
 <p>&nbsp;</p>
-<ul>
-<li><strong>Set the Compound Name:</strong> </li>
-</ul>
+<p><strong>How to Use</strong>  <br />
+- Set the <strong>Compound Name</strong> by editing the scripts to update the <strong><code>compound</code></strong> variable (e.g., <code>compound='75-85-4-2d'</code>).   <br />
+- Make <strong>Executable</strong>: <code>chmod +x *.sh</code><br />
+- Run the <strong>Pipeline</strong> <br />
+    - first <a href="Garage_20140910_COSMO-SAC-PreSigma_1_Dmol3COSMO.sh"><strong><code>1_Dmol3COSMO.sh</code></strong></a>: Extracts segment geometry and raw charges from <code>.cosmo</code> files. <br />
+    - then <a href="Garage_20140910_COSMO-SAC-PreSigma_2_Dmol3OUTMOL.sh"><strong><code>2_Dmol3OUTMOL.sh</code></strong></a>: Extracts cavity volume and average COSMO data from <code>.outmol</code> files. <br />
+    - then <a href="Garage_20140910_COSMO-SAC-PreSigma_3_sProfile.sh"><strong><code>3_sProfile.sh</code></strong></a>: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges. <br />
+    - and finally <a href="Garage_20140910_COSMO-SAC-PreSigma_SortS.sh"><strong><code>SortS.sh</code></strong></a>: Generates the P(σ) vs σ distribution for thermodynamic modeling. </p>
 <p>&nbsp;</p>
-<ul>
-<li>Edit the scripts to update the <code>compound</code> variable (e.g., <code>compound='75-85-4-2d'</code>).     </li>
-<li>Make Executable: <code>chmod +x *.sh</code></li>
-<li>Run the Pipeline: <code>./1_Dmol3COSMO.sh</code>, then <code>./2_Dmol3OUTMOL.sh</code>, then <code>./3_sProfile.sh</code>, then <code>./SortS.sh</code>. </li>
-</ul>
-<p>&nbsp;</p>
-<p>The scripts generate several intermediate <code>.cosmo.xyz</code> files and a final profile:<br />
+<p>The scripts generate several intermediate such as <code>.cosmo.xyz</code> files and a final sigma-profile:<br />
 - <code>${compound}.cosmo.SigmaNonSrt</code>: The smoothed charge densities.<br />
 - <code>${compound}.cosmo.SigmaSrt</code>: The charge density bin identifiers.<br />
 - <code>${compound}.cosmo.PSigmaSrt</code>: The final sigma-profile area values.</p>
 <p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">File (link)</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_1_Dmol3COSMO.sh"><code>1_Dmol3COSMO.sh</code></a></td>
-<td style="text-align: left;">Bash Script</td>
-<td style="text-align: left;">Extracts segment geometry and raw charges from <code>.cosmo</code> files.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_2_Dmol3OUTMOL.sh"><code>2_Dmol3OUTMOL.sh</code></a></td>
-<td style="text-align: left;">Bash Script</td>
-<td style="text-align: left;">Extracts cavity volume and average COSMO data from <code>.outmol</code> files.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_3_sProfile.sh"><code>3_sProfile.sh</code></a></td>
-<td style="text-align: left;">Bash Script</td>
-<td style="text-align: left;">Performs the N²-complexity Gaussian averaging of surface charges.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><a href="Garage_20140910_COSMO-SAC-PreSigma_SortS.sh"><code>SortS.sh</code></a></td>
-<td style="text-align: left;">Bash Script</td>
-<td style="text-align: left;">Generates the $P(\sigma)$ vs $\sigma$ distribution for thermodynamic modeling.</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p>Coordinates are converted from Atomic Units (au) to Angstroms (Å) using the conversion factor au = 0.529177249 Å.</p></div>
+<p>Coordinates are converted from Atomic Units (au) to Angstroms (Å) by <code>au = 0.529177249 Å</code>.</p></div>
         </section>
 
     </div>

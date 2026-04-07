@@ -36,27 +36,19 @@
         <section class="card span-2">
             <div class="card-content"><h2>Variable Density Mass Transfer Correction R<sub>n</sub></h2>
 <p>&nbsp;</p>
-<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0735193320302050"><strong>A note on the composition-dependency of the density within the mass transfer layer</strong></a>, we derived the equation for the mass transfer correction factor R<sub>n</sub>, which accounts for the effect of varying density (ρ) in a binary mixture. The model is particularly relevant for high-flux gas absorption or evaporation where the standard constant-density assumptions fail. </p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0735193320302050"><strong>A note on the composition-dependency of the density within the mass transfer layer</strong></a>, we derived the equation for the <strong>mass transfer correction factor R<sub>n</sub></strong>, which accounts for the effect of <strong>varying density (ρ) in a binary mixture</strong>. The model is particularly relevant for <strong>high-flux gas absorption or evaporation</strong> where the standard <strong>constant-density assumptions</strong> fail. </p>
 <p>&nbsp;</p>
 <p><img alt="Variable Density Mass Transfer Correction R&lt;sub&gt;n&lt;/sub&gt;" src="Publications_20200701_jICHMT.png" /></p>
 <p>&nbsp;</p>
-<p>The ratio of the density at the interface to the density in the bulk is modeled using a linear dependency parameter β and the mass fraction ω<sub>1</sub>:</p>
+<p><strong>Usage Instructions</strong>  </p>
 <p>&nbsp;</p>
-<p>ρ<sub>12</sub> = 1 / (1 − β · ω<sub>1</sub>)</p>
-<p>&nbsp;</p>
-<p>where:<br />
-- β: A parameter representing the normalized density difference between components.<br />
-- ω<sub>1</sub>: The mass fraction of component 1.</p>
-<p>&nbsp;</p>
-<p>The calculation of R<sub>n</sub> relates the actual mass flux to the flux predicted by constant-density theories:</p>
-<p>&nbsp;</p>
-<p>R<sub>n</sub> = 1 + (1/ρ<sub>12</sub> - 1) · [1/ln(1/(1 - ω<sub>1</sub>)) - (1 - ω<sub>1</sub>)/ω<sub>1</sub>]</p>
-<p>&nbsp;</p>
-<p>This equation adjusts the mass transfer driving force to account for the "bulk flow" (Stefan flow) induced by the density gradient at the interface.</p>
-<p>&nbsp;</p>
-<p><strong>R<sub>n</sub> as β and ρ<sub>12</sub> vary</strong></p>
+<p>Save the script as <code>script_name.py</code> and run it from the terminal as: <strong><code>python script_name.py</code></strong></p>
 <p>&nbsp;</p>
 <p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>R<sub>n</sub> as β and ρ<sub>12</sub> vary</strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-python">import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -68,9 +60,9 @@ for BETTA in betta:
         print (BETTA, RHO12, Rn)
 </code></pre>
 <p>&nbsp;</p>
-<p><strong>R<sub>n</sub> as β and ω<sub>1</sub> vary</strong></p>
-<p>&nbsp;</p>
-<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<ul>
+<li><strong>R<sub>n</sub> as β and ω<sub>1</sub> vary</strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-python">import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -82,9 +74,9 @@ for BETTA in betta:
         print (BETTA, OMG1, Rn)
 </code></pre>
 <p>&nbsp;</p>
-<p><strong>R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary</strong></p>
-<p>&nbsp;</p>
-<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<ul>
+<li><strong>R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary</strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-python">import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -103,48 +95,215 @@ for RHO12 in rho12:
 <p>&nbsp;</p>
 <p><img alt="Falling Film Mass Transfer &amp; Penetration Theory" src="Publications_20200101_jChERD.png" /></p>
 <p>&nbsp;</p>
-<p>Two python scripts are provided to calculate the mass transfer characteristics in falling liquid films. The scripts are written in Python 3.x and use the NumPy library for numerical calculations. The scripts solve the governing equations for convective mass transfer in a laminar falling film. One analyzes how different diffusion coefficients impact the penetration depth and flux (<a href="Publications_20200101_jChERD_varD.py">click here</a>). The other analyzes the effect of film flow rate on mass transfer efficiency (<a href="Publications_20200101_jChERD_varG.py">click here</a>).</p>
+<p>Two python scripts are provided. One analyzes how different <strong>diffusion coefficients</strong> impact the <strong>penetration depth and flux</strong> (<code>varD.py</code>). The other analyzes the effect of <strong>film flow rate</strong> on <strong>mass transfer efficiency</strong> (<code>varG.py</code>).</p>
 <p>&nbsp;</p>
-<p><strong>Film Hydrodynamics</strong><br />
-The film thickness (δ) and average velocity (u) are calculated based on the film flow rate (Γ) and fluid properties (density ρ, viscosity μ):</p>
-<p>&nbsp;</p>
-<p>δ = (3μΓ / ρ²g)<sup>1/3</sup></p>
-<p>u = Γ / (ρδ)</p>
-
-<p>&nbsp;</p>
-<p><strong>Infinite Penetration Model</strong><br />
-For short contact times or thick films, the solute is assumed not to reach the wall. The local mass transfer coefficient (k<sub>c</sub>) is:</p>
-<p>&nbsp;</p>
-<p>k<sub>c</sub>(y) = (3uD / 2πy)<sup>1/2</sup></p>
-
-<p>&nbsp;</p>
-<p><strong>Finite Penetration Model</strong><br />
-When the solute reaches the wall (finite depth), the concentration profile is solved using a Fourier series expansion. The code determines a characteristic parameter (ξ) by solving for the root of the error function:</p>
-<p>&nbsp;</p>
-<p>Error = ( Σ<sub>n=0</sub><sup>∞</sup> <sup>(-1)<sup>n</sup></sup>&frasl;<sub>2n+1</sub> exp( - [ <sup>(2n+1)π</sup>&frasl;<sub>2ξ</sub> ]<sup>2</sup> &middot; <sup>Dy</sup>&frasl;<sub>u</sub> ) ) - π&frasl;4</p>
-
-<p>&nbsp;</p>
-<p><strong>Mass Flux Calculation (N<sub>A</sub>)</strong><br />
-The local mass flux at the interface is determined by:</p>
-<p>&nbsp;</p>
-<p>N<sub>A</sub> = k<sub>c</sub> &middot; (c<sub>Ai</sub> - c<sub>A0</sub>)</p>
-
-<p>&nbsp;</p>
-<p>where c<sub>Ai</sub> is the interfacial concentration and c<sub>A0</sub> is the bulk concentration.     </p>
-<p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>    </p>
-<p>&nbsp;</p>
-<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
-<p>&nbsp;</p>
-<ol>
-<li>Open the desired script.</li>
-<li>Adjust the <strong>Test Data</strong> section to match your physical system:</li>
-</ol>
+<p><strong>Parameters</strong></p>
 <p>&nbsp;</p>
 <pre><code class="language-python">L = 1         # Wall length (m)
 gamma = 0.05  # Film flow rate (kg/m.s)
 cAi = 0.0366  # Interfacial concentration
-</code></pre></div>
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>  </p>
+<p>&nbsp;</p>
+<ul>
+<li>Save the script as <code>script_name.py</code> and run it from the terminal as: <strong><code>python script_name.py</code></strong></li>
+</ul>
+<p>&nbsp;</p>
+<p>You can also test the script using <a href="Garage_20260405_ipynb.html"><strong>our standalone Python Notebook (HTML)</strong></a>.</p>
+<p>&nbsp;</p>
+<p><strong>Script for <code>varD.py</code></strong></p>
+<pre><code class="language-python"># (in)finite penetration depth : varying D
+import numpy as np
+import math
+# test data 
+L=1 # wall lenght 
+gamma=0.05 # film flow rate kg/m.s 
+#um=0.21 # maximum flow velocity 
+#u=um*2/3 # average flow velocity 
+cA0=0 # initial concentration 
+cAi=0.0366 # interfacial concentration
+#D=1.96/1000000000 # diffusivity 
+var=[1.0, 2.0, 2.5, 5.0, 7.0, 8.0, 9.0]
+varD=[vard/1000000000 for vard in var] 
+Rho=998 # kg/m3
+Mue=0.000894 # kg/m.s at STP
+g=9.807 # m/s2
+#Z=[0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2, 2.4]
+#Z=[z/10000 for z in Z] 
+# y-coordinate 
+YY=[0.00000000001, 0.0000000001, 0.000000001, 
+    0.00000001, 0.0000001, 0.000001, 0.00001, 
+    0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1]
+Y=[L*y for y in YY] 
+# film thickness 
+delta=((3*Mue*gamma)/((Rho**2)*g))**(1/3)
+u=gamma/(Rho*delta)
+# z-coordinate 
+Z=np.linspace(0, delta, num=50)
+# mass transfer properties 
+#delta=((3*Mue*u)/(Rho*g))**0.5
+for D in varD:
+    b=(2*D)/(3*u)
+    infinity=100
+    for y in Y:
+        # finding kisi from BC2 
+        guesslist=np.logspace(0, 10, num=10000)
+        guesslist=delta/guesslist
+        guesslist=np.fliplr([guesslist])[0]
+        KICI=[delta]
+        for kisi in guesslist:
+            sigma=0
+            for n in range(infinity):
+                Sin=((-1)**n)/(2*n+1)
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                An=Sin*Exp
+                sigma += An
+            Err=sigma - (math.pi/4)
+            if abs(Err)==0:
+                KICI.append(kisi)   
+        kisi=min(KICI)
+        # calculating kc and NA  
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=y*Expot
+            Exp=np.exp(Expt)
+            An=Exp
+            Sum += An
+        kc_infY=(2*D/kisi)*Sum
+        NA_infY=kc_infY*(cAi - cA0)
+        kc_infN=((3*u*D)/(2*math.pi*y))**0.5
+        NA_infN=(cAi-cA0)*kc_infN
+        # kcbar calculation 
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=L*Expot
+            Exp=np.exp(Expt)
+            An=Exp/((2*n+1)**2)
+            Sum += An
+        kcbar_infY=(12*u*kisi/(L*(math.pi**2)))*((math.pi**2)/8 - Sum)  
+        kcbar_infN=((6*u*D)/(math.pi*L))**0.5
+        # calculating cA 
+        for z in Z:
+            Sum=0
+            for n in range(infinity):
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                Sin=math.sin(z*lmbda)
+                An=Sin*Exp/(2*n+1)
+                Sum += An 
+            cA_infY=cA0+(cAi-cA0)*(1-(4/math.pi)*Sum)
+            Exp_infN=0.5*(((3*u*(z**2))/(2*D*y))**0.5)
+            cA_infN=cA0+(cAi-cA0)*(1-math.erf(Exp_infN))
+            print (D, y, z, delta, kisi, cA_infY, cA_infN, NA_infY, NA_infN, kc_infY, kc_infN, kcbar_infY, kcbar_infN, gamma, u)
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Script for <code>varG.py</code></strong></p>
+<pre><code class="language-python"># (in)finite penetration depth : varying Gamma  
+import numpy as np
+import math
+# test data
+L=1 # wall lenght
+#um=0.21 # maximum flow velocity
+#u=um*2/3 # average flow velocity
+varG=[0.01, 0.02, 0.05, 0.08, 0.10, 0.20]
+cA0=0 # initial concentration
+cAi=0.0366 # interfacial concentration
+D=1.96/1000000000 # diffusivity
+Rho=998 # kg/m3
+Mue=0.000894 # kg/m.s at STP
+g=9.807 # m/s2
+# y-coordinate 
+YY=[0.00000000001, 0.0000000001, 0.000000001, 
+    0.00000001, 0.0000001, 0.000001, 0.00001, 
+    0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1]
+Y=[L*y for y in YY] 
+for gamma in varG:
+    # mass transfer properties
+    delta=((3*Mue*gamma)/((Rho**2)*g))**(1/3)
+    u=gamma/(Rho*delta)
+    # z-coordinate 
+    Z=np.linspace(0, delta, num=50)
+    b=(2*D)/(3*u)
+    infinity=100
+    for y in Y:
+        # finding kisi from BC2
+        guesslist=np.logspace(0, 10, num=10000)
+        guesslist=delta/guesslist
+        guesslist=np.fliplr([guesslist])[0]
+        KICI=[delta]
+        for kisi in guesslist:
+            sigma=0
+            for n in range(infinity):
+                Sin=((-1)**n)/(2*n+1)
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                An=Sin*Exp
+                sigma += An
+            Err=sigma - (math.pi/4)
+            if abs(Err)==0:
+                KICI.append(kisi)
+        kisi=min(KICI)
+        # calculating kc and NA
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=y*Expot
+            Exp=np.exp(Expt)
+            An=Exp
+            Sum += An
+        kc_infY=(2*D/kisi)*Sum
+        NA_infY=kc_infY*(cAi - cA0)
+        kc_infN=((3*u*D)/(2*math.pi*y))**0.5
+        NA_infN=(cAi-cA0)*kc_infN
+        # kcbar calculation 
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=L*Expot
+            Exp=np.exp(Expt)
+            An=Exp/((2*n+1)**2)
+            Sum += An
+        kcbar_infY=(12*u*kisi/(L*(math.pi**2)))*((math.pi**2)/8 - Sum)  
+        kcbar_infN=((6*u*D)/(math.pi*L))**0.5
+        # calculating cA 
+        for z in Z:
+            Sum=0
+            for n in range(infinity):
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                Sin=math.sin(z*lmbda)
+                An=Sin*Exp/(2*n+1)
+                Sum += An 
+            cA_infY=cA0+(cAi-cA0)*(1-(4/math.pi)*Sum)
+            Exp_infN=0.5*(((3*u*(z**2))/(2*D*y))**0.5)
+            cA_infN=cA0+(cAi-cA0)*(1-math.erf(Exp_infN))
+            print (gamma, u, y, z, delta, kisi, cA_infY, cA_infN, NA_infY, NA_infN, kc_infY, kc_infN, kcbar_infY, kcbar_infN, D)
+</code></pre>
+<p>&nbsp;</p></div>
         </section>
         <section class="card span-1 empty"></section>
 
@@ -152,155 +311,37 @@ cAi = 0.0366  # Interfacial concentration
         <section class="card span-2">
             <div class="card-content"><h2>Thermokinetic Model of Phase Inversion</h2>
 <p>&nbsp;</p>
-<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0376738817306889"><strong>On the search of rigorous thermo-kinetic model for wet phase inversion technique</strong></a>, we developed a rigorous thermo-kinetic model for the wet phase inversion process, with special emphasis on the role of the diffusion-thermo effect at the interface. The model provides a comprehensive mathematical derivation and mapping of the logic implemented in this phase inversion simulation project.   </p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0376738817306889"><strong>On the search of rigorous thermo-kinetic model for wet phase inversion technique</strong></a>, we developed a rigorous <strong>thermo-kinetic model for the wet phase inversion process</strong>, with special emphasis on the role of the <strong>diffusion-thermo effect</strong> at the interface.   </p>
 <p>&nbsp;</p>
 <p><img alt="Thermokinetic Model of Phase Inversion" src="Publications_20170501_JMS.png" /></p>
 <p>&nbsp;</p>
-<p><strong>System Constants &amp; Parameters</strong><br />
-The physical constants are defined in <code>CONSTANTS.m</code>. For the default Water (1) / Acetone (2) / Polymer (3) system:</p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Constant</th>
-<th style="text-align: left;">Description</th>
-<th style="text-align: left;">Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">ρ<sub>01</sub></td>
-<td style="text-align: left;">Density of Water</td>
-<td style="text-align: left;">1.0 g/cm³</td>
-</tr>
-<tr>
-<td style="text-align: left;">ρ<sub>02</sub></td>
-<td style="text-align: left;">Density of Acetone</td>
-<td style="text-align: left;">0.7857 g/cm³</td>
-</tr>
-<tr>
-<td style="text-align: left;">ρ<sub>03</sub></td>
-<td style="text-align: left;">Density of Polymer</td>
-<td style="text-align: left;">1.31 g/cm³</td>
-</tr>
-<tr>
-<td style="text-align: left;">M<sub>w1</sub></td>
-<td style="text-align: left;">Molecular weight (nonsolvent)</td>
-<td style="text-align: left;">18.0 g/mol</td>
-</tr>
-<tr>
-<td style="text-align: left;">M<sub>w2</sub></td>
-<td style="text-align: left;">Molecular weight (solvent)</td>
-<td style="text-align: left;">58.08 g/mol</td>
-</tr>
-<tr>
-<td style="text-align: left;">M<sub>w3</sub></td>
-<td style="text-align: left;">Molecular weight (polymer)</td>
-<td style="text-align: left;">40,000 g/mol</td>
-</tr>
-<tr>
-<td style="text-align: left;">v<sub>i</sub></td>
-<td style="text-align: left;">Specific volume of component $i$</td>
-<td style="text-align: left;">$1/\rho_{0i}$</td>
-</tr>
-<tr>
-<td style="text-align: left;">V<sub>i</sub></td>
-<td style="text-align: left;">Molar volume of component $i$</td>
-<td style="text-align: left;">$v_i \cdot M_{wi}$</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>Solution Properties</strong> (<a href="Publications_20170501_JMS_DENSTY.m"><code>DENSTY.m</code></a> &amp; <a href="Publications_20170501_JMS_PHIs.m"><code>PHIs.m</code></a>)</p>
-<p>&nbsp;</p>
-<p><strong>- Mixture Density</strong><br />
-The density ρ is calculated using a mole-fraction based mixing rule from the equation of state:      </p>
-<p>&nbsp;</p>
-<p>rρ = ω<sub>1</sub> · ((ρ<sub>03</sub> − ρ<sub>01</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) + ω<sub>2</sub> · ((ρ<sub>03</sub> − ρ<sub>02</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>)) + 1 / ρ<sub>03</sub>            </p>
-<p>&nbsp;</p>
-<p>ρ = 1 / (rρ)         </p>
-<p>&nbsp;</p>
-<p><strong>- Volume Fraction Conversion</strong><br />
-The volume fractions φ are converted from mass fractions ω using the following logic:</p>
-<p>&nbsp;</p>
-<p>D = α ω<sub>1</sub> + β ω<sub>2</sub> + γ           </p>
-<p>&nbsp;</p>
-<p>Where:<br />
-- α = V<sub>1</sub>/M<sub>w1</sub> - V<sub>3</sub>/M<sub>w3</sub>     <br />
-- β = V<sub>2</sub>/M<sub>w2</sub> - V<sub>3</sub>/M<sub>w3</sub>       <br />
-- γ = V<sub>3</sub>/M<sub>w3</sub>        </p>
-<p>&nbsp;</p>
-<p>Then:</p>
-<p>&nbsp;</p>
-<p>φ<sub>1</sub> = (V<sub>1</sub>/M<sub>w1</sub>) ω<sub>1</sub> / D          <br />
-φ<sub>2</sub> = (V<sub>2</sub>/M<sub>w2</sub>) ω<sub>2</sub> / D              <br />
-φ<sub>3</sub> = (V<sub>3</sub>/M<sub>w3</sub>) (1 − ω<sub>1</sub> − ω<sub>2</sub>) / D           </p>
-<p>&nbsp;</p>
-<p><strong>Thermodynamic Logic</strong> (<a href="Publications_20170501_JMS_FLORYHOGGINSCOEFF.m"><code>FLORYHOGGINSCOEFF.m</code></a> &amp; <a href="Publications_20170501_JMS_FGcomponents.m"><code>FGcomponents.m</code></a>)      </p>
-<p>&nbsp;</p>
-<p><strong>- Flory-Huggins Interaction Parameters</strong><br />
-Parameters G<sub>ij</sub> are concentration-dependent. Let u<sub>2</sub> be the solvent volume fraction on a polymer-free basis: u<sub>2</sub> = \frac{\phi_2}{\phi_1 + \phi_2}.</p>
-<p>&nbsp;</p>
-<p><strong>- Interaction G<sub>12</sub> (Nonsolvent-Solvent):</strong>         <br />
-G<sub>12</sub> = 0.661 + (0.417 / (1 − 0.755 u<sub>2</sub>))            <br />
-∂G<sub>12</sub>/∂u<sub>2</sub> = (0.417 · 0.755) / (1 − 0.755 u<sub>2</sub>)<sup>2</sup></p>
-<p>&nbsp;</p>
-<p><strong>- Interaction G<sub>23</sub> (Solvent-Polymer):</strong>         <br />
-G<sub>23</sub> = 0.535 + 0.11 \phi_3    <br />
-∂G<sub>23</sub>/∂\phi<sub>3</sub> = 0.11</p>
-<p>&nbsp;</p>
-<p><strong>- Interaction G<sub>13</sub> (Nonsolvent-Polymer):</strong>         <br />
-G<sub>13</sub> = 1.4</p>
-<p>&nbsp;</p>
-<p><strong>- Thermodynamic Gains (Q<sub>1</sub>, Q<sub>2</sub>, S<sub>1</sub>, S<sub>2</sub>)</strong><br />
-These terms represent the derivatives of chemical potentials ∂μ<sub>i</sub>/∂φ<sub>j</sub> (excluding the RT factor):  </p>
-<p>&nbsp;</p>
-<p>Q<sub>1</sub> =<br />
-1/φ<sub>1</sub> − 1 + V<sub>13</sub> + φ<sub>2</sub>(V<sub>12</sub>G<sub>23</sub> − G<sub>12</sub>) − (φ<sub>2</sub> + 2φ<sub>3</sub>)G<sub>13</sub> + (φ<sub>1</sub> − 2u<sub>2</sub>)u<sub>2</sub><sup>2</sup> (∂G<sub>12</sub>/∂u<sub>2</sub>) + 3V<sub>12</sub>φ<sub>2</sub>φ<sub>3</sub> (∂G<sub>23</sub>/∂φ<sub>3</sub>) + u<sub>1</sub>u<sub>2</sub><sup>3</sup> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + V<sub>12</sub>φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)             </p>
-<p>&nbsp;</p>
-<p>Q<sub>2</sub> =<br />
-−V<sub>12</sub> + V<sub>13</sub> + (φ<sub>2</sub> + φ<sub>3</sub>)(G<sub>12</sub> − G<sub>13</sub>) + V<sub>12</sub>(φ<sub>2</sub> − φ<sub>3</sub>)G<sub>23</sub> + u<sub>1</sub>u<sub>2</sub>(u<sub>2</sub> − u<sub>1</sub> − φ<sub>1</sub>) (∂G<sub>12</sub>/∂u<sub>2</sub>) + V<sub>12</sub>φ<sub>3</sub>(3φ<sub>2</sub> − φ<sub>3</sub>) (∂G<sub>23</sub>/∂φ<sub>3</sub>) − (u<sub>1</sub>u<sub>2</sub>)<sup>2</sup> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + V<sub>12</sub>φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)               </p>
-<p>&nbsp;</p>
-<p>S<sub>1</sub> =<br />
-−V<sub>21</sub> + V<sub>23</sub> + (φ<sub>1</sub> + φ<sub>3</sub>)(V<sub>21</sub>G<sub>12</sub> − G<sub>23</sub>) + V<sub>21</sub>(φ<sub>1</sub> − φ<sub>3</sub>)G<sub>13</sub> + V<sub>21</sub>u<sub>1</sub>u<sub>2</sub>(φ<sub>2</sub> + u<sub>2</sub> − u<sub>1</sub>) (∂G<sub>12</sub>/∂u<sub>2</sub>) + φ<sub>3</sub>(3φ<sub>2</sub> − 1) (∂G<sub>23</sub>/∂φ<sub>3</sub>) − V<sub>21</sub>(u<sub>1</sub>u<sub>2</sub>)<sup>2</sup> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)            </p>
-<p>&nbsp;</p>
-<p>S<sub>2</sub> =<br />
-1/φ<sub>2</sub> − 1 + V<sub>23</sub> + V<sub>21</sub>φ<sub>1</sub>(G<sub>13</sub> − G<sub>12</sub>) − (φ<sub>1</sub> + 2φ<sub>3</sub>)G<sub>13</sub> + V<sub>21</sub>u<sub>1</sub><sup>2</sup>(2u<sub>1</sub> − φ<sub>2</sub>) (∂G<sub>12</sub>/∂u<sub>2</sub>) + φ<sub>3</sub>(4φ<sub>2</sub> + φ<sub>1</sub> − 2) (∂G<sub>23</sub>/∂φ<sub>3</sub>) + V<sub>21</sub>u<sub>1</sub><sup>3</sup>u<sub>2</sub> (∂<sup>2</sup>G<sub>12</sub>/∂u<sub>2</sub><sup>2</sup>) + φ<sub>2</sub>φ<sub>3</sub><sup>2</sup> (∂<sup>2</sup>G<sub>23</sub>/∂φ<sub>3</sub><sup>2</sup>)                  </p>
-<p>&nbsp;</p>
-<p><strong>Continuity &amp; Flux Logic (<a href="Publications_20170501_JMS_COEFFICIENTS.m"><code>COEFFICIENTS.m</code></a>, <a href="Publications_20170501_JMS_ABCD.m"><code>ABCD.m</code></a>, <a href="Publications_20170501_JMS_BDCA.m"><code>BDCA.m</code></a>)</strong>          <br />
-<strong>- Kinetic Mobility</strong> <br />
-Friction coefficients ξ<sub>ij</sub> are calculated from self-diffusion coefficients D<sub>i</sub><sup><em></sup>, where D<sub>2</sub><sup></em></sup> is given by the solvent self-diffusion in <code>FRICTIONCOEF.m</code>.                              <br />
-ξ<sub>23</sub> = (ρ<sub>03</sub> M<sub>w3</sub>) / D<sub>2</sub><sup>*</sup>         </p>
-<p>&nbsp;</p>
-<p><strong>- Mobility Matrix Elements (<a href="Publications_20170501_JMS_ABCD.m"><code>ABCD.m</code></a>)</strong>   <br />
-The elements A, B, C, D facilitate the inversion of the friction matrix:    <br />
-A = (ω<sub>2</sub>ξ<sub>12</sub>)/(M<sub>w2</sub>ω<sub>1</sub>) + (ξ<sub>13</sub>(1 − ω<sub>2</sub>))/(M<sub>w3</sub>ω<sub>1</sub>)          <br />
-B = ξ<sub>12</sub>/M<sub>w2</sub> − ξ<sub>13</sub>/M<sub>w3</sub>        <br />
-C = (ω<sub>1</sub>ξ<sub>12</sub>)/(M<sub>w1</sub>ω<sub>2</sub>) + (ξ<sub>23</sub>(1 − ω<sub>1</sub>))/(M<sub>w3</sub>ω<sub>2</sub>)         <br />
-D = ξ<sub>12</sub>/M<sub>w1</sub> − ξ<sub>23</sub>/M<sub>w3</sub>           </p>
-<p>&nbsp;</p>
-<p><strong>- Reciprocal Scaling Term (<a href="Publications_20170501_JMS_BDCA.m"><code>BDCA.m</code></a>)</strong>          <br />
-CF<sub>12</sub>G<sub>12</sub> = (ω<sub>1</sub>ω<sub>2</sub>M<sub>w1</sub>M<sub>w2</sub>M<sub>w3</sub><sup>3</sup>)/(M<sub>w1</sub>M<sub>w3</sub>ξ<sub>12</sub>ξ<sub>23</sub>ω<sub>2</sub> + M<sub>w2</sub>M<sub>w3</sub>ξ<sub>13</sub>ξ<sub>12</sub>ω<sub>1</sub> + M<sub>w1</sub>M<sub>w2</sub>ξ<sub>13</sub>ξ<sub>23</sub>ω<sub>3</sub>)</p>
-<p>&nbsp;</p>
-<p><strong>- Final Transport Coefficients (<a href="Publications_20170501_JMS_COEFFICIENTS.m"><code>COEFFICIENTS.m</code></a>)</strong>         <br />
-The final Fickian-like coefficients F<sub>1</sub>, F<sub>2</sub>, G<sub>1</sub>, G<sub>2</sub> are, where σ<sub>ij</sub> = (∂μ<sub>i</sub>)/(∂ω<sub>j</sub>) (computed in <code>DMiOi.m</code>):             <br />
-F<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>11</sub> + B σ<sub>21</sub>)       <br />
-F<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>11</sub> + A σ<sub>21</sub>)                  <br />
-G<sub>1</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (C σ<sub>12</sub> + B σ<sub>22</sub>)         <br />
-G<sub>2</sub> = CF<sub>12</sub>G<sub>12</sub> &middot; (D σ<sub>12</sub> + A σ<sub>22</sub>)         </p>
-<p>&nbsp;</p>
-<p><strong>PDE &amp; Velocity Execution (<a href="Publications_20170501_JMS_MainGUFDM.m"><code>MainGUFDM.m</code></a> &amp; <a href="Publications_20170501_JMS_VELOCITY.m"><code>VELOCITY.m</code></a>)</strong>           </p>
-<p>&nbsp;</p>
-<p><strong>- Reference Velocity</strong>      <br />
-The center-of-mass velocity $v$ ensures volumetric consistency, where J<sub>i</sub><sup>'</sup> is the bracketed part of the flux J<sub>i</sub> = -ρ J<sub>i</sub><sup>'</sup>.           <br />
-v = ((ρ<sub>01</sub> − ρ<sub>03</sub>) / (ρ<sub>01</sub>ρ<sub>03</sub>)) J<sub>1</sub><sup>'</sup> + ((ρ<sub>02</sub> − ρ<sub>03</sub>) / (ρ<sub>02</sub>ρ<sub>03</sub>)) J<sub>2</sub><sup>'</sup></p>
-<p>&nbsp;</p>
-<p><strong>- Time Evolution</strong>    <br />
-Components 1 and 2 evolve according to:       <br />
-ω<sub>i</sub><sup>t+Δt</sup> = ω<sub>i</sub><sup>t</sup> − ( (1/ρ)(∂J<sub>i</sub>/∂z) + v(∂ω<sub>i</sub>/∂z) ) Δt      </p>
-<p>&nbsp;</p>
-<p><strong>- Spatial Discretization (<a href="Publications_20170501_JMS_MESHS.m"><code>MESHS.m</code></a>)</strong>    <br />
-The spatial derivatives are discretized using the GUFDM non-uniform grid.</p></div>
+<p><strong>List of Files:</strong> <br />
+- <a href="Publications_20170501_JMS_ABCD.m"><strong><code>ABCD.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_BDCA.m"><strong><code>BDCA.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_COEFFICIENTS.m"><strong><code>COEFFICIENTS.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_CONSTANTS.m"><strong><code>CONSTANTS.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_DENSTY.m"><strong><code>DENSTY.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_DMiOi.m"><strong><code>DMiOi.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_FGcomponents.m"><strong><code>FGcomponents.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_FLORYHOGGINSCOEFF.m"><strong><code>FLORYHOGGINSCOEFF.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_FRICTIONCOEF.m"><strong><code>FRICTIONCOEF.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_INITIALS.m"><strong><code>INITIALS.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_MESHS.m"><strong><code>MESHS.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_MainGUFDM.m"><strong><code>MainGUFDM.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_PHIs.m"><strong><code>PHIs.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_POSITIONS.m"><strong><code>POSITIONS.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_PreAllocation.m"><strong><code>PreAllocation.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_UorH.m"><strong><code>UorH.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_VELOCITY.m"><strong><code>VELOCITY.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_d2OMGidz2.m"><strong><code>d2OMGidz2.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_dABCD.m"><strong><code>dABCD.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_dBDCA.m"><strong><code>dBDCA.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_dFiGidz.m"><strong><code>dFiGidz.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_dMiOidz.m"><strong><code>dMiOidz.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_dOMGidz.m"><strong><code>dOMGidz.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_dPHIs.m"><strong><code>dPHIs.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_djFlux12.m"><strong><code>djFlux12.m</code></strong></a><br />
+- <a href="Publications_20170501_JMS_jFlux12.m"><strong><code>jFlux12.m</code></strong></a></p></div>
         </section>
 
     </div>

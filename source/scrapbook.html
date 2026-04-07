@@ -35,32 +35,31 @@
         <section class="card span-2">
             <div class="card-content"><h2>Raman Spectroscopy for Mineral Detection and Sorting</h2>
 <p>&nbsp;</p>
-<p>A critical aspect of mineral processing is selecting the appropriate technique to extract minerals from mined ore, which heavily relies on accurate species identification. This task can be challenging even for experienced professionals—minerals like chalcopyrite, pyrite, and gold can be easily mistaken for each other due to their similar visual appearances (e.g., yellowish color with metallic luster). Such misidentifications can lead to incorrect processing choices, such as using flotation to extract non-existent species, resulting in substantial financial, material, and time losses. This issue is exacerbated with low-grade ore samples, which are increasingly common due to continuous mineral exploration and the declining grades and availability of mineral resources.</p>
+<p>A critical aspect of <strong>mineral processing</strong> is selecting the appropriate technique to <strong>extract minerals from mined ore</strong>, which heavily relies on <strong>accurate species identification</strong>. This task can be challenging even for experienced professionals—minerals like chalcopyrite, pyrite, and gold can be easily mistaken for each other due to their <strong>similar visual appearances</strong> (e.g., yellowish color with metallic luster). Such misidentifications can lead to incorrect processing choices, such as using flotation to extract non-existent species, resulting in substantial financial, material, and time losses. This issue is exacerbated with <strong>low-grade ore samples</strong>, which are increasingly common due to continuous mineral exploration and the declining grades and availability of mineral resources.</p>
 <p>&nbsp;</p>
-<p>The aim is to develop digital twins—high-fidelity computational models that replicate physical materials and processes. These models can be deployed at mining sites for the smart identification of mineral species and the selection of appropriate extraction processes. This work aims to revolutionize mineral identification at mine operations through the development of robust digital twins and advanced machine learning models, ensuring efficient and accurate resource extraction with minimal waste.     </p>
+<p>The aim is to develop <strong>digital twins</strong>—high-fidelity computational models that replicate physical materials and processes. These models can be <strong>deployed at mining sites for the smart identification of mineral species and the selection of appropriate extraction processes</strong>. This work aims to <strong>facilitate mineral identification at mine operations</strong> through the development of <strong>digital twins and advanced machine learning models</strong>, ensuring efficient and accurate resource extraction with minimal waste.     </p>
 <p>&nbsp;</p>
-<p>Electromagnetic spectra and Raman spectra (fingerprints) will be used to identify species in mined ore samples. Currently, two comprehensive sets of spectral fingerprints exist:     <br />
+<p><strong>Electromagnetic spectra and Raman spectra (fingerprints)</strong> will be used to identify species in mined ore samples. Currently, two comprehensive sets of spectral fingerprints exist:     <br />
 - Elemental spectra: Hosted at <a href="https://physics.nist.gov/asd">NIST's Standard Reference Database -- Atomic Spectra Database (ASD)</a>; these spectra are unique for all known elements.   <br />
 - Mineral spectra: Available from the <a href="https://pubs.usgs.gov/ds/730/">U.S. Geological Survey Data Series</a> and <a href="https://www.jpl.nasa.gov/">NASA's Jet Propulsion Laboratory</a>, although discrepancies exist depending on factors such as mine location and purity/contamination.      </p>
 <p>&nbsp;</p>
 <p><strong>Investigating Discrepancies</strong>         <br />
-We will examine the fundamental building blocks of minerals—atoms—and their unique spectral fingerprints. By correlating the elemental spectra from ASD with mineral spectra, we aim to understand and account for discrepancies.    <br />
-Using an Extended Iterative Optimization Technique (EIOT), we will extract intrinsic (constant) and non-intrinsic (variable) features from the spectra. Principal Component Analysis (PCA) will identify the most relevant components while maintaining a high data correlation.</p>
+- We will examine the fundamental building blocks of minerals —atoms— and their unique spectral fingerprints. By correlating the elemental spectra from ASD with mineral spectra, we aim to understand and account for discrepancies.    <br />
+- Using an Extended Iterative Optimization Technique (EIOT), we will extract intrinsic (constant) and non-intrinsic (variable) features from the spectra. Principal Component Analysis (PCA) will identify the most relevant components while maintaining a high data correlation.</p>
 <p>&nbsp;</p>
 <p><strong>Developing Transferable Machine Learning Models</strong>    <br />
-Current mineral identification methods using hyperspectral sensors rely on supervised machine learning, which requires labeled data. This is limited by:    <br />
-- The need to retrain models for each mine location,    <br />
-- The inability to handle previously unseen mineral species.    <br />
-We propose developing <strong>unsupervised, physically informed machine learning models</strong> that adapt to new data on-the-fly.      </p>
+Current mineral identification methods using hyperspectral sensors rely on supervised machine learning, which requires labeled data. This is limited by (1) the need to retrain models for each mine location, and (2) the inability to handle previously unseen mineral species.    <br />
+- We propose developing <strong>unsupervised, physically informed machine learning models</strong> that adapt to new data on-the-fly.      </p>
 <p>&nbsp;</p>
 <p><strong>Building a Design Space for Single Species</strong>      <br />
-We will compile data on minerals of concern at Canadian mine sites, including their phase structures, transitions, and electromagnetic spectra. When data is lacking, we will use Density Functional Theory (DFT) and Molecular Dynamics (MD) to compute spectra.    <br />
-This dataset will train a Convolutional Neural Network (CNN), which will be validated using a separate test dataset.      </p>
+- We will compile data on minerals of concern at Canadian mine sites, including their phase structures, transitions, and electromagnetic spectra. <br />
+- When data is lacking, we will use Density Functional Theory (DFT) and Molecular Dynamics (MD) to compute spectra.    <br />
+- This dataset will train a Convolutional Neural Network (CNN), which will be validated using a separate test dataset.      </p>
 <p>&nbsp;</p>
 <p><strong>Creating Realistic Design Spaces</strong>    <br />
 While a CNN trained on pure species data can identify individual minerals, it may struggle with mixtures. To address this:    <br />
 - Mixture models of the collected species will be developed,    <br />
-- Random configurations will be generated and their spectra computed using Machine Learning Interatomic Potentials (MLIP) in MD,    <br />
+- Random configurations will be generated and their spectra computed using Machine Learning Interatomic Potentials (MLIP) in MD. <br />
 - A CNN trained on these mixture datasets will be tested with experimentally collected hyperspectral images.   </p>
 <p>&nbsp;</p>
 <p><strong>Enabling Deployment</strong>   <br />
@@ -84,12 +83,12 @@ We will explore the development of a low-cost, fast, cloud-based self-learning m
         <section class="card span-2">
             <div class="card-content"><h2>Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS</h2>
 <p>&nbsp;</p>
-<p>This is a <a href="https://www.lammps.org/">LAMMPS</a>-based implementation of a <a href="https://en.wikipedia.org/wiki/Population_balance_equation">Physiochemical Population Balance Model (PBM)</a> using <a href="https://en.wikipedia.org/wiki/Dissipative_particle_dynamics">Dissipative Particle Dynamics (DPD)</a> for structural evolution and <a href="https://en.wikipedia.org/wiki/Transition_state_theory">Transition State Theory (TST)</a> for chemical kinetics.</p>
+<p>This is a <a href="https://www.lammps.org/"><strong>LAMMPS</strong></a>-based implementation of a <a href="https://en.wikipedia.org/wiki/Population_balance_equation"><strong>Physiochemical Population Balance Model (PBM)</strong></a> using <a href="https://en.wikipedia.org/wiki/Dissipative_particle_dynamics"><strong>Dissipative Particle Dynamics (DPD)</strong></a> for structural evolution and <a href="https://en.wikipedia.org/wiki/Transition_state_theory"><strong>Transition State Theory (TST)</strong></a> for chemical kinetics.</p>
 <p>&nbsp;</p>
-<p>The simulation models the formation and dissociation of chemical clusters (species types 3–23) from two primary monomer species (types 1 and 2). It employs a hybrid approach:         <br />
-- <strong>Mechanical Dynamics</strong>: DPD potential accounts for thermal and structural behavior.<br />
-- <strong>Physiochemical Kinetics</strong>: TST-based rate constants determine the probability of species transformation events (Birth and Death).      <br />
-- <strong>Population Balance</strong>: Discrete "event" counters are calculated per timestep to modify the particle population in-situ while preserving bead numbers or chemical stoichiometry.</p>
+<p>The simulation models the <strong>formation and dissociation of chemical clusters</strong> (species types 3–23) from two primary <strong>monomer species</strong> (types 1 and 2). It employs a <strong>hybrid approach</strong>:         <br />
+- <strong>Mechanical Dynamics</strong>: DPD potential accounts for <strong>thermal and structural behavior</strong>.<br />
+- <strong>Physiochemical Kinetics</strong>: TST-based rate constants determine the probability of <strong>species transformation events</strong> (Birth and Death).      <br />
+- <strong>Population Balance</strong>: Discrete "event" counters are calculated per timestep to modify the <strong>particle population</strong> in-situ while preserving bead numbers or chemical stoichiometry.</p>
 <p>&nbsp;</p>
 <p><strong>Mathematical Models</strong>     <br />
 <strong>DPD Force Field</strong>  <br />
@@ -163,14 +162,56 @@ n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · 
 n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</li>
 </ul>
 <p>&nbsp;</p>
-<p><strong>Species Classification</strong>      <br />
-| Type | Label | Description | Mass (g/mol) | Diameter (Å) |<br />
-| :--- | :--- | :--- | :--- | :--- |<br />
-| <strong>1</strong> | <strong>A</strong> | Primary Monomer A | 122.127 | 5.9775 |<br />
-| <strong>2</strong> | <strong>B</strong> | Primary Monomer B | 206.285 | 7.5271 |<br />
-| <strong>3–11</strong> | <strong>AA1–AA9</strong> | A-A Homoclusters | 244.254 | ~7.5 |<br />
-| <strong>12–20</strong> | <strong>AB1–AB9</strong> | A-B Heteroclusters | 328.412 | ~8.6 |<br />
-| <strong>21–23</strong> | <strong>BB1–BB3</strong> | B-B Homoclusters | 412.570 | ~9.5 |</p>
+<p><strong>Species Classification</strong>         </p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Label</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Mass (g/mol)</th>
+<th style="text-align: left;">Diameter (Å)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1</strong></td>
+<td style="text-align: left;"><strong>A</strong></td>
+<td style="text-align: left;">Primary Monomer A</td>
+<td style="text-align: left;">122.127</td>
+<td style="text-align: left;">5.9775</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2</strong></td>
+<td style="text-align: left;"><strong>B</strong></td>
+<td style="text-align: left;">Primary Monomer B</td>
+<td style="text-align: left;">206.285</td>
+<td style="text-align: left;">7.5271</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3–11</strong></td>
+<td style="text-align: left;"><strong>AA1–AA9</strong></td>
+<td style="text-align: left;">A-A Homoclusters</td>
+<td style="text-align: left;">244.254</td>
+<td style="text-align: left;">~7.5</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>12–20</strong></td>
+<td style="text-align: left;"><strong>AB1–AB9</strong></td>
+<td style="text-align: left;">A-B Heteroclusters</td>
+<td style="text-align: left;">328.412</td>
+<td style="text-align: left;">~8.6</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>21–23</strong></td>
+<td style="text-align: left;"><strong>BB1–BB3</strong></td>
+<td style="text-align: left;">B-B Homoclusters</td>
+<td style="text-align: left;">412.570</td>
+<td style="text-align: left;">~9.5</td>
+</tr>
+</tbody>
+</table>
 <p>&nbsp;</p>
 <p><strong>Execution Flow</strong><br />
 - <strong>Setup</strong>: Initializes 23 atom types and constants.    <br />
@@ -198,9 +239,7 @@ Execute the main input script from the terminal:      </p>
 - <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>: Matrix of interaction fingerprints.    <br />
 - <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a>: Kinetic barriers for all species.    <br />
 - <a href="Scrapbook_20200101_PBMwDPD_setup_constant.lmp"><code>setup_constant.lmp</code></a>: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).    <br />
-- <a href="Scrapbook_20200101_PBMwDPD_dynamics_compute_events.lmp"><code>dynamics_compute_events.lmp</code></a>: Implementation of the PBM transformation logic.      </p>
-<p>&nbsp;</p>
-<p>© 2020 Physiochemical PBM Simulation Project (Part of CoCryM project)      </p></div>
+- <a href="Scrapbook_20200101_PBMwDPD_dynamics_compute_events.lmp"><code>dynamics_compute_events.lmp</code></a>: Implementation of the PBM transformation logic.           </p></div>
         </section>
         <section class="card span-1 empty"></section>
 
