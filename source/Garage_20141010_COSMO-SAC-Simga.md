@@ -1,46 +1,108 @@
-## COSMO-SAC Sigma Profile Generator
+### COSMO-SAC Sigma Profile Generator
 
-This is a MATLAB code designed to process raw quantum mechanical (QM) surface data into **sigma-profiles**. 
+This is a suite of MATLAB code designed to process raw quantum mechanical (QM) surface data into **sigma-profiles**. 
 
-An **`html`** version of this document is available [**here**](Garage_20141010_COSMO-SAC-Simga.html).
+- An **`html`** version of this document is available [**here**](Garage_20141010_COSMO-SAC-Simga.html).
 
 **How to Use**
-- Replace `CompoundName` with the specific sheet name in the Excel file. 
+- Replace `CompoundName` with the specific sheet name in the Excel file. In the Excel file named **`inputQM.xlsx`**, each sheet should correspond to a unique compound and contain: **Columns C, D, E:** are X, Y, Z coordinates (Atomic Units). **Column G:** is Segment Area. **Column H:** is Charge per Area (Surface Charge Density). [**Click here**](Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx) to see sample input file.    
 - Call the calculator function from the MATLAB command window as `[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');`.
 
-**Files**
 
-| File (link) | Function | Description |
-| :--- | :--- | :--- |
-| [**`SimgaProfileCalculator.m`**](Garage_20141010_COSMO-SAC-Simga_SimgaProfileCalculator.m) | **Core Engine** | The main routine that calculates distances, performs Gaussian averaging, and yields the final profile. |
-| [**`IOinDataBase.m`**](Garage_20141010_COSMO-SAC-Simga_IOinDataBase.m) | **Data Handler** | Manages input/output by reading QM data from `inputQM.xlsx` and writing processed profiles. |
-| [**`SortSimgaProfile.m`**](Garage_20141010_COSMO-SAC-Simga_SortSimgaProfile.m) | **Binning Logic** | Discretizes the continuous surface data into the specific $\sigma$-density intervals used by COSMO-SAC. |
-| [**`ConvertAU2A.m`**](Garage_20141010_COSMO-SAC-Simga_ConvertAU2A.m) | **Unit Converter**| Converts spatial coordinates from Atomic Units (au) to Angstroms (Å) and calculates radii. |
-| [**`inputQM.xlsx`**](Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx) | **Input Data** | The input file containing the QM data. |
+#### **Scripts Details**
 
-In the Excel file named [**`inputQM.xlsx`**](Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx), each sheet should correspond to a unique compound and contain:
-- **Columns C, D, E:** X, Y, Z coordinates (Atomic Units).    
-- **Column G:** Segment Area.    
-- **Column H:** Charge per Area (Surface Charge Density).     
-     
-**Summary**    
-These profiles represent the probability distribution of segment surface areas as a function of their local charge density, a critical input for calculating activity coefficients in chemical mixtures. 
+##### **1. `SimgaProfileCalculator.m`**
 
-The generator transforms discrete surface segment data (positions and charges) into a smoothed, continuous distribution. It accounts for neighbor-averaging effects to ensure the resulting profile accurately reflects the molecular surface environment.  
+```bash
+function SimgaProfileCalculator()
+% [SigmaDensity SigmaProfile]=SimgaProfileCalculator()
+REFF = 0.81764200000000;
+Char=input('Enter sheet name contains data and press enter = ','s');
+[NUMSEGMENT VolCavity AreaCavity ...
+    Charge Area Sigma Potential ...
+    POSXAU POSYAU POSZAU]=IOinDataBase(Char);
+[POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area);
+SigmaNEW=zeros(NUMSEGMENT,1);
+NormSum=zeros(NUMSEGMENT,1);
+for i=1:NUMSEGMENT
+    SigmaNEW(i)=0;
+    NormSum(i)=0;
+    for j=1:NUMSEGMENT
+        diffPOSXA=POSXA(j)-POSXA(i);
+        diffPOSYA=POSYA(j)-POSYA(i);
+        diffPOSZA=POSZA(j)-POSZA(i);
+        Term1=sqrt(diffPOSXA^2+diffPOSYA^2+diffPOSZA^2);
+        Term2=Sigma(j)*((RAD(j)^2*REFF^2)/(RAD(j)^2+REFF^2)).*...
+            exp(-Term1^2/((RAD(j)^2+REFF^2)));
+        Term3=(RAD(j)^2*REFF^2*(RAD(j)^2+REFF^2))*...
+            exp(-Term1^2/(RAD(j)^2+REFF^2));
+        SigmaNEW(i)=SigmaNEW(i)+Term2;
+        NormSum(i)= NormSum(i)+Term3;
+    end
+    SigmaNEW(i)=SigmaNEW(i)/NormSum(i);
+end
+[SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area);
+xlswrite('IOinDataBase.xlsx', SigmaDensity', Char, ['N3' ':' ['N' num2str(length(SigmaDensity)+3)]]); 
+xlswrite('IOinDataBase.xlsx', SigmaProfile', Char, ['O3' ':' ['O' num2str(length(SigmaDensity)+3)]]); 
+end 
+```
 
-To account for the influence of adjacent segments, the "raw" segment charge density (sigma<sub>i</sub>) is converted into a smoothed "effective" charge density (sigma<sub>new,i</sub>). The code uses a distance-weighted Gaussian averaging function:  
+##### **2. **`IOinDataBase.m`** 
 
-σ<sub>new,i</sub> = (∑<sub>j</sub> σ<sub>j</sub>
-( (r<sub>j</sub><sup>2</sup> R<sub>eff</sub><sup>2</sup>) / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )
-exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )
-)/(∑<sub>j</sub>( (r<sub>j</sub><sup>2</sup> R<sub>eff</sub><sup>2</sup>(r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) ) / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>) )
-exp( − d<sub>ij</sub><sup>2</sup> / (r<sub>j</sub><sup>2</sup> + R<sub>eff</sub><sup>2</sup>)))
+```bash
+function [NUMSEGMENT VolCavity AreaCavity ...
+    Charge Area ChargePerArea Potential ...
+    POSXAU POSYAU POSZAU]=IOinDataBase(Char)
+% Reads data from IOinDataBase.xlsx for Compound in sheet "Char"
+NUMSEGMENT=xlsread('IOinDataBase.xlsx',Char,'L2');
+VolCavity=xlsread('IOinDataBase.xlsx',Char,'L3');
+AreaCavity=xlsread('IOinDataBase.xlsx',Char,'L4');
+EndPOSXAU=['C' num2str(NUMSEGMENT+4)];
+EndPOSYAU=['D' num2str(NUMSEGMENT+4)];
+EndPOSZAU=['E' num2str(NUMSEGMENT+4)];
+EndCharge=['F' num2str(NUMSEGMENT+4)];
+EndArea=['G' num2str(NUMSEGMENT+4)];
+EndChargePerArea=['H' num2str(NUMSEGMENT+4)];
+EndPotential=['I' num2str(NUMSEGMENT+4)];
+%
+POSXAU=xlsread('IOinDataBase.xlsx',Char,['C4' ':' EndPOSXAU]);
+POSYAU=xlsread('IOinDataBase.xlsx',Char,['D4' ':' EndPOSYAU]);
+POSZAU=xlsread('IOinDataBase.xlsx',Char,['E4' ':' EndPOSZAU]);
+% 
+Charge=xlsread('IOinDataBase.xlsx',Char,['F4' ':' EndCharge]);
+Area=xlsread('IOinDataBase.xlsx',Char,['G4' ':' EndArea]);
+ChargePerArea=xlsread('IOinDataBase.xlsx',Char,['H4' ':' EndChargePerArea]);
+Potential=xlsread('IOinDataBase.xlsx',Char,['I4' ':' EndPotential]);
+end
+```
 
-where:  
-- d<sub>ij</sub> is the Euclidean distance between segments calculated from Cartesian coordinates (x, y, z).
-- r<sub>j</sub> is the radius of the segment, derived from its surface area (RAD = sqrt(Area/π)).
-- R<sub>eff</sub> is the fixed effective averaging radius (0.8176 Å).
+##### **3. `SortSimgaProfile.m`**
 
-The smoothed charge densities (sigma<sub>new</sub>) are categorized into discrete bins to form the sigma-profile P(sigma). The code defines a density spectrum from **-0.025 to 0.025 e/Å<sup>2</sup>**. For every segment falling within a specific charge density interval, its area is weighted and summed:
-  
-A(sigma<sub>bin</sub>) = sum<sub>i in bin</sub> | sigma<sub>new, i</sub> - sigma<sub>new, i+1</sub> | * Area<sub>i</sub>
+```bash
+function [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area)
+% Sorts the Sigma Profile
+SigmaDensity = -0.025:1e-3:0.025;
+SigmaProfile = zeros(length(SigmaDensity),1)';
+%
+for idPart=1:length(SigmaDensity)-1
+    [dummy idParSigmaNEW]=find(SigmaNEW>SigmaDensity(idPart) & SigmaNEW<SigmaDensity(idPart+1));
+    TempData=abs(SigmaNEW(idParSigmaNEW)-SigmaNEW(idParSigmaNEW+1)).*...
+        Area(idParSigmaNEW);
+    SigmaProfile(idPart)=sum(TempData);
+end
+end
+```
+
+##### **4. `ConvertAU2A.m`**
+
+```bash 
+function [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area)
+% From atomic unit [au] to ANGSTROMS [A*]
+PI = 3.14159265358979;
+% 
+POSXA=POSXAU*0.529177249;
+POSYA=POSYAU*0.529177249;
+POSZA=POSZAU*0.529177249;
+RAD=sqrt(Area/PI);
+end
+```

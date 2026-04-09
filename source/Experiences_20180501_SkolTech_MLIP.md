@@ -1,4 +1,4 @@
-## AI & ML in Material Sciences (2018: May - Oct.)  
+### AI & ML in Material Sciences (2018: May - Oct.)  
 
 [**Skolkovo Institute of Science and Technology (SkolTech)**](https://skoltech.ru/en/), Russia.
 

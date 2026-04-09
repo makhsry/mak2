@@ -1,4 +1,4 @@
-## Process Engineer (2017 Nov. - 2018 May)  
+### Process Engineer (2017 Nov. - 2018 May)  
 
 [**School of Energy and Environment**](https://www.cityu.edu.hk/see/), [**City University of Hong Kong**](https://www.cityu.edu.hk/), Hong Kong.
 

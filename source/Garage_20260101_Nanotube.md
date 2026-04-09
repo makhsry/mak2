@@ -1,8 +1,8 @@
-## Nanotube Builder and Mesher
+### Nanotube Builder and Mesher
 
 An **interactive browser-based tool** for **parametric design** and **3D visualization** of nanochannel geometries, **mesh generation** in real time, and **export**. 
 
-[**Click here to access the tool**](Garage_20260101_Nanotube.html).
+- Access the tool [**here**](Garage_20260101_Nanotube.html).
 
 The channel profile is described by two **wall functions** over the **axial coordinate** ξ:
 

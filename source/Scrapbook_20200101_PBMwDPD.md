@@ -1,4 +1,4 @@
-## Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
+### Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
 
 This is a [**LAMMPS**](https://www.lammps.org/)-based implementation of a [**Physiochemical Population Balance Model (PBM)**](https://en.wikipedia.org/wiki/Population_balance_equation) using [**Dissipative Particle Dynamics (DPD)**](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [**Transition State Theory (TST)**](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
 
@@ -84,20 +84,16 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋
    -- Updates DPD interaction parameters based on new populations.      
    -- Runs N<sub>DYN</sub> steps of mechanical dynamics.      
 
-**Usage Instructions**      
-**Prerequisites**      
-- **LAMMPS**: Must be compiled with `DPD` and `ASPHERE` packages.      
-- **Units**: The script uses `real` units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).      
+**Usage Instructions**    
 
-**Running the Simulation**      
-Execute the main input script from the terminal:      
 ```bash      
 lmp -in Main.lmp      
 ```
 
-**Key Input Files**      
-- [`Main.lmp`](Scrapbook_20200101_PBMwDPD_Main.lmp): Main control script.      
-- [`fingerprints_xij.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp): Matrix of interaction fingerprints.      
-- [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp): Kinetic barriers for all species.      
-- [`setup_constant.lmp`](Scrapbook_20200101_PBMwDPD_setup_constant.lmp): Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).      
-- [`dynamics_compute_events.lmp`](Scrapbook_20200101_PBMwDPD_dynamics_compute_events.lmp): Implementation of the PBM transformation logic.           
+- **LAMMPS**: Must be compiled with `DPD` and `ASPHERE` packages.      
+- **Units**: The script uses `real` units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).   
+- `Main.lmp`: Main control script.      
+- `fingerprints_xij.lmp`: Matrix of interaction fingerprints.      
+- `fingerprints_barrier_n.lmp`: Kinetic barriers for all species.      
+- `setup_constant.lmp`: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).      
+- `dynamics_compute_events.lmp`: Implementation of the PBM transformation logic.           

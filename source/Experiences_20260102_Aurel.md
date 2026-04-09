@@ -1,4 +1,4 @@
-## Simulation Module Development Lead (2026: Jan - _Present_)
+### Simulation Module Development Lead (2026: Jan - _Present_)
 
 [**Aurel Systems Inc.**](https://www.aurelsystems.com/), Vancouver, BC, Canada.       
 

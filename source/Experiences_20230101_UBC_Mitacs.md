@@ -1,4 +1,4 @@
-## Mineral Process Engineer (2023 Jan. - 2025 Dec.)
+### Mineral Process Engineer (2023 Jan. - 2025 Dec.)
          
 [**Norman B. Keevil Institute of Mining Engineering**](https://mining.ubc.ca/), Vancouver, Canada.
 

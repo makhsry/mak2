@@ -1,4 +1,4 @@
-## Canada West Coordinator (2023 Sept. - 2024 Sept.)
+### Canada West Coordinator (2023 Sept. - 2024 Sept.)
 
 [**Marie Curie Alumni Association**](https://www.mariecuriealumni.eu/), [**North America Chapter**](https://www.mariecuriealumni.eu/groups/north-america-chapter), Canada.
 

@@ -1,4 +1,4 @@
-## Visiting Researcher (2017 Sept. - 2017 Nov.)  
+### Visiting Researcher (2017 Sept. - 2017 Nov.)  
 
 [**Institute of Physics & Beijing National Lab for Condensed Matter Physics**](https://www.ipcas.ac.cn/), with [**Dr. Carlos-Andres Palma**](https://scholar.google.com/citations?user=HY7q_pcAAAAJ), Beijing, China.
 

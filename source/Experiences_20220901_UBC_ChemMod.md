@@ -1,4 +1,4 @@
-## Chemical Process Engineer (2022 Sept. - 2022 Dec.)
+### Chemical Process Engineer (2022 Sept. - 2022 Dec.)
 
 [**Chemical and Biological Engineering Department**](https://chbe.ubc.ca/), [**University of British Columbia (UBC)**](https://www.ubc.ca/), Vancouver, Canada, as Teaching Assistant for **Modelling and Optimization in Chemical Engineering** with [**Dr. Simcha Srebnik**](https://scholar.google.com/citations?user=--v31HgAAAAJ&hl=en).  
 

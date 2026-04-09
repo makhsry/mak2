@@ -1,4 +1,4 @@
-## MASc. Mining Engineering (2023-2025) 
+### MASc. Mining Engineering (2023-2025) 
 
 [**Norman B. Keevil Institute of Mining Engineering**](https://mining.ubc.ca/), [**University of British Columbia**](https://mining.ubc.ca/), Vancouver, Canada, 2023: Jan. - 2025: Dec.
 

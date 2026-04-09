@@ -1,4 +1,4 @@
-## Falling Film Mass Transfer & Penetration Theory
+### Falling Film Mass Transfer & Penetration Theory
 
 In the paper [**Revisiting ‘penetration depth’ in falling film mass transfer**](https://www.sciencedirect.com/science/article/pii/S0263876219305994), we calculated mass transfer characteristics in falling liquid films. We compared the **Infinite Penetration** (Higbie's theory) and **Finite Penetration** models to determine how deep a solute penetrates a moving film under various physical conditions.        
 
@@ -8,7 +8,7 @@ Two python scripts are provided. One analyzes how different **diffusion coeffici
 
 **Parameters**
 
-```python
+```bash
 L = 1         # Wall length (m)
 gamma = 0.05  # Film flow rate (kg/m.s)
 cAi = 0.0366  # Interfacial concentration
@@ -18,11 +18,8 @@ cAi = 0.0366  # Interfacial concentration
 
 - Save the script as `script_name.py` and run it from the terminal as: **`python script_name.py`**
 
-You can also test the script using [**our standalone Python Notebook (HTML)**](Garage_20260405_ipynb.html).
-
-
-**Script for `varD.py`**
-```python
+#### **Script for `varD.py`**
+```bash
 # (in)finite penetration depth : varying D
 import numpy as np
 import math
@@ -121,8 +118,8 @@ for D in varD:
 			print (D, y, z, delta, kisi, cA_infY, cA_infN, NA_infY, NA_infN, kc_infY, kc_infN, kcbar_infY, kcbar_infN, gamma, u)
 ```
 
-**Script for `varG.py`**
-```python
+#### **Script for `varG.py`**
+```bash
 # (in)finite penetration depth : varying Gamma  
 import numpy as np
 import math

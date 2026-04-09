@@ -1,4 +1,4 @@
-## Mineral Process Control Engineer (2023 Sept. - 2023 Dec.)
+### Mineral Process Control Engineer (2023 Sept. - 2023 Dec.)
 
 [**Norman B. Keevil Institute of Mining Engineering**](https://mining.ubc.ca/), Canada, as Teaching Assistant for the course **Process Control** with [**Dr. Ilija Miskovic**](https://scholar.google.com/citations?user=SoXCqtMAAAAJ&hl=en).
 
