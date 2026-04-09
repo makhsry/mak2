@@ -5,4 +5,4 @@
 **Tasks Performed**
 
 - Developed **custom numerical algorithms** in **MATLAB** and **C++** to solve complex ordinary and partial differential equations (ODEs/PDEs), and implemented **optimization routines** for scientific and engineering applications.
-- Applied advanced computational techniques for modeling **physical systems**, performing parameter estimation, and solving **multi-variable optimization problems** with a focus on accuracy, efficiency, and scalability.    
+- Applied advanced computational techniques for modeling **physical systems**, performing parameter estimation, and solving **multi-variable optimization problems** with a focus on accuracy, efficiency, and scalability.

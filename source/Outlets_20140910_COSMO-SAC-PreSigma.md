@@ -2,15 +2,15 @@
 
 This is a suite of `Shell` scripts designed to automate the extraction and processing of quantum mechanical (QM) data from **DMol3** output files (specifically **.cosmo** and **.outmol**) into **sigma-profiles** for **COSMO-SAC thermodynamic modeling**. 
 
-**How to Use**  
+**How to Use**
 	
-- Set the **Compound Name** by editing the scripts to update the **`compound`** variable (e.g., `compound='75-85-4-2d'`).     
+- Set the **Compound Name** by editing the scripts to update the **`compound`** variable (e.g., `compound='75-85-4-2d'`).
 - Make **Executable**: `chmod +x *.sh`
-- Run the **Pipeline** 
-    - first **`1_Dmol3COSMO.sh`**: Extracts segment geometry and raw charges from `.cosmo` files. 
-    - then **`2_Dmol3OUTMOL.sh`**: Extracts cavity volume and average COSMO data from `.outmol` files. 
-    - then **`3_sProfile.sh`**: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges. 
-    - and finally **`SortS.sh`**: Generates the P(σ) vs σ distribution for thermodynamic modeling. 
+- Run the **Pipeline**
+    - first **`1_Dmol3COSMO.sh`**: Extracts segment geometry and raw charges from `.cosmo` files.
+    - then **`2_Dmol3OUTMOL.sh`**: Extracts cavity volume and average COSMO data from `.outmol` files.
+    - then **`3_sProfile.sh`**: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges.
+    - and finally **`SortS.sh`**: Generates the P(σ) vs σ distribution for thermodynamic modeling.
 
 #### **Script Details**
 
@@ -19,7 +19,7 @@ The scripts generate several intermediate such as `.cosmo.xyz` files and a final
 - `${compound}.cosmo.SigmaSrt`: The charge density bin identifiers.
 - `${compound}.cosmo.PSigmaSrt`: The final sigma-profile area values.
 
-##### **1. `1_Dmol3COSMO.sh`**   
+##### **1. `1_Dmol3COSMO.sh`**
 
 ```bash
 #!/bin/bash
@@ -92,7 +92,7 @@ cp ${compound}.cosmo.QperA ${compound}.cosmo.SigmaDensity
 #
 ```
 
-##### **2. `2_Dmol3OUTMOL.sh`**   
+##### **2. `2_Dmol3OUTMOL.sh`**
 
 ```bash
 #!/bin/bash
@@ -141,7 +141,7 @@ echo  $vA >> ${compound}.outmol.vA;
 #
 ```
 
-##### **3. `3_sProfile.sh`**   
+##### **3. `3_sProfile.sh`**
 
 ```bash
 #!/bin/bash
@@ -206,7 +206,7 @@ done
 #
 ```
 
-##### **4. `4_SortSigma.sh`**   
+##### **4. `4_SortSigma.sh`**
 
 ```bash
 #!/bin/bash

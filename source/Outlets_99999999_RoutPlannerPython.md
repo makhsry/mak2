@@ -2,11 +2,11 @@
 
 A **Python notebook** that takes a **color-coded pattern image** (e.g., a design, logo, or artwork), overlays it onto a real city street network from **OpenStreetMap**, extracts **GPS coordinates** for each color layer, and exports the result as one or more **GPX track files** — ready to be used in any **GPS-capable** navigation app or **fitness tracker**.
 
-- **Access** the code [**here**](Garage_99999990_RoutPlannerPython.ipynb) 
+- **Access** the code [**here**](Garage_99999990_RoutPlannerPython.ipynb)
 
-**What It Does**  
+**What It Does**
 
-The notebook performs the following stages in order:  
+The notebook performs the following stages in order:
 
 - **Downloads a city's street network** from OpenStreetMap
 - **Loads a pattern image** and converts it to HSV color space
@@ -18,7 +18,7 @@ The notebook performs the following stages in order:
 - **Converts pixel positions to GPS coordinates** (latitude/longitude)
 - **Exports one `.gpx` file per color** layer
 
-**Key Parameters Reference**     
+**Key Parameters Reference**
 
 | Parameter | Location | Effect |
 |:---|:---|:---|
@@ -31,7 +31,7 @@ The notebook performs the following stages in order:
 | `position_offset_x/y` | Stage 6 | Pattern placement offset from bottom-right corner |
 | `threshold_val` | Stage 6 | Defined but available for custom threshold extensions |
 
-**Notes and Limitations**     
+**Notes and Limitations**
 
 - **Color range definitions** use single-unit HSV hue bins (e.g., H=3 for yellow) that are very narrow and may need widening in `color_ranges` if the pattern image uses slightly off-hue colors.
 - The **nearest-neighbor pixel ordering** is an O(n²) algorithm, and for large or high-resolution images with many boundary pixels, this step can be slow.

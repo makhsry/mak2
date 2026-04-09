@@ -1,17 +1,17 @@
 ### Nanotube Builder and Mesher
 
-An **interactive browser-based tool** for **parametric design** and **3D visualization** of nanochannel geometries, **mesh generation** in real time, and **export**. 
+An **interactive browser-based tool** for **parametric design** and **3D visualization** of nanochannel geometries, **mesh generation** in real time, and **export**.
 
 - Access the tool [**here**](Garage_20260101_Nanotube.html).
 
 The channel profile is described by two **wall functions** over the **axial coordinate** ξ:
 
-w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)     
-w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)
+- w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)
+- w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)
 
 The **local channel radius** at any point along the axis is:
 
-r(ξ) = (w₂ − w₁) / 2
+- r(ξ) = (w₂ − w₁) / 2
 
 The **centerline position** is the midpoint between w₁ and w₂, producing a tube whose axis can curve and whose radius varies continuously along its length.
 
@@ -46,7 +46,8 @@ Live **vertex**, **face**, and **estimated file size** statistics update automat
 
 Select a format, check the **estimated file size**, then click **Download**.
 
-The exported file contains the following information: 
+The exported file contains the following information:
+
 - `surface` — `outer` or `inner`
 - `face_indices` — semicolon-separated list of all face IDs the vertex belongs to
 - `nx, ny, nz` — surface normal vector

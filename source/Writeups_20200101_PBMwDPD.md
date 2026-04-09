@@ -2,9 +2,10 @@
 
 This is a [**LAMMPS**](https://www.lammps.org/)-based implementation of a [**Physiochemical Population Balance Model (PBM)**](https://en.wikipedia.org/wiki/Population_balance_equation) using [**Dissipative Particle Dynamics (DPD)**](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [**Transition State Theory (TST)**](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
 
-The simulation models the **formation and dissociation of chemical clusters** (species types 3–23) from two primary **monomer species** (types 1 and 2). It employs a **hybrid approach**:           
+The simulation models the **formation and dissociation of chemical clusters** (species types 3–23) from two primary **monomer species** (types 1 and 2). It employs a **hybrid approach**:
+
 - **Mechanical Dynamics**: DPD potential accounts for **thermal and structural behavior**.
-- **Physiochemical Kinetics**: TST-based rate constants determine the probability of **species transformation events** (Birth and Death).        
+- **Physiochemical Kinetics**: TST-based rate constants determine the probability of **species transformation events** (Birth and Death).
 - **Population Balance**: Discrete "event" counters are calculated per timestep to modify the **particle population** in-situ while preserving bead numbers or chemical stoichiometry.
 
 **Mathematical Models**
@@ -29,7 +30,7 @@ The interaction between any two particles i and j is governed by three pairwise 
 
 - **Weighting Function**:
 
-w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> < R<sub>c</sub>      
+w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> < R<sub>c</sub>
 w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub>
 
 Where A<sub>ij</sub> is the maximum repulsion, γ is the friction coefficient, σ is the noise amplitude (related to γ by σ<sup>2</sup> = 2γ k<sub>B</sub> T), and R<sub>c</sub> is the cutoff radius.
@@ -43,15 +44,16 @@ In the current implementation, V<sub>1</sub> = 1.0 and V<sub>2</sub> = 1.0, mapp
 
 **Transition State Theory (TST) Kinetics**
 
-Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:      
+Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:
+
 k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)
 
 **Physical Constants:**
 
-- k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)      
-- h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)      
-- N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)      
-- R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)      
+- k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)
+- h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)
+- N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)
+- R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)
 
 The activation energy barriers (E<sub>a</sub>) are defined in [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp) for every birth (B) and death (D) event for clusters AA, BB, and AB.
 
@@ -89,15 +91,15 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋
 
 **Execution Flow**
 
-- **Setup**: Initializes 23 atom types and constants.      
-- **Equilibration**: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.          
+- **Setup**: Initializes 23 atom types and constants.
+- **Equilibration**: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.
 - **PBM-DYNAMICS Loop**:
-   -- Updates k rates based on current T.      
-   -- Measures species populations (N<sub>i</sub>).      
-   -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.      
-   -- Executes reactions via `create_atoms` (Birth) and `delete_atoms` (Death).      
-   -- Updates DPD interaction parameters based on new populations.      
-   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.      
+   -- Updates k rates based on current T.
+   -- Measures species populations (N<sub>i</sub>).
+   -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.
+   -- Executes reactions via `create_atoms` (Birth) and `delete_atoms` (Death).
+   -- Updates DPD interaction parameters based on new populations.
+   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.
 
 **Usage Instructions**
 
@@ -105,10 +107,10 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋
 lmp -in Main.lmp
 ```
 
-- **LAMMPS**: Must be compiled with `DPD` and `ASPHERE` packages.      
-- **Units**: The script uses `real` units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).   
-- `Main.lmp`: Main control script.      
-- `fingerprints_xij.lmp`: Matrix of interaction fingerprints.      
-- `fingerprints_barrier_n.lmp`: Kinetic barriers for all species.      
-- `setup_constant.lmp`: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).      
+- **LAMMPS**: Must be compiled with `DPD` and `ASPHERE` packages.
+- **Units**: The script uses `real` units (mass in g/mol, distance in Angstroms, time in femtoseconds, energy in kcal/mol).
+- `Main.lmp`: Main control script.
+- `fingerprints_xij.lmp`: Matrix of interaction fingerprints.
+- `fingerprints_barrier_n.lmp`: Kinetic barriers for all species.
+- `setup_constant.lmp`: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).
 - `dynamics_compute_events.lmp`: Implementation of the PBM transformation logic.
