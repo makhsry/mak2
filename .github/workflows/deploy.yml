@@ -32,9 +32,14 @@ jobs:
       - name: Build Site
         run: |
           cd source
-          python3 build_toc.py Garage --output Garage_99999999_TOC.md
+          #
+          python3 build_toc.py Educations --output Educations_99999999_TOC.md
+          python3 build_toc.py Experiences --output Experiences_99999999_TOC.md
           python3 build_toc.py Publications --output Publications_99999999_TOC.md
-          python3 build_toc.py Scrapbook --output Scrapbook_99999999_TOC.md
+          # 
+          python3 build_toc.py Outlets --output Outlets_99999999_TOC.md
+          python3 build_toc.py Writeups --output Writeups_99999999_TOC.md
+          # 
           python3 build_site.py
 
       - name: Commit and Push Generated Files
