@@ -128,9 +128,29 @@ nav a.active {
 }
 
 a {
-    color: #000;
+    color: blue;
     text-decoration: underline;
     font-weight: 600;
+}
+
+pre {
+    background-color: lightgray;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+code {
+    background-color: lightgray;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+pre code {
+    padding: 0;
+    background-color: transparent;
 }
 
 footer {
