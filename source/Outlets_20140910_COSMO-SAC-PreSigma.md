@@ -1,5 +1,5 @@
 ### COSMO-SAC Sigma Profile Processor
-
+ 
 This is a suite of `Shell` scripts designed to automate the extraction and processing of quantum mechanical (QM) data from **DMol3** output files (specifically **.cosmo** and **.outmol**) into **sigma-profiles** for **COSMO-SAC thermodynamic modeling**. 
 
 **How to Use**    
