@@ -1,8 +1,9 @@
 ### COSMO-SAC Sigma Profile Processor
- 
+
 This is a suite of `Shell` scripts designed to automate the extraction and processing of quantum mechanical (QM) data from **DMol3** output files (specifically **.cosmo** and **.outmol**) into **sigma-profiles** for **COSMO-SAC thermodynamic modeling**. 
 
-**How to Use**    
+**How to Use**  
+	
 - Set the **Compound Name** by editing the scripts to update the **`compound`** variable (e.g., `compound='75-85-4-2d'`).     
 - Make **Executable**: `chmod +x *.sh`
 - Run the **Pipeline** 
@@ -11,7 +12,7 @@ This is a suite of `Shell` scripts designed to automate the extraction and proce
     - then **`3_sProfile.sh`**: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges. 
     - and finally **`SortS.sh`**: Generates the P(σ) vs σ distribution for thermodynamic modeling. 
 
-#### **Script Details**   
+#### **Script Details**
 
 The scripts generate several intermediate such as `.cosmo.xyz` files and a final sigma-profile:
 - `${compound}.cosmo.SigmaNonSrt`: The smoothed charge densities.

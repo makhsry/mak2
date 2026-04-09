@@ -3,12 +3,15 @@
 [**Research Institute of Petroleum Industry (RIPI)**](https://www.ripi.ir/en), Iran.
 
 **Project**   
+
 Design of Separation Systems for Ethane and Methane, with [**Dr. Nasim Tahouni**](https://scholar.google.com/citations?user=jWEhjFcAAAAJ&hl=en).
 
-**Project Goal**  
+**Project Summary**  
+
 Completed a process engineering internship focused on the **simulation and optimization** of a gas separation unit targeting high-purity ethane and methane recovery, integrating both **technical design** and **economic analysis** using industry-standard tools.
 
 **Tasks Performed**  
+
 - **Designed**, **simulated**, and **optimized** a separation process in **Aspen HYSYS**, achieving efficient separation of ethane and methane under various operating conditions.
 - Developed comprehensive **Process Flow Diagrams (PFDs)** to visualize and document the system configuration, **material and energy balances**, and process controls.
 - Performed **equipment sizing and selection** for distillation columns, heat exchangers, compressors, and separators based on simulated process data and vendor specifications.

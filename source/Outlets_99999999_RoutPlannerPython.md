@@ -4,8 +4,10 @@ A **Python notebook** that takes a **color-coded pattern image** (e.g., a design
 
 - **Access** the code [**here**](Garage_99999990_RoutPlannerPython.ipynb) 
 
-**What It Does**     
-The notebook performs the following stages in order:     
+**What It Does**  
+
+The notebook performs the following stages in order:  
+
 - **Downloads a city's street network** from OpenStreetMap
 - **Loads a pattern image** and converts it to HSV color space
 - **Detects which colors are present** in the image above a minimum threshold

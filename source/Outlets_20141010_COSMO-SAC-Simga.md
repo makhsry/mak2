@@ -5,9 +5,9 @@ This is a suite of MATLAB code designed to process raw quantum mechanical (QM) s
 - An **`html`** version of this document is available [**here**](Garage_20141010_COSMO-SAC-Simga.html).
 
 **How to Use**
+
 - Replace `CompoundName` with the specific sheet name in the Excel file. In the Excel file named **`inputQM.xlsx`**, each sheet should correspond to a unique compound and contain: **Columns C, D, E:** are X, Y, Z coordinates (Atomic Units). **Column G:** is Segment Area. **Column H:** is Charge per Area (Surface Charge Density). [**Click here**](Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx) to see sample input file.    
 - Call the calculator function from the MATLAB command window as `[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');`.
-
 
 #### **Scripts Details**
 

@@ -8,32 +8,38 @@ The aim is to develop **digital twins**—high-fidelity computational models tha
 - Elemental spectra: Hosted at [NIST's Standard Reference Database -- Atomic Spectra Database (ASD)](https://physics.nist.gov/asd); these spectra are unique for all known elements.     
 - Mineral spectra: Available from the [U.S. Geological Survey Data Series](https://pubs.usgs.gov/ds/730/) and [NASA's Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), although discrepancies exist depending on factors such as mine location and purity/contamination.      
                       
-**Investigating Discrepancies**           
+**Investigating Discrepancies**
+
 - We will examine the fundamental building blocks of minerals —atoms— and their unique spectral fingerprints. By correlating the elemental spectra from ASD with mineral spectra, we aim to understand and account for discrepancies.      
 - Using an Extended Iterative Optimization Technique (EIOT), we will extract intrinsic (constant) and non-intrinsic (variable) features from the spectra. Principal Component Analysis (PCA) will identify the most relevant components while maintaining a high data correlation.
 
-**Developing Transferable Machine Learning Models**      
+**Developing Transferable Machine Learning Models**
+
 Current mineral identification methods using hyperspectral sensors rely on supervised machine learning, which requires labeled data. This is limited by (1) the need to retrain models for each mine location, and (2) the inability to handle previously unseen mineral species.      
 - We propose developing **unsupervised, physically informed machine learning models** that adapt to new data on-the-fly.      
 
-**Building a Design Space for Single Species**        
+**Building a Design Space for Single Species**
+
 - We will compile data on minerals of concern at Canadian mine sites, including their phase structures, transitions, and electromagnetic spectra. 
 - When data is lacking, we will use Density Functional Theory (DFT) and Molecular Dynamics (MD) to compute spectra.      
 - This dataset will train a Convolutional Neural Network (CNN), which will be validated using a separate test dataset.      
 
-**Creating Realistic Design Spaces**      
+**Creating Realistic Design Spaces**
+
 While a CNN trained on pure species data can identify individual minerals, it may struggle with mixtures. To address this:      
 - Mixture models of the collected species will be developed,      
 - Random configurations will be generated and their spectra computed using Machine Learning Interatomic Potentials (MLIP) in MD. 
 - A CNN trained on these mixture datasets will be tested with experimentally collected hyperspectral images.   
          
-**Enabling Deployment**     
+**Enabling Deployment**
+
 We will explore the development of a low-cost, fast, cloud-based self-learning model for mineral detection called **otfMLesf** (on-the-fly Machine Learning models for electromagnetic spectrum fingerprints).     
 - The model will use the CNN from Milestone 3 to detect single species in real-time,      
 - For mixtures involving detected species, it will recall the CNN from Milestone 4 to quantify composition,      
 - For unknown species, it will build random mixture models, compute spectra as in Milestone 4, retrain the CNN, and proceed to quantification.  
       
-**Supporting Information**                
+**Supporting Information**
+
 - [Automatic materials characterization from infrared spectra using convolutional neural networks](https://doi.org/10.1039/D2SC05892H)      
 - [Leveraging infrared spectroscopy for automated structure elucidation](https://www.nature.com/articles/s42004-024-01341-w)      
 - [On the interplay of the potential energy and dipole moment surfaces in controlling the infrared activity of liquid water](https://doi.org/10.1063/1.4916629)       

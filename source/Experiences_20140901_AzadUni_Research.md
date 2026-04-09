@@ -3,11 +3,13 @@
 [**Islamic Azad University**](https://en.iau.ac.ir/), under [**Young Researchers and Elite Club**](https://yrec.ac.ir/en), Tehran, Iran.
 
 **Tasks Performed**  
+
 - Managed **diverse portfolios of research and development projects**, ensuring timely delivery, quality outputs, and **cross-disciplinary collaboration**.
 - Authored technical proposals, project schedules, and successfully acquired research funding for innovative environmental and industrial process solutions.
 - Directed maintaining high performance across the lifecycle of **multiple concurrent projects**.
 
 **Sample Projects**
+
 - On-site detection and monitoring of pollutants in **water and wastewater** streams via polymeric passive samplers.
 - Translated dilation to **attenuated total reflectance Fourier-transform infrared spectroscopy (FTIR-ATR)** of polycarbonate, poly (vinyl acetate), and poly (ether urethane) induced by acetonitrile.
 - Removal mechanism of **heavy metal ions** (Pb, Cu, Cd, Zn, and Ni) by using lignin as adsorbent.

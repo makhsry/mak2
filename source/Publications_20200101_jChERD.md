@@ -19,6 +19,7 @@ cAi = 0.0366  # Interfacial concentration
 - Save the script as `script_name.py` and run it from the terminal as: **`python script_name.py`**
 
 #### **Script for `varD.py`**
+
 ```bash
 # (in)finite penetration depth : varying D
 import numpy as np
@@ -119,6 +120,7 @@ for D in varD:
 ```
 
 #### **Script for `varG.py`**
+
 ```bash
 # (in)finite penetration depth : varying Gamma  
 import numpy as np
@@ -211,4 +213,3 @@ for gamma in varG:
 			cA_infN=cA0+(cAi-cA0)*(1-math.erf(Exp_infN))
 			print (gamma, u, y, z, delta, kisi, cA_infY, cA_infN, NA_infY, NA_infN, kc_infY, kc_infN, kcbar_infY, kcbar_infN, D)
 ```
-

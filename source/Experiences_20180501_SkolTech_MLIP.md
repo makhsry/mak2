@@ -3,12 +3,15 @@
 [**Skolkovo Institute of Science and Technology (SkolTech)**](https://skoltech.ru/en/), Russia.
 
 **Project**    
+
 Machine Learning Interatomic Potentials for Materials Discovery, with [**Dr. Alexander Shapeev**](https://scholar.google.com/citations?hl=en&user=NMyIbIwAAAAJ).     
 
-**Project Goal**        
+**Project Summary**        
+
 Aimed to **expedite the discovery and characterization** of hard materials for use in high-performance environments—such as aerospace, automotive, mining, and manufacturing—by developing and deploying **ML-driven interatomic potentials** for predictive modeling.  
 
 **Tasks Performed**     
+
 - Assessed candidate **hard materials** for industrial applications, focusing on performance under mechanical stress and durability in **extreme conditions**.      
 - Conducted **nanoindentation** research to evaluate **mechanical properties** such as hardness and elastic modulus of synthesized materials.        
 - Developed validation models to discuss experimental results with simulation predictions, extracting insights into **material failure** modes and defect behavior.       
