@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html">About</a>
+            <a href="educations.html">Educations</a>
+            <a href="experiences.html">Experiences</a>
+            <a href="garage.html" class="active">Garage</a>
+            <a href="publications.html">Publications</a>
+            <a href="scrapbook.html">Scrapbook</a>
+            <a href="wall.html">Wall</a>
+
+        </div>
+    </nav>
+    <div class="container">
+
+        <section class="card span-2">
+            <div class="card-content"><h2>Garage</h2>
+<p>&nbsp;</p>
+<ul>
+<li>Drawing to GPX (Route Pattern Mapper — Python Application)</li>
+<li>HPC Job Management Tools</li>
+<li>Nanotube Builder and Mesher</li>
+<li>COSMO-SAC Activity Coefficient Model</li>
+<li>COSMO-SAC Sigma Profile Generator</li>
+<li>COSMO-SAC Sigma Profile Processor</li>
+</ul></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3>Drawing to GPX (Route Pattern Mapper — Python Application)</h3>
+<p>&nbsp;</p>
+<p>A <strong>Python notebook</strong> that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from <strong>OpenStreetMap</strong>, extracts <strong>GPS coordinates</strong> for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to be used in any <strong>GPS-capable</strong> navigation app or <strong>fitness tracker</strong>.</p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Access</strong> the code <a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>here</strong></a> </li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>What It Does</strong>   <br />
+The notebook performs the following stages in order:   <br />
+- <strong>Downloads a city's street network</strong> from OpenStreetMap<br />
+- <strong>Loads a pattern image</strong> and converts it to HSV color space<br />
+- <strong>Detects which colors are present</strong> in the image above a minimum threshold<br />
+- <strong>Creates binary masks</strong> for each detected color<br />
+- <strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary<br />
+- <strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position<br />
+- <strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal<br />
+- <strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)<br />
+- <strong>Exports one <code>.gpx</code> file per color</strong> layer</p>
+<p>&nbsp;</p>
+<p><strong>Key Parameters Reference</strong>     </p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Location</th>
+<th style="text-align: left;">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>place_name</code></td>
+<td style="text-align: left;">Stage 1</td>
+<td style="text-align: left;">City/region for the street network</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>network_type</code></td>
+<td style="text-align: left;">Stage 1</td>
+<td style="text-align: left;">Road type filter (<code>bike</code>, <code>walk</code>, <code>drive</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>filename</code></td>
+<td style="text-align: left;">Stage 2</td>
+<td style="text-align: left;">Input pattern image path</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>min_pixels_threshold</code></td>
+<td style="text-align: left;">Stage 3</td>
+<td style="text-align: left;"><code>total_pixels × 0.001</code> — minimum pixel count to register a color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>outermost_color</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Color used to anchor position; processed first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>scale_factor_x/y</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Pattern size relative to map extent</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>position_offset_x/y</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Pattern placement offset from bottom-right corner</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>threshold_val</code></td>
+<td style="text-align: left;">Stage 6</td>
+<td style="text-align: left;">Defined but available for custom threshold extensions</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>Notes and Limitations</strong>     </p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Color range definitions</strong> use single-unit HSV hue bins (e.g., H=3 for yellow) that are very narrow and may need widening in <code>color_ranges</code> if the pattern image uses slightly off-hue colors.</li>
+<li>The <strong>nearest-neighbor pixel ordering</strong> is an O(n²) algorithm, and for large or high-resolution images with many boundary pixels, this step can be slow.</li>
+<li>The <strong>GPX output does not snap to streets</strong> always.</li>
+</ul></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3>HPC Job Management Tools</h3>
+<p>&nbsp;</p>
+<p>This script is a <strong><code>Bash</code></strong>-based utility designed to automate the configuration and submission of <a href="https://slurm.schedmd.com/"><strong><code>Slurm</code></strong></a>-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery. </p>
+<p>&nbsp;</p>
+<ul>
+<li>The <strong><code>bash</code></strong> script is available <a href="Garage_99999980_SubmitHPC.sh"><strong>here</strong></a>. </li>
+<li>An <strong><code>.html</code></strong> version is available <a href="Garage_99999980_SubmitHPC.html"><strong>here</strong></a>. </li>
+</ul>
+<p>&nbsp;</p>
+<p>It is specifically tailored for <a href="https://www.comsol.com/products/multiphysics/"><strong>COMSOL Multiphysics</strong></a> simulations. The script primaryly manages the entire workflow from environment validation to job submission on various <a href="https://www.alliancecan.ca/en/about"><strong>Canadian HPC clusters</strong></a> (<em>before their migration to new systems</em>).  </p>
+<p>&nbsp;</p>
+<p>The script builds the final <strong>COMSOL call</strong> as a concatenated string of the following components:      </p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">${CALL_COMSOL_AS} batch -mpibootstrap slurm \
+    -inputfile ${inputmph} \
+    -outputfile ${outputmph} \
+    -batchlog ${logfilepath} \
+    -tmpdir ${TMPDIR} \
+    -recoverydir ${RECDIR} \
+    -alivetime 15 \
+    ${COMSOL_EXTRA_} \    # Integrated study tags
+    ${COMSOL_CONTINUE_} \ # Recovery flags
+    ${COMSOL_PARAMS_} \   # Parametric sweep arguments
+    ${COMSOL_METHOD_}     # Custom method calls
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3>Nanotube Builder and Mesher</h3>
+<p>&nbsp;</p>
+<p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>. </p>
+<p>&nbsp;</p>
+<ul>
+<li>Access the tool <a href="Garage_20260101_Nanotube.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p>The channel profile is described by two <strong>wall functions</strong> over the <strong>axial coordinate</strong> ξ:</p>
+<p>&nbsp;</p>
+<p>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)   <br />
+w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
+<p>&nbsp;</p>
+<p>The <strong>local channel radius</strong> at any point along the axis is:</p>
+<p>&nbsp;</p>
+<p>r(ξ) = (w₂ − w₁) / 2</p>
+<p>&nbsp;</p>
+<p>The <strong>centerline position</strong> is the midpoint between w₁ and w₂, producing a tube whose axis can curve and whose radius varies continuously along its length.</p>
+<p>&nbsp;</p>
+<p><strong>Parameters</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Range</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>α₁</strong></td>
+<td style="text-align: left;">[0, 1]</td>
+<td style="text-align: left;"><strong>Asymmetry amplitude</strong> — shifts the centerline, producing a curved or off-axis channel</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>α₂</strong></td>
+<td style="text-align: left;">[0, 1]</td>
+<td style="text-align: left;"><strong>Corrugation amplitude</strong> — modulates the radius periodically, creating constrictions and expansions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>α₃</strong></td>
+<td style="text-align: left;">[0.5, 4]</td>
+<td style="text-align: left;"><strong>Wavenumber multiplier</strong> — controls the spatial frequency of the α₁ modulation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>r₀</strong></td>
+<td style="text-align: left;">[0.2, 2]</td>
+<td style="text-align: left;"><strong>Minimum base radius</strong> — sets the baseline channel width</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>L</strong></td>
+<td style="text-align: left;">[2, 40]</td>
+<td style="text-align: left;"><strong>Tube length</strong> in the ξ domain</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nₐ</strong></td>
+<td style="text-align: left;">&gt;20</td>
+<td style="text-align: left;"><strong>Axial mesh points</strong> — higher values give a smoother profile along the length</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nᵣ</strong></td>
+<td style="text-align: left;">&gt;8</td>
+<td style="text-align: left;"><strong>Radial mesh points</strong> — higher values give a rounder cross-section</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Each parameter has a <strong>slider</strong> for quick exploration and a <strong>number input</strong> for precise entry. Press <strong>Enter</strong> or leave the field to <strong>apply</strong> a typed value.</p>
+<p>&nbsp;</p>
+<p>Live <strong>vertex</strong>, <strong>face</strong>, and <strong>estimated file size</strong> statistics update automatically as you adjust these values.</p>
+<p>&nbsp;</p>
+<p><strong>Viewport Navigation</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Left-click drag</td>
+<td style="text-align: left;"><strong>Pan</strong> — recenters the view</td>
+</tr>
+<tr>
+<td style="text-align: left;">Right-click drag</td>
+<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Shift + drag</td>
+<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scroll wheel</td>
+<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;">Pinch (touch)</td>
+<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;">Single finger (touch)</td>
+<td style="text-align: left;"><strong>Pan</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>+</code> / <code>−</code> buttons</td>
+<td style="text-align: left;"><strong>Step zoom</strong> in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>RST</code> button</td>
+<td style="text-align: left;"><strong>Reset</strong> zoom, pan, and rotation to defaults</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Select a format, check the <strong>estimated file size</strong>, then click <strong>Download</strong>.</p>
+<p>&nbsp;</p>
+<p>The exported file contains the following information: <br />
+- <code>surface</code> — <code>outer</code> or <code>inner</code><br />
+- <code>face_indices</code> — semicolon-separated list of all face IDs the vertex belongs to<br />
+- <code>nx, ny, nz</code> — surface normal vector<br />
+- <code>u, v</code> — UV texture coordinates</p></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3>COSMO-SAC Activity Coefficient Model</h3>
+<p>&nbsp;</p>
+<p>This is a suite of MATLAB code for the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. </p>
+<p>&nbsp;</p>
+<ul>
+<li>An <strong><code>.html</code></strong> version of the calculator can be found <a href="Garage_20150101_COSMO-SAC_Calculator.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>      <br />
+- The Excel file (<strong><a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></strong>) must have sheets named after your <strong><code>components</code></strong> (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data. <br />
+- Set your desired <strong><code>SYSTEMP</code></strong> (Temperature in <strong>Kelvin</strong>).<br />
+- Update <strong><code>ListCOMP</code></strong> with the sheet names from your <strong><code>inputQM.xlsx</code></strong> file.<br />
+- Run the script <strong><code>eqCOSMO.m</code></strong>.</p>
+<p>&nbsp;</p>
+<p><strong>Outputs</strong> <br />
+- <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated <strong><code>sigma-densities</code></strong> and <strong><code>profiles</code></strong> for each component.<br />
+- <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing <strong><code>mole fractions (x)</code></strong>, <strong><code>activity coefficients (γ)</code></strong>, and <strong><code>ln γ</code></strong>.</p>
+<p>&nbsp;</p>
+<h4><strong>Scripts Details</strong></h4>
+<p>&nbsp;</p>
+<h5><strong>1. <code>eqCOSMO.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function eqCOSMO() 
+% Two Phase Equilibrium Calculations using COSMO model (COSMO-SAC) 
+% Manual at this stage 
+SYSTEMP=273.15; % temprature of interest 
+MIX='Dissolved'; % Mixture 1 - Phase A
+ListCOMP={'67-63-0-2d', 'Z1'}; % list of components in mixture 1
+% Binary mixtures at this stage 
+MATrixA=Binary(SYSTEMP, ListCOMP);
+%MATrix(x,:)=[x1(x) GAMMA(1) LNGAMMA(1) x2(x) GAMMA(2) LNGAMMA(2)];
+xlswrite('MixGamma.xlsx', MATrixA, MIX);
+% 
+MIX='Solute'; 
+ListCOMP={'Z1', 'Z1'}; 
+MATrixB=Binary(SYSTEMP, ListCOMP);
+xlswrite('MixGamma.xlsx', MATrixB, MIX);
+% Equilibria ::: @SLE
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>2. <code>Binary.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function MATrix=Binary(SYSTEMP, ListCOMP) 
+% 
+COMP=length(ListCOMP); % COMP=2;
+% mole fractions 
+x1=5e-3:1e-3:(1-5e-3); % mole fraction of component 1
+x2=1-x1; % mole fraction of component 2
+%
+% COSMO settings 
+[EO, AEFFPRIME, RGAS, VNORM, ANORM, COMPSEG, ...
+    EPS, COORD, SIGMAHB, CHB, FPOL, ALPHA, ALPHAPRIME]=paraCOSMO(); 
+%
+for n=1:COMP
+    [SigmaDensity SigmaProfile VolCavity]=SimgaProfileCalculator(ListCOMP{n});
+    xlswrite('sProfiles.xlsx', SigmaDensity', ListCOMP{n}, ...
+    ['A3' ':' ['A' num2str(length(SigmaDensity)+3)]]); 
+    xlswrite('sProfiles.xlsx', SigmaProfile', ListCOMP{n}, ...
+    ['B3' ':' ['B' num2str(length(SigmaDensity)+3)]]);
+    SigmaProfiles(:,n)=SigmaProfile'; 
+    ACOSMO(n)=sum(SigmaProfile); % MOLECULAR SURFACE AREA FROM COSMO OUTPUT (A**2) 
+                                % --THE SUM OF THE INDIVIDUAL PROFILE
+    VCOSMO(n)=VolCavity; % CAVITY VOLUME FROM COSMO OUTPUT (A**3)
+end
+RNORM = VCOSMO./VNORM; 
+QNORM = ACOSMO./ANORM;
+for x=1:length(x1)
+    NUMER = x1(x)*SigmaProfiles(:,1) + x2(x)*SigmaProfiles(:,2);
+    DENOM = x1(x)*ACOSMO(1) + x2(x)*ACOSMO(2);
+    MixSigmaProfile=NUMER./DENOM;
+    for i=1:length(SigmaDensity)
+        for j=1:length(SigmaDensity)
+            if SigmaDensity(i)&gt;=SigmaDensity(j)
+                SIGMAACC = SigmaDensity(i);
+                SIGMADON = SigmaDensity(j);
+            else 
+                SIGMADON = SigmaDensity(i);
+                SIGMAACC = SigmaDensity(j);
+            end 
+            DELTAW(i,j)=(ALPHAPRIME/2.0)*(SigmaDensity(i)+SigmaDensity(j))^2.0 + ...
+                CHB*max(0.0,(SIGMAACC - SIGMAHB))*min(0.0,(SIGMADON + SIGMAHB));
+        end 
+    end
+    % SEGMENT ACITIVITY COEF (PURE SPECIES)
+    for n=1:COMP
+        CONPR=1e3;
+        SEGGAMMAPR(1:length(SigmaDensity),n) = 1.0;
+        while (max(CONPR) &gt; 1e-6)
+            SEGGAMMAOLDPR(:,n)=SEGGAMMAPR(:,n);
+            for i=1:length(SigmaDensity)
+                SUMMATION = 0.0;
+                for j=1:length(SigmaDensity)
+                    SUMMATION = SUMMATION + ...
+                        (SigmaProfiles(j,n)/ACOSMO(n))*SEGGAMMAOLDPR(j,n)*...
+                        exp(-DELTAW(i,j)/(RGAS*SYSTEMP));
+                end
+                SEGGAMMAPR(i,n)=exp(-log(SUMMATION));
+                SEGGAMMAPR(i,n)=(SEGGAMMAPR(i,n)+SEGGAMMAOLDPR(i,n))/2.0; 
+            end 
+            CONPR=abs((SEGGAMMAPR(:,n)-SEGGAMMAOLDPR(:,n))/SEGGAMMAOLDPR(:,n));
+        end 
+    end 
+    % SEGMENT ACTIVITY COEF. (MIXTURE)
+    CON=1e3;
+    SEGGAMMA(1:length(SigmaDensity)) = 1.0;
+    while (max(CON) &gt; 1e-6)
+        SEGGAMMAOLD=SEGGAMMA;
+        for i=1:length(SigmaDensity)
+            SUMMATION = 0.0;
+            for j=1:length(SigmaDensity)
+                SUMMATION = SUMMATION + MixSigmaProfile(j)...
+                *SEGGAMMAOLD(j)*exp(-DELTAW(i,j)/(RGAS*SYSTEMP));
+            end
+            SEGGAMMA(i)=exp(-log(SUMMATION));
+            SEGGAMMA(i)=(SEGGAMMA(i)+SEGGAMMAOLD(i))/2.0; 
+        end 
+        CON=abs((SEGGAMMA-SEGGAMMAOLD)/SEGGAMMAOLD);
+    end 
+    BOTTHETA = x1(x)*QNORM(1) + x2(x)*QNORM(2);
+    BOTPHI = x1(x)*RNORM(1) + x2(x)*RNORM(2);
+    THETA(1) = (x1(x)*QNORM(1))/BOTTHETA;
+    THETA(2) = (x2(x)*QNORM(2))/BOTTHETA;
+    PHI(1) = (x1(x)*RNORM(1))/BOTPHI;
+    PHI(2) = (x2(x)*RNORM(2))/BOTPHI;
+    L = (COORD/2.0)*(RNORM-QNORM)-(RNORM-1.0);
+    % CALCULATION OF GAMMAS
+    GAMMASG(1) = log(PHI(1)/x1(x))+(COORD/2)*QNORM(1)*log(THETA(1)/PHI(1))...
+        +L(1)-(PHI(1)/x1(x))* (x1(x)*L(1) + x2(x)*L(2));
+    GAMMASG(2) = log(PHI(2)/x2(x))+(COORD/2)*QNORM(2)*log(THETA(2)/PHI(2))...
+        +L(2)-(PHI(2)/x2(x))* (x1(x)*L(1) + x2(x)*L(2)); 
+    for n=1:COMP 
+        SUMGAMMA(n)=sum((SigmaProfiles(:,n)/AEFFPRIME).*(log(SEGGAMMA'./(SEGGAMMAPR(:,n)))));
+    end 
+    GAMMA=exp(SUMGAMMA + GAMMASG);
+    LNGAMMA = log(GAMMA);
+    MATrix(x,:)=[x1(x) GAMMA(1) LNGAMMA(1) x2(x) GAMMA(2) LNGAMMA(2)];
+end
+% 
+end
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>3. <code>SimgaProfileCalculator.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [SigmaDensity SigmaProfile VolCavity]=SimgaProfileCalculator(Char)
+% [SigmaDensity SigmaProfile]=SimgaProfileCalculator()
+REFF = 0.81764200000000;
+%Char=input('Enter sheet name contains data and press enter = ','s');
+[NUMSEGMENT VolCavity AreaCavity ...
+    Charge Area ChargePerArea Potential ...
+    POSXAU POSYAU POSZAU]=Library(Char);
+[POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area);
+Sigma=ChargePerArea;
+SigmaNEW=zeros(NUMSEGMENT,1);
+NormSum=zeros(NUMSEGMENT,1);
+for i=1:NUMSEGMENT
+    SigmaNEW(i)=0;
+    NormSum(i)=0;
+    for j=1:NUMSEGMENT
+        diffPOSXA=POSXA(j)-POSXA(i);
+        diffPOSYA=POSYA(j)-POSYA(i);
+        diffPOSZA=POSZA(j)-POSZA(i);
+        Term1=sqrt(diffPOSXA^2+diffPOSYA^2+diffPOSZA^2);
+        Term2=Sigma(j)*((RAD(j)^2*REFF^2)/(RAD(j)^2+REFF^2)).*...
+            exp(-Term1^2/((RAD(j)^2+REFF^2)));
+        Term3=(RAD(j)^2*REFF^2*(RAD(j)^2+REFF^2))*...
+            exp(-Term1^2/(RAD(j)^2+REFF^2));
+        SigmaNEW(i)=SigmaNEW(i)+Term2;
+        NormSum(i)= NormSum(i)+Term3;
+    end
+    SigmaNEW(i)=SigmaNEW(i)/NormSum(i);
+end
+[SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area);
+end
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>4. <code>Library.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [NUMSEGMENT VolCavity AreaCavity ...
+    Charge Area ChargePerArea Potential ...
+    POSXAU POSYAU POSZAU]=Library(Char)
+% Reads data from inputQM.xlsx for Compound in sheet &quot;Char&quot;
+NUMSEGMENT=xlsread('inputQM.xlsx',Char,'L2');
+VolCavity=xlsread('inputQM.xlsx',Char,'L3');
+AreaCavity=xlsread('inputQM.xlsx',Char,'L4');
+EndPOSXAU=['C' num2str(NUMSEGMENT+4)];
+EndPOSYAU=['D' num2str(NUMSEGMENT+4)];
+EndPOSZAU=['E' num2str(NUMSEGMENT+4)];
+EndCharge=['F' num2str(NUMSEGMENT+4)];
+EndArea=['G' num2str(NUMSEGMENT+4)];
+EndChargePerArea=['H' num2str(NUMSEGMENT+4)];
+EndPotential=['I' num2str(NUMSEGMENT+4)];
+% 
+POSXAU=xlsread('inputQM.xlsx',Char,['C4' ':' EndPOSXAU]);
+POSYAU=xlsread('inputQM.xlsx',Char,['D4' ':' EndPOSYAU]);
+POSZAU=xlsread('inputQM.xlsx',Char,['E4' ':' EndPOSZAU]);
+% 
+Charge=xlsread('inputQM.xlsx',Char,['F4' ':' EndCharge]);
+Area=xlsread('inputQM.xlsx',Char,['G4' ':' EndArea]);
+ChargePerArea=xlsread('inputQM.xlsx',Char,['H4' ':' EndChargePerArea]);
+Potential=xlsread('inputQM.xlsx',Char,['I4' ':' EndPotential]);
+end
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>5. <code>paraCOSMO.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [EO, AEFFPRIME, RGAS, VNORM, ANORM, COMPSEG, ...
+    EPS, COORD, SIGMAHB, CHB, FPOL, ALPHA, ALPHAPRIME]=paraCOSMO()
+EO = 2.395e-4; % PERMITTIVITY IN A VACUUM (e**2*mol/Kcal*Angstrom)
+AEFFPRIME = 7.5; % EFFECTIVE SURFACE AREA (ANGSTROMS**2) --FROM LIN
+RGAS = 0.001987; % IDEAL GAS CONSTANT (Kcal/mol*K)
+VNORM = 66.69;  % VOLUME NORMALIZATION CONSTANT (A**3) --FROM LIN
+ANORM = 79.53; % AREA NORMALIZATION CONSTANT (A**2) --FROM LIN
+COMPSEG = 51; % NUMBER OF INTERVALS FOR THE SIGMA PROFILE
+EPS = 3.667; % RELATIVE PERMITTIVITY 
+            % --FROM LIN (LIN AND SANDLER USE A CONSTANT FPOL WHICH YEILDS EPS=3.68)
+COORD = 10.0; % THE COORIDINATION NUMBER --FROM LIN (KLAMT USED 7.2)  
+SIGMAHB = 0.0084; % CUTOFF VALUE FOR HYDROGEN BONDING (e/Angstrom**2)
+CHB = 85580.0; % HYDROGEN BONDING COEFFICIENT (Kcal/mole*Angstroms**4/e**2)
+FPOL = (EPS-1.0)/(EPS+0.5);
+ALPHA = (0.3*AEFFPRIME^(1.5))/(EO);
+ALPHAPRIME = FPOL*ALPHA; % ALPHAPRIME = A CONSTANT USED IN THE MISFIT ENERGY CALCULATION
+end 
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>6. <code>SortSimgaProfile.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area)
+% Sorts the Sigma Profile
+SigmaDensity = -0.025:1e-3:0.025;
+SigmaProfile = zeros(length(SigmaDensity),1)';
+%
+for idPart=1:length(SigmaDensity)-1
+    [dummy idParSigmaNEW]=find(SigmaNEW&gt;SigmaDensity(idPart) &amp; SigmaNEW&lt;SigmaDensity(idPart+1));
+    TempData=abs(SigmaNEW(idParSigmaNEW)-SigmaNEW(idParSigmaNEW+1)).*...
+        Area(idParSigmaNEW);
+    SigmaProfile(idPart)=sum(TempData);
+end
+end
+
+&amp;nbsp;
+
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>7. <code>ConvertAU2A.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area)
+% From atomic unit [au] to ANGSTROMS [A*]
+PI = 3.14159265358979;
+% 
+POSXA=POSXAU*0.529177249;
+POSYA=POSYAU*0.529177249;
+POSZA=POSZAU*0.529177249;
+RAD=sqrt(Area/PI);
+end
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3>COSMO-SAC Sigma Profile Generator</h3>
+<p>&nbsp;</p>
+<p>This is a suite of MATLAB code designed to process raw quantum mechanical (QM) surface data into <strong>sigma-profiles</strong>. </p>
+<p>&nbsp;</p>
+<ul>
+<li>An <strong><code>html</code></strong> version of this document is available <a href="Garage_20141010_COSMO-SAC-Simga.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>How to Use</strong><br />
+- Replace <code>CompoundName</code> with the specific sheet name in the Excel file. In the Excel file named <strong><code>inputQM.xlsx</code></strong>, each sheet should correspond to a unique compound and contain: <strong>Columns C, D, E:</strong> are X, Y, Z coordinates (Atomic Units). <strong>Column G:</strong> is Segment Area. <strong>Column H:</strong> is Charge per Area (Surface Charge Density). <a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><strong>Click here</strong></a> to see sample input file.  <br />
+- Call the calculator function from the MATLAB command window as <code>[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');</code>.</p>
+<p>&nbsp;</p>
+<h4><strong>Scripts Details</strong></h4>
+<p>&nbsp;</p>
+<h5><strong>1. <code>SimgaProfileCalculator.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function SimgaProfileCalculator()
+% [SigmaDensity SigmaProfile]=SimgaProfileCalculator()
+REFF = 0.81764200000000;
+Char=input('Enter sheet name contains data and press enter = ','s');
+[NUMSEGMENT VolCavity AreaCavity ...
+    Charge Area Sigma Potential ...
+    POSXAU POSYAU POSZAU]=IOinDataBase(Char);
+[POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area);
+SigmaNEW=zeros(NUMSEGMENT,1);
+NormSum=zeros(NUMSEGMENT,1);
+for i=1:NUMSEGMENT
+    SigmaNEW(i)=0;
+    NormSum(i)=0;
+    for j=1:NUMSEGMENT
+        diffPOSXA=POSXA(j)-POSXA(i);
+        diffPOSYA=POSYA(j)-POSYA(i);
+        diffPOSZA=POSZA(j)-POSZA(i);
+        Term1=sqrt(diffPOSXA^2+diffPOSYA^2+diffPOSZA^2);
+        Term2=Sigma(j)*((RAD(j)^2*REFF^2)/(RAD(j)^2+REFF^2)).*...
+            exp(-Term1^2/((RAD(j)^2+REFF^2)));
+        Term3=(RAD(j)^2*REFF^2*(RAD(j)^2+REFF^2))*...
+            exp(-Term1^2/(RAD(j)^2+REFF^2));
+        SigmaNEW(i)=SigmaNEW(i)+Term2;
+        NormSum(i)= NormSum(i)+Term3;
+    end
+    SigmaNEW(i)=SigmaNEW(i)/NormSum(i);
+end
+[SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area);
+xlswrite('IOinDataBase.xlsx', SigmaDensity', Char, ['N3' ':' ['N' num2str(length(SigmaDensity)+3)]]); 
+xlswrite('IOinDataBase.xlsx', SigmaProfile', Char, ['O3' ':' ['O' num2str(length(SigmaDensity)+3)]]); 
+end 
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>2. </strong><code>IOinDataBase.m</code>**</h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [NUMSEGMENT VolCavity AreaCavity ...
+    Charge Area ChargePerArea Potential ...
+    POSXAU POSYAU POSZAU]=IOinDataBase(Char)
+% Reads data from IOinDataBase.xlsx for Compound in sheet &quot;Char&quot;
+NUMSEGMENT=xlsread('IOinDataBase.xlsx',Char,'L2');
+VolCavity=xlsread('IOinDataBase.xlsx',Char,'L3');
+AreaCavity=xlsread('IOinDataBase.xlsx',Char,'L4');
+EndPOSXAU=['C' num2str(NUMSEGMENT+4)];
+EndPOSYAU=['D' num2str(NUMSEGMENT+4)];
+EndPOSZAU=['E' num2str(NUMSEGMENT+4)];
+EndCharge=['F' num2str(NUMSEGMENT+4)];
+EndArea=['G' num2str(NUMSEGMENT+4)];
+EndChargePerArea=['H' num2str(NUMSEGMENT+4)];
+EndPotential=['I' num2str(NUMSEGMENT+4)];
+%
+POSXAU=xlsread('IOinDataBase.xlsx',Char,['C4' ':' EndPOSXAU]);
+POSYAU=xlsread('IOinDataBase.xlsx',Char,['D4' ':' EndPOSYAU]);
+POSZAU=xlsread('IOinDataBase.xlsx',Char,['E4' ':' EndPOSZAU]);
+% 
+Charge=xlsread('IOinDataBase.xlsx',Char,['F4' ':' EndCharge]);
+Area=xlsread('IOinDataBase.xlsx',Char,['G4' ':' EndArea]);
+ChargePerArea=xlsread('IOinDataBase.xlsx',Char,['H4' ':' EndChargePerArea]);
+Potential=xlsread('IOinDataBase.xlsx',Char,['I4' ':' EndPotential]);
+end
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>3. <code>SortSimgaProfile.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area)
+% Sorts the Sigma Profile
+SigmaDensity = -0.025:1e-3:0.025;
+SigmaProfile = zeros(length(SigmaDensity),1)';
+%
+for idPart=1:length(SigmaDensity)-1
+    [dummy idParSigmaNEW]=find(SigmaNEW&gt;SigmaDensity(idPart) &amp; SigmaNEW&lt;SigmaDensity(idPart+1));
+    TempData=abs(SigmaNEW(idParSigmaNEW)-SigmaNEW(idParSigmaNEW+1)).*...
+        Area(idParSigmaNEW);
+    SigmaProfile(idPart)=sum(TempData);
+end
+end
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>4. <code>ConvertAU2A.m</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">function [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area)
+% From atomic unit [au] to ANGSTROMS [A*]
+PI = 3.14159265358979;
+% 
+POSXA=POSXAU*0.529177249;
+POSYA=POSYAU*0.529177249;
+POSZA=POSZAU*0.529177249;
+RAD=sqrt(Area/PI);
+end
+</code></pre></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3>COSMO-SAC Sigma Profile Processor</h3>
+<p>&nbsp;</p>
+<p>This is a suite of <code>Shell</code> scripts designed to automate the extraction and processing of quantum mechanical (QM) data from <strong>DMol3</strong> output files (specifically <strong>.cosmo</strong> and <strong>.outmol</strong>) into <strong>sigma-profiles</strong> for <strong>COSMO-SAC thermodynamic modeling</strong>. </p>
+<p>&nbsp;</p>
+<p><strong>How to Use</strong>  <br />
+- Set the <strong>Compound Name</strong> by editing the scripts to update the <strong><code>compound</code></strong> variable (e.g., <code>compound='75-85-4-2d'</code>).   <br />
+- Make <strong>Executable</strong>: <code>chmod +x *.sh</code><br />
+- Run the <strong>Pipeline</strong> <br />
+    - first <strong><code>1_Dmol3COSMO.sh</code></strong>: Extracts segment geometry and raw charges from <code>.cosmo</code> files. <br />
+    - then <strong><code>2_Dmol3OUTMOL.sh</code></strong>: Extracts cavity volume and average COSMO data from <code>.outmol</code> files. <br />
+    - then <strong><code>3_sProfile.sh</code></strong>: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges. <br />
+    - and finally <strong><code>SortS.sh</code></strong>: Generates the P(σ) vs σ distribution for thermodynamic modeling. </p>
+<p>&nbsp;</p>
+<h4><strong>Script Details</strong></h4>
+<p>&nbsp;</p>
+<p>The scripts generate several intermediate such as <code>.cosmo.xyz</code> files and a final sigma-profile:<br />
+- <code>${compound}.cosmo.SigmaNonSrt</code>: The smoothed charge densities.<br />
+- <code>${compound}.cosmo.SigmaSrt</code>: The charge density bin identifiers.<br />
+- <code>${compound}.cosmo.PSigmaSrt</code>: The final sigma-profile area values.</p>
+<p>&nbsp;</p>
+<h5><strong>1. <code>1_Dmol3COSMO.sh</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">#!/bin/bash
+#
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ...Dmol3COSMO.sh..
+# reads the COSMO files generated by DMol3 module
+# and returns QM data as required by COSMO-based models
+# it also performs unit conversion
+# from -atomic unit- to -Angstrom-
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Extracting data domain to export QM data
+#
+runID=$(date --rfc-3339='date');
+compound='75-85-4-2d';
+#
+PI=3.14159265358979;
+AU2A=0.529177249;
+# - detecting line number for -segment information- section of COSMO file
+line=`grep -n 'segment information' ${compound}.cosmo`;
+line=`echo $line | sed -e 's/:.*//'`;
+QMstart=${line};
+QMstarts=$(($QMstart + 3));
+# - detecting number of segments
+line=`grep -n 'total number of segments' ${compound}.cosmo`;
+line=`echo $line | sed -e 's/.*= //'`;
+segmentnum=`echo &quot;${line//[^0-9]/}&quot;`
+echo $segmentnum &gt; ${compound}.cosmo.segments
+#
+QMends=$(($segmentnum + $QMstarts));
+# reading QM data and writing to file
+for L in `seq $QMstarts $QMends`;
+    do
+    QMdata=`sed -n ${L}p ${compound}.cosmo`;
+    echo  $QMdata &gt;&gt; ${compound}.cosmo.QMdata;
+done
+# export completed to .QMdata file
+sed '${/^[[:space:]]*$/d}' ${compound}.cosmo.QMdata &gt; out;
+mv out ${compound}.cosmo.QMdata;
+# - writing individual QM data to scatter files
+while read idx nidx POSxAU POSyAU POSzAU Q Aau QperA POTau
+    do
+    echo  $POSxAU &gt;&gt; ${compound}.cosmo.POSxAU;
+    POSxA=$(bc &lt;&lt;&lt; &quot;scale=6;$POSxAU*$AU2A&quot;);
+    echo  $POSxA &gt;&gt; ${compound}.cosmo.POSxA;
+    echo  $POSyAU &gt;&gt; ${compound}.cosmo.POSyAU;
+    POSyA=$(bc &lt;&lt;&lt; &quot;scale=6;$POSyAU*$AU2A&quot;);
+    echo  $POSyA &gt;&gt; ${compound}.cosmo.POSyA;
+    echo  $POSzAU &gt;&gt; ${compound}.cosmo.POSzAU;
+    POSzA=$(bc &lt;&lt;&lt; &quot;scale=6;$POSzAU*$AU2A&quot;);
+    echo  $POSzA &gt;&gt; ${compound}.cosmo.POSzA;
+    echo  $Q &gt;&gt; ${compound}.cosmo.Charges;
+    echo  $Aau &gt;&gt; ${compound}.cosmo.Aau;
+    AA=$(bc &lt;&lt;&lt; &quot;scale=6;$Aau*$AU2A*$AU2A&quot;);
+    echo  $AA &gt;&gt; ${compound}.cosmo.AA;
+    RADau=$(bc &lt;&lt;&lt; &quot;scale=6;$Aau/$PI&quot;);
+    RADau=$(bc &lt;&lt;&lt; &quot;scale=6;sqrt($RADau)&quot;);
+    #RADau=$(bc &lt;&lt;&lt; &quot;scale=6;sqrt($(($Aau/$PI)))&quot;);
+    echo  $RADau &gt;&gt; ${compound}.cosmo.RADau;
+    RADA=$(bc &lt;&lt;&lt; &quot;scale=6;$RADau*$AU2A&quot;);
+    echo  $RADA &gt;&gt; ${compound}.cosmo.RADA;
+    echo  $QperA &gt;&gt; ${compound}.cosmo.QperA;
+    echo  $POTau &gt;&gt; ${compound}.cosmo.POTau;
+done&lt;${compound}.cosmo.QMdata
+cp ${compound}.cosmo.QperA ${compound}.cosmo.SigmaDensity
+#
+#mkdir $runID
+#mv *.cosmo.* $runID/
+# all done -  now exiting ...
+#
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>2. <code>2_Dmol3OUTMOL.sh</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">#!/bin/bash
+#
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ...Dmol3OUTMOL.sh...
+# reads the OUTMOL files generated by DMol3 module
+# and returns QM data as required by COSMO-based models
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Extracting data domain to export QM data
+# - detecting line number for -cosmo information- section of OUTMOL file
+#
+runID=$(date --rfc-3339='date');
+compound='75-85-4-2d';
+#
+line=`grep -n 'COSMO Results' ${compound}.outmol`;
+line=`echo $line | sed -e 's/:.*//'`;
+RESstarts=$(($line + 10));
+RESends=$(($RESstarts + 4));
+# reading QM data and writing to file
+for L in `seq $RESstarts $RESends`;
+    do
+    data=`sed -n ${L}p ${compound}.outmol`;
+    echo  $data &gt;&gt; ${compound}.outmol.QMdata;
+done
+# export completed to .QMdata file
+sed '${/^[[:space:]]*$/d}' ${compound}.outmol.QMdata &gt; out;
+mv out ${compound}.outmol.QMdata;
+# - writing individual QM data to scatter files
+sCavgAU=`sed -n 1p ${compound}.outmol.QMdata`;
+sCavgAU=`echo $sCavgAU | sed -e 's/.*= //'`;
+echo  $sCavgAU &gt;&gt; ${compound}.outmol.sCavgAU;
+vAU=`sed -n 2p ${compound}.outmol.QMdata`;
+vAU=`echo $vAU | sed -e 's/.*= //'`;
+echo  $vAU &gt;&gt; ${compound}.outmol.vAU;
+sCavgA=`sed -n 3p ${compound}.outmol.QMdata`;
+sCavgA=`echo $sCavgA | sed -e 's/.*= //'`;
+echo  $sCavgA &gt;&gt; ${compound}.outmol.sCavgA;
+vA=`sed -n 4p ${compound}.outmol.QMdata`;
+vA=`echo $vA | sed -e 's/.*= //'`;
+echo  $vA &gt;&gt; ${compound}.outmol.vA;
+#
+#mkdir $runID
+#mv *.outmol.* $runID/
+# all done -  now exiting ...
+#
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>3. <code>3_sProfile.sh</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">#!/bin/bash
+#
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ...sProfile.sh...
+# reads the COSMO data and generates the Sigma Profiles
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+runID=$(date --rfc-3339='date');
+compound='75-85-4-2d';
+#
+segments=$(cat ${compound}.cosmo.segments);
+EE=2.71828;
+REFF=0.81764200000000;
+REFF2=$(bc &lt;&lt;&lt; &quot;scale=8;$REFF*$REFF&quot;);
+echo 'if you see following warning:'
+echo '***************************************'
+echo 'Runtime warning (func=(main), adr=22): non-zero scale in exponent'
+echo '***************************************'
+echo 'do not care, calculations are going on in any case'
+echo 'this message disappeares after 20s'
+sleep 20s
+for i in `seq 1 $segments`
+    do
+    NormSum=0;
+    SigmaNew=0;
+    for j in `seq 1 $segments`
+        do
+        # reading data
+        xi=`sed -n ${i}p ${compound}.cosmo.POSxA`;
+        yi=`sed -n ${i}p ${compound}.cosmo.POSyA`;
+        zi=`sed -n ${i}p ${compound}.cosmo.POSzA`;
+        xj=`sed -n ${j}p ${compound}.cosmo.POSxA`;
+        yj=`sed -n ${j}p ${compound}.cosmo.POSyA`;
+        zj=`sed -n ${j}p ${compound}.cosmo.POSzA`;
+        RADj=`sed -n ${j}p ${compound}.cosmo.RADau`;
+        Sigma=`sed -n ${j}p ${compound}.cosmo.QperA`;
+        diffx=$(bc &lt;&lt;&lt; &quot;scale=8;$xi - $xj&quot;);
+        diffy=$(bc &lt;&lt;&lt; &quot;scale=8;$yi - $yj&quot;);
+        diffz=$(bc &lt;&lt;&lt; &quot;scale=8;$zi - $zj&quot;);
+        Dist=$(bc &lt;&lt;&lt; &quot;scale=8;$diffx*$diffx + $diffy*$diffy + $diffz*$diffz&quot;);
+        sqrDist=$(bc &lt;&lt;&lt; &quot;scale=8;sqrt($Dist)&quot;);
+        RADj2=$(bc &lt;&lt;&lt; &quot;scale=8;$RADj*$RADj&quot;);
+        mRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$RADj2*$REFF2&quot;);
+        pRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$RADj2 + $REFF2&quot;);
+        mpRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$mRADjREFF/$pRADjREFF&quot;);
+        DistpRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$Dist/$pRADjREFF&quot;);
+        Expt=$(bc &lt;&lt;&lt; &quot;scale=8;$DistpRADjREFF&quot;);
+        Expt=`echo &quot;$EE^$Expt&quot; | bc -l`;
+        Expt=`echo &quot;1/$Expt&quot; | bc -l`;
+        SigmaSum=$(bc &lt;&lt;&lt; &quot;scale=8;$Sigma*$mpRADjREFF*$Expt&quot;);
+        NormDist=$(bc &lt;&lt;&lt; &quot;scale=8;$mpRADjREFF*$Expt&quot;);
+        NormSum=$(bc &lt;&lt;&lt; &quot;scale=8;$NormSum + $NormDist&quot;);
+        SigmaNew=$(bc &lt;&lt;&lt; &quot;scale=8;$SigmaNew + $SigmaSum&quot;);
+        clear;
+    done
+    SigmaNonSrt=$(bc &lt;&lt;&lt; &quot;scale=8;$SigmaNew/$NormSum&quot;);
+    echo  $SigmaNonSrt &gt;&gt; ${compound}.cosmo.SigmaProfileNonSrt;
+done
+# all done -  now exiting ...
+#
+</code></pre>
+<p>&nbsp;</p>
+<h5><strong>4. <code>4_SortSigma.sh</code></strong></h5>
+<p>&nbsp;</p>
+<pre><code class="language-bash">#!/bin/bash
+# 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ...SortS.sh...  
+# reads and sorts the Sigma Profiles 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ITER=51; 
+for i in `seq 1 $ITER`
+    do 
+    j=$(($i-1));
+    SigmaSrt=$((-0.025+0.001*$j)); 
+    echo $SigmaSrt &gt;&gt; ${compound}.cosmo.SigmaSrt; 
+    echo 0 &gt;&gt; ${compound}.cosmo.PSigmaSrt; 
+done 
+segments=$(cat ${compound}.cosmo.segments);
+segmentnum=${segments//\ / };
+for j in `seq 1 $segmentnum`
+    do 
+    Aau=`sed -n ${j}p ${compound}.cosmo.Aau`;
+    SigmaNonSrtJ=`sed -n ${j}p ${compound}.cosmo.SigmaNonSrt`;
+    SigmaSrt1=`sed -n ${1}p ${compound}.cosmo.SigmaSrt`;
+    TMP=$(($SigmaNonSrtJ - $SigmaSrt1));
+    TMP=$(($TMP/0.001)); 
+    TMP=$((floor($TMP))); 
+    TMP1=$(($TMP + 1));
+    TMP2=$(($TMP + 2));
+    SPTMP1=`sed -n ${TMP1}p ${compound}.cosmo.PSigmaSrt`;
+    SPTMP2=`sed -n ${TMP2}p ${compound}.cosmo.PSigmaSrt`;
+    Term1=$(($SigmaNonSrtJ-$SPTMP1));
+    Term2=$(($Aau*$Term1));
+    Term3=$(($Term2/0.001)); 
+    SP2=$(($SPTMP2+$Term3));
+    Term4=$(($SPTMP2-$SigmaNonSrtJ));
+    Term5=$(($Aau*$Term4)); 
+    Term6=$(($Term5/0.001));
+    SP1=$(($SPTMP1+$Term6));
+    `sed -i &quot;${TMP1}s/.*/$SP1/&quot; ${compound}.cosmo.PSigmaSrt`
+    `sed -i &quot;${TMP2}s/.*/$SP2/&quot; ${compound}.cosmo.PSigmaSrt`
+done    
+# cleaning ... 
+# nothing to clean 
+# all done -  now exiting ...
+#
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+    </div>
+</body>
+</html>
