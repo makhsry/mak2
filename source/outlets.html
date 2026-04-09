@@ -45,17 +45,21 @@
 <li><strong>Access</strong> the code <a href="Garage_99999990_RoutPlannerPython.ipynb"><strong>here</strong></a> </li>
 </ul>
 <p>&nbsp;</p>
-<p><strong>What It Does</strong>   <br />
-The notebook performs the following stages in order:   <br />
-- <strong>Downloads a city's street network</strong> from OpenStreetMap<br />
-- <strong>Loads a pattern image</strong> and converts it to HSV color space<br />
-- <strong>Detects which colors are present</strong> in the image above a minimum threshold<br />
-- <strong>Creates binary masks</strong> for each detected color<br />
-- <strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary<br />
-- <strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position<br />
-- <strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal<br />
-- <strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)<br />
-- <strong>Exports one <code>.gpx</code> file per color</strong> layer</p>
+<p><strong>What It Does</strong>  </p>
+<p>&nbsp;</p>
+<p>The notebook performs the following stages in order:  </p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Downloads a city's street network</strong> from OpenStreetMap</li>
+<li><strong>Loads a pattern image</strong> and converts it to HSV color space</li>
+<li><strong>Detects which colors are present</strong> in the image above a minimum threshold</li>
+<li><strong>Creates binary masks</strong> for each detected color</li>
+<li><strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary</li>
+<li><strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position</li>
+<li><strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal</li>
+<li><strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)</li>
+<li><strong>Exports one <code>.gpx</code> file per color</strong> layer</li>
+</ul>
 <p>&nbsp;</p>
 <p><strong>Key Parameters Reference</strong>     </p>
 <p>&nbsp;</p>
@@ -286,15 +290,21 @@ w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</p>
 <li>An <strong><code>.html</code></strong> version of the calculator can be found <a href="Garage_20150101_COSMO-SAC_Calculator.html"><strong>here</strong></a>.</li>
 </ul>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>      <br />
-- The Excel file (<strong><a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></strong>) must have sheets named after your <strong><code>components</code></strong> (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data. <br />
-- Set your desired <strong><code>SYSTEMP</code></strong> (Temperature in <strong>Kelvin</strong>).<br />
-- Update <strong><code>ListCOMP</code></strong> with the sheet names from your <strong><code>inputQM.xlsx</code></strong> file.<br />
-- Run the script <strong><code>eqCOSMO.m</code></strong>.</p>
+<p><strong>Usage Instructions</strong>    </p>
 <p>&nbsp;</p>
-<p><strong>Outputs</strong> <br />
-- <strong><code>sProfiles.xlsx</code></strong>: Stores the calculated <strong><code>sigma-densities</code></strong> and <strong><code>profiles</code></strong> for each component.<br />
-- <strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing <strong><code>mole fractions (x)</code></strong>, <strong><code>activity coefficients (γ)</code></strong>, and <strong><code>ln γ</code></strong>.</p>
+<ul>
+<li>The Excel file (<strong><a href="Garage_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></strong>) must have sheets named after your <strong><code>components</code></strong> (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data. </li>
+<li>Set your desired <strong><code>SYSTEMP</code></strong> (Temperature in <strong>Kelvin</strong>).</li>
+<li>Update <strong><code>ListCOMP</code></strong> with the sheet names from your <strong><code>inputQM.xlsx</code></strong> file.</li>
+<li>Run the script <strong><code>eqCOSMO.m</code></strong>.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Outputs</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>sProfiles.xlsx</code></strong>: Stores the calculated <strong><code>sigma-densities</code></strong> and <strong><code>profiles</code></strong> for each component.</li>
+<li><strong><code>MixGamma.xlsx</code></strong>: Stores the final matrix containing <strong><code>mole fractions (x)</code></strong>, <strong><code>activity coefficients (γ)</code></strong>, and <strong><code>ln γ</code></strong>.</li>
+</ul>
 <p>&nbsp;</p>
 <h4><strong>Scripts Details</strong></h4>
 <p>&nbsp;</p>
@@ -546,9 +556,12 @@ end
 <li>An <strong><code>html</code></strong> version of this document is available <a href="Garage_20141010_COSMO-SAC-Simga.html"><strong>here</strong></a>.</li>
 </ul>
 <p>&nbsp;</p>
-<p><strong>How to Use</strong><br />
-- Replace <code>CompoundName</code> with the specific sheet name in the Excel file. In the Excel file named <strong><code>inputQM.xlsx</code></strong>, each sheet should correspond to a unique compound and contain: <strong>Columns C, D, E:</strong> are X, Y, Z coordinates (Atomic Units). <strong>Column G:</strong> is Segment Area. <strong>Column H:</strong> is Charge per Area (Surface Charge Density). <a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><strong>Click here</strong></a> to see sample input file.  <br />
-- Call the calculator function from the MATLAB command window as <code>[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');</code>.</p>
+<p><strong>How to Use</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>Replace <code>CompoundName</code> with the specific sheet name in the Excel file. In the Excel file named <strong><code>inputQM.xlsx</code></strong>, each sheet should correspond to a unique compound and contain: <strong>Columns C, D, E:</strong> are X, Y, Z coordinates (Atomic Units). <strong>Column G:</strong> is Segment Area. <strong>Column H:</strong> is Charge per Area (Surface Charge Density). <a href="Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx"><strong>Click here</strong></a> to see sample input file.    </li>
+<li>Call the calculator function from the MATLAB command window as <code>[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');</code>.</li>
+</ul>
 <p>&nbsp;</p>
 <h4><strong>Scripts Details</strong></h4>
 <p>&nbsp;</p>
@@ -650,14 +663,19 @@ end
 <p>&nbsp;</p>
 <p>This is a suite of <code>Shell</code> scripts designed to automate the extraction and processing of quantum mechanical (QM) data from <strong>DMol3</strong> output files (specifically <strong>.cosmo</strong> and <strong>.outmol</strong>) into <strong>sigma-profiles</strong> for <strong>COSMO-SAC thermodynamic modeling</strong>. </p>
 <p>&nbsp;</p>
-<p><strong>How to Use</strong>  <br />
-- Set the <strong>Compound Name</strong> by editing the scripts to update the <strong><code>compound</code></strong> variable (e.g., <code>compound='75-85-4-2d'</code>).   <br />
-- Make <strong>Executable</strong>: <code>chmod +x *.sh</code><br />
-- Run the <strong>Pipeline</strong> <br />
-    - first <strong><code>1_Dmol3COSMO.sh</code></strong>: Extracts segment geometry and raw charges from <code>.cosmo</code> files. <br />
-    - then <strong><code>2_Dmol3OUTMOL.sh</code></strong>: Extracts cavity volume and average COSMO data from <code>.outmol</code> files. <br />
-    - then <strong><code>3_sProfile.sh</code></strong>: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges. <br />
-    - and finally <strong><code>SortS.sh</code></strong>: Generates the P(σ) vs σ distribution for thermodynamic modeling. </p>
+<p><strong>How to Use</strong>  </p>
+<p>&nbsp;</p>
+<ul>
+<li>Set the <strong>Compound Name</strong> by editing the scripts to update the <strong><code>compound</code></strong> variable (e.g., <code>compound='75-85-4-2d'</code>).     </li>
+<li>Make <strong>Executable</strong>: <code>chmod +x *.sh</code></li>
+<li>Run the <strong>Pipeline</strong> <ul>
+<li>first <strong><code>1_Dmol3COSMO.sh</code></strong>: Extracts segment geometry and raw charges from <code>.cosmo</code> files. </li>
+<li>then <strong><code>2_Dmol3OUTMOL.sh</code></strong>: Extracts cavity volume and average COSMO data from <code>.outmol</code> files. </li>
+<li>then <strong><code>3_sProfile.sh</code></strong>: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges. </li>
+<li>and finally <strong><code>SortS.sh</code></strong>: Generates the P(σ) vs σ distribution for thermodynamic modeling. </li>
+</ul>
+</li>
+</ul>
 <p>&nbsp;</p>
 <h4><strong>Script Details</strong></h4>
 <p>&nbsp;</p>

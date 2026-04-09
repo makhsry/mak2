@@ -43,41 +43,57 @@
 - Elemental spectra: Hosted at <a href="https://physics.nist.gov/asd">NIST's Standard Reference Database -- Atomic Spectra Database (ASD)</a>; these spectra are unique for all known elements.   <br />
 - Mineral spectra: Available from the <a href="https://pubs.usgs.gov/ds/730/">U.S. Geological Survey Data Series</a> and <a href="https://www.jpl.nasa.gov/">NASA's Jet Propulsion Laboratory</a>, although discrepancies exist depending on factors such as mine location and purity/contamination.      </p>
 <p>&nbsp;</p>
-<p><strong>Investigating Discrepancies</strong>         <br />
-- We will examine the fundamental building blocks of minerals —atoms— and their unique spectral fingerprints. By correlating the elemental spectra from ASD with mineral spectra, we aim to understand and account for discrepancies.    <br />
-- Using an Extended Iterative Optimization Technique (EIOT), we will extract intrinsic (constant) and non-intrinsic (variable) features from the spectra. Principal Component Analysis (PCA) will identify the most relevant components while maintaining a high data correlation.</p>
+<p><strong>Investigating Discrepancies</strong></p>
 <p>&nbsp;</p>
-<p><strong>Developing Transferable Machine Learning Models</strong>    <br />
-Current mineral identification methods using hyperspectral sensors rely on supervised machine learning, which requires labeled data. This is limited by (1) the need to retrain models for each mine location, and (2) the inability to handle previously unseen mineral species.    <br />
+<ul>
+<li>We will examine the fundamental building blocks of minerals —atoms— and their unique spectral fingerprints. By correlating the elemental spectra from ASD with mineral spectra, we aim to understand and account for discrepancies.      </li>
+<li>Using an Extended Iterative Optimization Technique (EIOT), we will extract intrinsic (constant) and non-intrinsic (variable) features from the spectra. Principal Component Analysis (PCA) will identify the most relevant components while maintaining a high data correlation.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Developing Transferable Machine Learning Models</strong></p>
+<p>&nbsp;</p>
+<p>Current mineral identification methods using hyperspectral sensors rely on supervised machine learning, which requires labeled data. This is limited by (1) the need to retrain models for each mine location, and (2) the inability to handle previously unseen mineral species.    <br />
 - We propose developing <strong>unsupervised, physically informed machine learning models</strong> that adapt to new data on-the-fly.      </p>
 <p>&nbsp;</p>
-<p><strong>Building a Design Space for Single Species</strong>      <br />
-- We will compile data on minerals of concern at Canadian mine sites, including their phase structures, transitions, and electromagnetic spectra. <br />
-- When data is lacking, we will use Density Functional Theory (DFT) and Molecular Dynamics (MD) to compute spectra.    <br />
-- This dataset will train a Convolutional Neural Network (CNN), which will be validated using a separate test dataset.      </p>
+<p><strong>Building a Design Space for Single Species</strong></p>
 <p>&nbsp;</p>
-<p><strong>Creating Realistic Design Spaces</strong>    <br />
-While a CNN trained on pure species data can identify individual minerals, it may struggle with mixtures. To address this:    <br />
+<ul>
+<li>We will compile data on minerals of concern at Canadian mine sites, including their phase structures, transitions, and electromagnetic spectra. </li>
+<li>When data is lacking, we will use Density Functional Theory (DFT) and Molecular Dynamics (MD) to compute spectra.      </li>
+<li>This dataset will train a Convolutional Neural Network (CNN), which will be validated using a separate test dataset.      </li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Creating Realistic Design Spaces</strong></p>
+<p>&nbsp;</p>
+<p>While a CNN trained on pure species data can identify individual minerals, it may struggle with mixtures. To address this:    <br />
 - Mixture models of the collected species will be developed,    <br />
 - Random configurations will be generated and their spectra computed using Machine Learning Interatomic Potentials (MLIP) in MD. <br />
 - A CNN trained on these mixture datasets will be tested with experimentally collected hyperspectral images.   </p>
 <p>&nbsp;</p>
-<p><strong>Enabling Deployment</strong>   <br />
-We will explore the development of a low-cost, fast, cloud-based self-learning model for mineral detection called <strong>otfMLesf</strong> (on-the-fly Machine Learning models for electromagnetic spectrum fingerprints).   <br />
+<p><strong>Enabling Deployment</strong></p>
+<p>&nbsp;</p>
+<p>We will explore the development of a low-cost, fast, cloud-based self-learning model for mineral detection called <strong>otfMLesf</strong> (on-the-fly Machine Learning models for electromagnetic spectrum fingerprints).   <br />
 - The model will use the CNN from Milestone 3 to detect single species in real-time,    <br />
 - For mixtures involving detected species, it will recall the CNN from Milestone 4 to quantify composition,    <br />
 - For unknown species, it will build random mixture models, compute spectra as in Milestone 4, retrain the CNN, and proceed to quantification.  </p>
 <p>&nbsp;</p>
-<p><strong>Supporting Information</strong>              <br />
-- <a href="https://doi.org/10.1039/D2SC05892H">Automatic materials characterization from infrared spectra using convolutional neural networks</a>    <br />
-- <a href="https://www.nature.com/articles/s42004-024-01341-w">Leveraging infrared spectroscopy for automated structure elucidation</a>    <br />
-- <a href="https://doi.org/10.1063/1.4916629">On the interplay of the potential energy and dipole moment surfaces in controlling the infrared activity of liquid water</a>     <br />
-- - the infrared (IR) spectrum of a generic molecular system can be obtained, within the electric dipole approximation and linear response theory, from the Fourier transform of the quantum time autocorrelation function of the system’s dipole moment      <br />
-- <a href="https://doi.org/10.1002/jrs.4914">Raman spectroscopy of minerals and mineral pigments in archaeometry</a>    <br />
-- <a href="https://doi.org/10.1016/S1386-1425(03)00080-5">Stand-off Raman spectroscopic detection of minerals on planetary surfaces</a>    <br />
-- <a href="https://www.rruff.net/">RRUFF - Comprehensive Database of Mineral Data</a> (<a href="https://rruff.info/about/about_IMA_list.php">old website</a>) <br />
-- <a href="https://www.mindat.org/">Mindat.org is the world's largest open database of minerals, rocks, meteorites and the localities they come from</a>    <br />
-- <a href="https://doi.org/10.1029/97JE01694">Raman spectroscopy for mineral identification and quantification for in situ planetary surface analysis: A point count</a>      </p></div>
+<p><strong>Supporting Information</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li><a href="https://doi.org/10.1039/D2SC05892H">Automatic materials characterization from infrared spectra using convolutional neural networks</a>      </li>
+<li><a href="https://www.nature.com/articles/s42004-024-01341-w">Leveraging infrared spectroscopy for automated structure elucidation</a>      </li>
+<li><a href="https://doi.org/10.1063/1.4916629">On the interplay of the potential energy and dipole moment surfaces in controlling the infrared activity of liquid water</a>       </li>
+<li>
+<ul>
+<li>the infrared (IR) spectrum of a generic molecular system can be obtained, within the electric dipole approximation and linear response theory, from the Fourier transform of the quantum time autocorrelation function of the system’s dipole moment        </li>
+</ul>
+</li>
+<li><a href="https://doi.org/10.1002/jrs.4914">Raman spectroscopy of minerals and mineral pigments in archaeometry</a>      </li>
+<li><a href="https://doi.org/10.1016/S1386-1425(03)00080-5">Stand-off Raman spectroscopic detection of minerals on planetary surfaces</a>      </li>
+<li><a href="https://www.rruff.net/">RRUFF - Comprehensive Database of Mineral Data</a> (<a href="https://rruff.info/about/about_IMA_list.php">old website</a>)   </li>
+<li><a href="https://www.mindat.org/">Mindat.org is the world's largest open database of minerals, rocks, meteorites and the localities they come from</a>      </li>
+<li><a href="https://doi.org/10.1029/97JE01694">Raman spectroscopy for mineral identification and quantification for in situ planetary surface analysis: A point count</a>      </li>
+</ul></div>
         </section>
 
         <section class="card span-2">
@@ -90,79 +106,95 @@ We will explore the development of a low-cost, fast, cloud-based self-learning m
 - <strong>Physiochemical Kinetics</strong>: TST-based rate constants determine the probability of <strong>species transformation events</strong> (Birth and Death).      <br />
 - <strong>Population Balance</strong>: Discrete "event" counters are calculated per timestep to modify the <strong>particle population</strong> in-situ while preserving bead numbers or chemical stoichiometry.</p>
 <p>&nbsp;</p>
-<p><strong>Mathematical Models</strong>     <br />
-<strong>DPD Force Field</strong>  <br />
-The interaction between any two particles i and j is governed by three pairwise additive forces:</p>
+<p><strong>Mathematical Models</strong></p>
+<p>&nbsp;</p>
+<p><strong>DPD Force Field</strong></p>
+<p>&nbsp;</p>
+<p>The interaction between any two particles i and j is governed by three pairwise additive forces:</p>
 <p>&nbsp;</p>
 <p><strong>F</strong><sub>ij</sub> = <strong>F</strong><sub>ij</sub><sup>C</sup> + <strong>F</strong><sub>ij</sub><sup>D</sup> + <strong>F</strong><sub>ij</sub><sup>R</sup></p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Conservative Force</strong>:    <br />
-<strong>F</strong><sup>C</sup><sub>ij</sub> = A<sub>ij</sub> w(r<sub>ij</sub>) <strong>r̂</strong><sub>ij</sub></li>
+<li><strong>Conservative Force</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<ul>
-<li><strong>Dissipative Force</strong>:    <br />
-<strong>F</strong><sup>D</sup><sub>ij</sub> = -γ w<sup>2</sup>(r<sub>ij</sub>) (<strong>r̂</strong><sub>ij</sub> · <strong>v</strong><sub>ij</sub>) <strong>r̂</strong><sub>ij</sub>     </li>
-</ul>
+<p><strong>F</strong><sup>C</sup><sub>ij</sub> = A<sub>ij</sub> w(r<sub>ij</sub>) <strong>r̂</strong><sub>ij</sub></p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Random Force</strong>:    <br />
-<strong>F</strong><sup>R</sup><sub>ij</sub> = σ w(r<sub>ij</sub>) ζ Δt<sup>-1/2</sup> <strong>r̂</strong><sub>ij</sub>     </li>
+<li><strong>Dissipative Force</strong>:</li>
 </ul>
 <p>&nbsp;</p>
+<p><strong>F</strong><sup>D</sup><sub>ij</sub> = -γ w<sup>2</sup>(r<sub>ij</sub>) (<strong>r̂</strong><sub>ij</sub> · <strong>v</strong><sub>ij</sub>) <strong>r̂</strong><sub>ij</sub></p>
+<p>&nbsp;</p>
 <ul>
-<li><strong>Weighting Function</strong>:    <br />
-w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> &lt; R<sub>c</sub>    <br />
-w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub></li>
+<li><strong>Random Force</strong>:</li>
 </ul>
+<p>&nbsp;</p>
+<p><strong>F</strong><sup>R</sup><sub>ij</sub> = σ w(r<sub>ij</sub>) ζ Δt<sup>-1/2</sup> <strong>r̂</strong><sub>ij</sub></p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Weighting Function</strong>:</li>
+</ul>
+<p>&nbsp;</p>
+<p>w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> &lt; R<sub>c</sub>    <br />
+w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub></p>
 <p>&nbsp;</p>
 <p>Where A<sub>ij</sub> is the maximum repulsion, γ is the friction coefficient, σ is the noise amplitude (related to γ by σ<sup>2</sup> = 2γ k<sub>B</sub> T), and R<sub>c</sub> is the cutoff radius.</p>
 <p>&nbsp;</p>
-<p><strong>Interaction Parameters (a<sub>ij</sub>)</strong>    <br />
-The repulsive parameters a<sub>ij</sub> used for the conservative force are derived from interaction "fingerprints" (X<sub>ij</sub>) stored in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>:   <br />
+<p><strong>Interaction Parameters (a<sub>ij</sub>)</strong></p>
+<p>&nbsp;</p>
+<p>The repulsive parameters a<sub>ij</sub> used for the conservative force are derived from interaction "fingerprints" (X<sub>ij</sub>) stored in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>:   <br />
 a<sub>ij</sub> = V<sub>1</sub> + V<sub>2</sub> · X<sub>ij</sub></p>
 <p>&nbsp;</p>
 <p>In the current implementation, V<sub>1</sub> = 1.0 and V<sub>2</sub> = 1.0, mapping energy values directly to force units.</p>
 <p>&nbsp;</p>
-<p><strong>Transition State Theory (TST) Kinetics</strong>    <br />
-Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:    <br />
+<p><strong>Transition State Theory (TST) Kinetics</strong></p>
+<p>&nbsp;</p>
+<p>Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:    <br />
 k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)</p>
 <p>&nbsp;</p>
-<p><strong>Physical Constants:</strong>    <br />
-- k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)    <br />
-- h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)    <br />
-- N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)    <br />
-- R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)      </p>
+<p><strong>Physical Constants:</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)      </li>
+<li>h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)      </li>
+<li>N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)      </li>
+<li>R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)      </li>
+</ul>
 <p>&nbsp;</p>
 <p>The activation energy barriers (E<sub>a</sub>) are defined in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a> for every birth (B) and death (D) event for clusters AA, BB, and AB.</p>
 <p>&nbsp;</p>
-<p><strong>Population Balance Logic (PBM)</strong>    <br />
-The number of chemical events (n) performed at each iteration is calculated using the following discrete logic:      </p>
+<p><strong>Population Balance Logic (PBM)</strong></p>
+<p>&nbsp;</p>
+<p>The number of chemical events (n) performed at each iteration is calculated using the following discrete logic:</p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Monomer Birth (forming clusters AA or BB)</strong>:    <br />
-n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋</li>
+<li><strong>Monomer Birth (forming clusters AA or BB)</strong>:</li>
 </ul>
+<p>&nbsp;</p>
+<p>n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋</p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Cluster Death (dissociating AA or BB)</strong>:    <br />
-n<sub>death</sub> = ⌊k<sub>D</sub> · N<sub>cluster</sub> · Δt · step⌋</li>
+<li><strong>Cluster Death (dissociating AA or BB)</strong>:</li>
 </ul>
+<p>&nbsp;</p>
+<p>n<sub>death</sub> = ⌊k<sub>D</sub> · N<sub>cluster</sub> · Δt · step⌋</p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Mixed Birth (forming AB clusters)</strong>:    <br />
-n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · Δt · step⌋</li>
+<li><strong>Mixed Birth (forming AB clusters)</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><em>Constraint Enforcement:</em> n<sub>mixed birth</sub> ≤ 2 · min(N<sub>A</sub>, N<sub>B</sub>) to prevent local population exhaustion.      </p>
+<p>n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · Δt · step⌋</p>
+<p>&nbsp;</p>
+<p><em>Constraint Enforcement:</em> n<sub>mixed birth</sub> ≤ 2 · min(N<sub>A</sub>, N<sub>B</sub>) to prevent local population exhaustion.</p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Mixed Death (dissociating AB clusters)</strong>:    <br />
-n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</li>
+<li><strong>Mixed Death (dissociating AB clusters)</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><strong>Species Classification</strong>         </p>
+<p>n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</p>
+<p>&nbsp;</p>
+<p><strong>Species Classification</strong></p>
 <p>&nbsp;</p>
 <table>
 <thead>
@@ -213,20 +245,23 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</
 </tbody>
 </table>
 <p>&nbsp;</p>
-<p><strong>Execution Flow</strong><br />
-- <strong>Setup</strong>: Initializes 23 atom types and constants.    <br />
-- <strong>Equilibration</strong>: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.        <br />
-- <strong>PBM-DYNAMICS Loop</strong>:    <br />
+<p><strong>Execution Flow</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Setup</strong>: Initializes 23 atom types and constants.      </li>
+<li><strong>Equilibration</strong>: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.          </li>
+<li><strong>PBM-DYNAMICS Loop</strong>:<br />
    -- Updates k rates based on current T.    <br />
    -- Measures species populations (N<sub>i</sub>).    <br />
    -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.    <br />
    -- Executes reactions via <code>create_atoms</code> (Birth) and <code>delete_atoms</code> (Death).    <br />
    -- Updates DPD interaction parameters based on new populations.    <br />
-   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.      </p>
+   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.      </li>
+</ul>
 <p>&nbsp;</p>
-<p><strong>Usage Instructions</strong>    </p>
+<p><strong>Usage Instructions</strong></p>
 <p>&nbsp;</p>
-<pre><code class="language-bash">lmp -in Main.lmp      
+<pre><code class="language-bash">lmp -in Main.lmp
 </code></pre>
 <p>&nbsp;</p>
 <ul>
@@ -236,7 +271,7 @@ n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</
 <li><code>fingerprints_xij.lmp</code>: Matrix of interaction fingerprints.      </li>
 <li><code>fingerprints_barrier_n.lmp</code>: Kinetic barriers for all species.      </li>
 <li><code>setup_constant.lmp</code>: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).      </li>
-<li><code>dynamics_compute_events.lmp</code>: Implementation of the PBM transformation logic.           </li>
+<li><code>dynamics_compute_events.lmp</code>: Implementation of the PBM transformation logic.</li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
