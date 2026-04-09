@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html">About</a>
+            <a href="educations.html">Educations</a>
+            <a href="experiences.html">Experiences</a>
+            <a href="outlets.html">Outlets</a>
+            <a href="publications.html" class="active">Publications</a>
+            <a href="wall.html">Wall</a>
+            <a href="writeups.html">Writeups</a>
+
+        </div>
+    </nav>
+    <div class="container">
+
+        <section class="card span-2">
+            <div class="card-content"><h2>Publications</h2>
+<p>&nbsp;</p>
+<ul>
+<li>Variable Density Mass Transfer Correction R<sub>n</sub></li>
+<li>Falling Film Mass Transfer &amp; Penetration Theory</li>
+<li>Thermokinetic Model of Phase Inversion</li>
+</ul></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3>Variable Density Mass Transfer Correction R<sub>n</sub></h3>
+<p>&nbsp;</p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0735193320302050"><strong>A note on the composition-dependency of the density within the mass transfer layer</strong></a>, we derived the equation for the <strong>mass transfer correction factor R<sub>n</sub></strong>, which accounts for the effect of <strong>varying density (ρ) in a binary mixture</strong>. The model is particularly relevant for <strong>high-flux gas absorption or evaporation</strong> where the standard <strong>constant-density assumptions</strong> fail. </p>
+<p>&nbsp;</p>
+<p><img alt="Variable Density Mass Transfer Correction R&lt;sub&gt;n&lt;/sub&gt;" src="Publications_20200701_jICHMT.png" /></p>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>  </p>
+<p>&nbsp;</p>
+<ul>
+<li>Save the script as <code>script_name.py</code> and run it from the terminal as: <strong><code>python script_name.py</code></strong></li>
+</ul>
+<p>&nbsp;</p>
+<h4><strong>R<sub>n</sub> as β and ρ<sub>12</sub> vary</strong></h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import numpy as np
+omg1=np.linspace(0.00001, 0.99999, 25)
+betta=[-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1]
+for BETTA in betta:
+    for OMG1 in omg1:
+        RHO12 = 1/(1 - BETTA * OMG1)
+        Rn=1 + (1/RHO12 - 1) * (1/np.log(1/(1 - OMG1)) - (1 - OMG1)/OMG1)
+        print (BETTA, RHO12, Rn)
+</code></pre>
+<p>&nbsp;</p>
+<h4><strong>R<sub>n</sub> as β and ω<sub>1</sub> vary</strong></h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import numpy as np
+omg1=np.linspace(0.00001, 0.99999, 25)
+betta=[-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1]
+for BETTA in betta:
+    for OMG1 in omg1:
+        RHO12 = 1/(1 - BETTA * OMG1)
+        Rn=1 + (1/RHO12 - 1) * (1/np.log(1/(1 - OMG1)) - (1 - OMG1)/OMG1)
+        print (BETTA, OMG1, Rn)
+</code></pre>
+<p>&nbsp;</p>
+<h4><strong>R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary</strong></h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import numpy as np
+omg1=np.linspace(0.00001, 0.99999, 25)
+rho12=[0.001, 0.01, 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 5, 10]
+for RHO12 in rho12:
+    for OMG1 in omg1:
+        Rn=1 + (1/RHO12 - 1) * (1/np.log(1/(1 - OMG1)) - (1 - OMG1)/OMG1)
+        print (RHO12, OMG1, Rn)   
+</code></pre></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3>Falling Film Mass Transfer &amp; Penetration Theory</h3>
+<p>&nbsp;</p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0263876219305994"><strong>Revisiting ‘penetration depth’ in falling film mass transfer</strong></a>, we calculated mass transfer characteristics in falling liquid films. We compared the <strong>Infinite Penetration</strong> (Higbie's theory) and <strong>Finite Penetration</strong> models to determine how deep a solute penetrates a moving film under various physical conditions.        </p>
+<p>&nbsp;</p>
+<p><img alt="Falling Film Mass Transfer &amp; Penetration Theory" src="Publications_20200101_jChERD.png" /></p>
+<p>&nbsp;</p>
+<p>Two python scripts are provided. One analyzes how different <strong>diffusion coefficients</strong> impact the <strong>penetration depth and flux</strong> (<code>varD.py</code>). The other analyzes the effect of <strong>film flow rate</strong> on <strong>mass transfer efficiency</strong> (<code>varG.py</code>).</p>
+<p>&nbsp;</p>
+<p><strong>Parameters</strong></p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">L = 1         # Wall length (m)
+gamma = 0.05  # Film flow rate (kg/m.s)
+cAi = 0.0366  # Interfacial concentration
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Usage Instructions</strong>  </p>
+<p>&nbsp;</p>
+<ul>
+<li>Save the script as <code>script_name.py</code> and run it from the terminal as: <strong><code>python script_name.py</code></strong></li>
+</ul>
+<p>&nbsp;</p>
+<h4><strong>Script for <code>varD.py</code></strong></h4>
+<pre><code class="language-bash"># (in)finite penetration depth : varying D
+import numpy as np
+import math
+# test data 
+L=1 # wall lenght 
+gamma=0.05 # film flow rate kg/m.s 
+#um=0.21 # maximum flow velocity 
+#u=um*2/3 # average flow velocity 
+cA0=0 # initial concentration 
+cAi=0.0366 # interfacial concentration
+#D=1.96/1000000000 # diffusivity 
+var=[1.0, 2.0, 2.5, 5.0, 7.0, 8.0, 9.0]
+varD=[vard/1000000000 for vard in var] 
+Rho=998 # kg/m3
+Mue=0.000894 # kg/m.s at STP
+g=9.807 # m/s2
+#Z=[0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2, 2.4]
+#Z=[z/10000 for z in Z] 
+# y-coordinate 
+YY=[0.00000000001, 0.0000000001, 0.000000001, 
+    0.00000001, 0.0000001, 0.000001, 0.00001, 
+    0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1]
+Y=[L*y for y in YY] 
+# film thickness 
+delta=((3*Mue*gamma)/((Rho**2)*g))**(1/3)
+u=gamma/(Rho*delta)
+# z-coordinate 
+Z=np.linspace(0, delta, num=50)
+# mass transfer properties 
+#delta=((3*Mue*u)/(Rho*g))**0.5
+for D in varD:
+    b=(2*D)/(3*u)
+    infinity=100
+    for y in Y:
+        # finding kisi from BC2 
+        guesslist=np.logspace(0, 10, num=10000)
+        guesslist=delta/guesslist
+        guesslist=np.fliplr([guesslist])[0]
+        KICI=[delta]
+        for kisi in guesslist:
+            sigma=0
+            for n in range(infinity):
+                Sin=((-1)**n)/(2*n+1)
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                An=Sin*Exp
+                sigma += An
+            Err=sigma - (math.pi/4)
+            if abs(Err)==0:
+                KICI.append(kisi)   
+        kisi=min(KICI)
+        # calculating kc and NA  
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=y*Expot
+            Exp=np.exp(Expt)
+            An=Exp
+            Sum += An
+        kc_infY=(2*D/kisi)*Sum
+        NA_infY=kc_infY*(cAi - cA0)
+        kc_infN=((3*u*D)/(2*math.pi*y))**0.5
+        NA_infN=(cAi-cA0)*kc_infN
+        # kcbar calculation 
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=L*Expot
+            Exp=np.exp(Expt)
+            An=Exp/((2*n+1)**2)
+            Sum += An
+        kcbar_infY=(12*u*kisi/(L*(math.pi**2)))*((math.pi**2)/8 - Sum)  
+        kcbar_infN=((6*u*D)/(math.pi*L))**0.5
+        # calculating cA 
+        for z in Z:
+            Sum=0
+            for n in range(infinity):
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                Sin=math.sin(z*lmbda)
+                An=Sin*Exp/(2*n+1)
+                Sum += An 
+            cA_infY=cA0+(cAi-cA0)*(1-(4/math.pi)*Sum)
+            Exp_infN=0.5*(((3*u*(z**2))/(2*D*y))**0.5)
+            cA_infN=cA0+(cAi-cA0)*(1-math.erf(Exp_infN))
+            print (D, y, z, delta, kisi, cA_infY, cA_infN, NA_infY, NA_infN, kc_infY, kc_infN, kcbar_infY, kcbar_infN, gamma, u)
+</code></pre>
+<p>&nbsp;</p>
+<h4><strong>Script for <code>varG.py</code></strong></h4>
+<pre><code class="language-bash"># (in)finite penetration depth : varying Gamma  
+import numpy as np
+import math
+# test data
+L=1 # wall lenght
+#um=0.21 # maximum flow velocity
+#u=um*2/3 # average flow velocity
+varG=[0.01, 0.02, 0.05, 0.08, 0.10, 0.20]
+cA0=0 # initial concentration
+cAi=0.0366 # interfacial concentration
+D=1.96/1000000000 # diffusivity
+Rho=998 # kg/m3
+Mue=0.000894 # kg/m.s at STP
+g=9.807 # m/s2
+# y-coordinate 
+YY=[0.00000000001, 0.0000000001, 0.000000001, 
+    0.00000001, 0.0000001, 0.000001, 0.00001, 
+    0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1]
+Y=[L*y for y in YY] 
+for gamma in varG:
+    # mass transfer properties
+    delta=((3*Mue*gamma)/((Rho**2)*g))**(1/3)
+    u=gamma/(Rho*delta)
+    # z-coordinate 
+    Z=np.linspace(0, delta, num=50)
+    b=(2*D)/(3*u)
+    infinity=100
+    for y in Y:
+        # finding kisi from BC2
+        guesslist=np.logspace(0, 10, num=10000)
+        guesslist=delta/guesslist
+        guesslist=np.fliplr([guesslist])[0]
+        KICI=[delta]
+        for kisi in guesslist:
+            sigma=0
+            for n in range(infinity):
+                Sin=((-1)**n)/(2*n+1)
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                An=Sin*Exp
+                sigma += An
+            Err=sigma - (math.pi/4)
+            if abs(Err)==0:
+                KICI.append(kisi)
+        kisi=min(KICI)
+        # calculating kc and NA
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=y*Expot
+            Exp=np.exp(Expt)
+            An=Exp
+            Sum += An
+        kc_infY=(2*D/kisi)*Sum
+        NA_infY=kc_infY*(cAi - cA0)
+        kc_infN=((3*u*D)/(2*math.pi*y))**0.5
+        NA_infN=(cAi-cA0)*kc_infN
+        # kcbar calculation 
+        Sum=0
+        for n in range(infinity):
+            lmbda=((2*n+1)*math.pi)/(2*kisi)
+            lmbda2=lmbda**2
+            Expot=(-1)*lmbda2*b
+            Expt=L*Expot
+            Exp=np.exp(Expt)
+            An=Exp/((2*n+1)**2)
+            Sum += An
+        kcbar_infY=(12*u*kisi/(L*(math.pi**2)))*((math.pi**2)/8 - Sum)  
+        kcbar_infN=((6*u*D)/(math.pi*L))**0.5
+        # calculating cA 
+        for z in Z:
+            Sum=0
+            for n in range(infinity):
+                lmbda=((2*n+1)*math.pi)/(2*kisi)
+                lmbda2=lmbda**2
+                Expot=(-1)*lmbda2*b
+                Expt=y*Expot
+                Exp=np.exp(Expt)
+                Sin=math.sin(z*lmbda)
+                An=Sin*Exp/(2*n+1)
+                Sum += An 
+            cA_infY=cA0+(cAi-cA0)*(1-(4/math.pi)*Sum)
+            Exp_infN=0.5*(((3*u*(z**2))/(2*D*y))**0.5)
+            cA_infN=cA0+(cAi-cA0)*(1-math.erf(Exp_infN))
+            print (gamma, u, y, z, delta, kisi, cA_infY, cA_infN, NA_infY, NA_infN, kc_infY, kc_infN, kcbar_infY, kcbar_infN, D)
+</code></pre>
+<p>&nbsp;</p></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3>Thermokinetic Model of Phase Inversion</h3>
+<p>&nbsp;</p>
+<p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0376738817306889"><strong>On the search of rigorous thermo-kinetic model for wet phase inversion technique</strong></a>, we developed a rigorous <strong>thermo-kinetic model for the wet phase inversion process</strong>, with special emphasis on the role of the <strong>diffusion-thermo effect</strong> at the interface.   </p>
+<p>&nbsp;</p>
+<ul>
+<li>Download the <strong>MATLAB</strong> script <a href="Publications_20170501_JMS.zip"><strong>here</strong></a></li>
+</ul>
+<p>&nbsp;</p>
+<p><img alt="Thermokinetic Model of Phase Inversion" src="Publications_20170501_JMS.png" /></p></div>
+        </section>
+
+    </div>
+</body>
+</html>
