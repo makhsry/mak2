@@ -51,7 +51,7 @@ function SimgaProfileCalculator()
 end 
 ```
 
-##### **2. **`IOinDataBase.m`** 
+##### **2. `IOinDataBase.m`** 
 
 ```bash
 function [NUMSEGMENT VolCavity AreaCavity ...
