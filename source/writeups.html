@@ -116,91 +116,91 @@
 <p>&nbsp;</p>
 <p><strong>DPD Force Field</strong></p>
 <p>&nbsp;</p>
-<p>The interaction between any two particles <code>i</code> and <code>j</code> is governed by three pairwise additive forces:</p>
+<p>The interaction between any two particles i and j is governed by three pairwise additive forces:</p>
 <p>&nbsp;</p>
-<p><code>&lt;strong&gt;F&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt; = &lt;strong&gt;F&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;&lt;sup&gt;C&lt;/sup&gt; + &lt;strong&gt;F&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;&lt;sup&gt;D&lt;/sup&gt; + &lt;strong&gt;F&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;&lt;sup&gt;R&lt;/sup&gt;</code></p>
+<p><strong>F</strong><sub>ij</sub> = <strong>F</strong><sub>ij</sub><sup>C</sup> + <strong>F</strong><sub>ij</sub><sup>D</sup> + <strong>F</strong><sub>ij</sub><sup>R</sup></p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Conservative Force</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>&lt;strong&gt;F&lt;/strong&gt;&lt;sup&gt;C&lt;/sup&gt;&lt;sub&gt;ij&lt;/sub&gt; = A&lt;sub&gt;ij&lt;/sub&gt; w(r&lt;sub&gt;ij&lt;/sub&gt;) &lt;strong&gt;r̂&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;</code></p>
+<p><strong>F</strong><sup>C</sup><sub>ij</sub> = A<sub>ij</sub> w(r<sub>ij</sub>) <strong>r̂</strong><sub>ij</sub></p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Dissipative Force</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>&lt;strong&gt;F&lt;/strong&gt;&lt;sup&gt;D&lt;/sup&gt;&lt;sub&gt;ij&lt;/sub&gt; = -γ w&lt;sup&gt;2&lt;/sup&gt;(r&lt;sub&gt;ij&lt;/sub&gt;) (&lt;strong&gt;r̂&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt; · &lt;strong&gt;v&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;) &lt;strong&gt;r̂&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;</code></p>
+<p><strong>F</strong><sup>D</sup><sub>ij</sub> = -γ w<sup>2</sup>(r<sub>ij</sub>) (<strong>r̂</strong><sub>ij</sub> · <strong>v</strong><sub>ij</sub>) <strong>r̂</strong><sub>ij</sub></p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Random Force</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>&lt;strong&gt;F&lt;/strong&gt;&lt;sup&gt;R&lt;/sup&gt;&lt;sub&gt;ij&lt;/sub&gt; = σ w(r&lt;sub&gt;ij&lt;/sub&gt;) ζ Δt&lt;sup&gt;-1/2&lt;/sup&gt; &lt;strong&gt;r̂&lt;/strong&gt;&lt;sub&gt;ij&lt;/sub&gt;</code></p>
+<p><strong>F</strong><sup>R</sup><sub>ij</sub> = σ w(r<sub>ij</sub>) ζ Δt<sup>-1/2</sup> <strong>r̂</strong><sub>ij</sub></p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Weighting Function</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>w(r&lt;sub&gt;ij&lt;/sub&gt;) = 1 - r&lt;sub&gt;ij&lt;/sub&gt;/R&lt;sub&gt;c&lt;/sub&gt; for r&lt;sub&gt;ij&lt;/sub&gt; &lt; R&lt;sub&gt;c&lt;/sub&gt;</code><br />
-<code>w(r&lt;sub&gt;ij&lt;/sub&gt;) = 0 for r&lt;sub&gt;ij&lt;/sub&gt; ≥ R&lt;sub&gt;c&lt;/sub&gt;</code></p>
+<p>w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> &lt; R<sub>c</sub><br />
+w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub></p>
 <p>&nbsp;</p>
-<p>Where <code>A&lt;sub&gt;ij&lt;/sub&gt;</code> is the maximum repulsion, <code>γ</code> is the friction coefficient, <code>σ</code> is the noise amplitude (related to <code>γ</code> by <code>σ&lt;sup&gt;2&lt;/sup&gt; = 2γ k&lt;sub&gt;B&lt;/sub&gt; T</code>), and <code>R&lt;sub&gt;c&lt;/sub&gt;</code> is the cutoff radius.</p>
+<p>Where A<sub>ij</sub> is the maximum repulsion, γ is the friction coefficient, σ is the noise amplitude (related to γ by σ<sup>2</sup> = 2γ k<sub>B</sub> T), and R<sub>c</sub> is the cutoff radius.</p>
 <p>&nbsp;</p>
-<p><strong>Interaction Parameters (<code>a&lt;sub&gt;ij&lt;/sub&gt;</code>)</strong></p>
+<p><strong>Interaction Parameters (a<sub>ij</sub>)</strong></p>
 <p>&nbsp;</p>
-<p>The repulsive parameters <code>a&lt;sub&gt;ij&lt;/sub&gt;</code> used for the conservative force are derived from interaction "fingerprints" (<code>X&lt;sub&gt;ij&lt;/sub&gt;</code>) stored in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>:     </p>
+<p>The repulsive parameters a<sub>ij</sub> used for the conservative force are derived from interaction "fingerprints" (X<sub>ij</sub>) stored in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp"><code>fingerprints_xij.lmp</code></a>:     </p>
 <p>&nbsp;</p>
-<p><code>a&lt;sub&gt;ij&lt;/sub&gt; = V&lt;sub&gt;1&lt;/sub&gt; + V&lt;sub&gt;2&lt;/sub&gt; · X&lt;sub&gt;ij&lt;/sub&gt;</code></p>
+<p>a<sub>ij</sub> = V<sub>1</sub> + V<sub>2</sub> · X<sub>ij</sub></p>
 <p>&nbsp;</p>
-<p>In the current implementation, <code>V&lt;sub&gt;1&lt;/sub&gt; = 1.0</code> and <code>V&lt;sub&gt;2&lt;/sub&gt; = 1.0</code>, mapping energy values directly to force units.</p>
+<p>In the current implementation, V<sub>1</sub> = 1.0 and V<sub>2</sub> = 1.0, mapping energy values directly to force units.</p>
 <p>&nbsp;</p>
 <p><strong>Transition State Theory (TST) Kinetics</strong></p>
 <p>&nbsp;</p>
 <p>Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:</p>
 <p>&nbsp;</p>
-<p><code>k = (k&lt;sub&gt;B&lt;/sub&gt; T / N&lt;sub&gt;A&lt;/sub&gt; h) exp(-E&lt;sub&gt;a&lt;/sub&gt; / R&lt;sub&gt;g&lt;/sub&gt; T)</code></p>
+<p>k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)</p>
 <p>&nbsp;</p>
 <p><strong>Physical Constants:</strong></p>
 <p>&nbsp;</p>
 <ul>
-<li><code>k&lt;sub&gt;B&lt;/sub&gt;</code>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)</li>
-<li><code>h</code>: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)</li>
-<li><code>N&lt;sub&gt;A&lt;/sub&gt;</code>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)</li>
-<li><code>R&lt;sub&gt;g&lt;/sub&gt;</code>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)</li>
+<li>k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)</li>
+<li>h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)</li>
+<li>N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)</li>
+<li>R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)</li>
 </ul>
 <p>&nbsp;</p>
-<p>The activation energy barriers (<code>E&lt;sub&gt;a&lt;/sub&gt;</code>) are defined in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a> for every birth (B) and death (D) event for clusters AA, BB, and AB.</p>
+<p>The activation energy barriers (E<sub>a</sub>) are defined in <a href="Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp"><code>fingerprints_barrier_n.lmp</code></a> for every birth (B) and death (D) event for clusters AA, BB, and AB.</p>
 <p>&nbsp;</p>
 <p><strong>Population Balance Logic (PBM)</strong></p>
 <p>&nbsp;</p>
-<p>The number of chemical events (<code>n</code>) performed at each iteration is calculated using the following discrete logic:</p>
+<p>The number of chemical events (n) performed at each iteration is calculated using the following discrete logic:</p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Monomer Birth (forming clusters AA or BB)</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>n&lt;sub&gt;birth&lt;/sub&gt; = ⌊k&lt;sub&gt;B&lt;/sub&gt; · N&lt;sub&gt;monomer&lt;/sub&gt;&lt;sup&gt;2&lt;/sup&gt; · Δt · step⌋</code></p>
+<p>n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋</p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Cluster Death (dissociating AA or BB)</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>n&lt;sub&gt;death&lt;/sub&gt; = ⌊k&lt;sub&gt;D&lt;/sub&gt; · N&lt;sub&gt;cluster&lt;/sub&gt; · Δt · step⌋</code></p>
+<p>n<sub>death</sub> = ⌊k<sub>D</sub> · N<sub>cluster</sub> · Δt · step⌋</p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Mixed Birth (forming AB clusters)</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>n&lt;sub&gt;mixed birth&lt;/sub&gt; = ⌊k&lt;sub&gt;B&lt;/sub&gt; · N&lt;sub&gt;A&lt;/sub&gt; · N&lt;sub&gt;B&lt;/sub&gt; · Δt · step⌋</code></p>
+<p>n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · Δt · step⌋</p>
 <p>&nbsp;</p>
-<p><em>Constraint Enforcement:</em> <code>n&lt;sub&gt;mixed birth&lt;/sub&gt; ≤ 2 · min(N&lt;sub&gt;A&lt;/sub&gt;, N&lt;sub&gt;B&lt;/sub&gt;)</code> to prevent local population exhaustion.</p>
+<p><em>Constraint Enforcement:</em> n<sub>mixed birth</sub> ≤ 2 · min(N<sub>A</sub>, N<sub>B</sub>) to prevent local population exhaustion.</p>
 <p>&nbsp;</p>
 <ul>
 <li><strong>Mixed Death (dissociating AB clusters)</strong>:</li>
 </ul>
 <p>&nbsp;</p>
-<p><code>n&lt;sub&gt;mixed death&lt;/sub&gt; = ⌊k&lt;sub&gt;D&lt;/sub&gt; · N&lt;sub&gt;AB&lt;/sub&gt; · Δt · step⌋</code></p>
+<p>n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋</p>
 <p>&nbsp;</p>
 <p><strong>Species Classification</strong></p>
 <p>&nbsp;</p>
@@ -260,11 +260,11 @@
 <li><strong>Equilibration</strong>: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.</li>
 <li><strong>PBM-DYNAMICS Loop</strong>:<br />
    -- Updates <code>k</code> rates based on current <code>T</code>.<br />
-   -- Measures species populations (<code>N&lt;sub&gt;i&lt;/sub&gt;</code>).<br />
-   -- Calculates <code>n&lt;sub&gt;birth&lt;/sub&gt;</code> and <code>n&lt;sub&gt;death&lt;/sub&gt;</code> for all 21 reactions.<br />
+   -- Measures species populations (N<sub>i</sub>).<br />
+   -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.<br />
    -- Executes reactions via <code>create_atoms</code> (Birth) and <code>delete_atoms</code> (Death).<br />
    -- Updates DPD interaction parameters based on new populations.<br />
-   -- Runs <code>N&lt;sub&gt;DYN&lt;/sub&gt;</code> steps of mechanical dynamics.</li>
+   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.</li>
 </ul>
 <p>&nbsp;</p>
 <p><strong>Usage Instructions</strong></p>
@@ -278,7 +278,7 @@
 <li><code>Main.lmp</code>: Main control script.</li>
 <li><code>fingerprints_xij.lmp</code>: Matrix of interaction fingerprints.</li>
 <li><code>fingerprints_barrier_n.lmp</code>: Kinetic barriers for all species.</li>
-<li><code>setup_constant.lmp</code>: Defines physical constants (<code>k&lt;sub&gt;B&lt;/sub&gt;</code>, <code>h</code>, <code>N&lt;sub&gt;A&lt;/sub&gt;</code>, <code>R&lt;sub&gt;g&lt;/sub&gt;</code>).</li>
+<li><code>setup_constant.lmp</code>: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).</li>
 <li><code>dynamics_compute_events.lmp</code>: Implementation of the PBM transformation logic.</li>
 </ul></div>
         </section>
