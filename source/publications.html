@@ -25,7 +25,7 @@
             <div class="card-content"><h2>Publications</h2>
 <p>&nbsp;</p>
 <ul>
-<li>Variable Density Mass Transfer Correction R<sub>n</sub></li>
+<li>Variable Density Mass Transfer Correction</li>
 <li>Falling Film Mass Transfer &amp; Penetration Theory</li>
 <li>Thermokinetic Model of Phase Inversion</li>
 </ul></div>
@@ -34,11 +34,11 @@
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h3>Variable Density Mass Transfer Correction R<sub>n</sub></h3>
+            <div class="card-content"><h3>Variable Density Mass Transfer Correction</h3>
 <p>&nbsp;</p>
 <p>In the paper <a href="https://www.sciencedirect.com/science/article/pii/S0735193320302050"><strong>A note on the composition-dependency of the density within the mass transfer layer</strong></a>, we derived the equation for the <strong>mass transfer correction factor R<sub>n</sub></strong>, which accounts for the effect of <strong>varying density (ρ) in a binary mixture</strong>. The model is particularly relevant for <strong>high-flux gas absorption or evaporation</strong> where the standard <strong>constant-density assumptions</strong> fail.</p>
 <p>&nbsp;</p>
-<p><img alt="Variable Density Mass Transfer Correction R&lt;sub&gt;n&lt;/sub&gt;" src="Publications_20200701_jICHMT.png" /></p>
+<p><img alt="Variable Density Mass Transfer Correction" src="Publications_20200701_jICHMT.png" /></p>
 <p>&nbsp;</p>
 <p><strong>Usage Instructions</strong></p>
 <p>&nbsp;</p>
@@ -46,7 +46,7 @@
 <li>Save the script as <code>script_name.py</code> and run it from the terminal as: <strong><code>python script_name.py</code></strong></li>
 </ul>
 <p>&nbsp;</p>
-<h4><strong>R<sub>n</sub> as β and ρ<sub>12</sub> vary</strong></h4>
+<h4>1. <strong>R<sub>n</sub> as β and ρ<sub>12</sub> vary</strong></h4>
 <p>&nbsp;</p>
 <pre><code class="language-bash">import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -58,7 +58,7 @@ for BETTA in betta:
         print (BETTA, RHO12, Rn)
 </code></pre>
 <p>&nbsp;</p>
-<h4><strong>R<sub>n</sub> as β and ω<sub>1</sub> vary</strong></h4>
+<h4>2. <strong>R<sub>n</sub> as β and ω<sub>1</sub> vary</strong></h4>
 <p>&nbsp;</p>
 <pre><code class="language-bash">import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -70,7 +70,7 @@ for BETTA in betta:
         print (BETTA, OMG1, Rn)
 </code></pre>
 <p>&nbsp;</p>
-<h4><strong>R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary</strong></h4>
+<h4>3. <strong>R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary</strong></h4>
 <p>&nbsp;</p>
 <pre><code class="language-bash">import numpy as np
 omg1=np.linspace(0.00001, 0.99999, 25)
@@ -112,19 +112,13 @@ import math
 # test data 
 L=1 # wall lenght 
 gamma=0.05 # film flow rate kg/m.s 
-#um=0.21 # maximum flow velocity 
-#u=um*2/3 # average flow velocity 
 cA0=0 # initial concentration 
 cAi=0.0366 # interfacial concentration
-#D=1.96/1000000000 # diffusivity 
 var=[1.0, 2.0, 2.5, 5.0, 7.0, 8.0, 9.0]
 varD=[vard/1000000000 for vard in var] 
 Rho=998 # kg/m3
 Mue=0.000894 # kg/m.s at STP
 g=9.807 # m/s2
-#Z=[0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2, 2.4]
-#Z=[z/10000 for z in Z] 
-# y-coordinate 
 YY=[0.00000000001, 0.0000000001, 0.000000001, 
     0.00000001, 0.0000001, 0.000001, 0.00001, 
     0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1]
@@ -134,8 +128,6 @@ delta=((3*Mue*gamma)/((Rho**2)*g))**(1/3)
 u=gamma/(Rho*delta)
 # z-coordinate 
 Z=np.linspace(0, delta, num=50)
-# mass transfer properties 
-#delta=((3*Mue*u)/(Rho*g))**0.5
 for D in varD:
     b=(2*D)/(3*u)
     infinity=100
@@ -211,8 +203,6 @@ import numpy as np
 import math
 # test data
 L=1 # wall lenght
-#um=0.21 # maximum flow velocity
-#u=um*2/3 # average flow velocity
 varG=[0.01, 0.02, 0.05, 0.08, 0.10, 0.20]
 cA0=0 # initial concentration
 cAi=0.0366 # interfacial concentration
