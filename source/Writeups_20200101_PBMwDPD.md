@@ -14,73 +14,73 @@ The simulation models the **formation and dissociation of chemical clusters** (s
 
 **DPD Force Field**
 
-The interaction between any two particles `i` and `j` is governed by three pairwise additive forces:
+The interaction between any two particles i and j is governed by three pairwise additive forces:
 
-`<strong>F</strong><sub>ij</sub> = <strong>F</strong><sub>ij</sub><sup>C</sup> + <strong>F</strong><sub>ij</sub><sup>D</sup> + <strong>F</strong><sub>ij</sub><sup>R</sup>`
+<strong>F</strong><sub>ij</sub> = <strong>F</strong><sub>ij</sub><sup>C</sup> + <strong>F</strong><sub>ij</sub><sup>D</sup> + <strong>F</strong><sub>ij</sub><sup>R</sup>
 
 - **Conservative Force**:
 
-`<strong>F</strong><sup>C</sup><sub>ij</sub> = A<sub>ij</sub> w(r<sub>ij</sub>) <strong>r̂</strong><sub>ij</sub>`
+<strong>F</strong><sup>C</sup><sub>ij</sub> = A<sub>ij</sub> w(r<sub>ij</sub>) <strong>r̂</strong><sub>ij</sub>
 
 - **Dissipative Force**:
 
-`<strong>F</strong><sup>D</sup><sub>ij</sub> = -γ w<sup>2</sup>(r<sub>ij</sub>) (<strong>r̂</strong><sub>ij</sub> · <strong>v</strong><sub>ij</sub>) <strong>r̂</strong><sub>ij</sub>`
+<strong>F</strong><sup>D</sup><sub>ij</sub> = -γ w<sup>2</sup>(r<sub>ij</sub>) (<strong>r̂</strong><sub>ij</sub> · <strong>v</strong><sub>ij</sub>) <strong>r̂</strong><sub>ij</sub>
 
 - **Random Force**:
 
-`<strong>F</strong><sup>R</sup><sub>ij</sub> = σ w(r<sub>ij</sub>) ζ Δt<sup>-1/2</sup> <strong>r̂</strong><sub>ij</sub>`
+<strong>F</strong><sup>R</sup><sub>ij</sub> = σ w(r<sub>ij</sub>) ζ Δt<sup>-1/2</sup> <strong>r̂</strong><sub>ij</sub>
 
 - **Weighting Function**:
 
-`w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> < R<sub>c</sub>`
-`w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub>`
+w(r<sub>ij</sub>) = 1 - r<sub>ij</sub>/R<sub>c</sub> for r<sub>ij</sub> < R<sub>c</sub>
+w(r<sub>ij</sub>) = 0 for r<sub>ij</sub> ≥ R<sub>c</sub>
 
-Where `A<sub>ij</sub>` is the maximum repulsion, `γ` is the friction coefficient, `σ` is the noise amplitude (related to `γ` by `σ<sup>2</sup> = 2γ k<sub>B</sub> T`), and `R<sub>c</sub>` is the cutoff radius.
+Where A<sub>ij</sub> is the maximum repulsion, γ is the friction coefficient, σ is the noise amplitude (related to γ by σ<sup>2</sup> = 2γ k<sub>B</sub> T), and R<sub>c</sub> is the cutoff radius.
 
-**Interaction Parameters (`a<sub>ij</sub>`)**
+**Interaction Parameters (a<sub>ij</sub>)**
 
-The repulsive parameters `a<sub>ij</sub>` used for the conservative force are derived from interaction "fingerprints" (`X<sub>ij</sub>`) stored in [`fingerprints_xij.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp):     
+The repulsive parameters a<sub>ij</sub> used for the conservative force are derived from interaction "fingerprints" (X<sub>ij</sub>) stored in [`fingerprints_xij.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_xij.lmp):     
 
-`a<sub>ij</sub> = V<sub>1</sub> + V<sub>2</sub> · X<sub>ij</sub>`
+a<sub>ij</sub> = V<sub>1</sub> + V<sub>2</sub> · X<sub>ij</sub>
 
-In the current implementation, `V<sub>1</sub> = 1.0` and `V<sub>2</sub> = 1.0`, mapping energy values directly to force units.
+In the current implementation, V<sub>1</sub> = 1.0 and V<sub>2</sub> = 1.0, mapping energy values directly to force units.
 
 **Transition State Theory (TST) Kinetics**
 
 Chemical reaction rates are calculated using the Arrhenius-like Transition State Theory expression:
 
-`k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)`
+k = (k<sub>B</sub> T / N<sub>A</sub> h) exp(-E<sub>a</sub> / R<sub>g</sub> T)
 
 **Physical Constants:**
 
-- `k<sub>B</sub>`: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)
-- `h`: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)
-- `N<sub>A</sub>`: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)
-- `R<sub>g</sub>`: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)
+- k<sub>B</sub>: Boltzmann constant (3.2976 x 10<sup>-27</sup> kcal/K)
+- h: Planck constant (2.51 x 10<sup>-38</sup> kcal.s)
+- N<sub>A</sub>: Avogadro constant (6.0221 x 10<sup>23</sup> /mol)
+- R<sub>g</sub>: Gas constant (1.987 x 10<sup>-3</sup> kcal/K.mol)
 
-The activation energy barriers (`E<sub>a</sub>`) are defined in [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp) for every birth (B) and death (D) event for clusters AA, BB, and AB.
+The activation energy barriers (E<sub>a</sub>) are defined in [`fingerprints_barrier_n.lmp`](Scrapbook_20200101_PBMwDPD_fingerprints_barrier_n.lmp) for every birth (B) and death (D) event for clusters AA, BB, and AB.
 
 **Population Balance Logic (PBM)**
 
-The number of chemical events (`n`) performed at each iteration is calculated using the following discrete logic:
+The number of chemical events (n) performed at each iteration is calculated using the following discrete logic:
 
 - **Monomer Birth (forming clusters AA or BB)**:
 
-`n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋`
+n<sub>birth</sub> = ⌊k<sub>B</sub> · N<sub>monomer</sub><sup>2</sup> · Δt · step⌋
 
 - **Cluster Death (dissociating AA or BB)**:
 
-`n<sub>death</sub> = ⌊k<sub>D</sub> · N<sub>cluster</sub> · Δt · step⌋`
+n<sub>death</sub> = ⌊k<sub>D</sub> · N<sub>cluster</sub> · Δt · step⌋
 
 - **Mixed Birth (forming AB clusters)**:
 
-`n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · Δt · step⌋`
+n<sub>mixed birth</sub> = ⌊k<sub>B</sub> · N<sub>A</sub> · N<sub>B</sub> · Δt · step⌋
 
-*Constraint Enforcement:* `n<sub>mixed birth</sub> ≤ 2 · min(N<sub>A</sub>, N<sub>B</sub>)` to prevent local population exhaustion.
+*Constraint Enforcement:* n<sub>mixed birth</sub> ≤ 2 · min(N<sub>A</sub>, N<sub>B</sub>) to prevent local population exhaustion.
 
 - **Mixed Death (dissociating AB clusters)**:
 
-`n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋`
+n<sub>mixed death</sub> = ⌊k<sub>D</sub> · N<sub>AB</sub> · Δt · step⌋
 
 **Species Classification**
   
@@ -98,11 +98,11 @@ The number of chemical events (`n`) performed at each iteration is calculated us
 - **Equilibration**: Runs NPT dynamics (Nose-Hoover barostat/thermostat) followed by NVE.
 - **PBM-DYNAMICS Loop**:
    -- Updates `k` rates based on current `T`.
-   -- Measures species populations (`N<sub>i</sub>`).
-   -- Calculates `n<sub>birth</sub>` and `n<sub>death</sub>` for all 21 reactions.
+   -- Measures species populations (N<sub>i</sub>).
+   -- Calculates n<sub>birth</sub> and n<sub>death</sub> for all 21 reactions.
    -- Executes reactions via `create_atoms` (Birth) and `delete_atoms` (Death).
    -- Updates DPD interaction parameters based on new populations.
-   -- Runs `N<sub>DYN</sub>` steps of mechanical dynamics.
+   -- Runs N<sub>DYN</sub> steps of mechanical dynamics.
 
 **Usage Instructions**
 
@@ -115,5 +115,5 @@ lmp -in Main.lmp
 - `Main.lmp`: Main control script.
 - `fingerprints_xij.lmp`: Matrix of interaction fingerprints.
 - `fingerprints_barrier_n.lmp`: Kinetic barriers for all species.
-- `setup_constant.lmp`: Defines physical constants (`k<sub>B</sub>`, `h`, `N<sub>A</sub>`, `R<sub>g</sub>`).
+- `setup_constant.lmp`: Defines physical constants (k<sub>B</sub>, h, N<sub>A</sub>, R<sub>g</sub>).
 - `dynamics_compute_events.lmp`: Implementation of the PBM transformation logic.
