@@ -2,8 +2,8 @@
 
 This script is a **`Bash`**-based utility designed to automate the configuration and submission of [**`Slurm`**](https://slurm.schedmd.com/)-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery.
 
-- The **`bash`** script is available [**here**](Garage_99999980_SubmitHPC.sh).
-- An **`.html`** version is available [**here**](Garage_99999980_SubmitHPC.html).
+- The **`bash`** script is available [**here**](Outlets_99999980_SubmitHPC.sh).
+- An **`.html`** version is available [**here**](Outlets_99999980_SubmitHPC.html).
 
 It is specifically tailored for [**COMSOL Multiphysics**](https://www.comsol.com/products/multiphysics/) simulations. The script primaryly manages the entire workflow from environment validation to job submission on various [**Canadian HPC clusters**](https://www.alliancecan.ca/en/about) (_before their migration to new systems_).
 

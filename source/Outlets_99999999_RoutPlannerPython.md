@@ -2,7 +2,7 @@
 
 A **Python notebook** that takes a **color-coded pattern image** (e.g., a design, logo, or artwork), overlays it onto a real city street network from **OpenStreetMap**, extracts **GPS coordinates** for each color layer, and exports the result as one or more **GPX track files** — ready to be used in any **GPS-capable** navigation app or **fitness tracker**.
 
-- **Access** the code [**here**](Garage_99999990_RoutPlannerPython.ipynb)
+- **Access** the code [**here**](Outlets_99999990_RoutPlannerPython.ipynb)
 
 **What It Does**
 

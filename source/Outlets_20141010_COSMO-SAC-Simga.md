@@ -2,11 +2,11 @@
 
 This is a suite of MATLAB code designed to process raw quantum mechanical (QM) surface data into **sigma-profiles**.
 
-- An **`html`** version of this document is available [**here**](Garage_20141010_COSMO-SAC-Simga.html).
+- An **`html`** version of this document is available [**here**](Outlets_20141010_COSMO-SAC-Simga.html).
 
 **How to Use**
 
-- Replace `CompoundName` with the specific `sheet name` in the Excel file **`inputQM.xlsx`** ([**Click here to see sample input file**](Garage_20141010_COSMO-SAC-Simga_inputQM.xlsx)):
+- Replace `CompoundName` with the specific `sheet name` in the Excel file **`inputQM.xlsx`** ([**Click here to see sample input file**](Outlets_20141010_COSMO-SAC-Simga_inputQM.xlsx)):
 	- **Columns C, D, E:** are X, Y, Z coordinates (Atomic Units).
 	- **Column G:** is Segment Area.
 	- **Column H:** is Charge per Area (Surface Charge Density).
