@@ -17,7 +17,7 @@ Investigated nanoscale water flow mechanisms to reduce **nanobubble formation** 
 - Created **custom computational routines** for high-throughput molecular dynamics (MD) simulations using **LAMMPS**, tailored for complex **fluid-surface interactions**.
 - Compiled and optimized LAMMPS on UBC's Sockeye HPC environment for scalable, in-house simulation workflows.
 - Extended LAMMPS functionality with **custom C++ modules** to meet unique research needs in nanoscale flow modeling.
-- Implemented post-processing scripts in **Python** for automated extraction and visualization of simulation results, including pressure profiles, density distributions, and flow characteristics.
+- Implemented post-processing scripts in **Python** for automated extraction and visualization of simulation results, including **pressure profiles, density distributions, and flow characteristics**.
 - Collaborated with a **multidisciplinary team** to validate simulation results against theoretical models and experimental data, enhancing cross-domain communication and interpretation.
 
 ![Experiences_20220501_UBC_Cavitation](Experiences_20220501_UBC_Cavitation.jpg)

@@ -4,7 +4,7 @@
 
 **Project**
 
-Simulation and cost evaluation of hot section of BIPC olefin plant, with [Dr. Nasim Tahouni](https://scholar.google.com/citations?user=jWEhjFcAAAAJ&hl=en).
+Simulation and cost evaluation of hot section of BIPC olefin plant, with [**Dr. Nasim Tahouni**](https://scholar.google.com/citations?user=jWEhjFcAAAAJ&hl=en).
 
 **Project Summary**
 

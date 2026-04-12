@@ -4,7 +4,7 @@
 
 **Project**
 
-Thermo-kinetic modeling of the wet phase inversion process for polymeric membranes fabrication, with [Dr. Mohammad Ali Aroon](https://scholar.google.com/citations?user=IxP_tLUAAAAJ&hl=en).
+Thermo-kinetic modeling of the wet phase inversion process for polymeric membranes fabrication, with [**Dr. Mohammad Ali Aroon**](https://scholar.google.com/citations?user=IxP_tLUAAAAJ&hl=en).
 
 **Project Summary**
 

@@ -1,14 +1,14 @@
-### Variable Density Mass Transfer Correction R<sub>n</sub>
+### Variable Density Mass Transfer Correction
 
 In the paper [**A note on the composition-dependency of the density within the mass transfer layer**](https://www.sciencedirect.com/science/article/pii/S0735193320302050), we derived the equation for the **mass transfer correction factor R<sub>n</sub>**, which accounts for the effect of **varying density (ρ) in a binary mixture**. The model is particularly relevant for **high-flux gas absorption or evaporation** where the standard **constant-density assumptions** fail.
 
-![Variable Density Mass Transfer Correction R<sub>n</sub>](Publications_20200701_jICHMT.png)
+![Variable Density Mass Transfer Correction](Publications_20200701_jICHMT.png)
 
 **Usage Instructions**
 
 - Save the script as `script_name.py` and run it from the terminal as: **`python script_name.py`**
 
-#### **R<sub>n</sub> as β and ρ<sub>12</sub> vary**
+#### 1. **R<sub>n</sub> as β and ρ<sub>12</sub> vary**
 
 ```bash
 import numpy as np
@@ -21,7 +21,7 @@ for BETTA in betta:
         print (BETTA, RHO12, Rn)
 ```
 
-#### **R<sub>n</sub> as β and ω<sub>1</sub> vary**
+#### 2. **R<sub>n</sub> as β and ω<sub>1</sub> vary**
 
 ```bash
 import numpy as np
@@ -34,7 +34,7 @@ for BETTA in betta:
         print (BETTA, OMG1, Rn)
 ```
 
-#### **R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary**
+#### 3. **R<sub>n</sub> as ρ<sub>12</sub> and ω<sub>1</sub> vary**
 
 ```bash
 import numpy as np

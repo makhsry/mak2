@@ -27,19 +27,13 @@ import math
 # test data 
 L=1 # wall lenght 
 gamma=0.05 # film flow rate kg/m.s 
-#um=0.21 # maximum flow velocity 
-#u=um*2/3 # average flow velocity 
 cA0=0 # initial concentration 
 cAi=0.0366 # interfacial concentration
-#D=1.96/1000000000 # diffusivity 
 var=[1.0, 2.0, 2.5, 5.0, 7.0, 8.0, 9.0]
 varD=[vard/1000000000 for vard in var] 
 Rho=998 # kg/m3
 Mue=0.000894 # kg/m.s at STP
 g=9.807 # m/s2
-#Z=[0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2, 2.4]
-#Z=[z/10000 for z in Z] 
-# y-coordinate 
 YY=[0.00000000001, 0.0000000001, 0.000000001, 
     0.00000001, 0.0000001, 0.000001, 0.00001, 
     0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1]
@@ -49,8 +43,6 @@ delta=((3*Mue*gamma)/((Rho**2)*g))**(1/3)
 u=gamma/(Rho*delta)
 # z-coordinate 
 Z=np.linspace(0, delta, num=50)
-# mass transfer properties 
-#delta=((3*Mue*u)/(Rho*g))**0.5
 for D in varD:
 	b=(2*D)/(3*u)
 	infinity=100
@@ -127,8 +119,6 @@ import numpy as np
 import math
 # test data
 L=1 # wall lenght
-#um=0.21 # maximum flow velocity
-#u=um*2/3 # average flow velocity
 varG=[0.01, 0.02, 0.05, 0.08, 0.10, 0.20]
 cA0=0 # initial concentration
 cAi=0.0366 # interfacial concentration

@@ -8,7 +8,7 @@ Design of Separation Systems for Ethane and Methane, with [**Dr. Nasim Tahouni**
 
 **Project Summary**
 
-Completed a process engineering internship focused on the **simulation and optimization** of a gas separation unit targeting high-purity ethane and methane recovery, integrating both **technical design** and **economic analysis** using industry-standard tools.
+Completed a process engineering internship focused on the **simulation and optimization** of a gas separation unit targeting high-purity ethane and methane recovery, integrating both **technical design** and **economic analysis** using **industry-standard tools**.
 
 **Tasks Performed**
 
@@ -17,6 +17,6 @@ Completed a process engineering internship focused on the **simulation and optim
 - Performed **equipment sizing and selection** for distillation columns, heat exchangers, compressors, and separators based on simulated process data and vendor specifications.
 - Conducted **cost analysis**, including **capital expenditure (CAPEX)**, **operating expenditure (OPEX)**, and utility consumption, to assess **economic feasibility** and guide procurement strategies.
 - Applied **exergy analysis** and **pinch analysis** to identify thermodynamic inefficiencies and optimize energy integration, improving process sustainability and reducing waste heat.
-- Evaluated and compared equipment procurement options using technical and economic criteria to support decision-making for pilot-scale implementation.
+- Evaluated and compared **equipment procurement options** using **technical and economic criteria** to support decision-making for **pilot-scale implementation**.
 
 ![Experiences_20110701_RIPI_EthaneMethane](Experiences_20110701_RIPI_EthaneMethane.png)

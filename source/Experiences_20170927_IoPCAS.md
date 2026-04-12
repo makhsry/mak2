@@ -4,5 +4,5 @@
 
 **Tasks Performed**
 
-- Gained hands-on expertise in **CHARMM for (bio)molecular modeling**, focusing on simulation and analysis of organic and biological matter at the atomic level.
+- Gained hands-on expertise in **CHARMM for (bio)molecular modeling**, focusing on simulation and analysis of organic and biological matter at the **atomic level**.
 - Developed custom tools in **Fortran** and **Python** for simulation pre-processing and post-analysis, including data parsers, Fourier transforms, and specialized routines for trajectory and energy analysis.
