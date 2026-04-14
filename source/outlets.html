@@ -239,18 +239,13 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_ollama import OllamaEmbeddings
-#from langchain_community.document_loaders import (
-#    PyPDFLoader,
-#    TextLoader,
-#    BSHTMLLoader,
-#    UnstructuredFileLoader,
-#)
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
 from langchain_unstructured import UnstructuredLoader
 
 &amp;nbsp;
 
 import config
+from tqdm import tqdm
 
 &amp;nbsp;
 
@@ -269,53 +264,56 @@ SPECIFIC_LOADERS = {
 &amp;nbsp;
 
 def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
-    &quot;&quot;&quot;Smartly loads files, reports actions, and isolates failures.&quot;&quot;&quot;
+    &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
     docs: list[Document] = []
     folder_path = os.path.abspath(folder_path)
     error_dir = os.path.join(folder_path, &quot;.not_indexed&quot;)
 
 &amp;nbsp;
 
+    # Gather all files first for accurate progress
+    files_to_process = []
     for root, dirs, files in os.walk(folder_path):
         if &quot;.not_indexed&quot; in root:
+            continue
+        for filename in files:
+            files_to_process.append(os.path.join(root, filename))
+
+&amp;nbsp;
+
+    # tqdm.write() ensures &quot;echoing&quot; doesn't break the progress bar
+    for file_path in tqdm(files_to_process, desc=f&quot;Scanning {os.path.basename(folder_path)}&quot;, unit=&quot;file&quot;):
+        filename = os.path.basename(file_path)
+        ext = os.path.splitext(filename)[1].lower()
+
+&amp;nbsp;
+
+        if append_mode and file_path in indexed_sources:
+            tqdm.write(f&quot;  [Skip] Already indexed: {filename}&quot;)
             continue
 
 &amp;nbsp;
 
-        for filename in files:
-            file_path = os.path.join(root, filename)
-            ext = os.path.splitext(filename)[1].lower()
+        loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
 
 &amp;nbsp;
 
-            # Report skipping if in append mode and file is already indexed
-            if append_mode and file_path in indexed_sources:
-                print(f&quot;  [Skip] Already indexed: {filename}&quot;)
-                continue
-
-&amp;nbsp;
-
-            #loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredFileLoader)
-            loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
-
-&amp;nbsp;
-
+        try:
+            tqdm.write(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
+            loader = loader_cls(file_path)
+            docs.extend(loader.load())
+        except Exception as exc:
+            tqdm.write(f&quot;  [!! Error] Failed to read {filename}: {exc}&quot;)
+            if not os.path.exists(error_dir):
+                os.makedirs(error_dir)
             try:
-                print(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
-                loader = loader_cls(file_path)
-                docs.extend(loader.load())
-            except Exception as exc:
-                print(f&quot;  [!! Error] Failed to read {filename}: {exc}&quot;)
-                if not os.path.exists(error_dir):
-                    os.makedirs(error_dir)
-                try:
-                    dest = os.path.join(error_dir, filename)
-                    if os.path.exists(dest):
-                        dest = f&quot;{dest}_{uuid.uuid4().hex[:4]}&quot;
-                    shutil.move(file_path, dest)
-                    print(f&quot;  [Moved] {filename} -&gt; .not_indexed/&quot;)
-                except Exception as move_exc:
-                    print(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
+                dest = os.path.join(error_dir, filename)
+                if os.path.exists(dest):
+                    dest = f&quot;{dest}_{uuid.uuid4().hex[:4]}&quot;
+                shutil.move(file_path, dest)
+                tqdm.write(f&quot;  [Moved] {filename} -&gt; .not_indexed/&quot;)
+            except Exception as move_exc:
+                tqdm.write(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
     return docs
 
 &amp;nbsp;
@@ -376,6 +374,7 @@ def main():
     # 2. Document Collection
     all_new_docs = []
     for f in folders:
+        # Keeping the folder header print
         print(f&quot;\n[db] Scanning Folder: {f}&quot;)
         folder_docs = load_folder(f, indexed_sources, args.append)
         all_new_docs.extend(folder_docs)
@@ -402,14 +401,28 @@ def main():
 
 &amp;nbsp;
 
+    # Batch processing for the progress bar
+    batch_size = 50 
+
+&amp;nbsp;
+
     if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
-        Chroma.from_documents(
-            documents=chunks, 
+        # Initial chunk to create the store
+        vectorstore = Chroma.from_documents(
+            documents=chunks[:batch_size], 
             embedding=embeddings, 
             persist_directory=config.CHROMA_DB_PATH
         )
+        start_idx = batch_size
     else:
-        vectorstore.add_documents(chunks)
+        start_idx = 0
+
+&amp;nbsp;
+
+    # Indexing Progress Bar
+    for i in tqdm(range(start_idx, len(chunks), batch_size), desc=&quot;Indexing Chunks&quot;, unit=&quot;batch&quot;):
+        batch = chunks[i : i + batch_size]
+        vectorstore.add_documents(batch)
 
 &amp;nbsp;
 
