@@ -144,7 +144,7 @@ def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -> li
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "AUREL SYSTEMS: Vector Database Manager\n\n"
+            "Vector Database Manager\n\n"
             "Manages the ChromaDB store for engineering document analysis.\n"
             "This script tracks which files are indexed to avoid duplicate processing."
         ),
@@ -321,7 +321,7 @@ Configuration file for models, paths, and chunking settings
  
 ```bash
 """
-config.py — Shared configuration for the Aurel Systems RAG pipeline.
+config.py — Shared configuration for RAG pipeline.
 This file manages models, paths, and environment-specific path conversions.
 """
 
@@ -395,14 +395,14 @@ def load_prompt(filepath: str = PROMPT_FILE) -> str:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="AUREL SYSTEMS: Configuration & Path Verifier",
+        description="Configuration & Path Verifier",
         epilog="Run this script to verify your WSL mount points and model settings."
     )
     # Parse to allow --help but we don't need actual arguments
     _ = parser.parse_known_args()
 
     print("="*40)
-    print(" AUREL SYSTEMS CONFIGURATION CHECK")
+    print("Configuration Check")
     print("="*40)
     print(f"LLM Model:       {OLLAMA_MODEL}")
     print(f"Embedding Model: {EMBEDDING_MODEL}")
