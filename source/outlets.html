@@ -26,6 +26,7 @@
 <p>&nbsp;</p>
 <ul>
 <li>Drawing to GPX (Route Pattern Mapper — Python Application)</li>
+<li>Local RAG Pipeline — Ollama + ChromaDB + LangChain</li>
 <li>HPC Job Management Tools</li>
 <li>Nanotube Builder and Mesher</li>
 <li>COSMO-SAC Activity Coefficient Model</li>
@@ -125,6 +126,145 @@
         </section>
 
         <section class="card span-2">
+            <div class="card-content"><h3>Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
+<p>&nbsp;</p>
+<p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
+<p>&nbsp;</p>
+<ul>
+<li>To <strong>access</strong> scripts <a href="Outlets_99999981_localRAG.zip"><strong>click here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<h4>Workflow reference</h4>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">First-time setup database (from folder: <code>folders.txt</code>)</td>
+<td style="text-align: left;"><code>python index.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Ask a question (from file: <code>prompt.txt</code>)</td>
+<td style="text-align: left;"><code>python prompt.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Ask on command line</td>
+<td style="text-align: left;"><code>python prompt.py -q "..."</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Interactive chat</td>
+<td style="text-align: left;"><code>python prompt.py --interactive</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Add new documents (update database)</td>
+<td style="text-align: left;"><code>python update.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Full rebuild</td>
+<td style="text-align: left;"><code>python update.py --mode reconstruct</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Default question read by <code>prompt.py</code></td>
+<td style="text-align: left;"><code>prompt.txt</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">List of document folders to index</td>
+<td style="text-align: left;"><code>folders.txt</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Shared settings (models, paths, chunking). <strong>Edit here.</strong></td>
+<td style="text-align: left;"><code>config.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<h4>Getting Started</h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash"># 1. Install dependencies
+pip install langchain langchain-community chromadb ollama pypdf unstructured python-docx
+
+&amp;nbsp;
+
+# 2. Edit folders.txt  ← add your document folders (Windows or Unix paths)
+# 3. Edit prompt.txt   ← put your question there
+
+&amp;nbsp;
+
+# 4. Build the vector store
+python index.py
+
+&amp;nbsp;
+
+# 5. Ask a question (reads from prompt.txt)
+python prompt.py
+
+&amp;nbsp;
+
+# 5b. Ask directly on the command line
+python prompt.py --question &quot;What is the annual leave policy?&quot;
+
+&amp;nbsp;
+
+# 5c. Start an interactive chat loop
+python prompt.py --interactive
+</code></pre>
+<p>&nbsp;</p>
+<h4><code>folders.txt</code> format</h4>
+<p>&nbsp;</p>
+<p>Windows and Unix paths are both accepted:</p>
+<p>&nbsp;</p>
+<pre><code># Lines starting with '#' are comments and are ignored.
+
+&amp;nbsp;
+
+C:\Users\User\Documents\
+D:/Projects/reports
+/home/alice/hr_docs
+./documents/legal
+</code></pre>
+<p>&nbsp;</p>
+<h4>Updating the vector store</h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash"># Add only NEW documents (fast — skips already-indexed files)
+python update.py
+python update.py --mode update            # same thing
+
+&amp;nbsp;
+
+# Wipe and rebuild everything from scratch
+python update.py --mode reconstruct
+
+&amp;nbsp;
+
+# Use a different folders file
+python update.py --folders other_folders.txt
+</code></pre>
+<p>&nbsp;</p>
+<h4>Changing models or settings</h4>
+<p>&nbsp;</p>
+<p>Open <code>config.py</code> and edit the values at the top:</p>
+<p>&nbsp;</p>
+<pre><code class="language-python">OLLAMA_MODEL    = &quot;qwen3:4b&quot;   # LLM for answering
+EMBEDDING_MODEL = &quot;qwen3:4b&quot;   # Embedding model
+CHUNK_SIZE      = 500
+CHUNK_OVERLAP   = 50
+TOP_K_RESULTS   = 5
+</code></pre>
+<p>&nbsp;</p>
+<p>After changing <code>EMBEDDING_MODEL</code> or chunking settings, run:</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">python update.py --mode reconstruct
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
             <div class="card-content"><h3>HPC Job Management Tools</h3>
 <p>&nbsp;</p>
 <p>This script is a <strong><code>Bash</code></strong>-based utility designed to automate the configuration and submission of <a href="https://slurm.schedmd.com/"><strong><code>Slurm</code></strong></a>-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery.</p>
@@ -151,9 +291,7 @@
     ${COMSOL_METHOD_}
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3>Nanotube Builder and Mesher</h3>
 <p>&nbsp;</p>
@@ -287,7 +425,9 @@
 <li><code>u, v</code> — UV texture coordinates</li>
 </ul></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3>COSMO-SAC Activity Coefficient Model</h3>
 <p>&nbsp;</p>
@@ -541,9 +681,7 @@ end
 end
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3>COSMO-SAC Sigma Profile Generator</h3>
 <p>&nbsp;</p>
@@ -658,7 +796,9 @@ end
 end
 </code></pre></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3>COSMO-SAC Sigma Profile Processor</h3>
 <p>&nbsp;</p>
@@ -869,7 +1009,6 @@ for j in `seq 1 $segmentnum`
 done    
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
     </div>
 </body>
