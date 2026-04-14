@@ -327,7 +327,7 @@ def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt;
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            &quot;AUREL SYSTEMS: Vector Database Manager\n\n&quot;
+            &quot;Vector Database Manager\n\n&quot;
             &quot;Manages the ChromaDB store for engineering document analysis.\n&quot;
             &quot;This script tracks which files are indexed to avoid duplicate processing.&quot;
         ),
@@ -558,7 +558,7 @@ if __name__ == &quot;__main__&quot;:
 <p>Configuration file for models, paths, and chunking settings</p>
 <p>&nbsp;</p>
 <pre><code class="language-bash">&quot;&quot;&quot;
-config.py — Shared configuration for the Aurel Systems RAG pipeline.
+config.py — Shared configuration for RAG pipeline.
 This file manages models, paths, and environment-specific path conversions.
 &quot;&quot;&quot;
 
@@ -660,7 +660,7 @@ def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
 
 if __name__ == &quot;__main__&quot;:
     parser = argparse.ArgumentParser(
-        description=&quot;AUREL SYSTEMS: Configuration &amp; Path Verifier&quot;,
+        description=&quot;Configuration &amp; Path Verifier&quot;,
         epilog=&quot;Run this script to verify your WSL mount points and model settings.&quot;
     )
     # Parse to allow --help but we don't need actual arguments
@@ -669,7 +669,7 @@ if __name__ == &quot;__main__&quot;:
 &amp;nbsp;
 
     print(&quot;=&quot;*40)
-    print(&quot; AUREL SYSTEMS CONFIGURATION CHECK&quot;)
+    print(&quot;Configuration Check&quot;)
     print(&quot;=&quot;*40)
     print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
     print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
