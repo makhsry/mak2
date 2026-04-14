@@ -72,23 +72,18 @@ import os
 import shutil
 import sys
 import uuid
- 
+
 # Modern LangChain Imports
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_ollama import OllamaEmbeddings
-#from langchain_community.document_loaders import (
-#    PyPDFLoader,
-#    TextLoader,
-#    BSHTMLLoader,
-#    UnstructuredFileLoader,
-#)
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
 from langchain_unstructured import UnstructuredLoader
- 
+
 import config
- 
+from tqdm import tqdm
+
 # Priority mapping for loaders
 SPECIFIC_LOADERS = {
     ".pdf": PyPDFLoader,
@@ -96,51 +91,54 @@ SPECIFIC_LOADERS = {
     ".htm": BSHTMLLoader,
     ".txt": TextLoader,
 }
- 
+
 # Document loading
- 
+
 def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -> list[Document]:
-    """Smartly loads files, reports actions, and isolates failures."""
+    """Smartly loads files, reports actions via tqdm.write, and isolates failures."""
     docs: list[Document] = []
     folder_path = os.path.abspath(folder_path)
     error_dir = os.path.join(folder_path, ".not_indexed")
- 
+
+    # Gather all files first for accurate progress
+    files_to_process = []
     for root, dirs, files in os.walk(folder_path):
         if ".not_indexed" in root:
             continue
- 
         for filename in files:
-            file_path = os.path.join(root, filename)
-            ext = os.path.splitext(filename)[1].lower()
- 
-            # Report skipping if in append mode and file is already indexed
-            if append_mode and file_path in indexed_sources:
-                print(f"  [Skip] Already indexed: {filename}")
-                continue
- 
-            #loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredFileLoader)
-            loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
- 
+            files_to_process.append(os.path.join(root, filename))
+
+    # tqdm.write() ensures "echoing" doesn't break the progress bar
+    for file_path in tqdm(files_to_process, desc=f"Scanning {os.path.basename(folder_path)}", unit="file"):
+        filename = os.path.basename(file_path)
+        ext = os.path.splitext(filename)[1].lower()
+
+        if append_mode and file_path in indexed_sources:
+            tqdm.write(f"  [Skip] Already indexed: {filename}")
+            continue
+
+        loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
+        
+        try:
+            tqdm.write(f"  [Process] Loading: {filename} ({loader_cls.__name__})")
+            loader = loader_cls(file_path)
+            docs.extend(loader.load())
+        except Exception as exc:
+            tqdm.write(f"  [!! Error] Failed to read {filename}: {exc}")
+            if not os.path.exists(error_dir):
+                os.makedirs(error_dir)
             try:
-                print(f"  [Process] Loading: {filename} ({loader_cls.__name__})")
-                loader = loader_cls(file_path)
-                docs.extend(loader.load())
-            except Exception as exc:
-                print(f"  [!! Error] Failed to read {filename}: {exc}")
-                if not os.path.exists(error_dir):
-                    os.makedirs(error_dir)
-                try:
-                    dest = os.path.join(error_dir, filename)
-                    if os.path.exists(dest):
-                        dest = f"{dest}_{uuid.uuid4().hex[:4]}"
-                    shutil.move(file_path, dest)
-                    print(f"  [Moved] {filename} -> .not_indexed/")
-                except Exception as move_exc:
-                    print(f"  [Critical] Could not move file: {move_exc}")
+                dest = os.path.join(error_dir, filename)
+                if os.path.exists(dest):
+                    dest = f"{dest}_{uuid.uuid4().hex[:4]}"
+                shutil.move(file_path, dest)
+                tqdm.write(f"  [Moved] {filename} -> .not_indexed/")
+            except Exception as move_exc:
+                tqdm.write(f"  [Critical] Could not move file: {move_exc}")
     return docs
- 
+
 # Main Logic
- 
+
 def main():
     parser = argparse.ArgumentParser(
         description=(
@@ -155,20 +153,20 @@ def main():
             "  python database.py --rebuild   # Wipe and re-index all folders\n"
         )
     )
- 
+    
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--rebuild", action="store_true", help="Wipe and rebuild the DB from scratch.")
     group.add_argument("--append", action="store_true", help="Add only new files.")
- 
+
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
- 
+
     args = parser.parse_args()
     folders = config.load_folders()
     embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
     indexed_sources = set()
- 
+
     # 1. Initialize Mode
     if args.rebuild:
         if os.path.exists(config.CHROMA_DB_PATH):
@@ -179,18 +177,19 @@ def main():
         existing_data = vectorstore.get()
         indexed_sources = set(m.get('source') for m in existing_data['metadatas'])
         print(f"[db] Action: Append mode. Found {len(indexed_sources)} files already in database.")
- 
+
     # 2. Document Collection
     all_new_docs = []
     for f in folders:
+        # Keeping the folder header print
         print(f"\n[db] Scanning Folder: {f}")
         folder_docs = load_folder(f, indexed_sources, args.append)
         all_new_docs.extend(folder_docs)
- 
+
     if not all_new_docs:
         print("\n[db] Result: No new documents to index. Database is up to date.")
         return
- 
+
     # 3. Chunking & Embedding
     print(f"\n[db] Splitting {len(all_new_docs)} documents into chunks...")
     splitter = RecursiveCharacterTextSplitter(
@@ -198,20 +197,30 @@ def main():
         chunk_overlap=config.CHUNK_OVERLAP
     )
     chunks = splitter.split_documents(all_new_docs)
- 
+
     print(f"[db] Embedding {len(chunks)} chunks using '{config.EMBEDDING_MODEL}'...")
- 
+    
+    # Batch processing for the progress bar
+    batch_size = 50 
+    
     if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
-        Chroma.from_documents(
-            documents=chunks, 
+        # Initial chunk to create the store
+        vectorstore = Chroma.from_documents(
+            documents=chunks[:batch_size], 
             embedding=embeddings, 
             persist_directory=config.CHROMA_DB_PATH
         )
+        start_idx = batch_size
     else:
-        vectorstore.add_documents(chunks)
- 
+        start_idx = 0
+
+    # Indexing Progress Bar
+    for i in tqdm(range(start_idx, len(chunks), batch_size), desc="Indexing Chunks", unit="batch"):
+        batch = chunks[i : i + batch_size]
+        vectorstore.add_documents(batch)
+    
     print(f"\n[db] ✓ Success! Added {len(chunks)} new chunks to the vector store.")
- 
+
 if __name__ == "__main__":
     main()
 ```
