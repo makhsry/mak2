@@ -431,37 +431,61 @@ if __name__ == &quot;__main__&quot;:
 import sys
 import os
 import config
-from langchain_community.vectorstores import Chroma
-from langchain_ollama import OllamaEmbeddings, OllamaLLM
-from langchain.chains import RetrievalQA
 
 &amp;nbsp;
 
-def get_chain():
-    &quot;&quot;&quot;Helper to initialize the RAG chain.&quot;&quot;&quot;
+# Modern Imports matching database.py
+from langchain_community.vectorstores import Chroma
+from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
+&amp;nbsp;
+
+def get_rag_chain():
+    &quot;&quot;&quot;Helper to initialize the RAG chain using LCEL.&quot;&quot;&quot;
     if not os.path.exists(config.CHROMA_DB_PATH):
         print(f&quot;[error] Database not found at {config.CHROMA_DB_PATH}. Run 'python database.py --rebuild' first.&quot;)
         sys.exit(1)
 
 &amp;nbsp;
 
+    # Setup Retrieval
     embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
     vectorstore = Chroma(
         persist_directory=config.CHROMA_DB_PATH,
         embedding_function=embeddings,
     )
+    retriever = vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS})
 
 &amp;nbsp;
 
+    # Setup LLM
     llm = OllamaLLM(model=config.OLLAMA_MODEL)
 
 &amp;nbsp;
 
-    return RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type=&quot;stuff&quot;,
-        retriever=vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS}),
+    # Define the Prompt Template
+    template = &quot;&quot;&quot;Answer the question based only on the following context:
+    {context}
+
+&amp;nbsp;
+
+    Question: {question}
+    &quot;&quot;&quot;
+    prompt = ChatPromptTemplate.from_template(template)
+
+&amp;nbsp;
+
+    # Create the Chain (LCEL style)
+    chain = (
+        {&quot;context&quot;: retriever, &quot;question&quot;: RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
     )
+    return chain
 
 &amp;nbsp;
 
@@ -471,9 +495,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             &quot;Examples:\n&quot;
-            &quot;  python query.py --file          # Run using content in prompt.txt\n&quot;
-            &quot;  python query.py --question \&quot;Ask your question here\&quot;\n&quot;
-            &quot;  python query.py --interactive   # Start a live chat session&quot;
+            &quot;  python query.py --file          # Run using prompt.txt\n&quot;
+            &quot;  python query.py --question \&quot;...\&quot; # Ask a specific question\n&quot;
+            &quot;  python query.py --interactive   # Start a live chat&quot;
         )
     )
 
@@ -481,50 +505,45 @@ def main():
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(&quot;--interactive&quot;, action=&quot;store_true&quot;, help=&quot;Start an interactive chat session.&quot;)
-    group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question via command line.&quot;)
-    group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Execute using the prompt defined in prompt.txt.&quot;)
+    group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question.&quot;)
+    group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Use content in prompt.txt.&quot;)
 
 &amp;nbsp;
 
     args = parser.parse_args()
-
-&amp;nbsp;
-
-    # Initialize the RAG logic
-    qa_chain = get_chain()
+    rag_chain = get_rag_chain()
 
 &amp;nbsp;
 
     if args.file:
-        prompt = config.load_prompt()
+        user_prompt = config.load_prompt()
         print(f&quot;[query] Running batch prompt from {config.PROMPT_FILE}...&quot;)
-        result = qa_chain.invoke(prompt)
-        print(f&quot;\n--- ANSWER ---\n{result['result']}&quot;)
+        response = rag_chain.invoke(user_prompt)
+        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
 
 &amp;nbsp;
 
     elif args.question:
-        print(f&quot;[query] Processing question: {args.question}&quot;)
-        result = qa_chain.invoke(args.question)
-        print(f&quot;\n--- ANSWER ---\n{result['result']}&quot;)
+        print(f&quot;[query] Processing: {args.question}&quot;)
+        response = rag_chain.invoke(args.question)
+        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
 
 &amp;nbsp;
 
     elif args.interactive:
         print(&quot;\n--- INTERACTIVE MODE ---&quot;)
-        print(&quot;Type 'exit' or 'quit' to end the session.\n&quot;)
+        print(&quot;Type 'exit' or 'quit' to end.\n&quot;)
         while True:
             user_input = input(&quot;You: &quot;).strip()
             if user_input.lower() in [&quot;exit&quot;, &quot;quit&quot;]:
                 break
-            if not user_input:
-                continue
+            if not user_input: continue
 
 &amp;nbsp;
 
             print(&quot;Thinking...&quot;)
-            result = qa_chain.invoke(user_input)
-            print(f&quot;AI: {result['result']}\n&quot;)
+            response = rag_chain.invoke(user_input)
+            print(f&quot;AI: {response}\n&quot;)
 
 &amp;nbsp;
 
@@ -538,85 +557,141 @@ if __name__ == &quot;__main__&quot;:
 <p>&nbsp;</p>
 <p>Configuration file for models, paths, and chunking settings</p>
 <p>&nbsp;</p>
-<pre><code class="language-bash">import os
+<pre><code class="language-bash">&quot;&quot;&quot;
+config.py — Shared configuration for the Aurel Systems RAG pipeline.
+This file manages models, paths, and environment-specific path conversions.
+&quot;&quot;&quot;
+
+&amp;nbsp;
+
+import os
 import re
 import sys
 import argparse
 
 &amp;nbsp;
 
-# -- Current Settings --
-OLLAMA_MODEL    = &quot;gemma4:latest&quot;
-EMBEDDING_MODEL = &quot;nomic-embed-text&quot;
-CHROMA_DB_PATH  = &quot;./databases/&quot;
-CHUNK_SIZE      = 500
-CHUNK_OVERLAP   = 50
-TOP_K_RESULTS   = 5
-FOLDERS_FILE    = &quot;folders.txt&quot;
-PROMPT_FILE     = &quot;prompt.txt&quot;
+# --- Models ---
+OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
+EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
+
+&amp;nbsp;
+
+# --- Vector Store ---
+CHROMA_DB_PATH = &quot;./aurelsystems&quot;      # Directory for the Chroma database
+
+&amp;nbsp;
+
+# --- Chunking &amp; Retrieval ---
+CHUNK_SIZE    = 500                    # Characters per chunk
+CHUNK_OVERLAP = 50                     # Overlap between chunks
+TOP_K_RESULTS = 5                      # Number of chunks to retrieve per query
+
+&amp;nbsp;
+
+# --- Input Files ---
+FOLDERS_FILE = &quot;folders.txt&quot;           # File containing paths to scan
+PROMPT_FILE  = &quot;prompt.txt&quot;            # File containing the main prompt/question
+
+&amp;nbsp;
+
+# --- Path Helpers ---
 
 &amp;nbsp;
 
 def _win_to_wsl(path: str) -&gt; str:
+    &quot;&quot;&quot;
+    Automatically converts Windows paths to WSL paths.
+    C:\\Users\\Docs -&gt; /mnt/c/Users/Docs
+    &quot;&quot;&quot;
     path = path.strip()
+    # Match C:\... or C:/...
     m = re.match(r'^([A-Za-z]):[/\\\\](.*)', path)
     if m:
         drive, rest = m.groups()
         rest = rest.replace('\\', '/')
         return f&quot;/mnt/{drive.lower()}/{rest}&quot;
+    # If already Unix-style or relative, just fix slashes
     return path.replace('\\', '/')
 
 &amp;nbsp;
 
 def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
+    &quot;&quot;&quot;Reads and normalizes folder paths from the folders file.&quot;&quot;&quot;
     if not os.path.exists(filepath):
         return []
+
+&amp;nbsp;
+
     folders = []
     with open(filepath, encoding=&quot;utf-8&quot;) as fh:
         for raw in fh:
             line = raw.strip()
             if not line or line.startswith(&quot;#&quot;):
                 continue
+
+&amp;nbsp;
+
             unix_path = _win_to_wsl(line)
-            folders.append(unix_path)
+            # Ensure the directory exists before adding
+            if os.path.isdir(unix_path):
+                folders.append(unix_path)
+            else:
+                print(f&quot;[config] WARNING: Folder not found: {unix_path}&quot;)
+
+&amp;nbsp;
+
     return folders
 
 &amp;nbsp;
 
 def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
+    &quot;&quot;&quot;Reads the content of the prompt file.&quot;&quot;&quot;
     if not os.path.exists(filepath):
-        return &quot;No prompt found.&quot;
+        return &quot;No prompt found. Please check prompt.txt.&quot;
     with open(filepath, encoding=&quot;utf-8&quot;) as fh:
         return fh.read().strip()
 
 &amp;nbsp;
 
-# -- Help and Verification Feature --
+# --- Help &amp; Verification ---
+
+&amp;nbsp;
+
 if __name__ == &quot;__main__&quot;:
     parser = argparse.ArgumentParser(
-        description=&quot;Configuration Verifier&quot;,
-        epilog=&quot;This file contains the core settings for your RAG pipeline.&quot;
+        description=&quot;AUREL SYSTEMS: Configuration &amp; Path Verifier&quot;,
+        epilog=&quot;Run this script to verify your WSL mount points and model settings.&quot;
     )
-    parser.parse_args() # Just to enable --help
+    # Parse to allow --help but we don't need actual arguments
+    _ = parser.parse_known_args()
 
 &amp;nbsp;
 
-    print(&quot;--- SYSTEM CONFIGURATION ---&quot;)
+    print(&quot;=&quot;*40)
+    print(&quot; AUREL SYSTEMS CONFIGURATION CHECK&quot;)
+    print(&quot;=&quot;*40)
     print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
     print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
-    print(f&quot;DB Location:     {os.path.abspath(CHROMA_DB_PATH)}&quot;)
-    print(f&quot;Chunk Settings:  {CHUNK_SIZE} size / {CHUNK_OVERLAP} overlap&quot;)
+    print(f&quot;Database Path:   {os.path.abspath(CHROMA_DB_PATH)}&quot;)
 
 &amp;nbsp;
 
-    print(&quot;\n--- ACTIVE FOLDERS ---&quot;)
+    print(&quot;\n--- Folder Path Verification ---&quot;)
     active_folders = load_folders()
-    if active_folders:
-        for f in active_folders:
-            status = &quot;✓ Found&quot; if os.path.exists(f) else &quot;✗ NOT FOUND&quot;
-            print(f&quot;  {status}: {f}&quot;)
+    if not active_folders:
+        print(&quot;  [!] No valid folders found. Check your folders.txt file.&quot;)
     else:
-        print(&quot;  ! No folders listed in folders.txt&quot;)
+        for f in active_folders:
+            print(f&quot;  [✓] Detected: {f}&quot;)
+
+&amp;nbsp;
+
+    print(&quot;\n--- Prompt Preview ---&quot;)
+    p_content = load_prompt()
+    preview = (p_content[:75] + '...') if len(p_content) &gt; 75 else p_content
+    print(f&quot;  Content: {preview}&quot;)
+    print(&quot;=&quot;*40)
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
