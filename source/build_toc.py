@@ -58,8 +58,9 @@ def main():
     # Sort descending by priority (standard for the portfolio site)
     matching_files.sort(key=get_sort_key, reverse=True)
 
-    toc_lines = [f"## {args.tab}", ""]
+    #toc_lines = [f"## {args.tab}", ""]
     #toc_lines = [f"## {args.tab}s", ""]
+    toc_lines = []
     
     for f in matching_files:
         first_line = get_first_line(f)
