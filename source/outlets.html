@@ -121,24 +121,24 @@
 <p>&nbsp;</p>
 <h4>Scripts</h4>
 <p>&nbsp;</p>
-<ol>
-<li>Preparing (if running on google colab) </li>
-</ol>
+<ul>
+<li><strong>Preparing</strong> (if running on google colab) </li>
+</ul>
 <pre><code class="language-bash">from google.colab import drive
 drive.mount('/content/drive')
 %cd /content/drive/My Drive/GPX/
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Installing required modules (if not already installed)</li>
-</ol>
+<ul>
+<li><strong>Installing required modules</strong> (if not already installed)</li>
+</ul>
 <pre><code class="language-bash">!pip install osmnx -q
 !pip install gpxpy -q
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Loading required modules</li>
-</ol>
+<ul>
+<li><strong>Loading required modules</strong></li>
+</ul>
 <pre><code class="language-bash">import numpy as np
 import cv2
 from PIL import Image
@@ -153,9 +153,9 @@ from skimage import measure
 import os
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Getting city's street network from OpenStreetMap</li>
-</ol>
+<ul>
+<li><strong>Getting city's street network from OpenStreetMap</strong></li>
+</ul>
 <pre><code class="language-bash">place_name = &quot;Vancouver, BC, Canada&quot;
 network_type = 'bike'
 print(f&quot;Downloading {network_type} network for {place_name}&quot;)
@@ -166,9 +166,9 @@ plt.show()
 plt.close(fig)
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Processing the image</li>
-</ol>
+<ul>
+<li><strong>Processing the image</strong></li>
+</ul>
 <pre><code class="language-bash">filename = 'image.png'
 filename_without_ext = os.path.splitext(filename)[0]
 try:
@@ -183,13 +183,13 @@ plt.axis('off')
 plt.close()
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Color range hsv (update to be inclusive if needed) - <em>moved to the botoom of the this post</em>. </li>
-</ol>
+<ul>
+<li><strong>Color range hsv</strong> (update to be inclusive if needed) - <em>moved to the botoom of the this post</em>. </li>
+</ul>
 <p>&nbsp;</p>
-<ol>
-<li>Detects colors used in the image</li>
-</ol>
+<ul>
+<li><strong>Detects colors used in the image</strong></li>
+</ul>
 <pre><code class="language-bash">detected_colors = []
 total_pixels = img_np.shape[0] * img_np.shape[1]
 min_pixels_threshold = total_pixels * 0.001 #
@@ -258,9 +258,9 @@ for color in detected_colors:
 plt.close()
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Creates outlines for each color</li>
-</ol>
+<ul>
+<li><strong>Creates outlines for each color</strong></li>
+</ul>
 <pre><code class="language-bash">outline_imgs = {}
 #
 for color in detected_colors:
@@ -284,9 +284,9 @@ for color in detected_colors:
     outline_imgs[color] = outline_img
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Attempts to get the boundary/perimeter of the pattern as a continuous path</li>
-</ol>
+<ul>
+<li><strong>Attempts to get the boundary/perimeter of the pattern as a continuous path</strong></li>
+</ul>
 <pre><code class="language-bash">skeleton_imgs = {}
 #
 for color in detected_colors:
@@ -318,9 +318,9 @@ for color in detected_colors:
 plt.close()
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Overlaying image onto map - to detect the main extent using color or outermost layer</li>
-</ol>
+<ul>
+<li><strong>Overlaying image onto map - to detect the main extent using color or outermost layer</strong></li>
+</ul>
 <pre><code class="language-bash">####**specify the outermost color**
 detected_colors
 outermost_color = 'yellow'
@@ -428,9 +428,9 @@ plt.show()
 - <strong>Does it look good?</strong><br />
 - <strong>Does it fit in the network?</strong></p>
 <p>&nbsp;</p>
-<ol>
-<li>Production step</li>
-</ol>
+<ul>
+<li><strong>Production step</strong></li>
+</ul>
 <pre><code class="language-bash">coordinates = {}
 figv, axv = ox.plot_graph(G, node_size=0, edge_color='black',
                         edge_linewidth=0.5, bgcolor='white', show=False, close=False)
@@ -500,9 +500,9 @@ axv.legend()
 plt.show()
 </code></pre>
 <p>&nbsp;</p>
-<ol>
-<li>Writing out</li>
-</ol>
+<ul>
+<li><strong>Writing out</strong></li>
+</ul>
 <pre><code class="language-bash">#Creating GPS and exporting GPX file
 for _, color in enumerate(detected_colors):
   #
