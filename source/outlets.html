@@ -233,8 +233,6 @@ import shutil
 import sys
 import uuid
 
-&amp;nbsp;
-
 # Modern LangChain Imports
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -243,12 +241,8 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
 from langchain_unstructured import UnstructuredLoader
 
-&amp;nbsp;
-
 import config
 from tqdm import tqdm
-
-&amp;nbsp;
 
 # Priority mapping for loaders
 SPECIFIC_LOADERS = {
@@ -258,19 +252,13 @@ SPECIFIC_LOADERS = {
     &quot;.txt&quot;: TextLoader,
 }
 
-&amp;nbsp;
-
 # Document loading
-
-&amp;nbsp;
 
 def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
     &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
     docs: list[Document] = []
     folder_path = os.path.abspath(folder_path)
     error_dir = os.path.join(folder_path, &quot;.not_indexed&quot;)
-
-&amp;nbsp;
 
     # Gather all files first for accurate progress
     files_to_process = []
@@ -280,24 +268,16 @@ def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt;
         for filename in files:
             files_to_process.append(os.path.join(root, filename))
 
-&amp;nbsp;
-
     # tqdm.write() ensures &quot;echoing&quot; doesn't break the progress bar
     for file_path in tqdm(files_to_process, desc=f&quot;Scanning {os.path.basename(folder_path)}&quot;, unit=&quot;file&quot;):
         filename = os.path.basename(file_path)
         ext = os.path.splitext(filename)[1].lower()
 
-&amp;nbsp;
-
         if append_mode and file_path in indexed_sources:
             tqdm.write(f&quot;  [Skip] Already indexed: {filename}&quot;)
             continue
 
-&amp;nbsp;
-
         loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
-
-&amp;nbsp;
 
         try:
             tqdm.write(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
@@ -317,11 +297,7 @@ def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt;
                 tqdm.write(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
     return docs
 
-&amp;nbsp;
-
 # Main Logic
-
-&amp;nbsp;
 
 def main():
     parser = argparse.ArgumentParser(
@@ -338,26 +314,18 @@ def main():
         )
     )
 
-&amp;nbsp;
-
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(&quot;--rebuild&quot;, action=&quot;store_true&quot;, help=&quot;Wipe and rebuild the DB from scratch.&quot;)
     group.add_argument(&quot;--append&quot;, action=&quot;store_true&quot;, help=&quot;Add only new files.&quot;)
-
-&amp;nbsp;
 
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
 
-&amp;nbsp;
-
     args = parser.parse_args()
     folders = config.load_folders()
     embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
     indexed_sources = set()
-
-&amp;nbsp;
 
     # 1. Initialize Mode
     if args.rebuild:
@@ -370,8 +338,6 @@ def main():
         indexed_sources = set(m.get('source') for m in existing_data['metadatas'])
         print(f&quot;[db] Action: Append mode. Found {len(indexed_sources)} files already in database.&quot;)
 
-&amp;nbsp;
-
     # 2. Document Collection
     all_new_docs = []
     for f in folders:
@@ -380,13 +346,9 @@ def main():
         folder_docs = load_folder(f, indexed_sources, args.append)
         all_new_docs.extend(folder_docs)
 
-&amp;nbsp;
-
     if not all_new_docs:
         print(&quot;\n[db] Result: No new documents to index. Database is up to date.&quot;)
         return
-
-&amp;nbsp;
 
     # 3. Chunking &amp; Embedding
     print(f&quot;\n[db] Splitting {len(all_new_docs)} documents into chunks...&quot;)
@@ -396,16 +358,10 @@ def main():
     )
     chunks = splitter.split_documents(all_new_docs)
 
-&amp;nbsp;
-
     print(f&quot;[db] Embedding {len(chunks)} chunks using '{config.EMBEDDING_MODEL}'...&quot;)
-
-&amp;nbsp;
 
     # Batch processing for the progress bar
     batch_size = 50 
-
-&amp;nbsp;
 
     if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
         # Initial chunk to create the store
@@ -418,18 +374,12 @@ def main():
     else:
         start_idx = 0
 
-&amp;nbsp;
-
     # Indexing Progress Bar
     for i in tqdm(range(start_idx, len(chunks), batch_size), desc=&quot;Indexing Chunks&quot;, unit=&quot;batch&quot;):
         batch = chunks[i : i + batch_size]
         vectorstore.add_documents(batch)
 
-&amp;nbsp;
-
     print(f&quot;\n[db] ✓ Success! Added {len(chunks)} new chunks to the vector store.&quot;)
-
-&amp;nbsp;
 
 if __name__ == &quot;__main__&quot;:
     main()
@@ -446,8 +396,6 @@ import sys
 import os
 import config
 
-&amp;nbsp;
-
 # Modern Imports matching database.py
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
@@ -455,15 +403,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
-&amp;nbsp;
-
 def get_rag_chain():
     &quot;&quot;&quot;Helper to initialize the RAG chain using LCEL.&quot;&quot;&quot;
     if not os.path.exists(config.CHROMA_DB_PATH):
         print(f&quot;[error] Database not found at {config.CHROMA_DB_PATH}. Run 'python database.py --rebuild' first.&quot;)
         sys.exit(1)
-
-&amp;nbsp;
 
     # Setup Retrieval
     embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
@@ -473,24 +417,16 @@ def get_rag_chain():
     )
     retriever = vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS})
 
-&amp;nbsp;
-
     # Setup LLM
     llm = OllamaLLM(model=config.OLLAMA_MODEL)
-
-&amp;nbsp;
 
     # Define the Prompt Template
     template = &quot;&quot;&quot;Answer the question based only on the following context:
     {context}
 
-&amp;nbsp;
-
     Question: {question}
     &quot;&quot;&quot;
     prompt = ChatPromptTemplate.from_template(template)
-
-&amp;nbsp;
 
     # Create the Chain (LCEL style)
     chain = (
@@ -500,8 +436,6 @@ def get_rag_chain():
         | StrOutputParser()
     )
     return chain
-
-&amp;nbsp;
 
 def main():
     parser = argparse.ArgumentParser(
@@ -515,19 +449,13 @@ def main():
         )
     )
 
-&amp;nbsp;
-
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(&quot;--interactive&quot;, action=&quot;store_true&quot;, help=&quot;Start an interactive chat session.&quot;)
     group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question.&quot;)
     group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Use content in prompt.txt.&quot;)
 
-&amp;nbsp;
-
     args = parser.parse_args()
     rag_chain = get_rag_chain()
-
-&amp;nbsp;
 
     if args.file:
         user_prompt = config.load_prompt()
@@ -535,14 +463,10 @@ def main():
         response = rag_chain.invoke(user_prompt)
         print(f&quot;\n--- ANSWER ---\n{response}&quot;)
 
-&amp;nbsp;
-
     elif args.question:
         print(f&quot;[query] Processing: {args.question}&quot;)
         response = rag_chain.invoke(args.question)
         print(f&quot;\n--- ANSWER ---\n{response}&quot;)
-
-&amp;nbsp;
 
     elif args.interactive:
         print(&quot;\n--- INTERACTIVE MODE ---&quot;)
@@ -553,13 +477,9 @@ def main():
                 break
             if not user_input: continue
 
-&amp;nbsp;
-
             print(&quot;Thinking...&quot;)
             response = rag_chain.invoke(user_input)
             print(f&quot;AI: {response}\n&quot;)
-
-&amp;nbsp;
 
 if __name__ == &quot;__main__&quot;:
     main()
@@ -576,42 +496,28 @@ config.py — Shared configuration for RAG pipeline.
 This file manages models, paths, and environment-specific path conversions.
 &quot;&quot;&quot;
 
-&amp;nbsp;
-
 import os
 import re
 import sys
 import argparse
 
-&amp;nbsp;
-
 # --- Models ---
 OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
 EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
 
-&amp;nbsp;
-
 # --- Vector Store ---
 CHROMA_DB_PATH = &quot;./aurelsystems&quot;      # Directory for the Chroma database
-
-&amp;nbsp;
 
 # --- Chunking &amp; Retrieval ---
 CHUNK_SIZE    = 500                    # Characters per chunk
 CHUNK_OVERLAP = 50                     # Overlap between chunks
 TOP_K_RESULTS = 5                      # Number of chunks to retrieve per query
 
-&amp;nbsp;
-
 # --- Input Files ---
 FOLDERS_FILE = &quot;folders.txt&quot;           # File containing paths to scan
 PROMPT_FILE  = &quot;prompt.txt&quot;            # File containing the main prompt/question
 
-&amp;nbsp;
-
 # --- Path Helpers ---
-
-&amp;nbsp;
 
 def _win_to_wsl(path: str) -&gt; str:
     &quot;&quot;&quot;
@@ -628,14 +534,10 @@ def _win_to_wsl(path: str) -&gt; str:
     # If already Unix-style or relative, just fix slashes
     return path.replace('\\', '/')
 
-&amp;nbsp;
-
 def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
     &quot;&quot;&quot;Reads and normalizes folder paths from the folders file.&quot;&quot;&quot;
     if not os.path.exists(filepath):
         return []
-
-&amp;nbsp;
 
     folders = []
     with open(filepath, encoding=&quot;utf-8&quot;) as fh:
@@ -644,8 +546,6 @@ def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
             if not line or line.startswith(&quot;#&quot;):
                 continue
 
-&amp;nbsp;
-
             unix_path = _win_to_wsl(line)
             # Ensure the directory exists before adding
             if os.path.isdir(unix_path):
@@ -653,11 +553,7 @@ def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
             else:
                 print(f&quot;[config] WARNING: Folder not found: {unix_path}&quot;)
 
-&amp;nbsp;
-
     return folders
-
-&amp;nbsp;
 
 def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
     &quot;&quot;&quot;Reads the content of the prompt file.&quot;&quot;&quot;
@@ -666,11 +562,7 @@ def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
     with open(filepath, encoding=&quot;utf-8&quot;) as fh:
         return fh.read().strip()
 
-&amp;nbsp;
-
 # --- Help &amp; Verification ---
-
-&amp;nbsp;
 
 if __name__ == &quot;__main__&quot;:
     parser = argparse.ArgumentParser(
@@ -680,16 +572,12 @@ if __name__ == &quot;__main__&quot;:
     # Parse to allow --help but we don't need actual arguments
     _ = parser.parse_known_args()
 
-&amp;nbsp;
-
     print(&quot;=&quot;*40)
     print(&quot;Configuration Check&quot;)
     print(&quot;=&quot;*40)
     print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
     print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
     print(f&quot;Database Path:   {os.path.abspath(CHROMA_DB_PATH)}&quot;)
-
-&amp;nbsp;
 
     print(&quot;\n--- Folder Path Verification ---&quot;)
     active_folders = load_folders()
@@ -698,8 +586,6 @@ if __name__ == &quot;__main__&quot;:
     else:
         for f in active_folders:
             print(f&quot;  [✓] Detected: {f}&quot;)
-
-&amp;nbsp;
 
     print(&quot;\n--- Prompt Preview ---&quot;)
     p_content = load_prompt()
@@ -731,8 +617,6 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-&amp;nbsp;
-
 if sys.platform == 'win32':
     RAW_ROOT = Path(r&quot;c:\Users\MAK\Downloads\Takeout\Fitbit&quot;)
 else:
@@ -744,7 +628,6 @@ HEART_RATE_DIR = GPS_DATA_DIR
 OUTPUT_DIR = RAW_ROOT / &quot;Workout_GPX_Exports&quot;
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-&amp;nbsp;
 
 def parse_csv_datetime(value: str):
     if not value:
@@ -756,7 +639,6 @@ def parse_csv_datetime(value: str):
     except ValueError:
         return None
 
-&amp;nbsp;
 
 def parse_json_start(value: str):
     if not value:
@@ -768,7 +650,6 @@ def parse_json_start(value: str):
             continue
     return None
 
-&amp;nbsp;
 
 def load_exercise_metadata():
     rows = []
@@ -795,7 +676,6 @@ def load_exercise_metadata():
                 })
     return rows
 
-&amp;nbsp;
 
 def load_gps_points():
     gps_by_date = {}
@@ -821,7 +701,6 @@ def load_gps_points():
         pts.sort(key=lambda p: p['timestamp'])
     return gps_by_date
 
-&amp;nbsp;
 
 def load_heart_rate_data():
     heart_rate_by_date = {}
@@ -847,7 +726,6 @@ def load_heart_rate_data():
         }
     return heart_rate_by_date
 
-&amp;nbsp;
 
 def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(seconds=30)):
     best = None
@@ -874,7 +752,6 @@ def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(s
                     return best
     return best
 
-&amp;nbsp;
 
 def build_csv_index(metadata_rows):
     index = {}
@@ -883,7 +760,6 @@ def build_csv_index(metadata_rows):
         index.setdefault(key, []).append(row)
     return index
 
-&amp;nbsp;
 
 def match_activity_to_csv(activity, csv_index):
     key = activity['start_time'].isoformat()
@@ -900,7 +776,6 @@ def match_activity_to_csv(activity, csv_index):
                 best_delta = delta
     return best
 
-&amp;nbsp;
 
 def parse_exercise_json():
     activities = []
@@ -937,7 +812,6 @@ def parse_exercise_json():
             })
     return activities
 
-&amp;nbsp;
 
 def build_gpx(activity, points):
     gpx = ET.Element('gpx', {
@@ -980,7 +854,6 @@ def build_gpx(activity, points):
     indent_xml(gpx)
     return ET.tostring(gpx, encoding='unicode')
 
-&amp;nbsp;
 
 def indent_xml(element, level=0):
     indent = '\n' + ('  ' * level)
@@ -995,7 +868,6 @@ def indent_xml(element, level=0):
         if level and (not element.tail or not element.tail.strip()):
             element.tail = indent
 
-&amp;nbsp;
 
 def points_for_activity(activity, gps_by_date, heart_rate_by_date):
     if not gps_by_date:
@@ -1016,7 +888,6 @@ def points_for_activity(activity, gps_by_date, heart_rate_by_date):
             point['heart_rate'] = hr['bpm']
     return pts
 
-&amp;nbsp;
 
 def filename_for_activity(activity, exercise_id, cutoff_time):
     start_str = activity['start_time'].strftime('%Y%m%dT%H%M%SZ')
@@ -1027,7 +898,6 @@ def filename_for_activity(activity, exercise_id, cutoff_time):
         f&quot;{cutoff_str}_{activity['logId']}_{activity['activityTypeId']}.gpx&quot;
     )
 
-&amp;nbsp;
 
 def main():
     print('Loading exercise metadata from CSV...')
@@ -1035,13 +905,9 @@ def main():
     csv_index = build_csv_index(csv_rows)
     print(f'  Loaded {len(csv_rows)} exercise metadata rows.')
 
-&amp;nbsp;
-
     print('Loading exercise JSON logs...')
     activities = parse_exercise_json()
     print(f'  Loaded {len(activities)} JSON activity entries.')
-
-&amp;nbsp;
 
     print('Matching JSON activities to CSV exercise IDs...')
     matched = []
@@ -1058,25 +924,17 @@ def main():
         else:
             unmatched.append(activity)
 
-&amp;nbsp;
-
     print(f'  Matched {len(matched)} activities, {len(unmatched)} unmatched.')
-
-&amp;nbsp;
 
     print('Loading GPS point data...')
     gps_by_date = load_gps_points()
     total_points = sum(len(v) for v in gps_by_date.values())
     print(f'  Loaded {total_points} GPS points on {len(gps_by_date)} days.')
 
-&amp;nbsp;
-
     print('Loading heart rate point data...')
     heart_rate_by_date = load_heart_rate_data()
     total_hr_points = sum(len(v['records']) for v in heart_rate_by_date.values())
     print(f'  Loaded {total_hr_points} heart rate points on {len(heart_rate_by_date)} days.')
-
-&amp;nbsp;
 
     report_path = OUTPUT_DIR / 'exercise_json_gpx_summary.csv'
     with open(report_path, 'w', newline='', encoding='utf-8') as summary_file:
@@ -1086,8 +944,6 @@ def main():
             'csv_start_time', 'csv_end_time', 'csv_cutoff_time', 'json_start_time',
             'json_end_time', 'duration_seconds', 'matched', 'gps_point_count', 'hr_point_count', 'gpx_file'
         ])
-
-&amp;nbsp;
 
         generated = 0
         for activity in matched:
@@ -1119,8 +975,6 @@ def main():
                 gpx_file_name or '',
             ])
 
-&amp;nbsp;
-
     if unmatched:
         print('WARNING: Some JSON activities did not match a CSV exercise row.')
         for activity in unmatched[:10]:
@@ -1128,17 +982,12 @@ def main():
         if len(unmatched) &gt; 10:
             print(f'  ... plus {len(unmatched)-10} more')
 
-&amp;nbsp;
-
     print(f'Generated {generated} GPX files to {OUTPUT_DIR}')
     print(f'Summary saved to {report_path}')
 
-&amp;nbsp;
 
 if __name__ == '__main__':
     main()
-
-&amp;nbsp;
 
 </code></pre></div>
         </section>
@@ -1543,8 +1392,6 @@ end
         SigmaProfile(idPart)=sum(TempData);
     end
 end
-
-&amp;nbsp;
 
 </code></pre>
 <p>&nbsp;</p>
