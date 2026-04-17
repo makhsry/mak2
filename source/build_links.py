@@ -41,9 +41,9 @@ def process_html_file(filepath):
         clean_item_text = re.sub(r'<[^>]*>', '', item_text).strip()
         slug = slugify(clean_item_text)
         
-        # Find all h2 and h3 headers
+        # Find all h3 headers
         # We search for the whole tag to avoid matching text outside headings
-        headers = re.finditer(r'(<(h[23])[^>]*>)(.*?)(</\2>)', updated_html, re.DOTALL)
+        headers = re.finditer(r'(<(h3)[^>]*>)(.*?)(</\2>)', updated_html, re.DOTALL)
         matching_header = None
         
         for match in headers:
