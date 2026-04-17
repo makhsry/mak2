@@ -37,20 +37,20 @@ The notebook performs the following stages in order:
 
 #### Scripts
 
-1. Preparing (if running on google colab) 
+- **Preparing** (if running on google colab) 
 ```bash 
 from google.colab import drive
 drive.mount('/content/drive')
 %cd /content/drive/My Drive/GPX/
 ```
 
-2. Installing required modules (if not already installed)
+- **Installing required modules** (if not already installed)
 ```bash 
 !pip install osmnx -q
 !pip install gpxpy -q
 ```
 
-3. Loading required modules
+- **Loading required modules**
 ```bash 
 import numpy as np
 import cv2
@@ -66,7 +66,7 @@ from skimage import measure
 import os
 ```
 
-4. Getting city's street network from OpenStreetMap
+- **Getting city's street network from OpenStreetMap**
 ```bash 
 place_name = "Vancouver, BC, Canada"
 network_type = 'bike'
@@ -78,7 +78,7 @@ plt.show()
 plt.close(fig)
 ```
 
-5. Processing the image
+- **Processing the image**
 ```bash 
 filename = 'image.png'
 filename_without_ext = os.path.splitext(filename)[0]
@@ -94,9 +94,9 @@ plt.axis('off')
 plt.close()
 ```
 
-6. Color range hsv (update to be inclusive if needed) - _moved to the botoom of the this post_. 
+- **Color range hsv** (update to be inclusive if needed) - _moved to the botoom of the this post_. 
 
-7. Detects colors used in the image
+- **Detects colors used in the image**
 ```bash 
 detected_colors = []
 total_pixels = img_np.shape[0] * img_np.shape[1]
@@ -166,7 +166,7 @@ for color in detected_colors:
 plt.close()
 ```
 
-8. Creates outlines for each color
+- **Creates outlines for each color**
 ```bash 
 outline_imgs = {}
 #
@@ -191,7 +191,7 @@ for color in detected_colors:
     outline_imgs[color] = outline_img
 ```
 
-9. Attempts to get the boundary/perimeter of the pattern as a continuous path
+- **Attempts to get the boundary/perimeter of the pattern as a continuous path**
 ```bash 
 skeleton_imgs = {}
 #
@@ -224,7 +224,7 @@ for color in detected_colors:
 plt.close()
 ```
 
-10. Overlaying image onto map - to detect the main extent using color or outermost layer
+- **Overlaying image onto map - to detect the main extent using color or outermost layer**
 ```bash 
 ####**specify the outermost color**
 detected_colors
@@ -333,7 +333,7 @@ plt.show()
 - **Does it look good?**
 - **Does it fit in the network?**
 
-11. Production step
+- **Production step**
 ```bash 
 coordinates = {}
 figv, axv = ox.plot_graph(G, node_size=0, edge_color='black',
@@ -404,7 +404,7 @@ axv.legend()
 plt.show()
 ```
 
-12. Writing out
+- **Writing out**
 ```bash 
 #Creating GPS and exporting GPX file
 for _, color in enumerate(detected_colors):
