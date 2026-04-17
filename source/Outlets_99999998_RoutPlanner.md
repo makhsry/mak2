@@ -51,7 +51,7 @@ drive.mount('/content/drive')
 ```
 
 3. Loading required modules
-```python 
+```bash 
 import numpy as np
 import cv2
 from PIL import Image
