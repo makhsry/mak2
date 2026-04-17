@@ -131,10 +131,6 @@
 <p>&nbsp;</p>
 <p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
 <p>&nbsp;</p>
-<ul>
-<li><strong>Access</strong> scripts <a href="Outlets_99999982_localRAG.zip"><strong>click here</strong></a> or see <strong>the scripts below</strong>.</li>
-</ul>
-<p>&nbsp;</p>
 <p><strong>Workflow reference</strong></p>
 <p>&nbsp;</p>
 <ul>
@@ -180,9 +176,9 @@
 <p>&nbsp;</p>
 <p><strong>Changing models or settings</strong></p>
 <p>&nbsp;</p>
-<p>Open <code>config.py</code> and edit the values:</p>
+<p>Open <strong><code>config.py</code></strong> and edit the values:</p>
 <p>&nbsp;</p>
-<pre><code class="language-python">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
+<pre><code class="language-bash">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
 EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model (a very forgiving model)
 CHUNK_SIZE      = 500                   # Number of characters per chunk
 CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
