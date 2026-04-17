@@ -42,6 +42,8 @@ jobs:
           python3 build_toc.py Writeups --output Writeups_99999999_TOC.md
           # 
           python3 build_site.py
+          #
+          python3 build_links.py
 
       - name: Commit and Push Generated Files
         run: |
