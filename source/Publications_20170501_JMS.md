@@ -2,7 +2,7 @@
 
 In the paper [**On the search of rigorous thermo-kinetic model for wet phase inversion technique**](https://www.sciencedirect.com/science/article/pii/S0376738817306889), we developed a rigorous **thermo-kinetic model for the wet phase inversion process**, with special emphasis on the role of the **diffusion-thermo effect** at the interface.
 
-![Thermokinetic Model of Phase Inversion](Publications_20170501_JMS.png)
+![Thermokinetic Model of Phase Inversion](Images_Publications_20170501_JMS.png)
 
 #### Scripts
 
