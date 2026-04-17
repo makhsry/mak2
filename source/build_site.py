@@ -33,7 +33,17 @@ def get_md_files(source_dir):
 
 def convert_md_to_html(content):
     # Pre-process content to treat multiple blank lines as literal empty lines
-    content = re.sub(r'\n\s*\n', '\n\n&nbsp;\n\n', content)
+    # We skip fenced code blocks to avoid inserting &nbsp; inside them
+    parts = re.split(r'(^[`~]{3,}.*?^[`~]{3,})', content, flags=re.DOTALL | re.MULTILINE)
+    
+    processed_parts = []
+    for part in parts:
+        if part.startswith('```') or part.startswith('~~~'):
+            processed_parts.append(part)
+        else:
+            processed_parts.append(re.sub(r'\n\s*\n', '\n\n&nbsp;\n\n', part))
+    
+    content = "".join(processed_parts)
 
     return markdown.markdown(content, extensions=['extra', 'tables', 'fenced_code', 'attr_list', 'nl2br'])
 
