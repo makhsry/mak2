@@ -12,8 +12,8 @@ def get_md_files(source_dir):
         return []
 
     for file in source_path.glob("*.md"):
-        if file.name.startswith("TEMPLATE"):
-            continue
+        #if file.name.startswith("TEMPLATE"):
+        #    continue
         parts = file.stem.split("_", 2)
         if len(parts) >= 1:
             tab = parts[0]
@@ -59,8 +59,6 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
     # Use local CSS path for the generated HTML
     css_filename = "main.css"
 
-    # Create Navigation Links
-    nav_links = ""
     # Create Navigation Links
     nav_links = ""
     for t in sorted(all_tabs):

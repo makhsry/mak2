@@ -2,7 +2,7 @@
 
 This is a [**LAMMPS**](https://www.lammps.org/)-based implementation of a [**Physiochemical Population Balance Model (PBM)**](https://en.wikipedia.org/wiki/Population_balance_equation) using [**Dissipative Particle Dynamics (DPD)**](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [**Transition State Theory (TST)**](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
 
-- The code is accessible from [**here**](Writeups_20200101_PBMwDPD.zip).
+- **Access** the code from [**here**](Writeups_20200101_PBMwDPD.zip).
 
 The simulation models the **formation and dissociation of chemical clusters** (species types 3–23) from two primary **monomer species** (types 1 and 2). It employs a **hybrid approach**:
 

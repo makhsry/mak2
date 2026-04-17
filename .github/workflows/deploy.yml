@@ -47,7 +47,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add source/*.html
+          git add source/*.html source/*_TOC.md
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
           else

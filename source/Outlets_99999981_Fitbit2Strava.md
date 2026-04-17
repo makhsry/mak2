@@ -20,13 +20,13 @@ if sys.platform == 'win32':
     RAW_ROOT = Path(r"c:\Users\MAK\Downloads\Takeout\Fitbit")
 else:
     RAW_ROOT = Path("/mnt/c/Users/MAK/Downloads/Takeout/Fitbit")
+
 HEALTH_DATA_DIR = RAW_ROOT / "Health Fitness Data_GoogleData"
 JSON_DATA_DIR = RAW_ROOT / "Global Export Data"
 GPS_DATA_DIR = RAW_ROOT / "Physical Activity_GoogleData"
 HEART_RATE_DIR = GPS_DATA_DIR
 OUTPUT_DIR = RAW_ROOT / "Workout_GPX_Exports"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
 
 def parse_csv_datetime(value: str):
     if not value:
@@ -38,7 +38,6 @@ def parse_csv_datetime(value: str):
     except ValueError:
         return None
 
-
 def parse_json_start(value: str):
     if not value:
         return None
@@ -48,7 +47,6 @@ def parse_json_start(value: str):
         except ValueError:
             continue
     return None
-
 
 def load_exercise_metadata():
     rows = []
@@ -75,7 +73,6 @@ def load_exercise_metadata():
                 })
     return rows
 
-
 def load_gps_points():
     gps_by_date = {}
     for csv_file in sorted(GPS_DATA_DIR.glob('gps_location_*.csv')):
@@ -100,7 +97,6 @@ def load_gps_points():
         pts.sort(key=lambda p: p['timestamp'])
     return gps_by_date
 
-
 def load_heart_rate_data():
     heart_rate_by_date = {}
     for csv_file in sorted(HEART_RATE_DIR.glob('heart_rate_*.csv')):
@@ -124,7 +120,6 @@ def load_heart_rate_data():
             'timestamps': [h['timestamp'] for h in hrs],
         }
     return heart_rate_by_date
-
 
 def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(seconds=30)):
     best = None
@@ -151,14 +146,12 @@ def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(s
                     return best
     return best
 
-
 def build_csv_index(metadata_rows):
     index = {}
     for row in metadata_rows:
         key = row['start_time'].isoformat()
         index.setdefault(key, []).append(row)
     return index
-
 
 def match_activity_to_csv(activity, csv_index):
     key = activity['start_time'].isoformat()
@@ -174,7 +167,6 @@ def match_activity_to_csv(activity, csv_index):
                 best = candidate
                 best_delta = delta
     return best
-
 
 def parse_exercise_json():
     activities = []
@@ -210,7 +202,6 @@ def parse_exercise_json():
                 'raw': item,
             })
     return activities
-
 
 def build_gpx(activity, points):
     gpx = ET.Element('gpx', {
@@ -253,7 +244,6 @@ def build_gpx(activity, points):
     indent_xml(gpx)
     return ET.tostring(gpx, encoding='unicode')
 
-
 def indent_xml(element, level=0):
     indent = '\n' + ('  ' * level)
     if len(element):
@@ -266,7 +256,6 @@ def indent_xml(element, level=0):
     else:
         if level and (not element.tail or not element.tail.strip()):
             element.tail = indent
-
 
 def points_for_activity(activity, gps_by_date, heart_rate_by_date):
     if not gps_by_date:
@@ -287,7 +276,6 @@ def points_for_activity(activity, gps_by_date, heart_rate_by_date):
             point['heart_rate'] = hr['bpm']
     return pts
 
-
 def filename_for_activity(activity, exercise_id, cutoff_time):
     start_str = activity['start_time'].strftime('%Y%m%dT%H%M%SZ')
     end_str = activity['end_time'].strftime('%Y%m%dT%H%M%SZ')
@@ -296,7 +284,6 @@ def filename_for_activity(activity, exercise_id, cutoff_time):
         f"{exercise_id}_{start_str}_{end_str}_{activity['duration_seconds']}s_"
         f"{cutoff_str}_{activity['logId']}_{activity['activityTypeId']}.gpx"
     )
-
 
 def main():
     print('Loading exercise metadata from CSV...')
@@ -383,7 +370,6 @@ def main():
 
     print(f'Generated {generated} GPX files to {OUTPUT_DIR}')
     print(f'Summary saved to {report_path}')
-
 
 if __name__ == '__main__':
     main()

@@ -6,8 +6,8 @@ This doc describes how to use the `local RAG` pipeline with `Ollama`, `ChromaDB`
  
 **Workflow reference**
  
-- You must have **`Ollama`** installed and have pulled the required model (for example: `ollama pull gemma4:latest`) for the scripts to work.
-- Before running any script, **`Ollama`** must be running in the background: `ollama serve`.
+- You must have **`Ollama`** installed and have **`pulled`** the required models (**`embedding`** and **`LLM`**) (for example: `ollama pull gemma4:latest`) for the scripts to work.
+- Before running any script, **`Ollama`** must be running in the background: **`ollama serve`**.
 - Use **`--help`** to see all available options for each script.
  
 | Task | Command |
@@ -25,7 +25,7 @@ Open `config.py` and edit the values:
  
 ```python
 OLLAMA_MODEL    = "gemma4:latest"   # LLM for answering
-EMBEDDING_MODEL = "nomic-embed-text"       # Embedding model
+EMBEDDING_MODEL = "nomic-embed-text"       # Embedding model (a very forgiving model)
 CHUNK_SIZE      = 500                   # Number of characters per chunk
 CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
 TOP_K_RESULTS   = 5                     # Number of chunks to retrieve
@@ -64,7 +64,7 @@ langchain-text-splitters
  
 - **`database.py`**: 
  
-Builds or updates the ChromaDB database from the folders listed in `folders.txt`.
+Builds or updates the **`ChromaDB`** database from the **folders** listed in **`folders.txt`**.
  
 ```bash
 import argparse
@@ -73,7 +73,7 @@ import shutil
 import sys
 import uuid
 
-# Modern LangChain Imports
+# LangChain Imports
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
@@ -93,7 +93,6 @@ SPECIFIC_LOADERS = {
 }
 
 # Document loading
-
 def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -> list[Document]:
     """Smartly loads files, reports actions via tqdm.write, and isolates failures."""
     docs: list[Document] = []
@@ -138,7 +137,6 @@ def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -> li
     return docs
 
 # Main Logic
-
 def main():
     parser = argparse.ArgumentParser(
         description=(
@@ -227,7 +225,7 @@ if __name__ == "__main__":
  
 - **`query.py`**: 
  
-Queries the database using the prompt in `prompt.txt` or a custom query.
+Queries the **`database`** using the **`prompt`** in **`prompt.txt`** or a **`custom query`**.
  
 ```bash
 import argparse
@@ -235,7 +233,7 @@ import sys
 import os
 import config
 
-# Modern Imports matching database.py
+# Imports matching database.py
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
@@ -260,8 +258,7 @@ def get_rag_chain():
     llm = OllamaLLM(model=config.OLLAMA_MODEL)
 
     # Define the Prompt Template
-    template = """Answer the question based only on the following context:
-    {context}
+    template = """You are an expert in the field of the question you are asked. Answer the question based only on the following context: {context}. Make sure you answer in the same language as the question. Make sure the asnwer is based on the context only. If the answer is not in the context, say so. 
 
     Question: {question}
     """
@@ -344,7 +341,7 @@ OLLAMA_MODEL    = "gemma4:latest"      # LLM used for answering
 EMBEDDING_MODEL = "nomic-embed-text"   # Embedding model for vectorization
 
 # --- Vector Store ---
-CHROMA_DB_PATH = "./aurelsystems"      # Directory for the Chroma database
+CHROMA_DB_PATH = "./databases/NAMED_RAG"      # Directory for the Chroma database
 
 # --- Chunking & Retrieval ---
 CHUNK_SIZE    = 500                    # Characters per chunk
@@ -401,7 +398,6 @@ def load_prompt(filepath: str = PROMPT_FILE) -> str:
         return fh.read().strip()
 
 # --- Help & Verification ---
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Configuration & Path Verifier",
@@ -430,4 +426,31 @@ if __name__ == "__main__":
     preview = (p_content[:75] + '...') if len(p_content) > 75 else p_content
     print(f"  Content: {preview}")
     print("="*40)
+```
+
+- **`folders.txt`** 
+
+```bash
+# folders.txt — List of document folders to index.
+#
+# • One folder per line.
+# • Lines starting with '#' and blank lines are ignored.
+# • Windows paths are converted to WSL paths automatically.
+#   Examples of accepted formats:
+#       C:\Users\mak\Documents\finance
+#       D:/Projects/reports
+#       /home/mak/docs/hr
+#       ./documents/legal
+
+# Windows-style examples (converted automatically):
+#D:\Projects\legal
+#D:\Projects\reports
+
+# Unix / relative examples:
+# /home/mak/extra_docs
+# ./documents/local_folder
+
+/home/mak/Desktop/AurelSystemsInc/drawing
+/home/mak/Desktop/AurelSystemsInc/guidelines
+/home/mak/Desktop/AurelSystemsInc/helpfiles
 ```
