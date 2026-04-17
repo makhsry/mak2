@@ -2,11 +2,11 @@
 
 This is a suite of MATLAB code for the **COSMO-SAC (COSMO Segment Activity Coefficient)** model. 
 
-- An **`.html`** version of the calculator can be found [**here**](Outlets_20150101_COSMO-SAC_Calculator.html).
+- An **`.html`** version of the calculator can be found [**here**](Tools_COSMOSAC_Calculator.html). 
 
 **Usage Instructions**
 
-- The Excel file (**[`inputQM.xlsx`](Outlets_20150101_COSMO-SAC_inputQM.xlsx)**) must have sheets named after your **`components`** (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.
+- The Excel file (**[`inputQM.xlsx`](Tools_COSMOSAC_inputQM.xlsx)**) must have sheets named after your **`components`** (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.
 - Set your desired **`SYSTEMP`** (Temperature in **Kelvin**).
 - Update **`ListCOMP`** with the sheet names from your **`inputQM.xlsx`** file.
 - Run the script **`eqCOSMO.m`**.
@@ -18,7 +18,7 @@ This is a suite of MATLAB code for the **COSMO-SAC (COSMO Segment Activity Coeff
 
 #### **Scripts Details**
 
-##### **1. `eqCOSMO.m`**
+- **1. `eqCOSMO.m`**
 
 ```bash
 function eqCOSMO() 
@@ -38,7 +38,7 @@ function eqCOSMO()
 end
 ```
 
-##### **2. `Binary.m`**
+- **2. `Binary.m`**
 
 ```bash
 function MATrix=Binary(SYSTEMP, ListCOMP)
@@ -136,7 +136,7 @@ function MATrix=Binary(SYSTEMP, ListCOMP)
 end
 ```
 
-##### **3. `SimgaProfileCalculator.m`**
+- **3. `SimgaProfileCalculator.m`**
 
 ```bash
 function [SigmaDensity SigmaProfile VolCavity]=SimgaProfileCalculator(Char)
@@ -170,7 +170,7 @@ function [SigmaDensity SigmaProfile VolCavity]=SimgaProfileCalculator(Char)
 end
 ```
 
-##### **4. `Library.m`**
+- **4. `Library.m`**
 
 ```bash
 function [NUMSEGMENT VolCavity AreaCavity ...
@@ -197,7 +197,7 @@ function [NUMSEGMENT VolCavity AreaCavity ...
 end
 ```
 
-##### **5. `paraCOSMO.m`**
+- **5. `paraCOSMO.m`**
 
 ```bash
 function [EO, AEFFPRIME, RGAS, VNORM, ANORM, COMPSEG, ...
@@ -219,7 +219,7 @@ function [EO, AEFFPRIME, RGAS, VNORM, ANORM, COMPSEG, ...
 end 
 ```
 
-##### **6. `SortSimgaProfile.m`**
+- **6. `SortSimgaProfile.m`**
 
 ```bash
 function [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area)
@@ -236,7 +236,7 @@ end
 
 ```
 
-##### **7. `ConvertAU2A.m`**
+- **7. `ConvertAU2A.m`**
 
 ```bash
 function [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area)
