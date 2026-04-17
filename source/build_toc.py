@@ -35,7 +35,7 @@ def main():
     # Find matching files starting with the tab prefix
     # Pattern: TabName_*.md
     pattern = f"{args.tab}_*.md"
-    matching_files = list(source_path.glob(pattern))
+    matching_files = [f for f in source_path.glob(pattern) if not f.name.endswith("_TOC.md")]
 
     if not matching_files:
         print(f"No files found matching the pattern: {pattern}")
