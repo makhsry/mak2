@@ -2,8 +2,6 @@
  
 This doc describes how to use the `local RAG` pipeline with `Ollama`, `ChromaDB`, and `LangChain`. 
  
-- **Access** scripts [**click here**](Outlets_99999982_localRAG.zip) or see **the scripts below**.
- 
 **Workflow reference**
  
 - You must have **`Ollama`** installed and have **`pulled`** the required models (**`embedding`** and **`LLM`**) (for example: `ollama pull gemma4:latest`) for the scripts to work.
@@ -18,12 +16,12 @@ This doc describes how to use the `local RAG` pipeline with `Ollama`, `ChromaDB`
 | **Ask** on command line | `python query.py -q "..."` |
 | **Ask** in interactive chat | `python query.py --interactive` |
 | **Edit** shared settings (models, paths, chunking) | `config.py` |
- 
+
 **Changing models or settings**
  
-Open `config.py` and edit the values:
+Open **`config.py`** and edit the values:
  
-```python
+```bash
 OLLAMA_MODEL    = "gemma4:latest"   # LLM for answering
 EMBEDDING_MODEL = "nomic-embed-text"       # Embedding model (a very forgiving model)
 CHUNK_SIZE      = 500                   # Number of characters per chunk
