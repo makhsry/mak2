@@ -138,8 +138,8 @@
 <p><strong>Workflow reference</strong></p>
 <p>&nbsp;</p>
 <ul>
-<li>You must have <strong><code>Ollama</code></strong> installed and have pulled the required model (for example: <code>ollama pull gemma4:latest</code>) for the scripts to work.</li>
-<li>Before running any script, <strong><code>Ollama</code></strong> must be running in the background: <code>ollama serve</code>.</li>
+<li>You must have <strong><code>Ollama</code></strong> installed and have <strong><code>pulled</code></strong> the required models (<strong><code>embedding</code></strong> and <strong><code>LLM</code></strong>) (for example: <code>ollama pull gemma4:latest</code>) for the scripts to work.</li>
+<li>Before running any script, <strong><code>Ollama</code></strong> must be running in the background: <strong><code>ollama serve</code></strong>.</li>
 <li>Use <strong><code>--help</code></strong> to see all available options for each script.</li>
 </ul>
 <p>&nbsp;</p>
@@ -183,7 +183,7 @@
 <p>Open <code>config.py</code> and edit the values:</p>
 <p>&nbsp;</p>
 <pre><code class="language-python">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
-EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model
+EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model (a very forgiving model)
 CHUNK_SIZE      = 500                   # Number of characters per chunk
 CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
 TOP_K_RESULTS   = 5                     # Number of chunks to retrieve
@@ -225,7 +225,7 @@ langchain-text-splitters
 <li><strong><code>database.py</code></strong>: </li>
 </ul>
 <p>&nbsp;</p>
-<p>Builds or updates the ChromaDB database from the folders listed in <code>folders.txt</code>.</p>
+<p>Builds or updates the <strong><code>ChromaDB</code></strong> database from the <strong>folders</strong> listed in <strong><code>folders.txt</code></strong>.</p>
 <p>&nbsp;</p>
 <pre><code class="language-bash">import argparse
 import os
@@ -233,7 +233,7 @@ import shutil
 import sys
 import uuid
 
-# Modern LangChain Imports
+# LangChain Imports
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
@@ -253,7 +253,6 @@ SPECIFIC_LOADERS = {
 }
 
 # Document loading
-
 def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
     &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
     docs: list[Document] = []
@@ -298,7 +297,6 @@ def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt;
     return docs
 
 # Main Logic
-
 def main():
     parser = argparse.ArgumentParser(
         description=(
@@ -389,14 +387,14 @@ if __name__ == &quot;__main__&quot;:
 <li><strong><code>query.py</code></strong>: </li>
 </ul>
 <p>&nbsp;</p>
-<p>Queries the database using the prompt in <code>prompt.txt</code> or a custom query.</p>
+<p>Queries the <strong><code>database</code></strong> using the <strong><code>prompt</code></strong> in <strong><code>prompt.txt</code></strong> or a <strong><code>custom query</code></strong>.</p>
 <p>&nbsp;</p>
 <pre><code class="language-bash">import argparse
 import sys
 import os
 import config
 
-# Modern Imports matching database.py
+# Imports matching database.py
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
@@ -421,8 +419,7 @@ def get_rag_chain():
     llm = OllamaLLM(model=config.OLLAMA_MODEL)
 
     # Define the Prompt Template
-    template = &quot;&quot;&quot;Answer the question based only on the following context:
-    {context}
+    template = &quot;&quot;&quot;You are an expert in the field of the question you are asked. Answer the question based only on the following context: {context}. Make sure you answer in the same language as the question. Make sure the asnwer is based on the context only. If the answer is not in the context, say so. 
 
     Question: {question}
     &quot;&quot;&quot;
@@ -506,7 +503,7 @@ OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
 EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
 
 # --- Vector Store ---
-CHROMA_DB_PATH = &quot;./aurelsystems&quot;      # Directory for the Chroma database
+CHROMA_DB_PATH = &quot;./databases/NAMED_RAG&quot;      # Directory for the Chroma database
 
 # --- Chunking &amp; Retrieval ---
 CHUNK_SIZE    = 500                    # Characters per chunk
@@ -563,7 +560,6 @@ def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
         return fh.read().strip()
 
 # --- Help &amp; Verification ---
-
 if __name__ == &quot;__main__&quot;:
     parser = argparse.ArgumentParser(
         description=&quot;Configuration &amp; Path Verifier&quot;,
@@ -592,6 +588,34 @@ if __name__ == &quot;__main__&quot;:
     preview = (p_content[:75] + '...') if len(p_content) &gt; 75 else p_content
     print(f&quot;  Content: {preview}&quot;)
     print(&quot;=&quot;*40)
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>folders.txt</code></strong> </li>
+</ul>
+<p>&nbsp;</p>
+<pre><code class="language-bash"># folders.txt — List of document folders to index.
+#
+# • One folder per line.
+# • Lines starting with '#' and blank lines are ignored.
+# • Windows paths are converted to WSL paths automatically.
+#   Examples of accepted formats:
+#       C:\Users\mak\Documents\finance
+#       D:/Projects/reports
+#       /home/mak/docs/hr
+#       ./documents/legal
+
+# Windows-style examples (converted automatically):
+#D:\Projects\legal
+#D:\Projects\reports
+
+# Unix / relative examples:
+# /home/mak/extra_docs
+# ./documents/local_folder
+
+/home/mak/Desktop/AurelSystemsInc/drawing
+/home/mak/Desktop/AurelSystemsInc/guidelines
+/home/mak/Desktop/AurelSystemsInc/helpfiles
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
@@ -621,13 +645,13 @@ if sys.platform == 'win32':
     RAW_ROOT = Path(r&quot;c:\Users\MAK\Downloads\Takeout\Fitbit&quot;)
 else:
     RAW_ROOT = Path(&quot;/mnt/c/Users/MAK/Downloads/Takeout/Fitbit&quot;)
+
 HEALTH_DATA_DIR = RAW_ROOT / &quot;Health Fitness Data_GoogleData&quot;
 JSON_DATA_DIR = RAW_ROOT / &quot;Global Export Data&quot;
 GPS_DATA_DIR = RAW_ROOT / &quot;Physical Activity_GoogleData&quot;
 HEART_RATE_DIR = GPS_DATA_DIR
 OUTPUT_DIR = RAW_ROOT / &quot;Workout_GPX_Exports&quot;
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
 
 def parse_csv_datetime(value: str):
     if not value:
@@ -639,7 +663,6 @@ def parse_csv_datetime(value: str):
     except ValueError:
         return None
 
-
 def parse_json_start(value: str):
     if not value:
         return None
@@ -649,7 +672,6 @@ def parse_json_start(value: str):
         except ValueError:
             continue
     return None
-
 
 def load_exercise_metadata():
     rows = []
@@ -676,7 +698,6 @@ def load_exercise_metadata():
                 })
     return rows
 
-
 def load_gps_points():
     gps_by_date = {}
     for csv_file in sorted(GPS_DATA_DIR.glob('gps_location_*.csv')):
@@ -701,7 +722,6 @@ def load_gps_points():
         pts.sort(key=lambda p: p['timestamp'])
     return gps_by_date
 
-
 def load_heart_rate_data():
     heart_rate_by_date = {}
     for csv_file in sorted(HEART_RATE_DIR.glob('heart_rate_*.csv')):
@@ -725,7 +745,6 @@ def load_heart_rate_data():
             'timestamps': [h['timestamp'] for h in hrs],
         }
     return heart_rate_by_date
-
 
 def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(seconds=30)):
     best = None
@@ -752,14 +771,12 @@ def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(s
                     return best
     return best
 
-
 def build_csv_index(metadata_rows):
     index = {}
     for row in metadata_rows:
         key = row['start_time'].isoformat()
         index.setdefault(key, []).append(row)
     return index
-
 
 def match_activity_to_csv(activity, csv_index):
     key = activity['start_time'].isoformat()
@@ -775,7 +792,6 @@ def match_activity_to_csv(activity, csv_index):
                 best = candidate
                 best_delta = delta
     return best
-
 
 def parse_exercise_json():
     activities = []
@@ -811,7 +827,6 @@ def parse_exercise_json():
                 'raw': item,
             })
     return activities
-
 
 def build_gpx(activity, points):
     gpx = ET.Element('gpx', {
@@ -854,7 +869,6 @@ def build_gpx(activity, points):
     indent_xml(gpx)
     return ET.tostring(gpx, encoding='unicode')
 
-
 def indent_xml(element, level=0):
     indent = '\n' + ('  ' * level)
     if len(element):
@@ -867,7 +881,6 @@ def indent_xml(element, level=0):
     else:
         if level and (not element.tail or not element.tail.strip()):
             element.tail = indent
-
 
 def points_for_activity(activity, gps_by_date, heart_rate_by_date):
     if not gps_by_date:
@@ -888,7 +901,6 @@ def points_for_activity(activity, gps_by_date, heart_rate_by_date):
             point['heart_rate'] = hr['bpm']
     return pts
 
-
 def filename_for_activity(activity, exercise_id, cutoff_time):
     start_str = activity['start_time'].strftime('%Y%m%dT%H%M%SZ')
     end_str = activity['end_time'].strftime('%Y%m%dT%H%M%SZ')
@@ -897,7 +909,6 @@ def filename_for_activity(activity, exercise_id, cutoff_time):
         f&quot;{exercise_id}_{start_str}_{end_str}_{activity['duration_seconds']}s_&quot;
         f&quot;{cutoff_str}_{activity['logId']}_{activity['activityTypeId']}.gpx&quot;
     )
-
 
 def main():
     print('Loading exercise metadata from CSV...')
@@ -984,7 +995,6 @@ def main():
 
     print(f'Generated {generated} GPX files to {OUTPUT_DIR}')
     print(f'Summary saved to {report_path}')
-
 
 if __name__ == '__main__':
     main()
