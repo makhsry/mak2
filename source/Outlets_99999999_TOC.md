@@ -6,5 +6,3 @@
 - HPC Job Management Tools
 - Nanotube Builder and Mesher
 - COSMO-SAC Activity Coefficient Model
-- COSMO-SAC Sigma Profile Generator
-- COSMO-SAC Sigma Profile Processor

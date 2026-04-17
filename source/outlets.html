@@ -22,29 +22,12 @@
     <div class="container">
 
         <section class="card span-2">
-            <div class="card-content"><h2>Outlets</h2>
-<p>&nbsp;</p>
-<ul>
-<li><a href="#drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</a></li>
-<li><a href="#local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</a></li>
-<li><a href="#bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</a></li>
-<li><a href="#hpc-job-management-tools">HPC Job Management Tools</a></li>
-<li><a href="#nanotube-builder-and-mesher">Nanotube Builder and Mesher</a></li>
-<li><a href="#cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</a></li>
-<li><a href="#cosmo-sac-sigma-profile-generator">COSMO-SAC Sigma Profile Generator</a></li>
-<li><a href="#cosmo-sac-sigma-profile-processor">COSMO-SAC Sigma Profile Processor</a></li>
-</ul></div>
-        </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
-            <div class="card-content"><h3 id="drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</h3>
+            <div class="card-content"><h3>Drawing to GPX (Route Pattern Mapper — Python Application)</h3>
 <p>&nbsp;</p>
 <p>A <strong>Python notebook</strong> that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from <strong>OpenStreetMap</strong>, extracts <strong>GPS coordinates</strong> for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to be used in any <strong>GPS-capable</strong> navigation app or <strong>fitness tracker</strong>.</p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Access</strong> the code <a href="Outlets_99999990_RoutPlannerPython.ipynb"><strong>here</strong></a></li>
+<li><strong>Access</strong> the code <a href="Tools_RoutPlanner.ipynb"><strong>here</strong></a></li>
 </ul>
 <p>&nbsp;</p>
 <p><strong>What It Does</strong></p>
@@ -123,11 +106,27 @@
 <li><strong>Color range definitions</strong> use single-unit HSV hue bins (e.g., H=3 for yellow) that are very narrow and may need widening in <code>color_ranges</code> if the pattern image uses slightly off-hue colors.</li>
 <li>The <strong>nearest-neighbor pixel ordering</strong> is an O(n²) algorithm, and for large or high-resolution images with many boundary pixels, this step can be slow.</li>
 <li>The <strong>GPX output does not snap to streets</strong> always.</li>
+</ul>
+<p>&nbsp;</p></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h2>Outlets</h2>
+<p>&nbsp;</p>
+<ul>
+<li>Drawing to GPX (Route Pattern Mapper — Python Application)</li>
+<li>Local RAG Pipeline — Ollama + ChromaDB + LangChain</li>
+<li>Bring Old Fitbit Data to Strava</li>
+<li>HPC Job Management Tools</li>
+<li>Nanotube Builder and Mesher</li>
+<li>COSMO-SAC Activity Coefficient Model</li>
 </ul></div>
         </section>
 
         <section class="card span-2">
-            <div class="card-content"><h3 id="local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
+            <div class="card-content"><h3>Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
 <p>&nbsp;</p>
 <p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
 <p>&nbsp;</p>
@@ -618,7 +617,7 @@ if __name__ == &quot;__main__&quot;:
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h3 id="bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</h3>
+            <div class="card-content"><h3>Bring Old Fitbit Data to Strava</h3>
 <p>&nbsp;</p>
 <p>This is a script to generate <strong><code>.GPX</code></strong> files from the <strong>old</strong> <a href="https://www.fitbit.com/"><strong>Fitbit</strong></a> data, so that it can be imported into <a href="https://www.strava.com/"><strong>Strava</strong></a>. </p>
 <p>&nbsp;</p>
@@ -999,13 +998,12 @@ if __name__ == '__main__':
         </section>
 
         <section class="card span-2">
-            <div class="card-content"><h3 id="hpc-job-management-tools">HPC Job Management Tools</h3>
+            <div class="card-content"><h3>HPC Job Management Tools</h3>
 <p>&nbsp;</p>
 <p>This script is a <strong><code>Bash</code></strong>-based utility designed to automate the configuration and submission of <a href="https://slurm.schedmd.com/"><strong><code>Slurm</code></strong></a>-managed jobs. It handles cluster-specific hardware architectures, resource allocation logic, and job recovery.</p>
 <p>&nbsp;</p>
 <ul>
-<li>The <strong><code>bash</code></strong> script is available <a href="Outlets_99999980_SubmitHPC.sh"><strong>here</strong></a>.</li>
-<li>An <strong><code>.html</code></strong> version is available <a href="Outlets_99999980_SubmitHPC.html"><strong>here</strong></a>.</li>
+<li>An <strong><code>.html</code></strong> version is available <a href="Tools_SubmitHPC.html"><strong>here</strong></a>.</li>
 </ul>
 <p>&nbsp;</p>
 <p>It is specifically tailored for <a href="https://www.comsol.com/products/multiphysics/"><strong>COMSOL Multiphysics</strong></a> simulations. The script primaryly manages the entire workflow from environment validation to job submission on various <a href="https://www.alliancecan.ca/en/about"><strong>Canadian HPC clusters</strong></a> (<em>before their migration to new systems</em>).</p>
@@ -1023,18 +1021,1023 @@ if __name__ == '__main__':
     ${COMSOL_CONTINUE_} \
     ${COMSOL_PARAMS_} \
     ${COMSOL_METHOD_}
+</code></pre>
+<p>&nbsp;</p>
+<h4>Script</h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">#!/bin/bash 
+# --------------------------------------------------------------------------------
+# ################################################################################
+#    nested functions area - do not edit unless needed. 
+# 
+# ----------------------------- are we in scratch otherwise leave 
+is_under_scratch(){
+    echo 'checking current directory, if not scratch, this script will terminate.'
+    current_dir=$(pwd)
+    if [[ &quot;$current_dir&quot; == *&quot;scratch&quot;* ]]; then
+        echo &quot;this script is sitting and running under 'scratch', continuing with tasks (otherwise it would terminate).&quot;
+    else
+        echo &quot;this script is NOT sitting and running under 'scratch'&quot;
+        echo &quot;Terminating ....&quot;
+        exit
+    fi
+}
+# ----------------------------- comsol default root cleanup 
+comsolcleanup() {
+    while true; do
+        read -p &quot;cleanup all files in comsol root i.e., ./.comsol/? (yes/no) [select no if there is any active job] &quot; cleanupdecision
+        case $cleanupdecision in
+            &quot;yes&quot;)
+                echo &quot;deleting all files in ./.comsol/ ...., it may take a while ....&quot;
+                rm -rvf $SCRATCH/.comsol/* $HOME/.comsol/*
+                echo &quot;deleted all files in ./.comsol/.&quot;
+                break;;
+            &quot;no&quot;)
+                echo &quot;cleanup operation canceled.&quot;
+                break;;
+            * )
+                echo &quot;no answer provided or answer not recognized.&quot;
+                echo &quot;cleanup operation canceled.&quot;
+                break;;
+        esac
+    done
+}
+# ----------------------------- collects username 
+get_username(){
+    username=$(whoami)
+    while true; do
+        read -p &quot;are you $username? (yes/no) = &quot; confirmusername
+        case $confirmusername in
+            &quot;yes&quot;)
+                echo &quot;username confirmed. username is found correctly: $username&quot;
+                request_prompt=0
+                break;;
+            &quot;no&quot;)
+                echo &quot;username is wrong, something is wrong with calling slurm.&quot;
+                request_prompt=1
+                break
+                ;;
+            *)
+                echo 'yes/no expected'
+        esac 
+    done
+    # 
+    if [ &quot;$request_prompt&quot; -eq 1 ]; then
+        while true; do 
+            echo &quot;please type in your username&quot;
+            read -p &quot;who are you? (username) = &quot; usernamebyuser
+            # 
+            accounts=$(sacctmgr show assoc -P format=User,Account where user=$usernamebyuser | awk -F '|' -v user=&quot;$usernamebyuser&quot; '$1 == user {print $2}')
+            if [ -n &quot;$accounts&quot; ]; then
+                echo &quot;user $usernamebyuser exists and belongs to the following account(s):&quot;
+                echo &quot;$accounts&quot;
+                username=$usernamebyuser
+                break 
+            else
+                echo &quot;user $usernamebyuser does not exist&quot;
+            fi 
+        done
+    fi 
+}
+# ----------------------------- collect account/allocation name - auto is faulty - set manual 
+get_membership(){
+    while true; do
+        read -p &quot;to which group/allocation you/$username belongs? (groupname/your boss/UBC:st-amadiseh-1/CC:def-madiseh) = &quot; groupnamebyuser
+        groupname=$groupnamebyuser
+        if sacctmgr show assoc -P format=User,Account where user=$username,account=$groupname | grep -q &quot;^$username|$groupname$&quot;; then
+            echo &quot;you $username do belong to group $groupname&quot;
+            break 
+        else
+            echo &quot;you $username do NOT belong to the specified group $groupname.&quot;
+            echo &quot;though you $username do belong to these groups: &quot;
+            sacctmgr show assoc -P format=User,Account where user=$username,account=$groupname
+            echo &quot;please try again.&quot;
+        fi
+    done 
+}
+# ----------------------------- collects job/series name, email 
+get_job_extra_info(){
+    while true; do 
+        read -p &quot;please type in an email to send job status updates to (user@domain.com) = &quot; emailbyuser
+        if [ -n $emailbyuser ]; then
+            break 
+        else
+            echo 'you must provide an email. please try again.'
+        fi
+    done 
+    # 
+    while true; do 
+        read -p &quot;please type in a job name (array jobs not supported at this time) = &quot; jobnamebyuser
+        if [ -n $jobnamebyuser ]; then
+            break 
+        else
+            echo 'you must provide a job name. please try again.'
+        fi
+    done 
+    # 
+    while true; do 
+        read -p &quot;please type in how many Nodes does this job require = (1 / 10) &quot; nodesbyuser
+        if [ -n $nodesbyuser ]; then
+            break 
+        else
+            echo 'you must specify how many Nodes you need. please try again.'
+        fi
+    done 
+}
+# ----------------------------- watch mode on?  
+watch_mode(){
+    echo '&gt;&gt;&gt; this script can be configured to monitor and resume jobs automatically.'
+    echo 'option                        description'
+    echo '1                             user specifies the wall-time. does NOT watch for job completion.'
+    echo '2                             user specifies the wall-time. does watch for job completion and submits resume tasks automatically [if only failed due to TIMEOUT] as needed until done.'
+    while true; do 
+        read -p &quot;&gt;&gt;&gt; pick an option: (1/2) = &quot; watchmode
+        if [ -n $watchmode ]; then
+            case $watchmode in
+                &quot;1&quot;)
+                    watch_me='no'
+                    IFS='-' read -p &quot;please type in how much time hh-mm this job requires (NOTE the input pattern, separated by a hyphen)? = (hours-minutes) &quot; hoursbyuser minutesbyuser
+                    break 
+                    ;;
+                &quot;2&quot;)
+                    watch_me='yes'
+                    IFS='-' read -p &quot;please type in how much time hh-mm this job requires (NOTE the input pattern, separated by a hyphen)? = (hours-minutes) &quot; hoursbyuser minutesbyuser
+                    break 
+                    ;;
+                &quot;99&quot;)
+                    echo &quot;user confirmed enetering 99 mode.&quot;
+                    echo '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+                    echo '!!!! this functionality may violate T&amp;M of CC / ARC UBC !!!!'
+                    echo '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+                    echo 'please provide passkey to use this feature' # change it to read 
+                    watch_me='yes'
+                    hoursbyuser='01'
+                    minutesbyuser='00'
+                    break 
+                    ;;
+                *)
+                    echo &quot;option not recognized&quot;
+                    ;; 
+            esac
+        else
+            echo 'you must pick an option. please try again.'
+        fi
+    done
+}
+# ----------------------------- build a .sh file 
+initiate_sh_submit(){
+    # --- preset text to echo &gt;&gt; 
+    echo &quot;#!/bin/bash&quot; &gt; submit_job.sh
+    echo &quot;#SBATCH --account=$groupname&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --nodes=$nodesbyuser&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --cpus-per-task=$cpusfromselections&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --ntasks-per-node=1&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --time=$hoursbyuser:$minutesbyuser:00&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --job-name=$jobnamebyuser&quot; &gt;&gt; submit_job.sh
+    #
+    if [ &quot;$ramfromselections&quot; != &quot;NONE&quot; ]; then
+        echo &quot;#SBATCH --mem=$ramfromselections&quot; &gt;&gt; submit_job.sh
+    fi
+    #
+    echo &quot;#SBATCH --mail-user=$emailbyuser&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --mail-type=ALL&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --output=out.out&quot; &gt;&gt; submit_job.sh
+    echo &quot;#SBATCH --error=err.err&quot; &gt;&gt; submit_job.sh
+    # 
+    if [ &quot;$archfromselections&quot; != &quot;NONE&quot; ]; then
+        echo &quot;#SBATCH --constraint=$archfromselections&quot; &gt;&gt; submit_job.sh
+    fi
+    #
+    # advising OS to handle large MPI memory unsafe process: comsol-java issue
+    echo &quot;ulimit -s unlimited&quot; &gt;&gt; submit_job.sh
+    #
+    #for line in {0..12}; do
+    #   content=&quot;line_$line&quot;
+    #   if [ &quot;${!content}&quot; != &quot;SKIP&quot; ]; then
+    #       echo &quot;${!content}&quot; &gt;&gt; submit_job.sh
+    #   fi 
+    #done
+}
+# ----------------------------- determing where we are and what options we have - needs manual update if CC or UBC config changes. 
+get_cluster_name(){
+    cluster_name=$(scontrol show config | grep &quot;^ClusterName&quot; | awk -F= '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+    echo &quot;You are using $cluster_name&quot;. 
+    # 
+    while true; do
+        read -p &quot;do you confirm you are on $cluster_name? (yes/no) = &quot; confirmclustername
+        case $confirmclustername in
+            &quot;yes&quot; )
+                echo &quot;user confirmed. clustername is found correctly: $cluster_name&quot;
+                break;;
+            &quot;no&quot; )
+                echo &quot;user declined, something is wrong with calling slurm.&quot;
+                echo &quot;please pick one of the following cluster names manually when prompt.&quot;
+                echo &quot;sockeye, narval, beluga, cedar, graham, niagara&quot;
+                while true; do
+                    read -p &quot;we are on?: sockeye, narval, beluga, cedar, graham, niagara. = &quot; clusternamebyuser
+                    if [ -n $clusternamebyuser ]; then
+                        case $clusternamebyuser in
+                            &quot;sockeye&quot;)
+                                cluster_name=&quot;sockeye&quot;
+                                break;;
+                            &quot;narval&quot;)
+                                cluster_name=&quot;narval&quot;
+                                break;;
+                            &quot;beluga&quot;)
+                                cluster_name=&quot;beluga&quot;
+                                break;;
+                            &quot;cedar&quot;)
+                                cluster_name=&quot;cedar&quot;
+                                break;;
+                            &quot;graham&quot;)
+                                cluster_name=&quot;graham&quot;
+                                break;;
+                            &quot;niagara&quot;)
+                                cluster_name=&quot;niagara&quot;
+                                break;;
+                            *)
+                                echo &quot;$clusternamebyuser is not a recognizable cluster name, you have to provide architecture (Node, cpu, RAM, etc) manually!&quot;
+                                cluster_name=&quot;manual&quot;
+                                break;;
+                        esac 
+                    else
+                        echo 'you must provide a cluster namer. please try again.'
+                    fi
+                done 
+        esac
+    done
+}   # 
+# ----------------------------- shows node state on cluster  
+node_state(){
+    echo pay attention to the timelimit the nodes are configured into, to make a wise time request when submitting your job. 
+    echo nodes on $cluster are configured as shown bellow, note the timelimit and the number of nodes set to have such timelimits and then their availability
+    #echo &quot;columns are: PARTITION          AVAIL  TIMELIMIT   NODES(A/I/O/T) NODELIST&quot;
+    echo &quot;columns are: CPUS    MEMORY   GRES          NODES(A/I/O/T)  NODELIST&quot;
+    echo +++++
+    #sinfo -s
+    sinfo -eO &quot;CPUs:8,Memory:9,Gres:14,NodeAIOT:16,NodeList:50&quot;
+    echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    echo do you want to see a full report on state of nodes? 
+    echo &quot;&gt;&gt;&gt; this generate a long list, but should give you a more efficient node selection ability.&quot;
+    read -p &quot;do you want to see a report on state of individual nodes (yes/no)? = &quot; showmenodestate
+    case $showmenodestate in
+        &quot;yes&quot;)
+            echo generating long text, scroll back to read throughly 
+            #echo from list above, current state of nodes Allocated/Inuse/Other/Total is .... 
+            #echo &quot;columns are: CPUS    MEMORY   GRES          NODES(A/I/O/T)  NODELIST&quot;
+            #echo +++++
+            #sinfo -eO &quot;CPUs:8,Memory:9,Gres:14,NodeAIOT:16,NodeList:50&quot;
+            echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            echo idle nodes that are totally accessible right now are .... 
+            echo &quot;columns are: PARTITION          AVAIL  TIMELIMIT  NODES  STATE NODELIST&quot;
+            sinfo --state=idle
+            echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            echo mixed nodes that might be accessible right now or shortly .... 
+            echo &quot;columns are: PARTITION          AVAIL  TIMELIMIT  NODES  STATE NODELIST&quot;
+            sinfo --state=mixed
+            echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            echo here is a report on individual nodes 
+            echo &quot;columns are: HOSTNAMES FREE_MEM MEMORY AVAIL CPUS CPUS(A/I/O/T)&quot;
+            echo +++++
+            sinfo -o &quot;%n %m %a %c %C&quot;
+            echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            ;;
+        &quot;no&quot;)
+        ;;
+    esac
+}
+# ----------------------------- shows options on sockeye 
+options_on_sockeye(){
+    # 
+    echo &quot;option        RAMperCPU               AvailNodes          ARCH        isGPU&quot;
+    echo &quot;1             6GB     =192GB/32cores      210             Skylake          &quot;
+    echo &quot;2             12GB    =384GB/32cores      8               Skylake          &quot;
+    echo &quot;3             24GB    =768GB/32cores      8               Skylake          &quot;
+    echo &quot;4             8GB     =192GB/24cores      6               Skylake     Yes  &quot;
+    echo &quot;5             4.8GB   =192GB/40cores      170             Cascade          &quot;
+    echo &quot;6             9.6GB   =384GB/40cores      8               Cascade          &quot;
+    echo &quot;7             19.2GB  =768GB/40cores      8               Cascade          &quot;
+    echo &quot;8             8GB     =192GB/24cores      44              Cascade     Yes  &quot;
+    echo &quot;              8GB     =192GB/16cores      3               Skylake     login&quot;
+    echo &quot;              8GB     =192GB/16cores      2               Skylake     data &quot;
+    #
+    while true; do
+        read -p &quot;pick an option number = &quot; nodeselection
+        if [ -n $nodeselection ]; then
+            case $nodeselection in
+                &quot;1&quot;)
+                    echo &quot;1             6GB=192GB/32cores       210             Skylake     No   &quot;
+                    cpusfromselections='32'
+                    ramfromselections='186G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;2&quot;)
+                    echo &quot;2             12GB=384GB/32cores      8               Skylake     No   &quot;
+                    cpusfromselections='32'
+                    ramfromselections='376G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;3&quot;)
+                    echo &quot;3             24GB=768GB/32cores      8               Skylake     No   &quot;
+                    cpusfromselections='32'
+                    ramfromselections='754G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;4&quot;)
+                    echo &quot;4             8GB=192GB/24cores       6               Skylake     Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again' 
+                    ;;
+                &quot;5&quot;)
+                    echo &quot;5             4.8GB=192GB/40cores     170             Cascade     No   &quot;
+                    cpusfromselections='40'
+                    ramfromselections='186G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;6&quot;)
+                    echo &quot;6             9.6GB=384GB/40cores     8               Cascade     No   &quot;
+                    cpusfromselections='40'
+                    ramfromselections='376G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;7&quot;)
+                    echo &quot;7             19.2GB=768GB/40cores    8               Cascade     No   &quot;
+                    cpusfromselections='40'
+                    ramfromselections='754G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;8&quot;)
+                    echo &quot;8             8GB=192GB/24cores       44              Cascade     Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                *)
+                    echo &quot;no answer provided or answer not recognized.&quot;
+                    echo &quot;please try again.&quot;
+                    ;;
+            esac
+        else
+            echo 'you must pick an option from list.'
+        fi 
+    done
+}
+# ----------------------------- shows options on narval
+options_on_narval(){
+    echo &quot;option        RAMperCPU               AvailNodes          ARCH        isGPU&quot;
+    echo &quot;1             3.8GB   =249GB/64cores      1145            Rome             &quot;
+    echo &quot;2             31.3GB  =2009GB/64cores     33              Rome             &quot;
+    echo &quot;3             62.5GB  =4000GB/64cores     3               Rome             &quot;
+    echo &quot;4             7.7GB   =498GB/48cores      48              Milan       Yes  &quot;
+    #
+    while true; do
+        read -p &quot;pick an option number = &quot; nodeselection
+        if [ -n $nodeselection ]; then
+            case $nodeselection in
+                &quot;1&quot;)
+                    echo &quot;1             3.8GB   =249GB/64cores      1145            Rome             &quot;
+                    cpusfromselections='64'
+                    ramfromselections='249G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;2&quot;)
+                    echo &quot;2             31.3GB  =2009GB/64cores     33              Rome             &quot;
+                    cpusfromselections='64'
+                    ramfromselections='2009G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;3&quot;)
+                    echo &quot;3             62.5GB  =4000GB/64cores     3               Rome             &quot;
+                    cpusfromselections='64'
+                    ramfromselections='4000G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;4&quot;)
+                    echo &quot;4             7.7GB   =498GB/48cores      48              Milan       Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                *)
+                    echo &quot;no answer provided or answer not recognized.&quot;
+                    echo &quot;please try again.&quot;
+                    ;;
+            esac
+        else
+            echo 'you must pick an option from list.'
+        fi
+    done
+}
+# ----------------------------- shows options on beluga
+options_on_beluga(){
+    echo &quot;option        RAMperCPU               AvailNodes          ARCH        isGPU&quot;
+    echo &quot;1             2.3GB   =92GB/40cores       160             Skylake          &quot;
+    echo &quot;2             4.65GB  =186GB/40cores      589             Skylake          &quot;
+    echo &quot;3             18.8GB  =752GB/40cores      53              Skylake          &quot;
+    echo &quot;4             4.65GB  =186GB/40cores      172             Skylake     Yes  &quot;
+    #
+    while true; do
+        read -p &quot;pick an option number = &quot; nodeselection
+        if [ -n $nodeselection ]; then
+            case $nodeselection in
+                &quot;1&quot;)
+                    echo &quot;1             2.3GB   =92GB/40cores       160             Skylake          &quot;
+                    cpusfromselections='40'
+                    ramfromselections='92G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;2&quot;)
+                    echo &quot;2             4.65GB  =186GB/40cores      589             Skylake          &quot;
+                    cpusfromselections='40'
+                    ramfromselections='186G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;3&quot;)
+                    echo &quot;3             18.8GB  =752GB/40cores      53              Skylake          &quot;
+                    cpusfromselections='40'
+                    ramfromselections='752G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;4&quot;)
+                    echo &quot;4             4.65GB  =186GB/40cores      172             Skylake     Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                *)
+                    echo &quot;no answer provided or answer not recognized.&quot;
+                    echo &quot;please try again.&quot;
+                    ;;
+            esac
+        else
+            echo 'you must pick an option from list.'
+        fi
+    done
+}
+# ----------------------------- shows options on cedar
+options_on_cedar(){
+    echo &quot;option        RAMperCPU               AvailNodes          ARCH        isGPU&quot;
+    echo &quot;1             3.9GB   =125GB/32cores      256             Broadwell            &quot;
+    echo &quot;2             7.8GB   =250GB/32cores      256             Broadwell            &quot;
+    echo &quot;3             15.6GB  =502GB/32cores      40              Broadwell            &quot;
+    echo &quot;4             47.18GB =1510GB/32cores     16              Broadwell            &quot;
+    echo &quot;5             125GB   =4000GB/32cores     6               EPYC                 &quot;
+    echo &quot;6             150GB   =6000GB/40cores     2               Cascade              &quot;
+    echo &quot;7             5.2GB   =125GB/24cores      96              Broadwell       Yes  &quot;
+    echo &quot;8             10.4GB  =250GB/24cores      32              Broadwell       Yes  &quot;
+    echo &quot;9             5.8GB   =187GB/32cores      192             Cascade         Yes  &quot;
+    echo &quot;10            3.8GB   =187GB/48cores      608             Skylake              &quot;
+    echo &quot;11            3.8GB   =187GB/48cores      768             Cascade              &quot;
+    #
+    while true; do
+        read -p &quot;pick an option number = &quot; nodeselection
+        if [ -n $nodeselection ]; then
+            case $nodeselection in
+                &quot;1&quot;)
+                    echo &quot;1             3.9GB   =125GB/32cores      256             Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='125G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;2&quot;)
+                    echo &quot;2             7.8GB   =250GB/32cores      256             Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='250G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;3&quot;)
+                    echo &quot;3             15.6GB  =502GB/32cores      40              Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='502G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;4&quot;)
+                    echo &quot;4             47.18GB =1510GB/32cores     16              Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='1510G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;5&quot;)
+                    echo &quot;5             125GB   =4000GB/32cores     6               EPYC                 &quot;
+                    cpusfromselections='32'
+                    ramfromselections='4000G'
+                    archfromselections='NONE'
+                    break;;
+                &quot;6&quot;)
+                    echo &quot;6             150GB   =6000GB/40cores     2               Cascade              &quot;
+                    cpusfromselections='40'
+                    ramfromselections='6000G'
+                    archfromselections='cascade'
+                    break;;
+                &quot;7&quot;)
+                    echo &quot;7             5.2GB   =125GB/24cores      96              Broadwell       Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;8&quot;)
+                    echo &quot;8             10.4GB  =250GB/24cores      32              Broadwell       Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;9&quot;)
+                    echo &quot;9             5.8GB   =187GB/32cores      192             Cascade         Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;10&quot;)
+                    echo &quot;10            3.8GB   =187GB/48cores      608             Skylake              &quot;
+                    cpusfromselections='48'
+                    ramfromselections='187G'
+                    archfromselections='skylake'
+                    break;;
+                &quot;11&quot;)
+                    echo &quot;11            3.8GB   =187GB/48cores      768             Cascade              &quot;
+                    cpusfromselections='48'
+                    ramfromselections='187G'
+                    archfromselections='cascade'
+                    break;;
+                *)
+                    echo &quot;no answer provided or answer not recognized.&quot;
+                    echo &quot;please try again.&quot;
+                    ;;
+            esac
+        else
+            echo 'you must pick an option from list.'
+        fi
+    done
+}
+# ----------------------------- shows options on nigara
+options_on_nigara(){
+    echo &quot;no option selection with niagara, preset is:&quot;
+    echo &quot;              RAMperCPU               AvailNodes          ARCH        isGPU&quot;
+    echo &quot;              4.7GB   =188GB/40cores      2024            Skylake          &quot;
+    cpusfromselections='20'
+    ramfromselections='NONE'
+    archfromselections='NONE'
+}
+# ----------------------------- shows options on graham
+options_on_graham(){
+    echo &quot;option        RAMperCPU               AvailNodes          ARCH        isGPU&quot;
+    echo &quot;1             3.9GB   =125GB/32cores      903             Broadwell            &quot;
+    echo &quot;2             15.6GB  =502GB/32cores      24              Broadwell            &quot;
+    echo &quot;3             7.8GB   =250GB/32cores      56              Broadwell            &quot;
+    echo &quot;4             47.2GB  =3022GB/64cores     3               Broadwell            &quot;
+    echo &quot;5             3.8GB   =124GB/32cores      160             Broadwell       Yes  &quot;
+    echo &quot;6             6.6GB   =187GB/28cores      7               Skylake         Yes  &quot;
+    echo &quot;7             9.4GB   =377GB/40cores      2               Cascade         Yes  &quot;
+    echo &quot;8             11.6GB  =187GB/16cores      6               Skylake         Yes  &quot;
+    echo &quot;9             4.25GB  =187GB/44cores      30              Cascade         Yes  &quot;
+    echo &quot;10            4.25GB  =187GB/44cores      136             Cascade              &quot;
+    echo &quot;11            15.6GB  =2000GB/128cores    1               EPYC            Yes  &quot;
+    echo &quot;12            8GB     =256GB/32cores      2               Cascade         Yes  &quot;
+    echo &quot;13            1.95GB  =125GB/64cores      11              EPYC            Yes  &quot;
+    #
+    while true; do
+        read -p &quot;pick an option number = &quot; nodeselection
+        if [ -n $nodeselection ]; then
+            case $nodeselection in
+                &quot;1&quot;)
+                    echo &quot;1             3.9GB   =125GB/32cores      903             Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='125G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;2&quot;)
+                    echo &quot;2             15.6GB  =502GB/32cores      24              Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='502G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;3&quot;)
+                    echo &quot;3             7.8GB   =250GB/32cores      56              Broadwell            &quot;
+                    cpusfromselections='32'
+                    ramfromselections='250G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;4&quot;)
+                    echo &quot;4             47.2GB  =3022GB/64cores     3               Broadwell            &quot;
+                    cpusfromselections='64'
+                    ramfromselections='3022G'
+                    archfromselections='broadwell'
+                    break;;
+                &quot;5&quot;)
+                    echo &quot;5             3.8GB   =124GB/32cores      160             Broadwell       Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;6&quot;)
+                    echo &quot;6             6.6GB   =187GB/28cores      7               Skylake         Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;7&quot;)
+                    echo &quot;7             9.4GB   =377GB/40cores      2               Cascade         Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;8&quot;)
+                    echo &quot;8             11.6GB  =187GB/16cores      6               Skylake         Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;9&quot;)
+                    echo &quot;9             4.25GB  =187GB/44cores      30              Cascade         Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;10&quot;)
+                    echo &quot;10            4.25GB  =187GB/44cores      136             Cascade              &quot;
+                    cpusfromselections='44'
+                    ramfromselections='187G'
+                    archfromselections='cascade'
+                    break;;
+                &quot;11&quot;)
+                    echo &quot;11            15.6GB  =2000GB/128cores    1               EPYC            Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;12&quot;)
+                    echo &quot;12            8GB     =256GB/32cores      2               Cascade         Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                &quot;13&quot;)
+                    echo &quot;13            1.95GB  =125GB/64cores      11              EPYC            Yes  &quot;
+                    echo 'not supported yet. declaring nothing. try again'
+                    ;;
+                *)
+                    echo &quot;no answer provided or answer not recognized.&quot;
+                    echo &quot;please try again.&quot;
+                    ;; 
+            esac
+        else
+            echo 'you must pick an option from list.'
+        fi
+    done
+}
+# ----------------------------- show options for cluster 
+show_cluster_options(){
+    #
+    node_state # show current state of nodes on the cluster 
+    #
+    echo &quot;Here are the options for $cluster_name, please choose a number to build submission files.&quot;
+    echo &quot;(GPU nodes not supported at this time)&quot;
+    #
+    case $cluster_name in
+        &quot;sockeye&quot;)
+            options_on_sockeye
+            ;;
+        # 
+        &quot;narval&quot;)
+            options_on_narval
+            ;;
+        #
+        &quot;beluga&quot;)
+            options_on_beluga
+            ;;
+        # 
+        &quot;niagara&quot;)
+            options_on_nigara
+            ;;
+        #
+        &quot;cedar&quot;)
+            options_on_cedar
+            ;;
+        # 
+        &quot;graham&quot;)
+            options_on_graham
+            ;;
+        #
+        &quot;manual&quot;)
+            echo &quot;please provide these set of info for $cluster_name.&quot;
+            echo &quot;not supportrd yet&quot;
+            ;;
+            #
+    esac
+}
+# ----------------------------- what is comsol path 
+where_is_comsol(){
+    case $cluster_name in
+        &quot;sockeye&quot;)
+            echo 'on ' $cluster_name ' SOCKEYE UBC ARC comsol is compiled manually at path (relative to home): //arc/project/st-amadiseh-1/comsol/comsol62/multiphysics/bin'
+            echo 'writing comsol path to template sh file'
+            echo &quot;PATH2COMSOL='//arc/project/st-amadiseh-1/comsol/comsol62/multiphysics/bin'&quot; &gt;&gt; submit_job.sh
+            echo 'writing done.'
+            #
+            echo 'declaring and writing gcc, opemmpi and java path in template sh file'
+            echo 'module load gcc' &gt;&gt; submit_job.sh
+            echo 'module load openmpi' &gt;&gt; submit_job.sh
+            echo 'module load openjdk/11.0.20.1_1' &gt;&gt; submit_job.sh
+            echo 'writing done.'
+            #
+            CALL_COMSOL_AS=&quot;$&quot;&quot;{PATH2COMSOL}/comsol&quot;
+            #
+            ;;
+        *) 
+            echo 'on ' $cluster_name ', comsol is loaded as a module'
+            echo 'declaring and writing stabdard environment and comsol path in template sh file'
+            if [ &quot;$cluster_name&quot; == &quot;niagara&quot; ]; then
+                echo 'module load CCEnv' &gt;&gt; submit_job.sh
+            fi 
+            echo 'module load StdEnv/2020' &gt;&gt; submit_job.sh
+            echo 'module load StdEnv/2023' &gt;&gt; submit_job.sh
+            echo 'module load comsol/6.2' &gt;&gt; submit_job.sh
+            # 
+            CALL_COMSOL_AS=&quot;comsol&quot;
+            #
+            if [ $cluster_name == &quot;narval&quot; ]; then
+                echo 'NARVAL ' $cluster_name ' needs controll on external mpi forks. adding to template sh file'
+                echo 'export I_MPI_COLL_EXTERNAL=0' &gt;&gt; submit_job.sh
+                echo 'writing done.'
+            fi
+            #
+            ;;
+    esac
+}
+# ----------------------------- get desk ready 
+get_desk_ready(){
+    case $confirmresume in
+        &quot;new&quot;)
+            echo 'creating parent directory to put everything under: ' $whattimeisit
+            mkdir -p $whattimeisit 
+            echo 'created parent directory to put everything under: ' $whattimeisit
+            echo 'making ' $whattimeisit ' accessible to all nodes' 
+            chmod -R 755 $whattimeisit
+            echo 'made ' $whattimeisit ' accessible to all nodes' 
+            echo 'enetering ' $whattimeisit
+            cd $whattimeisit # &lt;&lt;&lt; relative pathes 
+            pwd 
+            echo 'enetered ' $whattimeisit
+            echo 'creating temporary and recovery directories ....'
+            mkdir -p tmp rec
+            echo 'created temporary and recovery directories.'
+            chmod -R 755 tmp rec
+            echo 'made temporary and recovery directories accessible to all nodes.'
+            RECDIR=rec #$whattimeisit/rec
+            TMPDIR=tmp #$whattimeisit/tmp
+            ;;
+        &quot;resume&quot;)
+            ;;
+    esac
+}
+# ----------------------------- prepare for a new job 
+this_is_new_job(){
+    COMSOL_CONTINUE=' '
+    get_desk_ready          # prepare desktop 
+    # 
+    comsolcleanup           # cleaning comsol root directory 
+    get_username            # who is the current user 
+    get_membership          # who's your boss 
+    get_cluster_name        # geting the clustername and building an sh file 
+    show_cluster_options    # what is available on this cluster 
+    get_job_extra_info      # getting extra info before building sh file 
+    watch_mode              # watch mode on? or specify the wall-time 
+    initiate_sh_submit      # creating bash submit file given user inputs/selections    
+    # 
+    where_is_comsol         # getting comsol path and settle
+    #
+    echo &quot;input file must be under (relative) ../, otherwise fails.&quot;
+    read -p &quot;please provide comsol INPUT file name (this script assumes input on relative path ../) = &quot; inputmph
+    if [ -n $inputmph ]; then
+        echo 'creating a copy of input file ../ '$inputmph ' in ' $whattimeisit
+        cp -v ../$inputmph .
+        if [ $? -ne 0 ]; then
+            echo &quot;copy operation failed. please put input file ../ relative and try again.&quot;
+            echo &quot;OR manually add the file to the directory once this script exists&quot;
+                echo &quot;directory to put the file is: _&quot; $whattimeisit
+        fi
+    else
+        echo 'you must provide input file name'
+    fi 
+    echo 'created a copy of file ../ '$inputmph ' in ' $whattimeisit
+    # 
+    echo 'if this is for one single study, provide study tag once prompt, otherwise type in +no+. (std2/no)'
+    echo '(specifying multiple study not supported at this time)'
+    while true; do 
+        read -p &quot;please provide study tag. (std2/no) = &quot; runforstudy
+        if [ -n $runforstudy ]; then
+            case $runforstudy in 
+                &quot;no&quot;)
+                    echo 'no study tag provided, preparing for full'
+                    COMSOL_EXTRA_=' '
+                    #
+                    outputmph='solved_at_'$whattimeisit'_'$inputmph
+                    echo 'created OUTPUT filename as: ' $outputmph
+                    break 
+                    ;;
+                [std]*)
+                    echo 'study tag provided, preparing for study = ' $runforstudy
+                    COMSOL_EXTRA_='-study '$runforstudy
+                    outputmph='solved_at_'$whattimeisit'_'$runforstudy'_'$inputmph
+                    echo 'created OUTPUT filename as: ' $outputmph
+                    break
+                    ;;
+                *) 
+                    echo 'field left blanck'
+            esac 
+        else 
+            echo 'field cannot left blanck'
+        fi 
+    done
+}
+# ----------------------------- this resumes a terminated job 
+this_is_resume_job(){
+    COMSOL_CONTINUE=' -recover -continue '
+    while true; do 
+        read -p &quot;please provide terminated job recovery directory relative path = &quot; recoverydir
+        if [ -n $recoverydir ]; then
+            RECDIR=$recoverydir
+            break 
+        else
+            echo 'you must provide a path'
+        fi 
+    done 
+    #
+    while true; do 
+        read -p &quot;please provide terminated job temporary directory relative path = &quot; temporarydir
+        if [ -n $temporarydir ]; then
+            TMPDIR=$temporarydir
+            break 
+        else
+            echo 'you must provide a path'
+        fi 
+    done
+    # 
+    while true; do 
+        read -p &quot;please provide comsol INPUT file name = &quot; inputmph
+        if [ -n $inputmph ]; then
+            break 
+        else
+            echo 'you must provide a finename'
+        fi 
+    done
+    #
+    while true; do 
+        read -p &quot;please provide comsol OUTPUT file name (&gt;&gt;&gt; what set before, it is NOT a new name &lt;&lt;&lt;) = &quot; outputmph
+        if [ -n $outputmph ]; then
+            break 
+        else
+            echo 'you must provide a filename'
+        fi 
+    done 
+    #
+    get_desk_ready          # prepare desktop 
+    get_username            # who is the current user 
+    get_membership          # who's your boss 
+    get_cluster_name        # geting the clustername 
+    show_cluster_options    # what is available on this cluster 
+    get_job_extra_info      # getting extra info before building sh file 
+    watch_mode              # watch mode on? or specify the wall-time 
+    initiate_sh_submit      # creating bash submit file given user inputs/selections    
+    # 
+    where_is_comsol         # getting comsol path and settle 
+    # 
+    echo 'if this is for one single study, provide study tag once prompt, otherwise type in +no+. (std2/no)'
+    echo '(specifying multiple study not supported at this time)'
+    while true; do 
+        read -p 'please provide study tag. (std2/no) = ' runforstudy
+        if [ -n $runforstudy ]; then
+            case $runforstudy in 
+                [Nn]*)
+                    echo 'no study tag provided, preparing for full'
+                    COMSOL_EXTRA_=' '
+                    break;;
+                [std]*)
+                    echo 'study tag provided, preparing for study = ' $runforstudy
+                    COMSOL_EXTRA_='-study '$runforstudy
+                    break;;
+                *) 
+                    echo &quot;field left empty&quot;
+            esac 
+        else
+            echo 'field cannot left blank'
+        fi 
+    done 
+}
+# ----------------------------- runs for a/list of specific parameter and value
+running_for_specific_parameter(){
+    read -p &quot;is it a run for a specific parameter or list of parameters? (yes/no) = &quot; itis4parameters
+    while true; do 
+        if [ -n $itis4parameters ]; then
+            case $itis4parameters in 
+                [Nn]*)
+                    echo 'no specific paramter is set and sent - this is a normal run'
+                    COMSOL_PARAMS_=' '
+                    break;;
+                [Yy]*)
+                    echo 'setting and sending a (list of) paramter(s) to COMSOL command line.'
+                    read -p &quot;how many parameters are to be specified? (1/2/.../n) = &quot; itis4thismanyparameters
+                    echo 'be prepared to specifiy paramter details once prompted .....'
+                    list_of_parameters=&quot;&quot;
+                    values_of_parameters=&quot;&quot;
+                    for ((i=1; i&lt;=itis4thismanyparameters; i++)); do
+                        read -p &quot;enter NAME of parameter #$i: &quot; current_parameter_name
+                        read -p &quot;enter VALUE of parameter #$i ($current_parameter_name): &quot; current_parameter_value
+                        if [ $i -eq 1 ]; then
+                            list_of_parameters=&quot;$current_parameter_name&quot;
+                            values_of_parameters=&quot;$current_parameter_value&quot;
+                        else
+                            list_of_parameters=&quot;$list_of_parameters,$current_parameter_name&quot;
+                            values_of_parameters=&quot;$values_of_parameters,$current_parameter_value&quot;
+                        fi
+                    done
+                    # 
+                    echo 'sent specifications to comsol call.'
+                    COMSOL_PARAMS_=&quot;-pname ${list_of_parameters} -plist ${values_of_parameters}&quot;
+                    break;;
+                *) 
+                    echo &quot;field left empty&quot;
+            esac 
+        else
+            echo 'field cannot left blank'
+        fi 
+    done 
+}
+# ----------------------------- calling a method? 
+caling_a_method(){
+    read -p &quot;does this run call a specific method? (yes/no) = &quot; itis4method
+    while true; do 
+        if [ -n $itis4itis4method ]; then
+            case $itis4itis4method in 
+                [Nn]*)
+                    echo 'no specific method is set and sent - this is a normal run'
+                    COMSOL_METHOD_=' '
+                    break;;
+                [Yy]*)
+                    read -p &quot;enter NAME of method to be called: &quot; method_name
+                    echo 'sent specifications to comsol call.'
+                    COMSOL_METHOD_=&quot;methodcall ${list_of_parameters}&quot;
+                    break;;
+                *) 
+                    echo &quot;field left empty&quot;
+            esac 
+        else
+            echo 'field cannot left blank'
+        fi 
+    done 
+}
+# ----------------------------- running comsol 
+submit_for_comsol(){
+    logfilepath=$jobnamebyuser.log
+    COMSOL_BASE_COMMAND=&quot;batch -mpibootstrap slurm -inputfile ${inputmph} -outputfile ${outputmph} -batchlog ${logfilepath} -tmpdir ${TMPDIR} -recoverydir ${RECDIR}  -alivetime 15&quot;
+    echo ${CALL_COMSOL_AS}' '${COMSOL_BASE_COMMAND}' '${COMSOL_EXTRA_}' '${COMSOL_CONTINUE}' '${COMSOL_PARAMS_}' '${COMSOL_METHOD_} &gt;&gt; 'submit_job.sh'
+    #
+    echo if you submit this jon NOW, it will probably starting at .... 
+    echo &quot;this info is very volatite, given how CCDB is configured (it forgets allocated nodes and reschdules everything every 15 minutes)&quot;
+    echo ++++++++
+    sbatch --test-only submit_job.sh
+    echo ++++++++
+    echo moving to submit this job.
+    echo for housekeeping purposes, renaming $whattimeisit to $jobnamebyuser'_'$whattimeisit. 
+    cd ..
+    mv $whattimeisit $jobnamebyuser'_'$whattimeisit
+    echo renamed $whattimeisit to $jobnamebyuser'_'$whattimeisit. 
+    cd $jobnamebyuser'_'$whattimeisit
+    sbatch submit_job.sh
+    #
+    pwd
+    echo current state of jobs under your account 
+    squeue -u $username -l --start
+}
+# ----------------------------- watcher active? 
+# function watcher - contact MAK to access the code 
+# ----------------------------- user habit learner - add later 
+# function learner - not yet 
+##################################################################################
+# --------------------------------------------------------------------------------
+# this is main - steps actually taken in this script 
+# --------------------------------------------------------------------------------
+is_under_scratch # if not under scratch, leave immediately 
+whattimeisit=$(date +&quot;%Y%m%d_%H%M%S&quot;) # get time and date to organize files 
+echo 'current date-time is : '$whattimeisit
+# ----------------------------- is it a new run or terminated? 
+while true; do 
+    read -p &quot;are you submitting a new job or resuming a terminated job? (new/resume) = &quot; confirmresume
+    if [ -n $recoverydir ]; then
+        case $confirmresume in
+            &quot;new&quot;)
+                echo &quot;preparing for new submission.&quot;
+                this_is_new_job         # tasks for new job 
+                running_for_specific_parameter
+                submit_for_comsol       # running comsol
+                break;;
+            &quot;resume&quot;)
+                echo &quot;preparing for a terminated job.&quot;
+                this_is_resume_job      # tasks for resume job
+                running_for_specific_parameter 
+                submit_for_comsol       # running comsol
+                break;;
+            *) 
+                echo &quot;command not recognized or no input.&quot;
+        esac
+        break 
+    else 
+        echo 'you must pick a task'
+    fi 
+done 
+# ----------------------------- watcher active? 
+# function watcher - contact MAK to get the code 
+# ----------------------------- user habit learner - add later 
+# 
+echo ALL DONE.
+exit
+# end of file 
+
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h3 id="nanotube-builder-and-mesher">Nanotube Builder and Mesher</h3>
+            <div class="card-content"><h3>Nanotube Builder and Mesher</h3>
 <p>&nbsp;</p>
 <p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>.</p>
 <p>&nbsp;</p>
 <ul>
-<li>Access the tool <a href="Outlets_20260101_Nanotube.html"><strong>here</strong></a>.</li>
+<li>Access the tool <a href="Tools_Nanotube.html"><strong>here</strong></a>.</li>
 </ul>
 <p>&nbsp;</p>
 <p>The channel profile is described by two <strong>wall functions</strong> over the <strong>axial coordinate</strong> <code>ξ</code>:</p>
@@ -1163,18 +2166,18 @@ if __name__ == '__main__':
         </section>
 
         <section class="card span-2">
-            <div class="card-content"><h3 id="cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</h3>
+            <div class="card-content"><h3>COSMO-SAC Activity Coefficient Model</h3>
 <p>&nbsp;</p>
 <p>This is a suite of MATLAB code for the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. </p>
 <p>&nbsp;</p>
 <ul>
-<li>An <strong><code>.html</code></strong> version of the calculator can be found <a href="Outlets_20150101_COSMO-SAC_Calculator.html"><strong>here</strong></a>.</li>
+<li>An <strong><code>.html</code></strong> version of the calculator can be found <a href="Tools_COSMOSAC_Calculator.html"><strong>here</strong></a>. </li>
 </ul>
 <p>&nbsp;</p>
 <p><strong>Usage Instructions</strong></p>
 <p>&nbsp;</p>
 <ul>
-<li>The Excel file (<strong><a href="Outlets_20150101_COSMO-SAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></strong>) must have sheets named after your <strong><code>components</code></strong> (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.</li>
+<li>The Excel file (<strong><a href="Tools_COSMOSAC_inputQM.xlsx"><code>inputQM.xlsx</code></a></strong>) must have sheets named after your <strong><code>components</code></strong> (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.</li>
 <li>Set your desired <strong><code>SYSTEMP</code></strong> (Temperature in <strong>Kelvin</strong>).</li>
 <li>Update <strong><code>ListCOMP</code></strong> with the sheet names from your <strong><code>inputQM.xlsx</code></strong> file.</li>
 <li>Run the script <strong><code>eqCOSMO.m</code></strong>.</li>
@@ -1189,7 +2192,9 @@ if __name__ == '__main__':
 <p>&nbsp;</p>
 <h4><strong>Scripts Details</strong></h4>
 <p>&nbsp;</p>
-<h5><strong>1. <code>eqCOSMO.m</code></strong></h5>
+<ul>
+<li><strong>1. <code>eqCOSMO.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function eqCOSMO() 
     % Two Phase Equilibrium Calculations using COSMO model (COSMO-SAC) 
@@ -1208,7 +2213,9 @@ if __name__ == '__main__':
 end
 </code></pre>
 <p>&nbsp;</p>
-<h5><strong>2. <code>Binary.m</code></strong></h5>
+<ul>
+<li><strong>2. <code>Binary.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function MATrix=Binary(SYSTEMP, ListCOMP)
     COMP=length(ListCOMP); % COMP=2;
@@ -1305,7 +2312,9 @@ end
 end
 </code></pre>
 <p>&nbsp;</p>
-<h5><strong>3. <code>SimgaProfileCalculator.m</code></strong></h5>
+<ul>
+<li><strong>3. <code>SimgaProfileCalculator.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function [SigmaDensity SigmaProfile VolCavity]=SimgaProfileCalculator(Char)
     REFF = 0.81764200000000;
@@ -1338,7 +2347,9 @@ end
 end
 </code></pre>
 <p>&nbsp;</p>
-<h5><strong>4. <code>Library.m</code></strong></h5>
+<ul>
+<li><strong>4. <code>Library.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function [NUMSEGMENT VolCavity AreaCavity ...
     Charge Area ChargePerArea Potential ...
@@ -1364,7 +2375,9 @@ end
 end
 </code></pre>
 <p>&nbsp;</p>
-<h5><strong>5. <code>paraCOSMO.m</code></strong></h5>
+<ul>
+<li><strong>5. <code>paraCOSMO.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function [EO, AEFFPRIME, RGAS, VNORM, ANORM, COMPSEG, ...
     EPS, COORD, SIGMAHB, CHB, FPOL, ALPHA, ALPHAPRIME]=paraCOSMO()
@@ -1385,7 +2398,9 @@ end
 end 
 </code></pre>
 <p>&nbsp;</p>
-<h5><strong>6. <code>SortSimgaProfile.m</code></strong></h5>
+<ul>
+<li><strong>6. <code>SortSimgaProfile.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area)
     % Sorts the Sigma Profile
@@ -1401,7 +2416,9 @@ end
 
 </code></pre>
 <p>&nbsp;</p>
-<h5><strong>7. <code>ConvertAU2A.m</code></strong></h5>
+<ul>
+<li><strong>7. <code>ConvertAU2A.m</code></strong></li>
+</ul>
 <p>&nbsp;</p>
 <pre><code class="language-bash">function [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area)
     % From atomic unit [au] to ANGSTROMS [A*]
@@ -1411,334 +2428,6 @@ end
     POSZA=POSZAU*0.529177249;
     RAD=sqrt(Area/PI);
 end
-</code></pre></div>
-        </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
-            <div class="card-content"><h3 id="cosmo-sac-sigma-profile-generator">COSMO-SAC Sigma Profile Generator</h3>
-<p>&nbsp;</p>
-<p>This is a suite of MATLAB code designed to process raw quantum mechanical (QM) surface data into <strong>sigma-profiles</strong>.</p>
-<p>&nbsp;</p>
-<ul>
-<li>An <strong><code>html</code></strong> version of this document is available <a href="Outlets_20141010_COSMO-SAC-Simga.html"><strong>here</strong></a>.</li>
-</ul>
-<p>&nbsp;</p>
-<p><strong>How to Use</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>Replace <code>CompoundName</code> with the specific <code>sheet name</code> in the Excel file <strong><code>inputQM.xlsx</code></strong> (<a href="Outlets_20141010_COSMO-SAC-Simga_inputQM.xlsx"><strong>Click here to see sample input file</strong></a>):<ul>
-<li><strong>Columns C, D, E:</strong> are X, Y, Z coordinates (Atomic Units).</li>
-<li><strong>Column G:</strong> is Segment Area.</li>
-<li><strong>Column H:</strong> is Charge per Area (Surface Charge Density).</li>
-</ul>
-</li>
-</ul>
-<p>&nbsp;</p>
-<ul>
-<li>Call the calculator function from the MATLAB command window as <code>[Density, Profile, Vol] = SimgaProfileCalculator('CompoundName');</code>.</li>
-</ul>
-<p>&nbsp;</p>
-<h4><strong>Scripts Details</strong></h4>
-<p>&nbsp;</p>
-<h5><strong>1. <code>SimgaProfileCalculator.m</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">function SimgaProfileCalculator()
-    % [SigmaDensity SigmaProfile]=SimgaProfileCalculator()
-    REFF = 0.81764200000000;
-    Char=input('Enter sheet name contains data and press enter = ','s');
-    [NUMSEGMENT VolCavity AreaCavity ...
-        Charge Area Sigma Potential ...
-        POSXAU POSYAU POSZAU]=IOinDataBase(Char);
-    [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area);
-    SigmaNEW=zeros(NUMSEGMENT,1);
-    NormSum=zeros(NUMSEGMENT,1);
-    for i=1:NUMSEGMENT
-        SigmaNEW(i)=0;
-        NormSum(i)=0;
-        for j=1:NUMSEGMENT
-            diffPOSXA=POSXA(j)-POSXA(i);
-            diffPOSYA=POSYA(j)-POSYA(i);
-            diffPOSZA=POSZA(j)-POSZA(i);
-            Term1=sqrt(diffPOSXA^2+diffPOSYA^2+diffPOSZA^2);
-            Term2=Sigma(j)*((RAD(j)^2*REFF^2)/(RAD(j)^2+REFF^2)).*...
-                exp(-Term1^2/((RAD(j)^2+REFF^2)));
-            Term3=(RAD(j)^2*REFF^2*(RAD(j)^2+REFF^2))*...
-                exp(-Term1^2/(RAD(j)^2+REFF^2));
-            SigmaNEW(i)=SigmaNEW(i)+Term2;
-            NormSum(i)= NormSum(i)+Term3;
-        end
-        SigmaNEW(i)=SigmaNEW(i)/NormSum(i);
-    end
-    [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area);
-    xlswrite('IOinDataBase.xlsx', SigmaDensity', Char, ['N3' ':' ['N' num2str(length(SigmaDensity)+3)]]); 
-    xlswrite('IOinDataBase.xlsx', SigmaProfile', Char, ['O3' ':' ['O' num2str(length(SigmaDensity)+3)]]); 
-end 
-</code></pre>
-<p>&nbsp;</p>
-<h5><strong>2. <code>IOinDataBase.m</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">function [NUMSEGMENT VolCavity AreaCavity ...
-    Charge Area ChargePerArea Potential ...
-    POSXAU POSYAU POSZAU]=IOinDataBase(Char)
-    % Reads data from IOinDataBase.xlsx for Compound in sheet &quot;Char&quot;
-    NUMSEGMENT=xlsread('IOinDataBase.xlsx',Char,'L2');
-    VolCavity=xlsread('IOinDataBase.xlsx',Char,'L3');
-    AreaCavity=xlsread('IOinDataBase.xlsx',Char,'L4');
-    EndPOSXAU=['C' num2str(NUMSEGMENT+4)];
-    EndPOSYAU=['D' num2str(NUMSEGMENT+4)];
-    EndPOSZAU=['E' num2str(NUMSEGMENT+4)];
-    EndCharge=['F' num2str(NUMSEGMENT+4)];
-    EndArea=['G' num2str(NUMSEGMENT+4)];
-    EndChargePerArea=['H' num2str(NUMSEGMENT+4)];
-    EndPotential=['I' num2str(NUMSEGMENT+4)];
-    POSXAU=xlsread('IOinDataBase.xlsx',Char,['C4' ':' EndPOSXAU]);
-    POSYAU=xlsread('IOinDataBase.xlsx',Char,['D4' ':' EndPOSYAU]);
-    POSZAU=xlsread('IOinDataBase.xlsx',Char,['E4' ':' EndPOSZAU]);
-    Charge=xlsread('IOinDataBase.xlsx',Char,['F4' ':' EndCharge]);
-    Area=xlsread('IOinDataBase.xlsx',Char,['G4' ':' EndArea]);
-    ChargePerArea=xlsread('IOinDataBase.xlsx',Char,['H4' ':' EndChargePerArea]);
-    Potential=xlsread('IOinDataBase.xlsx',Char,['I4' ':' EndPotential]);
-end
-</code></pre>
-<p>&nbsp;</p>
-<h5><strong>3. <code>SortSimgaProfile.m</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">function [SigmaDensity SigmaProfile]=SortSimgaProfile(SigmaNEW,Area)
-    % Sorts the Sigma Profile
-    SigmaDensity = -0.025:1e-3:0.025;
-    SigmaProfile = zeros(length(SigmaDensity),1)';
-    for idPart=1:length(SigmaDensity)-1
-        [dummy idParSigmaNEW]=find(SigmaNEW&gt;SigmaDensity(idPart) &amp; SigmaNEW&lt;SigmaDensity(idPart+1));
-        TempData=abs(SigmaNEW(idParSigmaNEW)-SigmaNEW(idParSigmaNEW+1)).*...
-            Area(idParSigmaNEW);
-        SigmaProfile(idPart)=sum(TempData);
-    end
-end
-</code></pre>
-<p>&nbsp;</p>
-<h5><strong>4. <code>ConvertAU2A.m</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">function [POSXA POSYA POSZA RAD]=ConvertAU2A(POSXAU,POSYAU,POSZAU,Area)
-    % From atomic unit [au] to ANGSTROMS [A*]
-    PI = 3.14159265358979;
-    POSXA=POSXAU*0.529177249;
-    POSYA=POSYAU*0.529177249;
-    POSZA=POSZAU*0.529177249;
-    RAD=sqrt(Area/PI);
-end
-</code></pre></div>
-        </section>
-
-        <section class="card span-2">
-            <div class="card-content"><h3 id="cosmo-sac-sigma-profile-processor">COSMO-SAC Sigma Profile Processor</h3>
-<p>&nbsp;</p>
-<p>This is a suite of <code>Shell</code> scripts designed to automate the extraction and processing of <strong>quantum mechanical (QM)</strong> data from <strong>DMol3</strong> output files (specifically <strong>.cosmo</strong> and <strong>.outmol</strong>) into <strong>sigma-profiles</strong> for <strong>COSMO-SAC thermodynamic modeling</strong>.</p>
-<p>&nbsp;</p>
-<p><strong>How to Use</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>Set the <strong>Compound Name</strong> by editing the scripts to update the <strong><code>compound</code></strong> variable (e.g., <code>compound='75-85-4-2d'</code>).</li>
-<li>Make <strong>Executable</strong>: <code>chmod +x *.sh</code></li>
-<li>Run the <strong>Pipeline</strong><ul>
-<li>first <strong><code>1_Dmol3COSMO.sh</code></strong>: Extracts segment geometry and raw charges from <code>.cosmo</code> files.</li>
-<li>then <strong><code>2_Dmol3OUTMOL.sh</code></strong>: Extracts cavity volume and average COSMO data from <code>.outmol</code> files.</li>
-<li>then <strong><code>3_sProfile.sh</code></strong>: Performs the N<sup>2</sup>-complexity Gaussian averaging of surface charges.</li>
-<li>and finally <strong><code>SortS.sh</code></strong>: Generates the P(σ) vs σ distribution for thermodynamic modeling.</li>
-</ul>
-</li>
-</ul>
-<p>&nbsp;</p>
-<h4><strong>Script Details</strong></h4>
-<p>&nbsp;</p>
-<p>The scripts generate several intermediate such as <code>.cosmo.xyz</code> files and a final sigma-profile:<br />
-- <code>${compound}.cosmo.SigmaNonSrt</code>: The smoothed charge densities.<br />
-- <code>${compound}.cosmo.SigmaSrt</code>: The charge density bin identifiers.<br />
-- <code>${compound}.cosmo.PSigmaSrt</code>: The final sigma-profile area values.</p>
-<p>&nbsp;</p>
-<h5><strong>1. <code>1_Dmol3COSMO.sh</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">#!/bin/bash
-# Extracting data domain to export QM data
-runID=$(date --rfc-3339='date');
-compound='75-85-4-2d';
-PI=3.14159265358979;
-AU2A=0.529177249;
-# - detecting line number for -segment information- section of COSMO file
-line=`grep -n 'segment information' ${compound}.cosmo`;
-line=`echo $line | sed -e 's/:.*//'`;
-QMstart=${line};
-QMstarts=$(($QMstart + 3));
-# - detecting number of segments
-line=`grep -n 'total number of segments' ${compound}.cosmo`;
-line=`echo $line | sed -e 's/.*= //'`;
-segmentnum=`echo &quot;${line//[^0-9]/}&quot;`
-echo $segmentnum &gt; ${compound}.cosmo.segments
-#
-QMends=$(($segmentnum + $QMstarts));
-# reading QM data and writing to file
-for L in `seq $QMstarts $QMends`;
-    do
-    QMdata=`sed -n ${L}p ${compound}.cosmo`;
-    echo  $QMdata &gt;&gt; ${compound}.cosmo.QMdata;
-done
-# export completed to .QMdata file
-sed '${/^[[:space:]]*$/d}' ${compound}.cosmo.QMdata &gt; out;
-mv out ${compound}.cosmo.QMdata;
-# - writing individual QM data to scatter files
-while read idx nidx POSxAU POSyAU POSzAU Q Aau QperA POTau
-    do
-    echo  $POSxAU &gt;&gt; ${compound}.cosmo.POSxAU;
-    POSxA=$(bc &lt;&lt;&lt; &quot;scale=6;$POSxAU*$AU2A&quot;);
-    echo  $POSxA &gt;&gt; ${compound}.cosmo.POSxA;
-    echo  $POSyAU &gt;&gt; ${compound}.cosmo.POSyAU;
-    POSyA=$(bc &lt;&lt;&lt; &quot;scale=6;$POSyAU*$AU2A&quot;);
-    echo  $POSyA &gt;&gt; ${compound}.cosmo.POSyA;
-    echo  $POSzAU &gt;&gt; ${compound}.cosmo.POSzAU;
-    POSzA=$(bc &lt;&lt;&lt; &quot;scale=6;$POSzAU*$AU2A&quot;);
-    echo  $POSzA &gt;&gt; ${compound}.cosmo.POSzA;
-    echo  $Q &gt;&gt; ${compound}.cosmo.Charges;
-    echo  $Aau &gt;&gt; ${compound}.cosmo.Aau;
-    AA=$(bc &lt;&lt;&lt; &quot;scale=6;$Aau*$AU2A*$AU2A&quot;);
-    echo  $AA &gt;&gt; ${compound}.cosmo.AA;
-    RADau=$(bc &lt;&lt;&lt; &quot;scale=6;$Aau/$PI&quot;);
-    RADau=$(bc &lt;&lt;&lt; &quot;scale=6;sqrt($RADau)&quot;);
-    #RADau=$(bc &lt;&lt;&lt; &quot;scale=6;sqrt($(($Aau/$PI)))&quot;);
-    echo  $RADau &gt;&gt; ${compound}.cosmo.RADau;
-    RADA=$(bc &lt;&lt;&lt; &quot;scale=6;$RADau*$AU2A&quot;);
-    echo  $RADA &gt;&gt; ${compound}.cosmo.RADA;
-    echo  $QperA &gt;&gt; ${compound}.cosmo.QperA;
-    echo  $POTau &gt;&gt; ${compound}.cosmo.POTau;
-done&lt;${compound}.cosmo.QMdata
-cp ${compound}.cosmo.QperA ${compound}.cosmo.SigmaDensity
-</code></pre>
-<p>&nbsp;</p>
-<h5><strong>2. <code>2_Dmol3OUTMOL.sh</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">#!/bin/bash
-# - detecting line number for -cosmo information- section of OUTMOL file
-runID=$(date --rfc-3339='date');
-compound='75-85-4-2d';
-line=`grep -n 'COSMO Results' ${compound}.outmol`;
-line=`echo $line | sed -e 's/:.*//'`;
-RESstarts=$(($line + 10));
-RESends=$(($RESstarts + 4));
-# reading QM data and writing to file
-for L in `seq $RESstarts $RESends`;
-    do
-    data=`sed -n ${L}p ${compound}.outmol`;
-    echo  $data &gt;&gt; ${compound}.outmol.QMdata;
-done
-# export completed to .QMdata file
-sed '${/^[[:space:]]*$/d}' ${compound}.outmol.QMdata &gt; out;
-mv out ${compound}.outmol.QMdata;
-# - writing individual QM data to scatter files
-sCavgAU=`sed -n 1p ${compound}.outmol.QMdata`;
-sCavgAU=`echo $sCavgAU | sed -e 's/.*= //'`;
-echo  $sCavgAU &gt;&gt; ${compound}.outmol.sCavgAU;
-vAU=`sed -n 2p ${compound}.outmol.QMdata`;
-vAU=`echo $vAU | sed -e 's/.*= //'`;
-echo  $vAU &gt;&gt; ${compound}.outmol.vAU;
-sCavgA=`sed -n 3p ${compound}.outmol.QMdata`;
-sCavgA=`echo $sCavgA | sed -e 's/.*= //'`;
-echo  $sCavgA &gt;&gt; ${compound}.outmol.sCavgA;
-vA=`sed -n 4p ${compound}.outmol.QMdata`;
-vA=`echo $vA | sed -e 's/.*= //'`;
-echo  $vA &gt;&gt; ${compound}.outmol.vA;
-</code></pre>
-<p>&nbsp;</p>
-<h5><strong>3. <code>3_sProfile.sh</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">#!/bin/bash
-runID=$(date --rfc-3339='date');
-compound='75-85-4-2d';
-segments=$(cat ${compound}.cosmo.segments);
-EE=2.71828;
-REFF=0.81764200000000;
-REFF2=$(bc &lt;&lt;&lt; &quot;scale=8;$REFF*$REFF&quot;);
-echo 'if you see following warning:'
-echo '***************************************'
-echo 'Runtime warning (func=(main), adr=22): non-zero scale in exponent'
-echo '***************************************'
-echo 'do not care, calculations are going on in any case'
-echo 'this message disappeares after 20s'
-sleep 20s
-for i in `seq 1 $segments`
-    do
-    NormSum=0;
-    SigmaNew=0;
-    for j in `seq 1 $segments`
-        do
-        # reading data
-        xi=`sed -n ${i}p ${compound}.cosmo.POSxA`;
-        yi=`sed -n ${i}p ${compound}.cosmo.POSyA`;
-        zi=`sed -n ${i}p ${compound}.cosmo.POSzA`;
-        xj=`sed -n ${j}p ${compound}.cosmo.POSxA`;
-        yj=`sed -n ${j}p ${compound}.cosmo.POSyA`;
-        zj=`sed -n ${j}p ${compound}.cosmo.POSzA`;
-        RADj=`sed -n ${j}p ${compound}.cosmo.RADau`;
-        Sigma=`sed -n ${j}p ${compound}.cosmo.QperA`;
-        diffx=$(bc &lt;&lt;&lt; &quot;scale=8;$xi - $xj&quot;);
-        diffy=$(bc &lt;&lt;&lt; &quot;scale=8;$yi - $yj&quot;);
-        diffz=$(bc &lt;&lt;&lt; &quot;scale=8;$zi - $zj&quot;);
-        Dist=$(bc &lt;&lt;&lt; &quot;scale=8;$diffx*$diffx + $diffy*$diffy + $diffz*$diffz&quot;);
-        sqrDist=$(bc &lt;&lt;&lt; &quot;scale=8;sqrt($Dist)&quot;);
-        RADj2=$(bc &lt;&lt;&lt; &quot;scale=8;$RADj*$RADj&quot;);
-        mRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$RADj2*$REFF2&quot;);
-        pRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$RADj2 + $REFF2&quot;);
-        mpRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$mRADjREFF/$pRADjREFF&quot;);
-        DistpRADjREFF=$(bc &lt;&lt;&lt; &quot;scale=8;$Dist/$pRADjREFF&quot;);
-        Expt=$(bc &lt;&lt;&lt; &quot;scale=8;$DistpRADjREFF&quot;);
-        Expt=`echo &quot;$EE^$Expt&quot; | bc -l`;
-        Expt=`echo &quot;1/$Expt&quot; | bc -l`;
-        SigmaSum=$(bc &lt;&lt;&lt; &quot;scale=8;$Sigma*$mpRADjREFF*$Expt&quot;);
-        NormDist=$(bc &lt;&lt;&lt; &quot;scale=8;$mpRADjREFF*$Expt&quot;);
-        NormSum=$(bc &lt;&lt;&lt; &quot;scale=8;$NormSum + $NormDist&quot;);
-        SigmaNew=$(bc &lt;&lt;&lt; &quot;scale=8;$SigmaNew + $SigmaSum&quot;);
-        clear;
-    done
-    SigmaNonSrt=$(bc &lt;&lt;&lt; &quot;scale=8;$SigmaNew/$NormSum&quot;);
-    echo  $SigmaNonSrt &gt;&gt; ${compound}.cosmo.SigmaProfileNonSrt;
-done
-</code></pre>
-<p>&nbsp;</p>
-<h5><strong>4. <code>4_SortSigma.sh</code></strong></h5>
-<p>&nbsp;</p>
-<pre><code class="language-bash">#!/bin/bash
-ITER=51; 
-for i in `seq 1 $ITER`
-    do 
-    j=$(($i-1));
-    SigmaSrt=$((-0.025+0.001*$j)); 
-    echo $SigmaSrt &gt;&gt; ${compound}.cosmo.SigmaSrt; 
-    echo 0 &gt;&gt; ${compound}.cosmo.PSigmaSrt; 
-done 
-segments=$(cat ${compound}.cosmo.segments);
-segmentnum=${segments//\ / };
-for j in `seq 1 $segmentnum`
-    do 
-    Aau=`sed -n ${j}p ${compound}.cosmo.Aau`;
-    SigmaNonSrtJ=`sed -n ${j}p ${compound}.cosmo.SigmaNonSrt`;
-    SigmaSrt1=`sed -n ${1}p ${compound}.cosmo.SigmaSrt`;
-    TMP=$(($SigmaNonSrtJ - $SigmaSrt1));
-    TMP=$(($TMP/0.001)); 
-    TMP=$((floor($TMP))); 
-    TMP1=$(($TMP + 1));
-    TMP2=$(($TMP + 2));
-    SPTMP1=`sed -n ${TMP1}p ${compound}.cosmo.PSigmaSrt`;
-    SPTMP2=`sed -n ${TMP2}p ${compound}.cosmo.PSigmaSrt`;
-    Term1=$(($SigmaNonSrtJ-$SPTMP1));
-    Term2=$(($Aau*$Term1));
-    Term3=$(($Term2/0.001)); 
-    SP2=$(($SPTMP2+$Term3));
-    Term4=$(($SPTMP2-$SigmaNonSrtJ));
-    Term5=$(($Aau*$Term4)); 
-    Term6=$(($Term5/0.001));
-    SP1=$(($SPTMP1+$Term6));
-    `sed -i &quot;${TMP1}s/.*/$SP1/&quot; ${compound}.cosmo.PSigmaSrt`
-    `sed -i &quot;${TMP2}s/.*/$SP2/&quot; ${compound}.cosmo.PSigmaSrt`
-done    
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
