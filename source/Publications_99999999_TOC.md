@@ -1,5 +1,3 @@
-## Publications
-
 - Publications
 - Variable Density Mass Transfer Correction
 - Falling Film Mass Transfer & Penetration Theory

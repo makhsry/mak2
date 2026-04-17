@@ -1,5 +1,3 @@
-## Outlets
-
 - Outlets
 - Drawing to GPX (Route Pattern Mapper — Python Application)
 - Local RAG Pipeline — Ollama + ChromaDB + LangChain

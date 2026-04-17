@@ -1,5 +1,3 @@
-## Experiences
-
 - Experiences
 - Simulation Module Development Lead (2026: Jan - _Present_)
 - Mineral Process Engineer (2025 Sept. - 2025 Dec.)

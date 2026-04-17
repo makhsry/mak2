@@ -1,5 +1,3 @@
-## Educations
-
 - Educations
 - MASc. Mining Engineering (2023-2025)
 - MASc. Chemical Engineering - Process Design (2012-2014)
