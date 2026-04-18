@@ -1,7 +1,7 @@
 ## Outlets
 
-- Drawing to GPX (Route Pattern Mapper — Python Application)
 - Bike Trainer Dashboard (Minoura MAG-500)
+- Drawing to GPX (Route Pattern Mapper — Python Application)
 - Local RAG Pipeline — Ollama + ChromaDB + LangChain
 - Bring Old Fitbit Data to Strava
 - HPC Job Management Tools
