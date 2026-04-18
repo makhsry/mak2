@@ -5,9 +5,9 @@ A dynamic, single-page dashboard designed for **indoor cycling** using my **Mino
 - Access the dashboard [**here**](Tools_BikeTrainer.html)
 
 It utilizes a power model to estimate intensity based on environmental and mechanical factors:
-* **Gravitational Power:** Calculates power required to overcome slope/grade.
-* **Rolling Resistance:** Accounts for tire friction based on total mass.
-* **Aerodynamic Drag:** Estimates wind resistance using rider height and shoulder width.
+- **Gravitational Power:** Calculates power required to overcome slope/grade.
+- **Rolling Resistance:** Accounts for tire friction based on total mass.
+- **Aerodynamic Drag:** Estimates wind resistance using rider height and shoulder width.
 
 The settings include:
 - **MAG500 Config:** Eight magnetic resistance levels (L1–L8) mapped to specific slopes.
