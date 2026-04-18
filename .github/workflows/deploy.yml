@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Site
         run: |
-          cd source
+          cd content
           #
           python3 build_toc.py Educations --output Educations_99999999_TOC.md
           python3 build_toc.py Experiences --output Experiences_99999999_TOC.md
@@ -49,7 +49,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add source/*.html source/*_TOC.md
+          git add content/*.html content/*_TOC.md
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
           else
@@ -60,7 +60,7 @@ jobs:
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'source/'
+          path: 'content/'
 
   deploy:
     needs: build_and_deploy
