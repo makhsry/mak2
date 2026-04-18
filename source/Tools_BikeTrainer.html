@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta 
+    name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+    <title>
+        MAG-500 Trainer App
+    </title>
+    <link 
+    href="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack.min.css" 
+    rel="stylesheet"/>
+    <script 
+    src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+    <script 
+    id="MathJax-script" 
+    async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --tile-color: #1e293b;
+            --text-color: #f8fafc;
+            --bg: #11110f; 
+            --panel: #1c1c18; 
+            --accent: #ff6b00;
+            --text-dim: #888880; 
+            --text-bright: #e0e0d5; 
+            --border: #32322d;
+            --recovery: #00e676; 
+            --aerobic: #00d4ff; 
+            --tempo: #ffd740; 
+            --threshold: #ff9100; 
+            --vo2: #ff3d57; 
+            --neuro: #aa77ff;
+        }
+        body, html {
+            margin: 0; 
+            padding: 0;
+            height: 100vh; 
+            width: 100vw;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden; 
+            font-family: 'Consolas', monospace;
+        }
+        .grid-stack { 
+            background: var(--bg-color); 
+            height: 100vh !important; 
+        }
+        .grid-stack-item-content {
+            background-color: var(--tile-color);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .trainer-wrapper {
+            background: var(--bg); 
+            color: var(--text-bright);
+            padding: 0px; 
+            overflow-y: auto; 
+            height: 100%;
+        }
+        .trainer-content {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            max-width: 100%; 
+            margin: 0;
+        }
+        .panel { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            padding: 15px; 
+            border-radius: 4px; 
+        }
+        .full { 
+            grid-column: 1 / -1; 
+        }
+        h2 { 
+            font-size: 0.8rem; 
+            letter-spacing: 2px; 
+            color: var(--text-dim); 
+            margin: 0 0 15px 0; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 5px; 
+        }
+        .big-stat { 
+            text-align: center; 
+            flex: 1; 
+            border-right: 1px solid var(--border); 
+        }
+        .big-stat:last-child { 
+            border-right: none; 
+        }
+        .label { 
+            display: block; 
+            font-size: 0.65rem; 
+            color: var(--text-dim); 
+            margin-bottom: 5px; 
+            text-transform: uppercase; }
+        .value { 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: var(--accent); 
+        }
+        .gear-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            flex: 1; 
+        }
+        .btn { 
+            background: var(--bg); 
+            border: 1px solid var(--border); 
+            color: var(--text-dim); 
+            padding: 5px 8px; 
+            cursor: pointer; 
+            font-size: 0.75rem; 
+            min-width: 42px; 
+            text-align: center; 
+        }
+        .btn.active { 
+            border-color: var(--accent); 
+            color: var(--accent); 
+            background: #2a1a0a; 
+        }
+        .phase-tag { 
+            font-size: 0.7rem; 
+            padding: 3px 12px; 
+            border-radius: 3px; 
+            margin-top: 10px; 
+            display: inline-block; 
+            color: #000; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+        }
+        input[type="number"], 
+        select { 
+            background: #000; 
+            border: 1px solid var(--border); 
+            color: var(--accent); 
+            padding: 4px; 
+            text-align: center; 
+            font-family: inherit; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        input[type="range"] { 
+            width: 100%; 
+            accent-color: var(--accent); 
+            margin: 10px 0; 
+            cursor: pointer; 
+        }
+        .math-block { 
+            color: var(--text-bright); 
+            padding: 10px 0; 
+            font-size: 0.95rem; 
+            text-align: center; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
+            font-size: 0.75rem; 
+            color: var(--text-dim); 
+            border: 1px solid var(--border); 
+        }
+        th { 
+            background: #000; 
+            color: var(--accent); 
+            text-align: left; 
+            padding: 8px; 
+            border-bottom: 1px solid var(--border); 
+            text-transform: uppercase; 
+        }
+        td { 
+            padding: 8px; 
+            border-bottom: 1px solid var(--border); 
+        }
+        .sc-controls { 
+            display: flex; 
+            padding: 10px; 
+            background: rgba(0,0,0,0.3); 
+            gap: 10px; 
+            align-items: center; 
+        }
+        #playlist-url { 
+            flex-grow: 1; 
+            background: #0f172a; 
+            border: 1px solid #334155; 
+            color: white; 
+            padding: 8px; 
+            border-radius: 6px; 
+            outline: none; 
+        }
+        #sc-widget { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+        }
+
+        /* Resizing Handle Styling */
+        .ui-resizable-handle {
+            background-image: none !important;
+            opacity: 1 !important;
+        }
+        .ui-resizable-n { top: 5px; cursor: n-resize; }
+        .ui-resizable-s { bottom: 5px; cursor: s-resize; }
+        .ui-resizable-e { right: 5px; cursor: e-resize; }
+        .ui-resizable-w { left: 5px; cursor: w-resize; }
+        .ui-resizable-se { right: 5px; bottom: 5px; cursor: se-resize; }
+        .ui-resizable-sw { left: 5px; bottom: 5px; cursor: sw-resize; }
+        .ui-resizable-ne { right: 5px; top: 5px; cursor: ne-resize; }
+        .ui-resizable-nw { left: 5px; top: 5px; cursor: nw-resize; }
+
+        .ui-resizable-handle::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+        .ui-resizable-se::after { transform: rotate(0deg); }
+        .ui-resizable-sw::after { transform: rotate(90deg); }
+        .ui-resizable-nw::after { transform: rotate(180deg); }
+        .ui-resizable-ne::after { transform: rotate(270deg); }
+        .ui-resizable-n::after, .ui-resizable-s::after, .ui-resizable-e::after, .ui-resizable-w::after { content: none; }
+    </style>
+</head>
+<body>
+    <div 
+    class="grid-stack">
+        <div 
+        class="grid-stack-item" 
+        gs-x="0" 
+        gs-y="0" 
+        gs-w="5" 
+        gs-h="12" 
+        gs-id="trainer-app">
+            <div 
+            class="grid-stack-item-content"
+            >
+                <div 
+                class="trainer-wrapper"
+                >
+                    <div 
+                    class="trainer-content"
+                    >
+                        <div 
+                        class="panel full" 
+                        style="display: flex; 
+                        align-items: center;
+                        border-top: none;
+                        border-left: none;
+                        border-right: none;
+                        border-radius: 0;"
+                        >
+                            <div 
+                            class="big-stat" 
+                            style="flex: 1.5;"
+                            >
+                                <span 
+                                class="label"
+                                >
+                                MAG500 CONFIG
+                            </span>
+                                <div 
+                                class="gear-grid" 
+                                id="mag-group" 
+                                style="justify-content: center; 
+                                margin: 10px 0;"
+                                >
+                                </div>
+                                <div 
+                                style="padding: 0 20px;"
+                                >
+                                    <div 
+                                    style="display:flex; 
+                                    justify-content:space-between"
+                                    >
+                                    <span 
+                                    class="label">Slope (%)
+                                </span>
+                                <span 
+                                id="val-grade" 
+                                style="color:var(--accent)"
+                                >0.0%
+                            </span>
+                            </div>
+                                    <input 
+                                    type="range" 
+                                    id="in-grade" 
+                                    min="0" 
+                                    max="15" 
+                                    step="0.1" 
+                                    value="4.3" 
+                                    oninput="updateState('grade', this.value)"
+                                    >
+                                </div>
+                                <div 
+                                id="phase-display" 
+                                class="phase-tag"
+                                >
+                                —
+                            </div>
+                            </div>
+                            <div 
+                            class="big-stat"
+                            >
+                            <span 
+                            class="label"
+                            >
+                            EST. INTENSITY
+                        </span>
+                            <span 
+                            class="value" 
+                            id="disp-intensity"
+                            >
+                            0%
+                        </span>
+                        </div>
+                            <div class="big-stat"
+                            >
+                                <span 
+                                class="label"
+                                >
+                                ACTUAL PHYSICS POWER
+                            </span>
+                                <span 
+                                class="value" 
+                                id="disp-power"
+                                >
+                                0W
+                            </span>
+                            </div>
+                        </div>
+                        <div 
+                        class="panel"
+                        style="border-left: none; border-radius: 0;"
+                        >
+                            <h2>
+                                ● LIVE CONTROLS
+                            </h2>
+                            <div 
+                            style="display:flex; 
+                            justify-content:space-between; 
+                            margin-top:10px"
+                            >
+                            <span 
+                            class="label"
+                            >
+                            Cadence (RPM)
+                        </span>
+                        <span 
+                        id="val-cad"
+                        >
+                        90
+                    </span>
+                </div>
+                            <input 
+                            type="range" 
+                            id="in-cad" 
+                            min="0" 
+                            max="130" 
+                            step="1" 
+                            value="90" 
+                            oninput="updateState('rpm', this.value)"
+                            >
+                            <div 
+                            style="display:flex; 
+                            justify-content:space-between; 
+                            margin-top:10px"
+                            >
+                            <span 
+                            class="label"
+                            >
+                            Speed (km/h)
+                        </span>
+                        <span 
+                        id="val-speed"
+                        >
+                        0.0
+                    </span>
+                </div>
+                            <input 
+                            type="range" 
+                            id="in-speed" 
+                            min="0" 
+                            max="70" 
+                            step="0.1" 
+                            value="30.2" 
+                            oninput="updateState('speed', this.value)"
+                            >
+                        </div>
+                        <div 
+                        class="panel"
+                        style="border-right: none; border-radius: 0;"
+                        >
+                            <h2>
+                                ● RIDER CONFIG
+                            </h2>
+                            <div 
+                            style="display:grid; 
+                            grid-template-columns: 1fr 1fr; 
+                            gap: 10px;"
+                            >
+                                <div>
+                                    <span 
+                                    class="label"
+                                    >
+                                    FTP (W)
+                                </span>
+                                <input 
+                                type="number" 
+                                id="in-ftp" 
+                                value="250" 
+                                oninput="updateState('ftp', this.value)"
+                                >
+                            </div>
+                            <div>
+                                <span 
+                                class="label"
+                                >
+                                Mass (kg)
+                            </span>
+                            <input 
+                            type="number" 
+                            id="in-mass" 
+                            value="85" 
+                            oninput="updateState('mass', this.value)"
+                            >
+                        </div>
+                        <div>
+                            <span 
+                            class="label"
+                            >
+                            Height (cm)
+                        </span>
+                        <input 
+                        type="number" 
+                        id="in-h" 
+                        value="178" 
+                        oninput="updateState('height', this.value)"
+                        >
+                    </div>
+                    <div>
+                        <span 
+                        class="label"
+                        >
+                        Width (cm)
+                    </span>
+                    <input 
+                    type="number" 
+                    id="in-w" 
+                    value="31" 
+                    oninput="updateState('width', this.value)"
+                    >
+                </div>
+            </div>
+        </div>
+                        <div 
+                        class="panel full"
+                        style="border-left: none; border-right: none; border-radius: 0;"
+                        >
+                            <h2>
+                                ● DRIVETRAIN (ACTIVE GEARS)
+                            </h2>
+                            <div 
+                            style="display:flex; 
+                            gap:30px"
+                            >
+                                <div 
+                                style="flex:1"
+                                >
+                                    <span 
+                                    class="label"
+                                    >
+                                    Front Ring
+                                </span>
+                                    <div 
+                                    style="display:flex; 
+                                    gap:10px; 
+                                    margin-bottom:15px"
+                                    >
+                                        <div 
+                                        class="gear-grid" 
+                                        id="front-btns">
+                                    </div>
+                                        <input 
+                                        type="number" 
+                                        id="man-f" 
+                                        style="width:70px" 
+                                        oninput="updateState('fRing', this.value)"
+                                        >
+                                    </div>
+                                    <span 
+                                    class="label"
+                                    >
+                                    Rear Cassette
+                                </span>
+                                    <div 
+                                    style="display:flex; 
+                                    gap:10px"
+                                    >
+                                        <div 
+                                        class="gear-grid" 
+                                        id="rear-btns"
+                                        >
+                                    </div>
+                                        <input 
+                                        type="number" 
+                                        id="man-r" 
+                                        style="width:70px" 
+                                        oninput="updateState('rCog', this.value)"
+                                        >
+                                    </div>
+                                </div>
+                                <div 
+                                style="width: 300px; 
+                                border-left: 1px solid var(--border); 
+                                padding-left: 20px;"
+                                >
+                                    <span 
+                                    class="label"
+                                    >
+                                    Wheel Type
+                                </span>
+                                    <select 
+                                    id="wheel-select" 
+                                    onchange="updateWheelPreset(this.value)" 
+                                    style="margin-bottom:10px"
+                                    >
+                                        <option 
+                                        value="2.096"
+                                        >
+                                        700 x 23C
+                                    </option>
+                                        <option 
+                                        value="2.105" 
+                                        selected
+                                        >
+                                        700 x 25C
+                                    </option>
+                                        <option 
+                                        value="2.136"
+                                        >
+                                        700 x 28C
+                                    </option>
+                                        <option 
+                                        value="2.146"
+                                        >
+                                        700 x 30C
+                                    </option>
+                                        <option 
+                                        value="2.155"
+                                        >
+                                        700 x 32C
+                                    </option>
+                                        <option 
+                                        value="custom"
+                                        >
+                                        Custom
+                                    </option>
+                                    </select>
+                                    <span 
+                                    class="label"
+                                    >
+                                    Circumference (m)
+                                </span>
+                                    <input 
+                                    type="number" 
+                                    id="in-circ" 
+                                    value="2.105" 
+                                    step="0.001" 
+                                    oninput="updateState('circ', this.value)"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <div 
+                        class="panel full"
+                        style="border-left: none; border-right: none; border-bottom: none; border-radius: 0;"
+                        >
+                            <h2>
+                                ● LOGIC & PARAMETERS
+                            </h2>
+                            <div 
+                            class="math-block"
+                            >
+                                $$Intensity = \frac{P_{total}}{FTP} \cdot 100\% \quad | \quad v = \frac{RPM \cdot (T_{f} / T_{r}) \cdot C_{wheel}}{60}$$ 
+                                $$P_{total} = (m \cdot g \cdot v \cdot \text{grade}) + (m \cdot g \cdot v \cdot C_{rr}) + (\frac{1}{2} \rho \cdot C_d \cdot [W \cdot 0.75H] \cdot v^3)$$
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            % of FTP
+                                        </th>
+                                        <th>
+                                            Intensity Phase
+                                        </th>
+                                        <th>
+                                            Color Code
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            &lt; 60%
+                                        </td>
+                                        <td>
+                                            Recovery
+                                        </td>
+                                        <td>
+                                            Green
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            60% – 75%
+                                        </td>
+                                        <td>
+                                            Aerobic
+                                        </td>
+                                        <td>
+                                            Blue
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            75% – 90%
+                                        </td>
+                                        <td>
+                                            Tempo
+                                        </td>
+                                        <td>
+                                            Yellow
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            90% – 105%
+                                        </td>
+                                        <td>
+                                            Threshold
+                                        </td>
+                                        <td>
+                                            Orange
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            105% – 120%
+                                        </td>
+                                        <td>
+                                            VO2 Max
+                                        </td>
+                                        <td>
+                                            Red
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            &gt; 120%
+                                        </td>
+                                        <td>
+                                            Neuromuscular
+                                        </td>
+                                        <td>
+                                            Purple
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div 
+        class="grid-stack-item" 
+        gs-x="5" 
+        gs-y="0" 
+        gs-w="2" 
+        gs-h="12" 
+        gs-id="sc-player"
+        gs-no-move="false"
+        >
+            <div 
+            class="grid-stack-item-content"
+            >
+                <div 
+                class="sc-controls"
+                >
+                    <input 
+                    type="text" 
+                    id="playlist-url" 
+                    placeholder="Paste SoundCloud URL..." 
+                    />
+                </div>
+                <iframe 
+                id="sc-widget" 
+                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/311634062&color=%23ff5500&hide_related=true&show_comments=false&visual=false" 
+                scrolling="no" 
+                frameborder="no">
+            </iframe>
+            </div>
+        </div>
+        <div 
+        class="grid-stack-item" 
+        gs-x="7" 
+        gs-y="0" 
+        gs-w="5" 
+        gs-h="12" 
+        gs-id="new-feature-panel"
+        >
+            <div 
+            class="grid-stack-item-content" 
+            style="display: flex; justify-content: center; align-items: center;"
+            >
+                <div 
+                class="label" 
+                style="font-size: 1rem; text-align: center;"
+                >
+                    New Feature To Be Added Here
+                </div>
+            </div>
+        </div>
+    </div>
+    <script 
+    src="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack-all.js"
+    >
+</script>
+    <script 
+    src="https://w.soundcloud.com/player/api.js"
+    >
+</script>
+    <script>
+        // Initialization
+        const grid = GridStack.init
+        (
+            { 
+                cellHeight: '8.33vh', 
+                column: 12, 
+                margin: 5, 
+                float: true,
+                disableOneColumnMode: true,
+                resizable: {
+                    handles: 'all'
+                }
+            }
+        );
+        // SoundCloud Integration
+        const widget = SC.Widget
+        (
+            document.getElementById
+            (
+                'sc-widget'
+            )
+        );
+        document.getElementById
+        (
+            'playlist-url'
+        ).addEventListener
+        (
+            'keypress', 
+            (e) => 
+            {
+                if (e.key === 'Enter') widget.load
+                (e.target.value, 
+                 { 
+                    color: '#ff5500', 
+                    auto_play: true, 
+                    visual: false 
+                 }
+                );
+            }
+        );
+        // Updated default state constants
+        const state = { 
+            ftp: 250, 
+            mass: 85, 
+            height: 178, 
+            width: 31, 
+            grade: 4.3, 
+            rpm: 90, 
+            speed: 30.2, 
+            fRing: 50, 
+            rCog: 15, 
+            circ: 2.105, 
+            magLevel: 3 
+        };
+        const zones = [
+            { 
+                limit: 0.60, 
+                label: "RECOVERY", 
+                color: "var(--recovery)" 
+            },
+            { 
+                limit: 0.75, 
+                label: "AEROBIC", 
+                color: "var(--aerobic)" 
+            },
+            { 
+                limit: 0.90, 
+                label: "TEMPO", 
+                color: "var(--tempo)" 
+            },
+            { 
+                limit: 1.05, 
+                label: "THRESHOLD", 
+                color: "var(--threshold)" 
+            },
+            { 
+                limit: 1.20, 
+                label: "VO2 MAX", 
+                color: "var(--vo2)" 
+            },
+            { 
+                limit: Infinity, 
+                label: "NEUROMUSCULAR", 
+                color: "var(--neuro)" 
+            }
+        ];
+
+        function updateWheelPreset(val) 
+        { if (val !== "custom") 
+            { document.getElementById
+                ('in-circ').value = val; 
+                updateState('circ', val); 
+            } 
+        }
+        function updateState(key, val) 
+        {
+            state[key] = parseFloat(val) || 0;
+            if (key === 'circ') 
+            {
+                const select = document.getElementById('wheel-select');
+                let found = false;
+                for (let opt of select.options) 
+                { 
+                    if (parseFloat(opt.value) === state.circ) 
+                    { 
+                        select.value = opt.value; 
+                        found = true; 
+                        break; 
+                    } 
+                }
+                if (!found) select.value = "custom";
+            }
+            if (key === 'grade') state.magLevel = Math.round((state.grade * 7 / 15) + 1);
+            else if (key === 'magLevel') state.grade = (state.magLevel - 1) * (15 / 7);
+            if (key === 'speed') state.rpm = ((state.speed / 3.6) * 60) / ((state.fRing / state.rCog) * state.circ);
+            else state.speed = ((state.rpm * (state.fRing / state.rCog) * state.circ) / 60) * 3.6;
+            render();
+        }
+        function render() 
+        {
+            const v = state.speed / 3.6;
+            const A = (state.width / 100) * (0.75 * (state.height / 100));
+            const pTotal = Math.max(0, (state.mass * 9.81 * v * (state.grade/100)) + (state.mass * 9.81 * v * 0.004) + (0.5 * 1.225 * 0.88 * A * Math.pow(v, 3)));
+            const intensity = pTotal / state.ftp;
+            document.getElementById('disp-power').innerText = Math.round(pTotal) + "W";
+            document.getElementById('disp-intensity').innerText = Math.round(intensity * 100) + "%";
+            document.getElementById('in-grade').value = state.grade.toFixed(1);
+            document.getElementById('val-grade').innerText = state.grade.toFixed(1) + "%";
+            document.getElementById('in-cad').value = Math.round(state.rpm);
+            document.getElementById('val-cad').innerText = Math.round(state.rpm);
+            document.getElementById('in-speed').value = state.speed.toFixed(1);
+            document.getElementById('val-speed').innerText = state.speed.toFixed(1);
+            document.getElementById('man-f').value = state.fRing; document.getElementById('man-r').value = state.rCog;
+            document.getElementById('in-circ').value = state.circ;
+            document.querySelectorAll('#mag-group .btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.val) === state.magLevel));
+            const zone = zones.find(z => intensity < z.limit) || zones[zones.length - 1];
+            const tag = document.getElementById('phase-display');
+            tag.innerText = zone.label; tag.style.backgroundColor = zone.color;
+            document.querySelectorAll('#front-btns .btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === state.fRing));
+            document.querySelectorAll('#rear-btns .btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === state.rCog));
+        }
+        function init() 
+        {
+            const mg = document.getElementById('mag-group');
+            for(let i=1; i<=8; i++) 
+            {
+                const b = document.createElement('button'); b.className = 'btn'; b.innerText = 'L'+i; b.dataset.val = i;
+                b.onclick = () => updateState('magLevel', i); mg.appendChild(b);
+            }
+            const fg = document.getElementById('front-btns');
+            [50, 34].forEach(t => 
+            {
+                const b = document.createElement('button'); b.className = 'btn'; b.innerText = t+'T';
+                b.onclick = () => updateState('fRing', t); fg.appendChild(b);
+            }
+            );
+            const rg = document.getElementById('rear-btns');
+            [11, 12, 13, 14, 15, 17, 19, 21, 24, 28, 32, 34].forEach(t => {
+                const b = document.createElement('button'); b.className = 'btn'; b.innerText = t+'T';
+                b.onclick = () => updateState('rCog', t); rg.appendChild(b);
+            }
+            );
+            render();
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
