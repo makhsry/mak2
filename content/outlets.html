@@ -28,6 +28,7 @@
 <li><a href="#bike-trainer-dashboard-minoura-mag-500">Bike Trainer Dashboard (Minoura MAG-500)</a></li>
 <li><a href="#drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</a></li>
 <li><a href="#local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</a></li>
+<li><a href="#creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</a></li>
 <li><a href="#an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</a></li>
 <li><a href="#bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</a></li>
 <li><a href="#hpc-job-management-tools">HPC Job Management Tools</a></li>
@@ -1257,6 +1258,168 @@ if __name__ == &quot;__main__&quot;:
         </section>
 
         <section class="card span-2">
+            <div class="card-content"><h3 id="creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</h3>
+<p>&nbsp;</p>
+<p>This is a <strong><code>java</code></strong> script in <strong><code>COMSOL Application Method</code></strong> designed to automate 3D geometry construction from point cloud data into COMSOL's Native Domains.</p>
+<p>&nbsp;</p>
+<h4>Script</h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">package builder;
+import com.comsol.api.*;
+import com.comsol.api.database.*;
+import com.comsol.api.database.param.*;
+import com.comsol.api.database.result.*;
+import com.comsol.model.*;
+import com.comsol.model.physics.*;
+import com.comsol.model.application.*;
+import java.io.*;
+import java.util.*;
+import com.comsol.model.*;
+import com.comsol.model.util.*;
+public class via_csv_combined extends ApplicationMethod
+{
+  // SWITCH
+  // 1: via_csv_with_faceid
+  // 2: via_csv_with_faceid_with_scale
+  // 3: via_csv_with_faceid_with_scale_with_fillet
+  int jobType = 3; 
+  String CompTag = &quot;comp1&quot;;
+  String GeoTag = &quot;geom1&quot;;
+  int maxIDX = 000000;
+  int created_domains = 0;
+  double tagetV = 1000.0; //0.500646235*1000;
+  double currentV = 1000.0;
+  double scaleV = Math.pow(tagetV/currentV, 1.0/3.0); // 1/3 is not 1.0/3.0
+  public void execute()
+  {
+    ModelUtil.showProgress(&quot;COMSOL_Progress.txt&quot;);
+    ArrayList&lt;double[]&gt; DomainPoints = new ArrayList&lt;&gt;();
+    // initialization
+    int domid_old = 0;
+    for (int idx = 0; idx &lt;= maxIDX; idx++)
+    {
+      double domid = model.param().evaluate(&quot;fid_domid(&quot;+idx+&quot;)&quot;);
+      // populate domain points until domain changes
+      if (idx &lt; 1) {domid_old = (int) domid; } // initiate domain ids
+      if ((int) domid == domid_old) // one family of points
+      {
+        double posx = model.param().evaluate(&quot;fid_posx(&quot;+idx+&quot;)&quot;);
+        double posy = model.param().evaluate(&quot;fid_posy(&quot;+idx+&quot;)&quot;);
+        double posz = model.param().evaluate(&quot;fid_posz(&quot;+idx+&quot;)&quot;);
+        DomainPoints.add(new double[]{posx, posy, posz});
+      } // end if - one family of points
+      else // family changed - remember to reset
+      {
+        // containers - node group - packing (or node groupe in scale scripts)
+        String GroupName = (jobType &gt;= 2) ? &quot;G&quot;+Integer.toString(domid_old) : Integer.toString(domid_old);
+        model.component(CompTag).geom(GeoTag).nodeGroup().create(GroupName);
+        // containers - list of tetrahedrons
+        ArrayList&lt;String&gt; tetraList = new ArrayList&lt;&gt;(); // to record actual builds
+        // compute COM
+        double[] pCOM = computeCOM(DomainPoints); // shared point in all tetrahedrons
+        for (int pt = 0; pt &lt;= DomainPoints.size()-3; pt += 3)
+        {
+          double[] p1 = DomainPoints.get(pt+0);
+          double[] p2 = DomainPoints.get(pt+1);
+          double[] p3 = DomainPoints.get(pt+2);
+          // compact vertices matrix
+          double[][] verts = {{p1[0], p2[0], p3[0], pCOM[0]},
+                              {p1[1], p2[1], p3[1], pCOM[1]},
+                              {p1[2], p2[2], p3[2], pCOM[2]}};
+          // tetrahedron name tag
+          String tetName = &quot;tetra_&quot;+Integer.toString(domid_old)+&quot;_&quot;+&quot;com&quot;+Integer.toString(pt);
+          // initialize tetrahedron
+          model.component(CompTag).geom(GeoTag).create(tetName, &quot;Tetrahedron&quot;);
+          // assign vertices
+          model.component(CompTag).geom(GeoTag).feature(tetName).set(&quot;p&quot;, verts);
+          // try to build
+          try
+          {
+            model.component(CompTag).geom(GeoTag).run(tetName); // building
+            tetraList.add(tetName); // add to list
+            model.component(CompTag).geom(GeoTag).nodeGroup(GroupName).add(tetName); // add to group
+          } // end try
+          catch (Exception e) // if not built
+          {
+            continue; // not built, move along
+          } // end - catch
+        } // end - for pt
+        // tetra list type conversion
+        String[] tetraArray = tetraList.toArray(new String[0]);
+        // performing boolean operations to unify the tetrahedrons
+        String UnionName = (jobType &gt;= 2) ? &quot;U&quot;+Integer.toString(domid_old) : Integer.toString(domid_old);
+        //
+        model.component(CompTag).geom(GeoTag).create(UnionName, &quot;Union&quot;);
+        model.component(CompTag).geom(GeoTag).feature(UnionName).selection(&quot;input&quot;).set(tetraArray);
+        model.component(CompTag).geom(GeoTag).feature(UnionName).set(&quot;intbnd&quot;, false);
+        model.component(CompTag).geom(GeoTag).feature(UnionName).set(&quot;repairtoltype&quot;, &quot;auto&quot;);
+        /*
+        model.component(CompTag).geom(GeoTag).feature(Integer.toString(domid_old)).set(&quot;repairtoltype&quot;, &quot;absolute&quot;);
+        model.component(CompTag).geom(GeoTag).feature(Integer.toString(domid_old)).set(&quot;absrepairtol&quot;, &quot;1E-14&quot;);
+        */
+        // building the union
+        model.component(CompTag).geom(GeoTag).run(UnionName);
+        // Logic for Job 2 and 3 (Scaling)
+        if (jobType &gt;= 2)
+        {
+          // getting the union and scaling it here
+          String ScaleName = &quot;S&quot;+Integer.toString(domid_old);
+          model.component(CompTag).geom(GeoTag).create(ScaleName, &quot;Scale&quot;);
+          model.component(CompTag).geom(GeoTag).feature(ScaleName).set(&quot;isotropic&quot;, scaleV);
+          model.component(CompTag).geom(GeoTag).feature(ScaleName).selection(&quot;input&quot;).set(UnionName);
+          model.component(CompTag).geom(GeoTag).feature(ScaleName).set(&quot;pos&quot;, new double[]{pCOM[0], pCOM[1], pCOM[2]});
+          // Logic for Job 3 (Fillet)
+          if (jobType == 3)
+          {
+            model.component(CompTag).geom(GeoTag).run(ScaleName);
+            created_domains += 1;
+            // now trying the fillet operation
+            String filletName = &quot;F&quot;+Integer.toString(domid_old);
+            model.component(CompTag).geom(GeoTag).create(filletName, &quot;Fillet3D&quot;);
+            model.component(CompTag).geom(GeoTag).feature(filletName).set(&quot;radius&quot;, &quot;0.0001&quot;);
+            GeomInfo info = model.component(CompTag).geom(GeoTag).obj(ScaleName);
+            int fromDim = info.getSDim(); // e.g. 3 for 3D
+            int toDim = 1; // edges
+            int[][] adj = info.getAdj(fromDim, toDim);
+            int[] edgeIndices = adj[0];
+            model.component(CompTag).geom(GeoTag).feature(filletName).selection(&quot;edge&quot;).set(ScaleName, edgeIndices);
+            model.component(CompTag).geom(GeoTag).run(filletName);
+          }
+        }
+        // reset state for next round / domain
+        DomainPoints.clear();
+        tetraList.clear();
+        domid_old = (int) domid;
+        // do not forget current surpass in if
+        double posx = model.param().evaluate(&quot;fid_posx(&quot;+idx+&quot;)&quot;);
+        double posy = model.param().evaluate(&quot;fid_posy(&quot;+idx+&quot;)&quot;);
+        double posz = model.param().evaluate(&quot;fid_posz(&quot;+idx+&quot;)&quot;);
+        DomainPoints.add(new double[]{posx, posy, posz});
+      } // end else - family changed - remember to reset
+    } // end - for - idx
+    // build final geometry
+    model.component(CompTag).geom(GeoTag).run();
+  } // end - public void execute
+  // helper functions
+  public double[] computeCOM(List&lt;double[]&gt; points)
+  {
+    double cx = 0, cy = 0, cz = 0;
+    for (double[] pt : points)
+    {
+      cx += pt[0];
+      cy += pt[1];
+      cz += pt[2];
+    } // end - for
+    int n = points.size();
+    return new double[]{cx/n, cy/n, cz/n};
+  } // end - computeCOM
+} // end public main
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
             <div class="card-content"><h3 id="an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</h3>
 <p>&nbsp;</p>
 <p>This is a lightweight, single-file web application that mimics the <strong>Jupyter Notebook</strong> experience locally. It leverages <strong>Pyodide</strong> to run a full Python environment directly in browser without needing a remote backend. </p>
@@ -1906,9 +2069,7 @@ if __name__ == &quot;__main__&quot;:
 &lt;/html&gt;
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3 id="bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</h3>
 <p>&nbsp;</p>
@@ -2289,7 +2450,9 @@ if __name__ == '__main__':
 
 </code></pre></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3 id="hpc-job-management-tools">HPC Job Management Tools</h3>
 <p>&nbsp;</p>
@@ -3321,9 +3484,7 @@ exit
 
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
-        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3 id="nanotube-builder-and-mesher">Nanotube Builder and Mesher</h3>
 <p>&nbsp;</p>
@@ -3457,7 +3618,9 @@ exit
 <li><code>u, v</code> — UV texture coordinates</li>
 </ul></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3 id="cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</h3>
 <p>&nbsp;</p>
@@ -3723,7 +3886,6 @@ end
 end
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
 
     </div>
 </body>
