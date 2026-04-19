@@ -1260,9 +1260,11 @@ if __name__ == &quot;__main__&quot;:
         <section class="card span-2">
             <div class="card-content"><h3 id="creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</h3>
 <p>&nbsp;</p>
-<p>This is a <strong><code>java</code></strong> script in <strong><code>COMSOL Application Method</code></strong> designed to automate 3D geometry construction from point cloud data into COMSOL's Native Domains.</p>
+<p>This is a <strong><code>java</code></strong> script in <strong><code>COMSOL Application Method</code></strong> designed to automate 3D geometry construction from point cloud data into COMSOL's native <strong>domains</strong>.</p>
 <p>&nbsp;</p>
-<h4>Script</h4>
+<p>The point cloud data are generated using the <strong><code>python</code></strong> script that projects a <strong><code>convex hull</code></strong> to the cloud points and generates respectives faces for each set of points in a <strong><code>triangulations</code></strong>.</p>
+<p>&nbsp;</p>
+<h4>Java Script</h4>
 <p>&nbsp;</p>
 <pre><code class="language-bash">package builder;
 import com.comsol.api.*;
@@ -1414,6 +1416,79 @@ public class via_csv_combined extends ApplicationMethod
     return new double[]{cx/n, cy/n, cz/n};
   } // end - computeCOM
 } // end public main
+</code></pre>
+<p>&nbsp;</p>
+<h4>Python Script</h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import os
+import glob
+import numpy as np
+from scipy.spatial import ConvexHull # vertices detection
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import re
+from datetime import datetime
+import pandas as pd
+from matplotlib.backends.backend_pdf import PdfPages
+#to read files (data exported from comsol)
+def process_point_files(filename_pattern):
+    data_dict = {}
+    for filename in os.listdir('.'):
+        if filename.startswith(filename_pattern):
+            try:
+                match = re.search(r&quot;dom(\d+)&quot;, filename)
+                if not match:
+                    print(f&quot;Could not extract number from {filename}&quot;)
+                    continue
+                file_number = int(match.group(1))
+
+                with open(filename, 'r') as f:
+                    lines = f.readlines()
+                    data_lines = lines[9:] # line 10 onwards
+
+                data = []
+                for line in data_lines:
+                    values = line.strip().split() #  space-separated
+                    data.append([float(v) for v in values]) # to float
+
+                if data:
+                    numpy_data = np.array(data)
+                    processed_data = numpy_data[:, :-1]
+                    data_dict[filename] = {
+                        'file_number': file_number,
+                        'data': processed_data
+                    }
+                else:
+                     data_dict[filename] = {
+                        'file_number': file_number,
+                        'data': np.array([]) # if no data lines
+                    }
+
+            except Exception as e:
+                print(f&quot;Error processing file {filename}: {e}&quot;)
+
+    return data_dict
+##building the convex hull over the imported mesh
+def convexhull3dpoints(points):
+  hull = ConvexHull(points)
+  boundary_vertex_indices = np.unique(hull.simplices.flatten())
+  boundary_vertices = points[boundary_vertex_indices]
+  faces = [points[simplex] for simplex in hull.simplices]
+  simplicez = hull.simplices
+  return boundary_vertex_indices, boundary_vertices, faces, simplicez
+# -------
+filename_pattern=&quot;SC1_Assembly126_AR111_dom&quot;
+processed_data = process_point_files(filename_pattern)
+points = processed_data[filename_pattern+'1']['data']
+hull = ConvexHull(points)
+faces = [points[simplex] for simplex in hull.simplices]
+store = np.empty((0, 4))
+triangulation = np.empty((0, 5)) # connect COM to each set of three points
+# domainid, faceid, x, y, z
+index_col = np.arange(triangulation.shape[0]).reshape(-1, 1)
+triangulation_for_comsol = np.hstack((index_col, triangulation))
+np.savetxt(output_filenames_triangulation_for_comsol, triangulation_for_comsol, delimiter=&quot;,&quot;, fmt=&quot;%.6f&quot;)
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
