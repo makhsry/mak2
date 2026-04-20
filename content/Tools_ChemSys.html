@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chemical System Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background: #f0f2f5; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .input-section { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 8px; flex-wrap: wrap; }
+        .decomp-section { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; background: #fff8e1; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #ffc107; flex-wrap: wrap; }
+        .special-section { display: flex; gap: 10px; margin-bottom: 25px; align-items: center; background: #f3e5f5; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #9c27b0; flex-wrap: wrap; }
+        input, select, button { padding: 10px; border: 1px solid #ced4da; border-radius: 6px; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        .btn-analyze { background: #28a745; width: 100%; margin-top: 20px; font-size: 1.1em; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: center; }
+        th { background: #e9ecef; }
+        .matrix-view { overflow-x: auto; font-family: monospace; font-size: 0.9em; background: #212529; color: #49ff18; padding: 15px; border-radius: 6px; white-space: pre; }
+        .equation { padding: 10px; background: #e7f3ff; border-left: 5px solid #007bff; margin: 10px 0; font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+        .hidden { display: none; }
+        .handle { cursor: grab; color: #999; font-size: 20px; padding-right: 10px; }
+        tr.sortable-ghost { opacity: 0.4; background-color: #d1e7ff; }
+        .badge-decomp { background: #ffc107; color: #333; font-size: 0.75em; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: bold; }
+        .badge-special { background: #9c27b0; color: white; font-size: 0.75em; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: bold; }
+        .section-label { font-weight: bold; color: #555; white-space: nowrap; font-size: 0.95em; }
+        .footnote { margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 0.85em; color: #666; line-height: 1.6; }
+        .footnote h4 { margin-top: 0; margin-bottom: 10px; color: #555; font-size: 0.95em; }
+        .footnote ol { margin: 0; padding-left: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Chemical System Analyzer</h2>
+    
+    <!-- Original chemical input section -->
+    <div class="input-section">
+        <input type="text" id="formula" placeholder="Formula (e.g., h2o or NO)">
+        <select id="phase">
+            <option value="g">Gas (g)</option>
+            <option value="l">Liquid (l)</option>
+            <option value="s">Solid (s)</option>
+            <option value="aq">Aqueous (aq)</option>
+        </select>
+        <button onclick="addEntry()">Add Chemical</button>
+    </div>
+
+    <!-- Feature 1: Decomposition input (supports multiple pathways) -->
+    <div class="decomp-section">
+        <span class="section-label">🔗 Decomposition (optional):</span>
+        <input type="checkbox" id="decompCheck" style="width:18px;height:18px;padding:0;cursor:pointer;" title="Enable decomposition pathways">
+        <label for="decompCheck" style="cursor:pointer;font-size:0.9em;">Enable decomposition?</label>
+        <span style="font-size:0.85em;color:#888;flex-basis:100%;margin-top:8px;">Add fragment formulas below to create different decomposition pathways:</span>
+    </div>
+
+    <div id="fragmentsContainer" class="hidden" style="background:#fff8e1;border-left:4px solid #ffc107;padding:12px 15px;margin-bottom:10px;border-radius:8px;">
+        <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+            <input type="text" id="decompFragment" placeholder="Fragment formula (e.g., C2H4 or OH)" style="flex:1;min-width:160px;">
+            <button onclick="addFragmentPathway()" style="background:#17a2b8;padding:8px 12px;">Add Pathway</button>
+        </div>
+        <div id="fragmentsList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <!-- Feature 2: Special chemical input -->
+    <div class="special-section">
+        <span class="section-label">⚛️ Special chemical:</span>
+        <input type="text" id="specialLabel" placeholder='Pattern: Formula^Flag (e.g., OH^RADICAL or e^electron)' style="flex:1;min-width:200px;">
+        <select id="specialPhase">
+            <option value="g">Gas (g)</option>
+            <option value="l">Liquid (l)</option>
+            <option value="s">Solid (s)</option>
+            <option value="aq">Aqueous (aq)</option>
+        </select>
+        <button onclick="addSpecialEntry()">Add Special</button>
+        <span style="font-size:0.85em;color:#888;">Pattern: Formula^Flag (gets unique row in matrix)</span>
+    </div>
+
+    <table id="listTable">
+        <thead>
+            <tr>
+                <th style="width: 40px;"></th>
+                <th>Chemical (Phase)</th>
+                <th>Composition</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="listBody"></tbody>
+    </table>
+
+    <button class="btn-analyze" onclick="processSystem()">Run</button>
+
+    <div id="resultsArea" class="hidden">
+        <h3>Atom-Formula Matrix (A)</h3>
+        <div id="matrixDisplay" class="matrix-view"></div>
+        
+        <h3>Row Echelon Form (RREF)</h3>
+        <div id="echelonDisplay" class="matrix-view"></div>
+
+        <h3>Null-Space Vectors</h3>
+        <div id="nullspaceDisplay" class="matrix-view"></div>
+        
+        <h3>Independent Chemical Reactions</h3>
+        <div id="reactionsDisplay"></div>
+    </div>
+
+    <div class="footnote">
+        <h4>Read more:</h4>
+        <ol>
+            <li>Gibbs Reactor, Aurel Systems Inc. (CADSIM Plus)</li>
+            <li>Chemical Reaction Equilibrium Analysis: Theory and Algorithms by William R. Smith and Ronald W. Missen (1982)</li>
+        </ol>
+    </div>
+</div>
+
+<script>
+    // Periodic Table - Master list of valid elements
+    const periodicTable = {
+        1: ["Hydrogen", "H"],
+        2: ["Helium", "He"],
+        3: ["Lithium", "Li"],
+        4: ["Beryllium", "Be"],
+        5: ["Boron", "B"],
+        6: ["Carbon", "C"],
+        7: ["Nitrogen", "N"],
+        8: ["Oxygen", "O"],
+        9: ["Fluorine", "F"],
+        10: ["Neon", "Ne"],
+        11: ["Sodium", "Na"],
+        12: ["Magnesium", "Mg"],
+        13: ["Aluminum", "Al"],
+        14: ["Silicon", "Si"],
+        15: ["Phosphorus", "P"],
+        16: ["Sulfur", "S"],
+        17: ["Chlorine", "Cl"],
+        18: ["Argon", "Ar"],
+        19: ["Potassium", "K"],
+        20: ["Calcium", "Ca"],
+        21: ["Scandium", "Sc"],
+        22: ["Titanium", "Ti"],
+        23: ["Vanadium", "V"],
+        24: ["Chromium", "Cr"],
+        25: ["Manganese", "Mn"],
+        26: ["Iron", "Fe"],
+        27: ["Cobalt", "Co"],
+        28: ["Nickel", "Ni"],
+        29: ["Copper", "Cu"],
+        30: ["Zinc", "Zn"],
+        31: ["Gallium", "Ga"],
+        32: ["Germanium", "Ge"],
+        33: ["Arsenic", "As"],
+        34: ["Selenium", "Se"],
+        35: ["Bromine", "Br"],
+        36: ["Krypton", "Kr"],
+        37: ["Rubidium", "Rb"],
+        38: ["Strontium", "Sr"],
+        39: ["Yttrium", "Y"],
+        40: ["Zirconium", "Zr"],
+        41: ["Niobium", "Nb"],
+        42: ["Molybdenum", "Mo"],
+        43: ["Technetium", "Tc"],
+        44: ["Ruthenium", "Ru"],
+        45: ["Rhodium", "Rh"],
+        46: ["Palladium", "Pd"],
+        47: ["Silver", "Ag"],
+        48: ["Cadmium", "Cd"],
+        49: ["Indium", "In"],
+        50: ["Tin", "Sn"],
+        51: ["Antimony", "Sb"],
+        52: ["Tellurium", "Te"],
+        53: ["Iodine", "I"],
+        54: ["Xenon", "Xe"],
+        55: ["Cesium", "Cs"],
+        56: ["Barium", "Ba"],
+        57: ["Lanthanum", "La"],
+        58: ["Cerium", "Ce"],
+        59: ["Praseodymium", "Pr"],
+        60: ["Neodymium", "Nd"],
+        61: ["Promethium", "Pm"],
+        62: ["Samarium", "Sm"],
+        63: ["Europium", "Eu"],
+        64: ["Gadolinium", "Gd"],
+        65: ["Terbium", "Tb"],
+        66: ["Dysprosium", "Dy"],
+        67: ["Holmium", "Ho"],
+        68: ["Erbium", "Er"],
+        69: ["Thulium", "Tm"],
+        70: ["Ytterbium", "Yb"],
+        71: ["Lutetium", "Lu"],
+        72: ["Hafnium", "Hf"],
+        73: ["Tantalum", "Ta"],
+        74: ["Tungsten", "W"],
+        75: ["Rhenium", "Re"],
+        76: ["Osmium", "Os"],
+        77: ["Iridium", "Ir"],
+        78: ["Platinum", "Pt"],
+        79: ["Gold", "Au"],
+        80: ["Mercury", "Hg"],
+        81: ["Thallium", "Tl"],
+        82: ["Lead", "Pb"],
+        83: ["Bismuth", "Bi"],
+        84: ["Polonium", "Po"],
+        85: ["Astatine", "At"],
+        86: ["Radon", "Rn"],
+        87: ["Francium", "Fr"],
+        88: ["Radium", "Ra"],
+        89: ["Actinium", "Ac"],
+        90: ["Thorium", "Th"],
+        91: ["Protactinium", "Pa"],
+        92: ["Uranium", "U"],
+        93: ["Neptunium", "Np"],
+        94: ["Plutonium", "Pu"],
+        95: ["Americium", "Am"],
+        96: ["Curium", "Cm"],
+        97: ["Berkelium", "Bk"],
+        98: ["Californium", "Cf"],
+        99: ["Einsteinium", "Es"],
+        100: ["Fermium", "Fm"],
+        101: ["Mendelevium", "Md"],
+        102: ["Nobelium", "No"],
+        103: ["Lawrencium", "Lr"],
+        104: ["Rutherfordium", "Rf"],
+        105: ["Dubnium", "Db"],
+        106: ["Seaborgium", "Sg"],
+        107: ["Bohrium", "Bh"],
+        108: ["Hassium", "Hs"],
+        109: ["Meitnerium", "Mt"],
+        110: ["Darmstadtium", "Ds"],
+        111: ["Roentgenium", "Rg"],
+        112: ["Copernicium", "Cn"],
+        113: ["Nihonium", "Nh"],
+        114: ["Flerovium", "Fl"],
+        115: ["Moscovium", "Mc"],
+        116: ["Livermorium", "Lv"],
+        117: ["Tennessine", "Ts"],
+        118: ["Oganesson", "Og"],
+    };
+
+    // Extract valid element symbols from periodic table for quick lookup
+    const validElements = new Set();
+    for (let z in periodicTable) {
+        validElements.add(periodicTable[z][1]);
+    }
+
+    // Each entry in chemicals[] is one column in the matrix.
+    // Fields: label (string), atoms (object), isSpecial (bool), specialKey (string, only for specials)
+    let chemicals = [];
+    
+    // Temporary list of decomposition fragments for the current formula
+    let currentDecompFragments = [];
+
+    const el = document.getElementById('listBody');
+    Sortable.create(el, {
+        handle: '.handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: function (evt) {
+            const movedItem = chemicals.splice(evt.oldIndex, 1)[0];
+            chemicals.splice(evt.newIndex, 0, movedItem);
+        },
+    });
+
+    // Enable/disable the fragments container based on the checkbox
+    document.getElementById('decompCheck').addEventListener('change', function() {
+        const container = document.getElementById('fragmentsContainer');
+        if (this.checked) {
+            container.classList.remove('hidden');
+        } else {
+            container.classList.add('hidden');
+            currentDecompFragments = [];
+            document.getElementById('fragmentsList').innerHTML = '';
+            document.getElementById('decompFragment').value = '';
+        }
+    });
+
+    function parseFormula(formula) {
+        let stack = [{}];
+        let i = 0;
+        
+        while (i < formula.length) {
+            let c = formula[i];
+            
+            if (c === '(') {
+                stack.push({});
+                i++;
+            } else if (c === ')') {
+                i++;
+                let start = i;
+                while (i < formula.length && /\d/.test(formula[i])) i++;
+                let mult = parseInt(formula.substring(start, i)) || 1;
+                let top = stack.pop();
+                for (let atom in top) {
+                    stack[stack.length-1][atom] = (stack[stack.length-1][atom] || 0) + top[atom] * mult;
+                }
+            } else if (/[A-Za-z]/.test(c)) {
+                let atom;
+                let nextChar = formula[i + 1];
+                
+                // Check if next character exists and is lowercase (not uppercase, not digit)
+                // If next is uppercase or digit, treat current as 1-char element
+                // If next is lowercase, try 2-char element first
+                if (nextChar && /[a-z]/.test(nextChar)) {
+                    let twoChar = formula.substring(i, i + 2);
+                    twoChar = twoChar[0].toUpperCase() + twoChar[1].toLowerCase();
+                    
+                    if (validElements.has(twoChar)) {
+                        atom = twoChar;
+                        i += 2;
+                    } else {
+                        // 2-char didn't work, try 1-char
+                        let oneChar = formula[i].toUpperCase();
+                        if (validElements.has(oneChar)) {
+                            atom = oneChar;
+                            i += 1;
+                        } else {
+                            i++;
+                            continue;
+                        }
+                    }
+                } else {
+                    // Next is uppercase, digit, or doesn't exist - treat as 1-char element
+                    let oneChar = formula[i].toUpperCase();
+                    if (validElements.has(oneChar)) {
+                        atom = oneChar;
+                        i += 1;
+                    } else {
+                        i++;
+                        continue;
+                    }
+                }
+                
+                // Parse count
+                let numStart = i;
+                while (i < formula.length && /\d/.test(formula[i])) i++;
+                let count = parseInt(formula.substring(numStart, i)) || 1;
+                stack[stack.length-1][atom] = (stack[stack.length-1][atom] || 0) + count;
+            } else {
+                i++;
+            }
+        }
+        return stack[0];
+    }
+
+    /**
+     * Subtract atoms of fragmentAtoms from parentAtoms.
+     * Returns the resulting atom map (values may be zero or negative).
+     */
+    function subtractAtoms(parentAtoms, fragmentAtoms) {
+        let result = Object.assign({}, parentAtoms);
+        for (let atom in fragmentAtoms) {
+            result[atom] = (result[atom] || 0) - fragmentAtoms[atom];
+        }
+        return result;
+    }
+
+    function addFragmentPathway() {
+        const fragRaw = document.getElementById('decompFragment').value.trim();
+        if (!fragRaw) {
+            alert('Please enter a fragment formula.');
+            return;
+        }
+
+        // Check if fragment already exists in the list
+        if (currentDecompFragments.includes(fragRaw)) {
+            alert(`Fragment "${fragRaw}" is already in the pathways list.`);
+            return;
+        }
+
+        currentDecompFragments.push(fragRaw);
+        renderFragmentsList();
+        document.getElementById('decompFragment').value = '';
+    }
+
+    function removeFragmentPathway(index) {
+        currentDecompFragments.splice(index, 1);
+        renderFragmentsList();
+    }
+
+    function renderFragmentsList() {
+        const listDiv = document.getElementById('fragmentsList');
+        if (currentDecompFragments.length === 0) {
+            listDiv.innerHTML = '';
+            return;
+        }
+
+        listDiv.innerHTML = currentDecompFragments.map((frag, idx) => {
+            return `
+            <div style="background:#ffc107;color:#333;padding:6px 12px;border-radius:20px;font-size:0.9em;display:flex;align-items:center;gap:8px;">
+                <span><strong>Pathway ${idx + 1}:</strong> ${frag}</span>
+                <button onclick="removeFragmentPathway(${idx})" style="background:none;border:none;color:#c00;cursor:pointer;font-size:1.2em;padding:0;">×</button>
+            </div>
+        `;
+        }).join('');
+    }
+
+    /**
+    * Returns true if subtracting fragment would cause any atom to reach zero or go negative.
+    * This ensures we stop immediately when an atom hits 0.
+    */
+    function fragmentExhausted(currentAtoms, fragmentAtoms) {
+        for (let atom in fragmentAtoms) {
+            // Check if the result of subtraction would be zero or negative
+            if ((currentAtoms[atom] || 0) - fragmentAtoms[atom] <= 1e-9) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Build a compact chemical formula string from an atom-count object.
+     * Atoms are emitted in insertion order. A count of 1 is omitted.
+     */
+    function atomsToFormula(atoms) {
+        return Object.entries(atoms)
+            .filter(([, v]) => Math.abs(v) > 1e-9)
+            .map(([atom, count]) => {
+                const n = Math.round(count);
+                return n === 1 ? atom : `${atom}${n}`;
+            })
+            .join('');
+    }
+
+    /**
+     * Feature 1: Given a parent formula and a fragment formula, generate
+     * the decomposition sequence as an array of {label, atoms} objects.
+     * The parent is NOT included (already added by addEntry).
+     * Stop BEFORE subtracting when any fragment atom would reach zero or below.
+     * Each column label is the actual computed formula of the remainder.
+     */
+    function generateDecompSequence(parentLabel, parentAtoms, fragmentFormula, phase) {
+        const fragAtoms = parseFormula(fragmentFormula);
+
+        if (Object.keys(fragAtoms).length === 0) return null;
+
+        let columns = [];
+        let current = Object.assign({}, parentAtoms);
+
+        while (true) {
+            // Stop BEFORE subtracting if any fragment atom is already at zero or below
+            if (fragmentExhausted(current, fragAtoms)) break;
+
+            let next = subtractAtoms(current, fragAtoms);
+
+            // Remove zero-count atoms so the matrix stays clean
+            let cleanNext = {};
+            for (let atom in next) {
+                if (Math.abs(next[atom]) > 1e-9) cleanNext[atom] = next[atom];
+            }
+
+            // Label is the actual computed formula reconstructed from remaining atoms
+            const formulaLabel = atomsToFormula(cleanNext);
+            const stepLabel = `${formulaLabel}(${phase})`;
+
+            if (!columns.some(c => c.label === stepLabel)) {
+                columns.push({ label: stepLabel, atoms: cleanNext, isSpecial: false });
+            }
+
+            current = next;
+        }
+
+        return columns;
+    }
+
+    function addEntry() {
+        let rawF = document.getElementById('formula').value.trim();
+        const p = document.getElementById('phase').value;
+        if (!rawF) return;
+
+        // Keep the original formula casing in the label
+        const label = `${rawF}(${p})`;
+        
+        if (chemicals.some(c => c.label === label)) {
+            alert(`Warning: ${rawF}(${p}) is already in the list.`);
+            return;
+        }
+
+        const parentAtoms = parseFormula(rawF);
+
+        chemicals.push({ label: label, atoms: parentAtoms, isSpecial: false });
+
+        // Feature 1: Process all decomposition pathways
+        if (currentDecompFragments.length > 0) {
+            currentDecompFragments.forEach((fragRaw, pathwayIdx) => {
+                const decompCols = generateDecompSequence(label, parentAtoms, fragRaw, p);
+                if (decompCols === null || decompCols.length === 0) {
+                    console.warn(`Pathway ${pathwayIdx + 1} (${fragRaw}) produced no valid decomposition steps.`);
+                } else {
+                    decompCols.forEach(col => {
+                        if (!chemicals.some(c => c.label === col.label)) {
+                            chemicals.push(col);
+                        }
+                    });
+                    // Mark the parent entry with decomposition info
+                    const parentEntry = chemicals.find(c => c.label === label);
+                    if (!parentEntry.decompPathways) parentEntry.decompPathways = [];
+                    parentEntry.decompPathways.push(fragRaw);
+                }
+            });
+            currentDecompFragments = [];
+            renderFragmentsList();
+        }
+
+        renderList();
+        document.getElementById('formula').value = '';
+        document.getElementById('decompCheck').checked = false;
+        document.getElementById('fragmentsContainer').classList.add('hidden');
+        document.getElementById('decompFragment').value = '';
+    }
+
+    /**
+     * Feature 2: Add a special chemical using pattern: Formula^Flag
+     * - Formula: processed by normal parser
+     * - Flag: kept as-is for visual/presentation purposes
+     * The special chemical gets its own unique row key in the matrix.
+     */
+    function addSpecialEntry() {
+        const rawInput = document.getElementById('specialLabel').value.trim();
+        const p = document.getElementById('specialPhase').value;
+        if (!rawInput) return;
+
+        // Split by ^ separator
+        const parts = rawInput.split('^');
+        if (parts.length !== 2) {
+            alert('Invalid pattern. Use: Formula^Flag (e.g., OH^RADICAL or e^electron)');
+            return;
+        }
+
+        const formulaPart = parts[0].trim();
+        const flag = parts[1].trim();
+
+        if (!formulaPart || !flag) {
+            alert('Both Formula and Flag parts must be non-empty.');
+            return;
+        }
+
+        // Parse the formula using normal parser
+        const parsedAtoms = parseFormula(formulaPart);
+
+        // Create display label combining formula and flag
+        const label = `${formulaPart}^${flag}(${p})`;
+
+        if (chemicals.some(c => c.label === label)) {
+            alert(`Warning: ${label} is already in the list.`);
+            return;
+        }
+
+        // Add the unique special-species row on top of the parsed atoms
+        const specialKey = `__special__${label}`;
+        const atoms = Object.assign({}, parsedAtoms);
+        atoms[specialKey] = 1;
+
+        chemicals.push({ label: label, atoms: atoms, isSpecial: true, specialKey: specialKey, flag: flag });
+        renderList();
+        document.getElementById('specialLabel').value = '';
+    }
+
+    function renderList() {
+        const body = document.getElementById('listBody');
+        body.innerHTML = chemicals.map((c, i) => {
+            let badge = '';
+            if (c.isSpecial) {
+                badge = `<span class="badge-special">SPECIAL${c.flag ? ': ' + c.flag : ''}</span>`;
+            } else if (c.decompPathways && c.decompPathways.length > 0) {
+                const pathwaysText = c.decompPathways.map(frag => `−${frag}`).join(', ');
+                badge = `<span class="badge-decomp">DECOMP: ${pathwaysText}</span>`;
+            }
+
+            // For display, show parsed atoms plus a note about the special row
+            let atomsDisplay;
+            if (c.isSpecial) {
+                const visibleAtoms = Object.fromEntries(
+                    Object.entries(c.atoms).filter(([k]) => !k.startsWith('__special__'))
+                );
+                const parsed = JSON.stringify(visibleAtoms);
+                atomsDisplay = `${parsed} + [special row]`;
+            } else {
+                atomsDisplay = JSON.stringify(c.atoms);
+            }
+
+            return `
+            <tr>
+                <td><span class="handle">☰</span></td>
+                <td>${c.label}${badge}</td>
+                <td>${atomsDisplay}</td>
+                <td><button style="background:#dc3545" onclick="chemicals.splice(${i},1);renderList()">Remove</button></td>
+            </tr>
+        `;
+        }).join('');
+    }
+
+    function gaussJordanV2(A, numRows, numCols) {
+        let p = Array.from({length: numCols}, (_, i) => i); 
+        let rank = 0;
+        const EPS = 1e-9;
+        for (let i = 0; i < Math.min(numRows, numCols); i++) {
+            let maxVal = -1.0;
+            let pivotR = -1, pivotC = -1;
+            for (let r = i; r < numRows; r++) {
+                for (let c = i; c < numCols; c++) {
+                    if (Math.abs(A[r][c]) > maxVal) {
+                        maxVal = Math.abs(A[r][c]);
+                        pivotR = r;
+                        pivotC = c;
+                    }
+                }
+            }
+            if (maxVal < EPS) break;
+            if (pivotR !== i) [A[i], A[pivotR]] = [A[pivotR], A[i]];
+            if (pivotC !== i) {
+                for (let r = 0; r < numRows; r++) {
+                    let temp = A[r][i];
+                    A[r][i] = A[r][pivotC];
+                    A[r][pivotC] = temp;
+                }
+                [p[i], p[pivotC]] = [p[pivotC], p[i]];
+            }
+            let divisor = A[i][i];
+            for (let j = i; j < numCols; j++) A[i][j] /= divisor;
+            for (let r = 0; r < numRows; r++) {
+                if (r !== i) {
+                    let factor = A[r][i];
+                    for (let j = i; j < numCols; j++) A[r][j] -= factor * A[i][j];
+                }
+            }
+            rank++;
+        }
+        return { A, p, rank };
+    }
+
+    function processSystem() {
+        if (chemicals.length === 0) return;
+        let atomSet = new Set();
+        chemicals.forEach(c => Object.keys(c.atoms).forEach(a => atomSet.add(a)));
+        let atomList = Array.from(atomSet);
+        let matrix = Array.from({length: atomList.length}, () => new Array(chemicals.length).fill(0));
+        chemicals.forEach((c, col) => {
+            atomList.forEach((a, row) => {
+                matrix[row][col] = c.atoms[a] || 0;
+            });
+        });
+
+        // For matrix display: show friendly row names (strip __special__ prefix)
+        const friendlyAtomNames = atomList.map(a => a.startsWith('__special__') ? a.replace('__special__', '') : a);
+
+        // Display original matrix A
+        let matrixText = "      " + chemicals.map(c => c.label.padStart(12)).join(" ") + "\n";
+        matrix.forEach((row, i) => {
+            matrixText += friendlyAtomNames[i].padEnd(5) + " [" + row.map(v => v.toString().padStart(12)).join(" ") + "]\n";
+        });
+        document.getElementById('matrixDisplay').textContent = matrixText;
+
+        // Perform Gauss-Jordan elimination
+        let { A, p, rank } = gaussJordanV2(matrix, atomList.length, chemicals.length);
+        
+        // Display echelon form (RREF)
+        let echelonText = "      " + chemicals.map(c => c.label.padStart(12)).join(" ") + "\n";
+        A.forEach((row, i) => {
+            echelonText += friendlyAtomNames[i].padEnd(5) + " [" + row.map(v => v.toFixed(6).replace(/\.?0+$/, "").padStart(12)).join(" ") + "]\n";
+        });
+        echelonText += `\nRank: ${rank} | Nullity: ${chemicals.length - rank}`;
+        document.getElementById('echelonDisplay').textContent = echelonText;
+
+        // Extract and display null-space vectors
+        let nullspaceText = '';
+        if (chemicals.length - rank > 0) {
+            nullspaceText += `Null-space basis (${chemicals.length - rank} vector(s)):\n\n`;
+            for (let j = rank; j < chemicals.length; j++) {
+                nullspaceText += `Vector ${j - rank + 1} (corresponding to ${chemicals[p[j]].label}):\n`;
+                let vector = new Array(chemicals.length).fill(0);
+                vector[p[j]] = 1.0;
+                for (let i = 0; i < rank; i++) {
+                    vector[p[i]] = -A[i][j];
+                }
+                nullspaceText += "  [";
+                nullspaceText += vector.map((v, idx) => {
+                    const val = Math.abs(v) < 1e-9 ? 0 : v;
+                    return `${chemicals[idx].label}: ${val.toFixed(4).replace(/\.?0+$/, "")}`;
+                }).join(", ");
+                nullspaceText += "]\n";
+            }
+        } else {
+            nullspaceText = "No null-space vectors (system is full rank).";
+        }
+        document.getElementById('nullspaceDisplay').textContent = nullspaceText;
+
+        // Generate reactions from null-space vectors
+        let reactionsHtml = '';
+        for (let j = rank; j < chemicals.length; j++) {
+            let coeffs = new Array(chemicals.length).fill(0);
+            coeffs[p[j]] = 1.0; 
+            for (let i = 0; i < rank; i++) coeffs[p[i]] = -A[i][j];
+            let reactants = [], products = [];
+            coeffs.forEach((val, idx) => {
+                if (Math.abs(val) < 1e-9) return;
+                let cName = chemicals[idx].label;
+                let displayVal = Math.abs(val).toFixed(4).replace(/\.?0+$/, "");
+                let term = `${displayVal === '1' ? '' : displayVal} ${cName}`;
+                if (val < 0) reactants.push(term); else products.push(term);
+            });
+            reactionsHtml += `<div class="equation">Reaction ${j - rank + 1}: ${reactants.join(' + ')} &hArr; ${products.join(' + ')}</div>`;
+        }
+        document.getElementById('reactionsDisplay').innerHTML = reactionsHtml || "No independent reactions.";
+        document.getElementById('resultsArea').classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>
