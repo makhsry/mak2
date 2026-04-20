@@ -312,7 +312,7 @@
 
 <body>
     <div class="grid-stack">
-        <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="5" gs-h="12" gs-id="trainer-app">
+        <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="6" gs-h="12" gs-id="trainer-app">
             <div class="grid-stack-item-content">
                 <div class="trainer-wrapper">
                     <div class="trainer-content">
@@ -590,7 +590,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid-stack-item" gs-x="5" gs-y="0" gs-w="2" gs-h="12" gs-id="sc-player" gs-no-move="false">
+        <div class="grid-stack-item" gs-x="6" gs-y="0" gs-w="2" gs-h="12" gs-id="sc-player" gs-no-move="false">
             <div class="grid-stack-item-content">
                 <div class="sc-controls">
                     <input type="text" id="playlist-url" placeholder="Paste SoundCloud URL..." />
@@ -601,21 +601,47 @@
                 </iframe>
             </div>
         </div>
-        <div class="grid-stack-item" gs-x="7" gs-y="0" gs-w="5" gs-h="5" gs-id="panel-a">
-            <div class="grid-stack-item-content" style="display: flex; justify-content: center; align-items: center;">
-                <div class="label" style="font-size: 1rem; text-align: center;">
-                    Panel A
+        <div class="grid-stack-item" gs-x="8" gs-y="0" gs-w="2" gs-h="5" gs-id="panel-a1">
+            <div class="grid-stack-item-content"
+                style="display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+                <div
+                    style="flex: 1; background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                    <video id="camera-feed" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline>
+                    </video>
+                </div>
+                <div
+                    style="flex: 1; background: var(--panel); border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; padding: 10px;">
+                    <div class="label" style="font-size: 0.9rem; text-align: center;">
+                        Speed (Rear wheel)
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="grid-stack-item" gs-x="7" gs-y="5" gs-w="5" gs-h="5" gs-id="panel-b">
+        <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="2" gs-h="5" gs-id="panel-a2">
+            <div class="grid-stack-item-content"
+                style="display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+                <div
+                    style="flex: 1; background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                    <video id="camera-feed-2" style="width: 100%; height: 100%; object-fit: cover;" autoplay
+                        playsinline>
+                    </video>
+                </div>
+                <div
+                    style="flex: 1; background: var(--panel); border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; padding: 10px;">
+                    <div class="label" style="font-size: 0.9rem; text-align: center;">
+                        Cadence
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-stack-item" gs-x="8" gs-y="5" gs-w="4" gs-h="5" gs-id="panel-b">
             <div class="grid-stack-item-content" style="display: flex; justify-content: center; align-items: center;">
                 <div class="label" style="font-size: 1rem; text-align: center;">
                     Panel B
                 </div>
             </div>
         </div>
-        <div class="grid-stack-item" gs-x="7" gs-y="10" gs-w="5" gs-h="2" gs-id="panel-c">
+        <div class="grid-stack-item" gs-x="8" gs-y="10" gs-w="4" gs-h="2" gs-id="panel-c">
             <div class="grid-stack-item-content" style="display: flex; justify-content: center; align-items: center;">
                 <div class="label" style="font-size: 1rem; text-align: center;">
                     Panel C
@@ -717,7 +743,7 @@
         function updateWheelPreset(val) {
             if (val !== "custom") {
                 document.getElementById
-                    ('in-circ').value = val;
+                ('in-circ').value = val;
                 updateState('circ', val);
             }
         }
