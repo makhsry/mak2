@@ -19,4 +19,4 @@ Completed a process engineering internship focused on the **simulation and optim
 - Applied **exergy analysis** and **pinch analysis** to identify thermodynamic inefficiencies and optimize energy integration, improving process sustainability and reducing waste heat.
 - Evaluated and compared **equipment procurement options** using **technical and economic criteria** to support decision-making for **pilot-scale implementation**.
 
-![Experiences_20110701_RIPI_EthaneMethane](Images_Experiences_20110701_RIPI_EthaneMethane.png)
+![Experiences_20110701_RIPI_EthaneMethane](media/Images_Experiences_20110701_RIPI_EthaneMethane.png)

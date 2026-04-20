@@ -18,4 +18,4 @@ Developed a **novel process** for the **direct capture, separation, and solid-st
 - Developed **microkinetic and kinetic Monte Carlo models** to simulate **reaction dynamics** and **upscale lab-scale findings for process-scale feasibility**.
 - Demonstrated **on-demand recovery** of nitrogen and lithium through **electrochemical regeneration**, showcasing **material circularity** and long-term process sustainability.
 
-![Experiences_20171115_CityUHK](Images_Experiences_20171115_CityUHK.jpg)
+![Experiences_20171115_CityUHK](media/Images_Experiences_20171115_CityUHK.jpg)

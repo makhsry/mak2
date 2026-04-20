@@ -19,4 +19,4 @@ Developed a **data-driven digital twin framework** to address low-yield challeng
 - Utilized **Density Functional Theory (DFT)** and **molecular dynamics (MD)** simulations to analyze **molecular interactions**, guiding optimal cocrystal formation **pathways** and identifying **key process descriptors**.
 - Integrated **Raman spectrometer** data into a live control system, enabling **real-time feedback and control** within a continuous manufacturing environment through **predictive ML models**.
 
-![Experiences_20191030_SSPC_CoCryM](Images_Experiences_20191030_SSPC_CoCryM.jpg)
+![Experiences_20191030_SSPC_CoCryM](media/Images_Experiences_20191030_SSPC_CoCryM.jpg)

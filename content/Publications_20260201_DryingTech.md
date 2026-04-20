@@ -9,4 +9,4 @@ Key outcomes:
 - Stable extraction rate at higher energy dosages (**~0.25 g per kWh/t**)
 - Strong agreement between **numerical and experimental data**
 
-![Microwave Drying of Minerals](Images_Publications_20260201_DryingTech.png)
+![Microwave Drying of Minerals](media/Images_Publications_20260201_DryingTech.png)
