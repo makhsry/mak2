@@ -24,5 +24,5 @@ A **web-based** tool for analyzing **chemical reaction systems** based atom redu
 All 118 periodic table elements are supported (H through Og).
 
 **References**    
-- Gibbs Reactor, Aurel Systems Inc. (CADSIM Plus)
+- Gibbs Reactor Module, Aurel Systems Inc. (CADSIM Plus).
 - Chemical Reaction Equilibrium Analysis: Theory and Algorithms by William R. Smith and Ronald W. Missen (1982)
