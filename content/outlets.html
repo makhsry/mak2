@@ -25,20 +25,54 @@
             <div class="card-content"><h2>Outlets</h2>
 <p>&nbsp;</p>
 <ul>
+<li><a href="#chemical-reaction-systems-analyzer">Chemical Reaction Systems Analyzer</a></li>
 <li><a href="#bike-trainer-dashboard-minoura-mag-500">Bike Trainer Dashboard (Minoura MAG-500)</a></li>
-<li><a href="#drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</a></li>
-<li><a href="#local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</a></li>
-<li><a href="#creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</a></li>
-<li><a href="#an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</a></li>
 <li><a href="#bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</a></li>
-<li><a href="#hpc-job-management-tools">HPC Job Management Tools</a></li>
+<li><a href="#an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</a></li>
+<li><a href="#local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</a></li>
 <li><a href="#nanotube-builder-and-mesher">Nanotube Builder and Mesher</a></li>
+<li><a href="#drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</a></li>
+<li><a href="#creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</a></li>
+<li><a href="#hpc-job-management-tools">HPC Job Management Tools</a></li>
 <li><a href="#cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</a></li>
 </ul></div>
         </section>
         <section class="card span-1 empty"></section>
 
         <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3 id="chemical-reaction-systems-analyzer">Chemical Reaction Systems Analyzer</h3>
+<p>&nbsp;</p>
+<p>A <strong>web-based</strong> tool for analyzing <strong>chemical reaction systems</strong> based atom reducndency principle. The analyzer takes a list of chemical formulas and their phases, constructs an atom-formula matrix, and computes independent chemical reactions from the null-space vectors using reduced row echelon form (RREF).</p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Access</strong> the tool <a href="Tools_ChemicalSystems.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Standard Chemical Input</strong><br />
+- Enter chemical formulas with phases (gas, liquid, solid, aqueous)<br />
+- Formulas are parsed using a periodic table (valid elements only)<br />
+- Drag-to-reorder entries</p>
+<p>&nbsp;</p>
+<p><strong>Decomposition Pathways</strong><br />
+- Mark chemicals that decompose into fragments<br />
+- Add multiple fragment formulas to create different decomposition sequences<br />
+- Each pathway subtracts its fragment until any atom reaches zero<br />
+- Automatically generates intermediate compounds</p>
+<p>&nbsp;</p>
+<p><strong>Special Chemicals</strong><br />
+- Add non-standard species using the pattern: <code>Formula^Flag(phase)</code><br />
+- Example: OH radical: <code>OH^.(aq)</code> or hydrated electron: <code>e^-(aq)</code><br />
+- Gets a unique row in the matrix for tracking</p>
+<p>&nbsp;</p>
+<p><strong>Element Support</strong> <br />
+All 118 periodic table elements are supported (H through Og).</p>
+<p>&nbsp;</p>
+<p><strong>References</strong>  <br />
+- Gibbs Reactor, Aurel Systems Inc. (CADSIM Plus)<br />
+- Chemical Reaction Equilibrium Analysis: Theory and Algorithms by William R. Smith and Ronald W. Missen (1982)</p></div>
+        </section>
+
         <section class="card span-2">
             <div class="card-content"><h3 id="bike-trainer-dashboard-minoura-mag-500">Bike Trainer Dashboard (Minoura MAG-500)</h3>
 <p>&nbsp;</p>
@@ -59,7 +93,1672 @@
 - <strong>Wheel Calibration:</strong> Presets for various tire sizes (700x23C up to 700x32C) with manual circumference input.<br />
 - <strong>Rider Profile:</strong> Defaults are FTP 250W, Mass 85kg, Height 178cm, Shoulder Width 31cm.</p></div>
         </section>
+        <section class="card span-1 empty"></section>
 
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3 id="bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</h3>
+<p>&nbsp;</p>
+<p>This is a script to generate <strong><code>.GPX</code></strong> files from the <strong>old</strong> <a href="https://www.fitbit.com/"><strong>Fitbit</strong></a> data, so that it can be imported into <a href="https://www.strava.com/"><strong>Strava</strong></a>. </p>
+<p>&nbsp;</p>
+<ul>
+<li>Save the script as <code>script_name.py</code> and run it next to the <code>Takeout</code> directory. </li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Script</strong> </p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import bisect
+import csv
+import json
+import os
+import sys
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+if sys.platform == 'win32':
+    RAW_ROOT = Path(r&quot;c:\Users\MAK\Downloads\Takeout\Fitbit&quot;)
+else:
+    RAW_ROOT = Path(&quot;/mnt/c/Users/MAK/Downloads/Takeout/Fitbit&quot;)
+
+HEALTH_DATA_DIR = RAW_ROOT / &quot;Health Fitness Data_GoogleData&quot;
+JSON_DATA_DIR = RAW_ROOT / &quot;Global Export Data&quot;
+GPS_DATA_DIR = RAW_ROOT / &quot;Physical Activity_GoogleData&quot;
+HEART_RATE_DIR = GPS_DATA_DIR
+OUTPUT_DIR = RAW_ROOT / &quot;Workout_GPX_Exports&quot;
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+def parse_csv_datetime(value: str):
+    if not value:
+        return None
+    try:
+        if value.endswith('Z'):
+            value = value[:-1] + '+00:00'
+        return datetime.fromisoformat(value)
+    except ValueError:
+        return None
+
+def parse_json_start(value: str):
+    if not value:
+        return None
+    for fmt in ['%m/%d/%y %H:%M:%S', '%m/%d/%Y %H:%M:%S']:
+        try:
+            return datetime.strptime(value, fmt).replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+def load_exercise_metadata():
+    rows = []
+    for csv_file in sorted(HEALTH_DATA_DIR.glob('UserExercises_*.csv')):
+        with open(csv_file, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                exercise_id = row.get('exercise_id')
+                if not exercise_id:
+                    continue
+                start_time = parse_csv_datetime(row.get('exercise_start', ''))
+                end_time = parse_csv_datetime(row.get('exercise_end', ''))
+                if not start_time or not end_time:
+                    continue
+                rows.append({
+                    'exercise_id': exercise_id,
+                    'activity_name': row.get('activity_name', 'Unknown'),
+                    'start_time': start_time,
+                    'end_time': end_time,
+                    'utc_offset': row.get('utc_offset', ''),
+                    'cutoff_time': end_time,
+                    'source_csv': csv_file.name,
+                    'row': row,
+                })
+    return rows
+
+def load_gps_points():
+    gps_by_date = {}
+    for csv_file in sorted(GPS_DATA_DIR.glob('gps_location_*.csv')):
+        with open(csv_file, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                try:
+                    ts = datetime.fromisoformat(row['timestamp'].replace('Z', '+00:00'))
+                    lat = float(row['latitude'])
+                    lon = float(row['longitude'])
+                    ele = float(row['altitude'])
+                except Exception:
+                    continue
+                date_key = ts.date()
+                gps_by_date.setdefault(date_key, []).append({
+                    'timestamp': ts,
+                    'latitude': lat,
+                    'longitude': lon,
+                    'altitude': ele,
+                })
+    for pts in gps_by_date.values():
+        pts.sort(key=lambda p: p['timestamp'])
+    return gps_by_date
+
+def load_heart_rate_data():
+    heart_rate_by_date = {}
+    for csv_file in sorted(HEART_RATE_DIR.glob('heart_rate_*.csv')):
+        with open(csv_file, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                try:
+                    ts = datetime.fromisoformat(row['timestamp'].replace('Z', '+00:00'))
+                    bpm = int(float(row['beats per minute']))
+                except Exception:
+                    continue
+                date_key = ts.date()
+                heart_rate_by_date.setdefault(date_key, []).append({
+                    'timestamp': ts,
+                    'bpm': bpm,
+                })
+    for date_key, hrs in list(heart_rate_by_date.items()):
+        hrs.sort(key=lambda h: h['timestamp'])
+        heart_rate_by_date[date_key] = {
+            'records': hrs,
+            'timestamps': [h['timestamp'] for h in hrs],
+        }
+    return heart_rate_by_date
+
+def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(seconds=30)):
+    best = None
+    best_delta = max_delta
+    for day_offset in (-1, 0, 1):
+        day = (timestamp + timedelta(days=day_offset)).date()
+        hr_day = heart_rate_by_date.get(day)
+        if not hr_day:
+            continue
+        timestamps = hr_day['timestamps']
+        hrs = hr_day['records']
+        index = bisect.bisect_left(timestamps, timestamp)
+        candidates = []
+        if index &gt; 0:
+            candidates.append(hrs[index - 1])
+        if index &lt; len(hrs):
+            candidates.append(hrs[index])
+        for hr in candidates:
+            delta = abs(hr['timestamp'] - timestamp)
+            if delta &lt; best_delta:
+                best = hr
+                best_delta = delta
+                if delta == timedelta(0):
+                    return best
+    return best
+
+def build_csv_index(metadata_rows):
+    index = {}
+    for row in metadata_rows:
+        key = row['start_time'].isoformat()
+        index.setdefault(key, []).append(row)
+    return index
+
+def match_activity_to_csv(activity, csv_index):
+    key = activity['start_time'].isoformat()
+    candidates = csv_index.get(key, [])
+    if candidates:
+        return candidates[0]
+    best = None
+    best_delta = timedelta.max
+    for rows in csv_index.values():
+        for candidate in rows:
+            delta = abs(candidate['start_time'] - activity['start_time'])
+            if delta &lt; best_delta and delta &lt;= timedelta(seconds=5):
+                best = candidate
+                best_delta = delta
+    return best
+
+def parse_exercise_json():
+    activities = []
+    for json_file in sorted(JSON_DATA_DIR.glob('exercise-*.json')):
+        try:
+            with open(json_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception:
+            continue
+        if not isinstance(data, list):
+            continue
+        for item in data:
+            start_time = parse_json_start(item.get('startTime') or item.get('originalStartTime') or '')
+            duration_ms = None
+            for field in ['duration', 'originalDuration', 'activeDuration']:
+                if field in item and item[field] is not None:
+                    try:
+                        duration_ms = int(item[field])
+                        break
+                    except (ValueError, TypeError):
+                        continue
+            if not start_time or duration_ms is None:
+                continue
+            activities.append({
+                'json_file': json_file.name,
+                'logId': str(item.get('logId', '')),
+                'activityTypeId': str(item.get('activityTypeId', '')),
+                'activityName': item.get('activityName', 'Unknown'),
+                'start_time': start_time,
+                'duration_seconds': int(duration_ms / 1000),
+                'end_time': start_time + timedelta(milliseconds=duration_ms),
+                'hasGps': bool(item.get('hasGps', False)),
+                'raw': item,
+            })
+    return activities
+
+def build_gpx(activity, points):
+    gpx = ET.Element('gpx', {
+        'version': '1.1',
+        'creator': 'Fitbit Exercise JSON GPX Export',
+        'xmlns': 'http://www.topografix.com/GPX/1/1',
+        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        'xmlns:gpxtpx': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1',
+        'xsi:schemaLocation': 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd',
+    })
+    metadata = ET.SubElement(gpx, 'metadata')
+    time_elem = ET.SubElement(metadata, 'time')
+    time_elem.text = activity['start_time'].isoformat().replace('+00:00', 'Z')
+    trk = ET.SubElement(gpx, 'trk')
+    name = ET.SubElement(trk, 'name')
+    name.text = f&quot;{activity['activityName']}&quot;
+    cmt = ET.SubElement(trk, 'cmt')
+    cmt.text = activity['activityName']
+    desc = ET.SubElement(trk, 'desc')
+    desc.text = (
+        f&quot;Source JSON: {activity['json_file']} | &quot;
+        f&quot;Duration: {activity['duration_seconds']}s | &quot;
+        f&quot;LogId: {activity['logId']} | ActivityTypeId: {activity['activityTypeId']}&quot;
+    )
+    trkseg = ET.SubElement(trk, 'trkseg')
+    for point in points:
+        trkpt = ET.SubElement(trkseg, 'trkpt', {
+            'lat': f&quot;{point['latitude']:.7f}&quot;,
+            'lon': f&quot;{point['longitude']:.7f}&quot;,
+        })
+        ele = ET.SubElement(trkpt, 'ele')
+        ele.text = f&quot;{point['altitude']:.1f}&quot;
+        ts_elem = ET.SubElement(trkpt, 'time')
+        ts_elem.text = point['timestamp'].isoformat().replace('+00:00', 'Z')
+        if point.get('heart_rate') is not None:
+            extensions = ET.SubElement(trkpt, 'extensions')
+            tpe = ET.SubElement(extensions, 'gpxtpx:TrackPointExtension')
+            hr_elem = ET.SubElement(tpe, 'gpxtpx:hr')
+            hr_elem.text = str(point['heart_rate'])
+    indent_xml(gpx)
+    return ET.tostring(gpx, encoding='unicode')
+
+def indent_xml(element, level=0):
+    indent = '\n' + ('  ' * level)
+    if len(element):
+        if not element.text or not element.text.strip():
+            element.text = indent + '  '
+        for child in element:
+            indent_xml(child, level + 1)
+        if not child.tail or not child.tail.strip():
+            child.tail = indent
+    else:
+        if level and (not element.tail or not element.tail.strip()):
+            element.tail = indent
+
+def points_for_activity(activity, gps_by_date, heart_rate_by_date):
+    if not gps_by_date:
+        return []
+    start = activity['start_time']
+    end = activity['end_time']
+    buffer = timedelta(seconds=5)
+    pts = []
+    for day_offset in (-1, 0, 1):
+        day = (start + timedelta(days=day_offset)).date()
+        for point in gps_by_date.get(day, []):
+            if start - buffer &lt;= point['timestamp'] &lt;= end + buffer:
+                pts.append(point)
+    pts.sort(key=lambda p: p['timestamp'])
+    for point in pts:
+        hr = find_nearest_heart_rate(point['timestamp'], heart_rate_by_date)
+        if hr:
+            point['heart_rate'] = hr['bpm']
+    return pts
+
+def filename_for_activity(activity, exercise_id, cutoff_time):
+    start_str = activity['start_time'].strftime('%Y%m%dT%H%M%SZ')
+    end_str = activity['end_time'].strftime('%Y%m%dT%H%M%SZ')
+    cutoff_str = cutoff_time.strftime('%Y%m%dT%H%M%SZ')
+    return (
+        f&quot;{exercise_id}_{start_str}_{end_str}_{activity['duration_seconds']}s_&quot;
+        f&quot;{cutoff_str}_{activity['logId']}_{activity['activityTypeId']}.gpx&quot;
+    )
+
+def main():
+    print('Loading exercise metadata from CSV...')
+    csv_rows = load_exercise_metadata()
+    csv_index = build_csv_index(csv_rows)
+    print(f'  Loaded {len(csv_rows)} exercise metadata rows.')
+
+    print('Loading exercise JSON logs...')
+    activities = parse_exercise_json()
+    print(f'  Loaded {len(activities)} JSON activity entries.')
+
+    print('Matching JSON activities to CSV exercise IDs...')
+    matched = []
+    unmatched = []
+    for activity in activities:
+        csv_match = match_activity_to_csv(activity, csv_index)
+        if csv_match:
+            activity['exercise_id'] = csv_match['exercise_id']
+            activity['csv_start_time'] = csv_match['start_time']
+            activity['csv_end_time'] = csv_match['end_time']
+            activity['cutoff_time'] = csv_match['cutoff_time']
+            activity['csv_activity_name'] = csv_match['activity_name']
+            matched.append(activity)
+        else:
+            unmatched.append(activity)
+
+    print(f'  Matched {len(matched)} activities, {len(unmatched)} unmatched.')
+
+    print('Loading GPS point data...')
+    gps_by_date = load_gps_points()
+    total_points = sum(len(v) for v in gps_by_date.values())
+    print(f'  Loaded {total_points} GPS points on {len(gps_by_date)} days.')
+
+    print('Loading heart rate point data...')
+    heart_rate_by_date = load_heart_rate_data()
+    total_hr_points = sum(len(v['records']) for v in heart_rate_by_date.values())
+    print(f'  Loaded {total_hr_points} heart rate points on {len(heart_rate_by_date)} days.')
+
+    report_path = OUTPUT_DIR / 'exercise_json_gpx_summary.csv'
+    with open(report_path, 'w', newline='', encoding='utf-8') as summary_file:
+        writer = csv.writer(summary_file)
+        writer.writerow([
+            'exercise_id', 'json_file', 'logId', 'activityTypeId', 'activityName',
+            'csv_start_time', 'csv_end_time', 'csv_cutoff_time', 'json_start_time',
+            'json_end_time', 'duration_seconds', 'matched', 'gps_point_count', 'hr_point_count', 'gpx_file'
+        ])
+
+        generated = 0
+        for activity in matched:
+            points = points_for_activity(activity, gps_by_date, heart_rate_by_date)
+            gpx_file_name = None
+            if points:
+                gpx_file_name = filename_for_activity(activity, activity['exercise_id'], activity['cutoff_time'])
+                gpx_content = build_gpx(activity, points)
+                path = OUTPUT_DIR / gpx_file_name
+                with open(path, 'w', encoding='utf-8') as out_f:
+                    out_f.write('&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;\n')
+                    out_f.write(gpx_content)
+                generated += 1
+            writer.writerow([
+                activity['exercise_id'],
+                activity['json_file'],
+                activity['logId'],
+                activity['activityTypeId'],
+                activity['activityName'],
+                activity.get('csv_start_time').isoformat() if activity.get('csv_start_time') else '',
+                activity.get('csv_end_time').isoformat() if activity.get('csv_end_time') else '',
+                activity.get('cutoff_time').isoformat().replace('+00:00', 'Z') if activity.get('cutoff_time') else '',
+                activity['start_time'].isoformat().replace('+00:00', 'Z'),
+                activity['end_time'].isoformat().replace('+00:00', 'Z'),
+                activity['duration_seconds'],
+                'yes',
+                len(points),
+                sum(1 for p in points if p.get('heart_rate') is not None),
+                gpx_file_name or '',
+            ])
+
+    if unmatched:
+        print('WARNING: Some JSON activities did not match a CSV exercise row.')
+        for activity in unmatched[:10]:
+            print(f&quot;  Unmatched logId={activity['logId']} start={activity['start_time'].isoformat()} duration={activity['duration_seconds']}s&quot;)
+        if len(unmatched) &gt; 10:
+            print(f'  ... plus {len(unmatched)-10} more')
+
+    print(f'Generated {generated} GPX files to {OUTPUT_DIR}')
+    print(f'Summary saved to {report_path}')
+
+if __name__ == '__main__':
+    main()
+
+</code></pre></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3 id="an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</h3>
+<p>&nbsp;</p>
+<p>This is a lightweight, single-file web application that mimics the <strong>Jupyter Notebook</strong> experience locally. It leverages <strong>Pyodide</strong> to run a full Python environment directly in browser without needing a remote backend. </p>
+<p>&nbsp;</p>
+<ul>
+<li>Access the <strong><code>.html</code></strong> file <a href="Tools_ipynb.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p>It also has a sidebar <strong>assistant</strong> powered by <strong>Puter.ai</strong> that sees current code and output to provide debugging help or code suggestions. </p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Navigate to the directory</strong> containing <strong><code>.html</code></strong> file.</li>
+<li><strong>Start a Python local server</strong> by running the following command in terminal:<br />
+<code>bash
+    python -m http.server 8000</code></li>
+<li><strong>Access the dashboard</strong> by opening browser and navigating to <strong><code>http://localhost:8000/FILENAME.html</code></strong>.</li>
+</ol>
+<p>&nbsp;</p>
+<h4>Script</h4>
+<p>&nbsp;</p>
+<pre><code class="language-bash">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Numerical Dashboard with AI Companion&lt;/title&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.plot.ly/plotly-2.27.0.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://js.puter.com/v2/&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        * { box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 1rem; background: #f8fafc; color: #1e293b; display: flex; gap: 0; height: 100vh; }
+        .main-content { flex: 1; background: white; padding: 2rem; border-radius: 12px 0 0 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); min-width: 300px; overflow-y: auto; height: calc(100vh - 2rem); }
+        .chat-sidebar { width: 350px; min-width: 250px; max-width: 600px; background: white; padding: 1.5rem; border-radius: 0 12px 12px 0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: calc(100vh - 2rem); position: sticky; top: 1rem; overflow: hidden; }
+        h2 { margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        textarea { width: 100%; height: 250px; font-family: 'Cascadia Code', monospace; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f1f5f9; box-sizing: border-box; }
+        button { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 1rem; }
+        #output { margin-top: 1.5rem; padding: 12px; background: #0f172a; color: #f8fafc; border-radius: 6px; min-height: 40px; white-space: pre-wrap; font-family: monospace; font-size: 13px; }
+        #plot-area { margin-top: 1.5rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px; min-height: 450px; }
+        .status-bar { font-size: 0.85rem; padding: 8px 12px; border-radius: 4px; margin-bottom: 1rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+        #chat-history { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; font-size: 14px; background: #fcfcfc; }
+        .chat-input-wrapper { display: flex; gap: 5px; }
+        #chat-input { flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .api-label { font-size: 11px; font-weight: bold; color: #64748b; display: block; margin-bottom: 4px; }
+        .msg { margin-bottom: 10px; padding: 8px; border-radius: 6px; }
+        .user-msg { background: #dbeafe; color: #1e40af; }
+        .ai-msg { background: #f1f5f9; color: #334155; }
+        .cell { margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
+        .cell-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+        .cell-type { font-size: 12px; font-weight: bold; color: #64748b; }
+        .cell-actions { display: flex; gap: 8px; }
+        .cell-actions button { padding: 4px 8px; font-size: 11px; margin: 0; }
+        .cell-actions .run-btn { background: #16a34a; }
+        .cell-actions .delete-btn { background: #dc2626; }
+        .cell-actions .add-above-btn, .cell-actions .add-below-btn { background: #64748b; padding: 4px 6px; font-size: 11px; }
+        .cell textarea { border: none; border-radius: 0; resize: none; transition: height 0.2s; }
+        .cell textarea.collapsed { height: 38px !important; overflow: hidden; }
+        .cell textarea.expanded { height: 250px; }
+        .cell-output { padding: 12px; background: #0f172a; color: #f8fafc; border-radius: 0; min-height: 30px; font-family: monospace; font-size: 13px; white-space: pre-wrap; }
+        .markdown-cell { background: #fafafa; }
+        .markdown-cell textarea { background: #fafafa; font-family: -apple-system, system-ui, sans-serif; }
+        .markdown-content { padding: 12px; font-family: -apple-system, system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 { margin-top: 0; color: #0f172a; }
+        .markdown-content code { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-family: 'Cascadia Code', monospace; font-size: 13px; }
+        .markdown-content pre { background: #0f172a; color: #f8fafc; padding: 12px; border-radius: 6px; overflow-x: auto; }
+        .editable { cursor: pointer; }
+        .cell.dragging { opacity: 0.5; border: 2px dashed #3b82f6; }
+        .cell.drag-over { border-top: 2px solid #3b82f6; }
+        .cell-actions .move-btn { background: #64748b; }
+        .cell-expand { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 12px; color: #64748b; padding: 2px 6px; background: #f1f5f9; border-radius: 3px; z-index: 5; }
+        .cell-expand:hover { background: #e2e8f0; }
+        .add-cell-bar { display: flex; align-items: center; gap: 15px; padding: 8px 20px; margin: 10px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; background: transparent; }
+        .add-cell-bar:hover { background: #f8fafc; }
+        .add-cell-btn { background: none; border: none; color: #94a3b8; font-size: 12px; cursor: pointer; padding: 4px 10px; border-radius: 4px; }
+        .add-cell-btn:hover { background: #e2e8f0; color: #475569; }
+        .cell-type-select { padding: 4px 8px; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #475569; }
+        .resizer { width: 10px; cursor: col-resize; background: #e2e8f0; display: flex; align-items: center; justify-content: center; height: calc(100vh - 2rem); position: sticky; top: 1rem; border-radius: 4px; overflow: hidden; }
+        .resizer:hover, .resizer.active { background: #3b82f6; }
+        .resizer::before { content: '⋮'; color: #94a3b8; font-size: 16px; writing-mode: vertical-rl; }
+        .resizer:hover::before, .resizer.active::before { color: white; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;main-content&quot;&gt;
+    &lt;h2&gt;Numerical Analysis Dashboard&lt;/h2&gt;
+    &lt;div id=&quot;status&quot; class=&quot;status-bar&quot;&gt;Initializing Pyodide...&lt;/div&gt;
+    &lt;div style=&quot;margin-bottom: 1rem; padding: 1rem; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px;&quot;&gt;
+        &lt;div style=&quot;font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 8px;&quot;&gt;Install Python Packages&lt;/div&gt;
+        &lt;div style=&quot;display: flex; gap: 10px; align-items: center;&quot;&gt;
+            &lt;input type=&quot;text&quot; id=&quot;package-input&quot; placeholder=&quot;Enter package names (e.g., scipy, matplotlib)&quot; style=&quot;flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;&quot;&gt;
+            &lt;button id=&quot;install-btn&quot; onclick=&quot;installPackages()&quot; style=&quot;margin: 0; padding: 8px 16px; font-size: 13px;&quot;&gt;Install&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;install-status&quot; style=&quot;margin-top: 8px; font-size: 12px; color: #64748b;&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;cells-container&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;add-cell-bar&quot;&gt;
+        &lt;button class=&quot;add-cell-btn&quot; onclick=&quot;addCell('code')&quot; title=&quot;Insert code cell below&quot;&gt;+ Code&lt;/button&gt;
+        &lt;button class=&quot;add-cell-btn&quot; onclick=&quot;addCell('markdown')&quot; title=&quot;Insert markdown cell below&quot;&gt;+ Markdown&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;plot-area&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;resizer&quot; id=&quot;resizer&quot;&gt;&lt;/div&gt;
+
+&lt;div class=&quot;chat-sidebar&quot; id=&quot;chat-sidebar&quot;&gt;
+    &lt;h3&gt;AI Assistant&lt;/h3&gt;
+    &lt;div id=&quot;puter-auth-bar&quot; style=&quot;margin-bottom:12px;&quot;&gt;
+        &lt;div id=&quot;puter-status&quot; style=&quot;font-size:12px; color:#64748b; margin-bottom:6px;&quot;&gt;Not connected to Puter&lt;/div&gt;
+        &lt;button id=&quot;puter-connect-btn&quot; onclick=&quot;connectPuter()&quot; style=&quot;margin:0; padding:8px 14px; font-size:12px; width:100%;&quot;&gt;Connect Puter Account&lt;/button&gt;
+        &lt;button id=&quot;puter-signout-btn&quot; onclick=&quot;signOut()&quot; style=&quot;display:none; margin-top:6px; padding:8px 14px; font-size:12px; width:100%; background:#ef4444; color:white; border:none; border-radius:6px; cursor:pointer;&quot;&gt;Sign Out&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;model-bar&quot; style=&quot;margin-bottom:12px; display:none;&quot;&gt;
+        &lt;span class=&quot;api-label&quot;&gt;MODEL:&lt;/span&gt;
+        &lt;select id=&quot;model-selector&quot; style=&quot;width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; background:#f1f5f9;&quot;&gt;
+            &lt;option value=&quot;&quot;&gt;Loading models...&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;chat-history&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;chat-input-wrapper&quot;&gt;
+        &lt;input type=&quot;text&quot; id=&quot;chat-input&quot; placeholder=&quot;Ask a question...&quot; onkeypress=&quot;if(event.key==='Enter') sendChat()&quot;&gt;
+        &lt;button onclick=&quot;sendChat()&quot; style=&quot;margin:0; padding:8px;&quot;&gt;Send&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    let pyodide;
+
+    let directoryHandle = null;
+    let isMounting = false;
+
+    async function getDirectoryHandle() {
+        if (!directoryHandle) {
+            directoryHandle = await window.showDirectoryPicker({
+                mode: 'readwrite'
+            });
+        }
+        return directoryHandle;
+    }
+
+    async function setupEnvironment() {
+        try {
+            pyodide = await loadPyodide();
+            await pyodide.loadPackage(['micropip']);
+
+            pyodide.FS.mkdir('/root');
+
+            document.getElementById('status').innerText = &quot;Status: Server Active | Python Ready&quot;;
+        } catch (err) {
+            document.getElementById('status').innerText = &quot;Error: &quot; + err.message;
+        }
+    }
+
+    const resizer = document.getElementById('resizer');
+    const chatSidebar = document.getElementById('chat-sidebar');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) =&gt; {
+        isResizing = true;
+        resizer.classList.add('active');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) =&gt; {
+        if (!isResizing) return;
+        const newWidth = window.innerWidth - e.clientX;
+        if (newWidth &gt;= 250 &amp;&amp; newWidth &lt;= 600) {
+            chatSidebar.style.width = newWidth + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', () =&gt; {
+        if (isResizing) {
+            isResizing = false;
+            resizer.classList.remove('active');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+
+    async function installPackages() {
+        const input = document.getElementById('package-input');
+        const status = document.getElementById('install-status');
+        const packages = input.value.trim().split(/[\s,]+/).filter(p =&gt; p);
+
+        if (!packages.length) {
+            status.innerText = &quot;Please enter at least one package name.&quot;;
+            status.style.color = &quot;#dc2626&quot;;
+            return;
+        }
+
+        status.innerText = `Installing: ${packages.join(', ')}...`;
+        status.style.color = &quot;#1e40af&quot;;
+
+        try {
+            await pyodide.loadPackage(packages);
+            status.innerText = `Successfully installed: ${packages.join(', ')}`;
+            status.style.color = &quot;#16a34a&quot;;
+            input.value = '';
+        } catch (err) {
+            status.innerText = `Installation failed: ${err.message}`;
+            status.style.color = &quot;#dc2626&quot;;
+        }
+    }
+
+    let cellCounter = 0;
+
+    function addCell(type, afterId = null) {
+        const container = document.getElementById('cells-container');
+        const id = 'cell-' + (++cellCounter);
+        const isMarkdown = type === 'markdown';
+
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (isMarkdown ? ' markdown-cell' : '');
+        cell.id = id;
+        cell.draggable = true;
+
+        cell.innerHTML = `
+            &lt;div class=&quot;cell-header&quot;&gt;
+                &lt;span class=&quot;cell-type&quot; style=&quot;cursor: grab;&quot; title=&quot;Drag to reorder&quot;&gt;☰ ${isMarkdown ? 'Markdown' : 'Code'}&lt;/span&gt;
+                &lt;div class=&quot;cell-actions&quot;&gt;
+                    &lt;select id=&quot;${id}-type&quot; class=&quot;cell-type-select&quot; onchange=&quot;updateCellType('${id}', this.value)&quot;&gt;
+                        &lt;option value=&quot;code&quot; ${!isMarkdown ? 'selected' : ''}&gt;Code&lt;/option&gt;
+                        &lt;option value=&quot;markdown&quot; ${isMarkdown ? 'selected' : ''}&gt;Markdown&lt;/option&gt;
+                    &lt;/select&gt;
+                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'code')&quot; title=&quot;Add code above&quot;&gt;↑C&lt;/button&gt;
+                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'markdown')&quot; title=&quot;Add markdown above&quot;&gt;↑M&lt;/button&gt;
+                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'code')&quot; title=&quot;Add code below&quot;&gt;↓C&lt;/button&gt;
+                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'markdown')&quot; title=&quot;Add markdown below&quot;&gt;↓M&lt;/button&gt;
+                    &lt;button class=&quot;run-btn&quot; onclick=&quot;runCell('${id}')&quot;&gt;Run&lt;/button&gt;
+                    &lt;button class=&quot;delete-btn&quot; onclick=&quot;deleteCell('${id}')&quot;&gt;Delete&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;textarea id=&quot;${id}-input&quot; class=&quot;collapsed&quot; rows=&quot;1&quot; placeholder=&quot;${isMarkdown ? 'Enter markdown text...' : 'Enter Python code...'}&quot; ${isMarkdown ? 'ondblclick=&quot;toggleMarkdownEdit(\'' + id + '\')&quot;' : ''} oninput=&quot;autoResize(this)&quot; onclick=&quot;expandCell('${id}')&quot;&gt;${isMarkdown ? '# Heading\n\nEnter your markdown here...' : '# your code here'}&lt;/textarea&gt;
+            &lt;span class=&quot;cell-expand&quot; onclick=&quot;toggleExpand('${id}')&quot; title=&quot;Click to expand&quot;&gt;⬇&lt;/span&gt;
+            ${isMarkdown ? `&lt;div id=&quot;${id}-rendered&quot; class=&quot;markdown-content&quot; style=&quot;display:none;&quot; onclick=&quot;toggleMarkdownEdit('${id}')&quot;&gt;&lt;/div&gt;` : ''}
+            &lt;div id=&quot;${id}-output&quot; class=&quot;cell-output&quot; style=&quot;display: none;&quot;&gt;&lt;/div&gt;
+        `;
+
+        setTimeout(() =&gt; {
+            const textarea = document.getElementById(id + '-input');
+            autoResize(textarea);
+        }, 0);
+
+        cell.addEventListener('dragstart', (e) =&gt; {
+            cell.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', id);
+        });
+
+        cell.addEventListener('dragend', () =&gt; {
+            cell.classList.remove('dragging');
+            document.querySelectorAll('.cell').forEach(c =&gt; c.classList.remove('drag-over'));
+        });
+
+        cell.addEventListener('dragover', (e) =&gt; {
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if (dragging &amp;&amp; dragging !== cell) {
+                cell.classList.add('drag-over');
+            }
+        });
+
+        cell.addEventListener('dragleave', () =&gt; {
+            cell.classList.remove('drag-over');
+        });
+
+        cell.addEventListener('drop', (e) =&gt; {
+            e.preventDefault();
+            const draggedId = e.dataTransfer.getData('text/plain');
+            const dragged = document.getElementById(draggedId);
+            if (dragged &amp;&amp; dragged !== cell) {
+                container.insertBefore(dragged, cell);
+            }
+            cell.classList.remove('drag-over');
+        });
+
+        if (afterId) {
+            const afterCell = document.getElementById(afterId);
+            if (afterCell &amp;&amp; afterCell.nextSibling) {
+                container.insertBefore(cell, afterCell.nextSibling);
+            } else {
+                container.appendChild(cell);
+            }
+        } else {
+            container.appendChild(cell);
+        }
+    }
+
+    function createCellElement(type) {
+        const container = document.getElementById('cells-container');
+        const id = 'cell-' + (++cellCounter);
+        const isMarkdown = type === 'markdown';
+
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (isMarkdown ? ' markdown-cell' : '');
+        cell.id = id;
+        cell.draggable = true;
+
+        cell.innerHTML = `
+            &lt;div class=&quot;cell-header&quot;&gt;
+                &lt;span class=&quot;cell-type&quot; style=&quot;cursor: grab;&quot; title=&quot;Drag to reorder&quot;&gt;☰ ${isMarkdown ? 'Markdown' : 'Code'}&lt;/span&gt;
+                &lt;div class=&quot;cell-actions&quot;&gt;
+                    &lt;select id=&quot;${id}-type&quot; class=&quot;cell-type-select&quot; onchange=&quot;updateCellType('${id}', this.value)&quot;&gt;
+                        &lt;option value=&quot;code&quot; ${!isMarkdown ? 'selected' : ''}&gt;Code&lt;/option&gt;
+                        &lt;option value=&quot;markdown&quot; ${isMarkdown ? 'selected' : ''}&gt;Markdown&lt;/option&gt;
+                    &lt;/select&gt;
+                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'code')&quot; title=&quot;Add code above&quot;&gt;↑C&lt;/button&gt;
+                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'markdown')&quot; title=&quot;Add markdown above&quot;&gt;↑M&lt;/button&gt;
+                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'code')&quot; title=&quot;Add code below&quot;&gt;↓C&lt;/button&gt;
+                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'markdown')&quot; title=&quot;Add markdown below&quot;&gt;↓M&lt;/button&gt;
+                    &lt;button class=&quot;run-btn&quot; onclick=&quot;runCell('${id}')&quot;&gt;Run&lt;/button&gt;
+                    &lt;button class=&quot;delete-btn&quot; onclick=&quot;deleteCell('${id}')&quot;&gt;Delete&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;textarea id=&quot;${id}-input&quot; class=&quot;collapsed&quot; rows=&quot;1&quot; placeholder=&quot;${isMarkdown ? 'Enter markdown text...' : 'Enter Python code...'}&quot; ${isMarkdown ? 'ondblclick=&quot;toggleMarkdownEdit(\'' + id + '\')&quot;' : ''} oninput=&quot;autoResize(this)&quot; onclick=&quot;expandCell('${id}')&quot;&gt;${isMarkdown ? '# Heading\n\nEnter your markdown here...' : '# your code here'}&lt;/textarea&gt;
+            &lt;span class=&quot;cell-expand&quot; onclick=&quot;toggleExpand('${id}')&quot; title=&quot;Click to expand&quot;&gt;⬇&lt;/span&gt;
+            ${isMarkdown ? `&lt;div id=&quot;${id}-rendered&quot; class=&quot;markdown-content&quot; style=&quot;display:none;&quot; onclick=&quot;toggleMarkdownEdit('${id}')&quot;&gt;&lt;/div&gt;` : ''}
+            &lt;div id=&quot;${id}-output&quot; class=&quot;cell-output&quot; style=&quot;display: none;&quot;&gt;&lt;/div&gt;
+        `;
+
+        setTimeout(() =&gt; {
+            const textarea = document.getElementById(id + '-input');
+            autoResize(textarea);
+        }, 0);
+
+        cell.addEventListener('dragstart', (e) =&gt; {
+            cell.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', id);
+        });
+
+        cell.addEventListener('dragend', () =&gt; {
+            cell.classList.remove('dragging');
+            document.querySelectorAll('.cell').forEach(c =&gt; c.classList.remove('drag-over'));
+        });
+
+        cell.addEventListener('dragover', (e) =&gt; {
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if (dragging &amp;&amp; dragging !== cell) {
+                cell.classList.add('drag-over');
+            }
+        });
+
+        cell.addEventListener('dragleave', () =&gt; {
+            cell.classList.remove('drag-over');
+        });
+
+        cell.addEventListener('drop', (e) =&gt; {
+            e.preventDefault();
+            const draggedId = e.dataTransfer.getData('text/plain');
+            const dragged = document.getElementById(draggedId);
+            if (dragged &amp;&amp; dragged !== cell) {
+                container.insertBefore(dragged, cell);
+            }
+            cell.classList.remove('drag-over');
+        });
+
+        return cell;
+    }
+
+    function toggleMarkdownEdit(cellId) {
+        const input = document.getElementById(cellId + '-input');
+        const rendered = document.getElementById(cellId + '-rendered');
+
+        if (input.style.display !== 'none') {
+            rendered.innerHTML = parseMarkdown(input.value);
+            input.style.display = 'none';
+            rendered.style.display = 'block';
+        } else {
+            input.style.display = 'block';
+            rendered.style.display = 'none';
+        }
+    }
+
+    function parseMarkdown(text) {
+        let html = text
+            .replace(/^### (.*$)/gim, '&lt;h3&gt;$1&lt;/h3&gt;')
+            .replace(/^## (.*$)/gim, '&lt;h2&gt;$1&lt;/h2&gt;')
+            .replace(/^# (.*$)/gim, '&lt;h1&gt;$1&lt;/h1&gt;')
+            .replace(/\*\*(.*?)\*\*/g, '&lt;strong&gt;$1&lt;/strong&gt;')
+            .replace(/\*(.*?)\*/g, '&lt;em&gt;$1&lt;/em&gt;')
+            .replace(/`([^`]+)`/g, '&lt;code&gt;$1&lt;/code&gt;')
+            .replace(/```([\s\S]*?)```/g, '&lt;pre&gt;&lt;code&gt;$1&lt;/code&gt;&lt;/pre&gt;')
+            .replace(/^\- (.*$)/gim, '&lt;li&gt;$1&lt;/li&gt;')
+            .replace(/^\d+\. (.*$)/gim, '&lt;li&gt;$1&lt;/li&gt;')
+            .replace(/\n/g, '&lt;br&gt;');
+        return html;
+    }
+
+    async function runCell(cellId) {
+        const input = document.getElementById(cellId + '-input');
+        const output = document.getElementById(cellId + '-output');
+        const rendered = document.getElementById(cellId + '-rendered');
+        const cell = document.getElementById(cellId);
+        const isMarkdown = cell.classList.contains('markdown-cell');
+
+        if (isMarkdown) {
+            if (input.style.display !== 'none') {
+                rendered.innerHTML = parseMarkdown(input.value);
+                input.style.display = 'none';
+                rendered.style.display = 'block';
+            }
+            output.style.display = 'none';
+            return;
+        }
+
+        const code = input.value;
+        output.style.display = 'block';
+        output.innerText = 'Running...';
+
+        try {
+            const isMounted = pyodide.FS.mounts.some(m =&gt; m.mountpoint === '/root');
+
+            if (!isMounted) {
+                try {
+                    pyodide.FS.unmount('/root');
+                } catch (e) {}
+
+                try {
+                    pyodide.FS.rmdir('/root');
+                } catch (e) {}
+
+                pyodide.FS.mkdir('/root');
+                const handle = await getDirectoryHandle();
+                await pyodide.mountNativeFS('/root', handle);
+            }
+
+            output.innerText = '';
+
+            pyodide.setStdout({
+                batched: (str) =&gt; {
+                    output.innerText += str + '\n';
+                }
+            });
+
+            let result = await pyodide.runPythonAsync(code);
+
+            if (result !== undefined &amp;&amp; result !== null) {
+                const resultStr = result.toString();
+                if (output.innerText.trim() !== resultStr.trim()) {
+                    output.innerText += resultStr;
+                }
+            } else if (output.innerText === '') {
+                output.innerText = 'Success';
+            }
+        } catch (err) {
+            output.innerText = 'Error: ' + err.message;
+        }
+    }
+
+    function deleteCell(cellId) {
+        document.getElementById(cellId).remove();
+    }
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    function expandCell(cellId) {
+        const textarea = document.getElementById(cellId + '-input');
+        textarea.classList.remove('collapsed');
+        textarea.classList.add('expanded');
+        autoResize(textarea);
+    }
+
+    function toggleExpand(cellId) {
+        const textarea = document.getElementById(cellId + '-input');
+        const expandIcon = document.querySelector('#' + cellId + ' .cell-expand');
+
+        if (textarea.classList.contains('collapsed')) {
+            textarea.classList.remove('collapsed');
+            textarea.classList.add('expanded');
+            autoResize(textarea);
+            expandIcon.innerHTML = '⬆';
+        } else {
+            textarea.classList.remove('expanded');
+            textarea.classList.add('collapsed');
+            textarea.style.height = '38px';
+            expandIcon.innerHTML = '⬇';
+        }
+    }
+
+    function addCellAt(cellId, position, type) {
+        const container = document.getElementById('cells-container');
+        const currentCell = document.getElementById(cellId);
+        const cellType = type || 'code';
+
+        const newCell = createCellElement(cellType);
+
+        if (position === 'above') {
+            container.insertBefore(newCell, currentCell);
+        } else {
+            if (currentCell.nextSibling) {
+                container.insertBefore(newCell, currentCell.nextSibling);
+            } else {
+                container.appendChild(newCell);
+            }
+        }
+    }
+
+    function updateCellType(cellId, type) {
+        const cell = document.getElementById(cellId);
+        const isMarkdown = type === 'markdown';
+
+        if (isMarkdown) {
+            cell.classList.add('markdown-cell');
+        } else {
+            cell.classList.remove('markdown-cell');
+        }
+
+        const typeLabel = cell.querySelector('.cell-type');
+        typeLabel.innerHTML = '☰ ' + (isMarkdown ? 'Markdown' : 'Code');
+    }
+
+    async function loadModels() {
+        const selector = document.getElementById('model-selector');
+        const modelBar = document.getElementById('model-bar');
+        modelBar.style.display = 'block';
+        try {
+            const models = await puter.ai.listModels();
+            const priority = ['claude', 'openai', 'google', 'meta', 'mistral', 'deepseek', 'xai'];
+            models.sort((a, b) =&gt; {
+                const ai = priority.findIndex(p =&gt; (a.id || '').toLowerCase().includes(p));
+                const bi = priority.findIndex(p =&gt; (b.id || '').toLowerCase().includes(p));
+                return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+            });
+            selector.innerHTML = models.map(m =&gt; {
+                const label = m.name || m.id;
+                return `&lt;option value=&quot;${m.id}&quot;&gt;${label}&lt;/option&gt;`;
+            }).join('');
+            const defaultModel = models.find(m =&gt; m.id &amp;&amp; m.id.includes('claude-sonnet-4'));
+            if (defaultModel) selector.value = defaultModel.id;
+        } catch (err) {
+            selector.innerHTML = '&lt;option value=&quot;&quot;&gt;Failed to load models&lt;/option&gt;';
+        }
+    }
+
+    async function connectPuter() {
+        const btn = document.getElementById('puter-connect-btn');
+        const statusEl = document.getElementById('puter-status');
+        const signoutBtn = document.getElementById('puter-signout-btn');
+
+        btn.disabled = true;
+        btn.innerText = 'Connecting...';
+
+        try {
+            await puter.auth.signIn({ attempt_temp_user_creation: true });
+            const user = await puter.auth.getUser();
+            statusEl.innerText = `Connected as: ${user.username}`;
+            statusEl.style.color = '#16a34a';
+            btn.style.display = 'none';
+            signoutBtn.style.display = 'block';
+            await loadModels();
+        } catch (err) {
+            statusEl.innerText = 'Connection failed. Try again.';
+            statusEl.style.color = '#dc2626';
+            // Explicitly reset button state on failure
+            btn.disabled = false;
+            btn.innerText = 'Connect Puter Account';
+        } finally {
+            // Safety check: if sign-in didn't complete, re-enable button
+            if (!puter.auth.isSignedIn()) {
+                btn.disabled = false;
+                btn.innerText = 'Connect Puter Account';
+            }
+        }
+    }
+
+    function signOut() {
+        puter.auth.signOut();
+
+        const btn = document.getElementById('puter-connect-btn');
+        const signoutBtn = document.getElementById('puter-signout-btn');
+
+        // Reset the UI elements
+        document.getElementById('puter-status').innerText = &quot;Not connected to Puter&quot;;
+        document.getElementById('puter-status').style.color = '#64748b';
+
+        // Force reset the connect button state
+        btn.style.display = 'block';
+        btn.disabled = false;
+        btn.innerText = 'Connect Puter Account';
+
+        signoutBtn.style.display = 'none';
+
+        // Hide and clear the model selector
+        document.getElementById('model-bar').style.display = 'none';
+        document.getElementById('model-selector').innerHTML = '&lt;option value=&quot;&quot;&gt;Loading models...&lt;/option&gt;';
+
+        // Clear chat history
+        document.getElementById('chat-history').innerHTML = '';
+    }
+
+    async function sendChat() {
+        const input = document.getElementById('chat-input');
+        const history = document.getElementById('chat-history');
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        if (!puter.auth.isSignedIn()) {
+            history.innerHTML += `&lt;div class=&quot;msg ai-msg&quot; style=&quot;color:#b45309&quot;&gt;&lt;b&gt;Note:&lt;/b&gt; Please connect your Puter account first.&lt;/div&gt;`;
+            history.scrollTop = history.scrollHeight;
+            return;
+        }
+
+        const cells = document.querySelectorAll('.cell');
+        let contextData = &quot;Current Dashboard State:\n&quot;;
+        cells.forEach((c, i) =&gt; {
+            const cInput = document.getElementById(c.id + '-input')?.value || &quot;&quot;;
+            const cOutput = document.getElementById(c.id + '-output')?.innerText || &quot;&quot;;
+            contextData += `[Cell ${i+1} Code]:\n${cInput}\n[Cell ${i+1} Output]:\n${cOutput}\n---\n`;
+        });
+
+        const fullPrompt = `Dashboard Context:\n${contextData}\n\nUser Question: ${text}\n\nNote: Local files are at '/root/'. If providing code, use that path.`;
+
+        const model = document.getElementById('model-selector').value;
+        history.innerHTML += `&lt;div class=&quot;msg user-msg&quot;&gt;&lt;b&gt;You:&lt;/b&gt; ${text}&lt;/div&gt;`;
+        input.value = '';
+
+        try {
+            const response = await puter.ai.chat(fullPrompt, { model });
+            const aiText = response?.message?.content?.[0]?.text || response?.toString() || &quot;Ready.&quot;;
+            const formattedAiText = parseMarkdown(aiText);
+
+            history.innerHTML += `&lt;div class=&quot;msg ai-msg&quot;&gt;&lt;b&gt;AI:&lt;/b&gt;&lt;div class=&quot;markdown-content&quot;&gt;${formattedAiText}&lt;/div&gt;&lt;/div&gt;`;
+        } catch (err) {
+            history.innerHTML += `&lt;div class=&quot;msg ai-msg&quot; style=&quot;color:red&quot;&gt;&lt;b&gt;Error:&lt;/b&gt; ${err.message}&lt;/div&gt;`;
+        }
+        history.scrollTop = history.scrollHeight;
+    }
+
+    window.addEventListener('load', () =&gt; {
+        if (puter.auth.isSignedIn()) {
+            puter.auth.getUser().then(user =&gt; {
+                document.getElementById('puter-status').innerText = `Connected as: ${user.username}`;
+                document.getElementById('puter-status').style.color = '#16a34a';
+                document.getElementById('puter-connect-btn').style.display = 'none';
+                document.getElementById('puter-signout-btn').style.display = 'block';
+                loadModels();
+            });
+        }
+    });
+
+    setupEnvironment();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3 id="local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
+<p>&nbsp;</p>
+<p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
+<p>&nbsp;</p>
+<p><strong>Workflow reference</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>You must have <strong><code>Ollama</code></strong> installed and have <strong><code>pulled</code></strong> the required models (<strong><code>embedding</code></strong> and <strong><code>LLM</code></strong>) (for example: <code>ollama pull gemma4:latest</code>) for the scripts to work.</li>
+<li>Before running any script, <strong><code>Ollama</code></strong> must be running in the background: <strong><code>ollama serve</code></strong>.</li>
+<li>Use <strong><code>--help</code></strong> to see all available options for each script.</li>
+</ul>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Setup <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
+<td style="text-align: left;"><code>python database.py --rebuild</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Update <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
+<td style="text-align: left;"><code>python database.py --append</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ask</strong> a question (uses file: <code>prompt.txt</code>)</td>
+<td style="text-align: left;"><code>python query.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ask</strong> on command line</td>
+<td style="text-align: left;"><code>python query.py -q "..."</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ask</strong> in interactive chat</td>
+<td style="text-align: left;"><code>python query.py --interactive</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Edit</strong> shared settings (models, paths, chunking)</td>
+<td style="text-align: left;"><code>config.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>Changing models or settings</strong></p>
+<p>&nbsp;</p>
+<p>Open <strong><code>config.py</code></strong> and edit the values:</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
+EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model (a very forgiving model)
+CHUNK_SIZE      = 500                   # Number of characters per chunk
+CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
+TOP_K_RESULTS   = 5                     # Number of chunks to retrieve
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Steps to prepare the WSL environment</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>Update and upgrade: <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code> </li>
+<li>Install dependencies: <code>sudo apt install -y build-essential python3-pip python3-venv curl git libmagic-dev poppler-utils tesseract-ocr</code>.</li>
+<li>Create a python virtual environment: <code>python3 -m venv venv</code> </li>
+<li>Activate it: <code>source venv/bin/activate</code>. </li>
+<li>Install pip packages: <code>pip install -r requirements.txt</code>.</li>
+<li>Install Ollama: <code>https://ollama.com/download</code> or <code>curl -fsSL https://ollama.com/install.sh | sh</code>.</li>
+<li>Pull the required model: <code>ollama pull gemma4:latest</code> and <code>ollama pull nomic-embed-text</code>.</li>
+</ul>
+<p>&nbsp;</p>
+<p>The <strong>requirements.txt</strong>:</p>
+<pre><code class="language-bash">langchain
+langchain-community
+langchain-core
+langchain-ollama
+chromadb
+python-dotenv
+langchain-unstructured
+langchain-text-splitters
+langchain-community
+langchain-core
+langchain-ollama
+chromadb
+python-dotenv
+langchain-unstructured
+langchain-text-splitters
+</code></pre>
+<p>&nbsp;</p>
+<h4>Scripts</h4>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>database.py</code></strong>: </li>
+</ul>
+<p>&nbsp;</p>
+<p>Builds or updates the <strong><code>ChromaDB</code></strong> database from the <strong>folders</strong> listed in <strong><code>folders.txt</code></strong>.</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import argparse
+import os
+import shutil
+import sys
+import uuid
+
+# LangChain Imports
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_ollama import OllamaEmbeddings
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
+from langchain_unstructured import UnstructuredLoader
+
+import config
+from tqdm import tqdm
+
+# Priority mapping for loaders
+SPECIFIC_LOADERS = {
+    &quot;.pdf&quot;: PyPDFLoader,
+    &quot;.html&quot;: BSHTMLLoader,
+    &quot;.htm&quot;: BSHTMLLoader,
+    &quot;.txt&quot;: TextLoader,
+}
+
+# Document loading
+def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
+    &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
+    docs: list[Document] = []
+    folder_path = os.path.abspath(folder_path)
+    error_dir = os.path.join(folder_path, &quot;.not_indexed&quot;)
+
+    # Gather all files first for accurate progress
+    files_to_process = []
+    for root, dirs, files in os.walk(folder_path):
+        if &quot;.not_indexed&quot; in root:
+            continue
+        for filename in files:
+            files_to_process.append(os.path.join(root, filename))
+
+    # tqdm.write() ensures &quot;echoing&quot; doesn't break the progress bar
+    for file_path in tqdm(files_to_process, desc=f&quot;Scanning {os.path.basename(folder_path)}&quot;, unit=&quot;file&quot;):
+        filename = os.path.basename(file_path)
+        ext = os.path.splitext(filename)[1].lower()
+
+        if append_mode and file_path in indexed_sources:
+            tqdm.write(f&quot;  [Skip] Already indexed: {filename}&quot;)
+            continue
+
+        loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
+
+        try:
+            tqdm.write(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
+            loader = loader_cls(file_path)
+            docs.extend(loader.load())
+        except Exception as exc:
+            tqdm.write(f&quot;  [!! Error] Failed to read {filename}: {exc}&quot;)
+            if not os.path.exists(error_dir):
+                os.makedirs(error_dir)
+            try:
+                dest = os.path.join(error_dir, filename)
+                if os.path.exists(dest):
+                    dest = f&quot;{dest}_{uuid.uuid4().hex[:4]}&quot;
+                shutil.move(file_path, dest)
+                tqdm.write(f&quot;  [Moved] {filename} -&gt; .not_indexed/&quot;)
+            except Exception as move_exc:
+                tqdm.write(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
+    return docs
+
+# Main Logic
+def main():
+    parser = argparse.ArgumentParser(
+        description=(
+            &quot;Vector Database Manager\n\n&quot;
+            &quot;Manages the ChromaDB store for engineering document analysis.\n&quot;
+            &quot;This script tracks which files are indexed to avoid duplicate processing.&quot;
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            &quot;Usage Examples:\n&quot;
+            &quot;  python database.py --append    # Only index new files (Recommended)\n&quot;
+            &quot;  python database.py --rebuild   # Wipe and re-index all folders\n&quot;
+        )
+    )
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(&quot;--rebuild&quot;, action=&quot;store_true&quot;, help=&quot;Wipe and rebuild the DB from scratch.&quot;)
+    group.add_argument(&quot;--append&quot;, action=&quot;store_true&quot;, help=&quot;Add only new files.&quot;)
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    args = parser.parse_args()
+    folders = config.load_folders()
+    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
+    indexed_sources = set()
+
+    # 1. Initialize Mode
+    if args.rebuild:
+        if os.path.exists(config.CHROMA_DB_PATH):
+            print(f&quot;[db] Action: Wiping database at {config.CHROMA_DB_PATH}&quot;)
+            shutil.rmtree(config.CHROMA_DB_PATH)
+    elif os.path.exists(config.CHROMA_DB_PATH):
+        vectorstore = Chroma(persist_directory=config.CHROMA_DB_PATH, embedding_function=embeddings)
+        existing_data = vectorstore.get()
+        indexed_sources = set(m.get('source') for m in existing_data['metadatas'])
+        print(f&quot;[db] Action: Append mode. Found {len(indexed_sources)} files already in database.&quot;)
+
+    # 2. Document Collection
+    all_new_docs = []
+    for f in folders:
+        # Keeping the folder header print
+        print(f&quot;\n[db] Scanning Folder: {f}&quot;)
+        folder_docs = load_folder(f, indexed_sources, args.append)
+        all_new_docs.extend(folder_docs)
+
+    if not all_new_docs:
+        print(&quot;\n[db] Result: No new documents to index. Database is up to date.&quot;)
+        return
+
+    # 3. Chunking &amp; Embedding
+    print(f&quot;\n[db] Splitting {len(all_new_docs)} documents into chunks...&quot;)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=config.CHUNK_SIZE, 
+        chunk_overlap=config.CHUNK_OVERLAP
+    )
+    chunks = splitter.split_documents(all_new_docs)
+
+    print(f&quot;[db] Embedding {len(chunks)} chunks using '{config.EMBEDDING_MODEL}'...&quot;)
+
+    # Batch processing for the progress bar
+    batch_size = 50 
+
+    if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
+        # Initial chunk to create the store
+        vectorstore = Chroma.from_documents(
+            documents=chunks[:batch_size], 
+            embedding=embeddings, 
+            persist_directory=config.CHROMA_DB_PATH
+        )
+        start_idx = batch_size
+    else:
+        start_idx = 0
+
+    # Indexing Progress Bar
+    for i in tqdm(range(start_idx, len(chunks), batch_size), desc=&quot;Indexing Chunks&quot;, unit=&quot;batch&quot;):
+        batch = chunks[i : i + batch_size]
+        vectorstore.add_documents(batch)
+
+    print(f&quot;\n[db] ✓ Success! Added {len(chunks)} new chunks to the vector store.&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>query.py</code></strong>: </li>
+</ul>
+<p>&nbsp;</p>
+<p>Queries the <strong><code>database</code></strong> using the <strong><code>prompt</code></strong> in <strong><code>prompt.txt</code></strong> or a <strong><code>custom query</code></strong>.</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import argparse
+import sys
+import os
+import config
+
+# Imports matching database.py
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
+def get_rag_chain():
+    &quot;&quot;&quot;Helper to initialize the RAG chain using LCEL.&quot;&quot;&quot;
+    if not os.path.exists(config.CHROMA_DB_PATH):
+        print(f&quot;[error] Database not found at {config.CHROMA_DB_PATH}. Run 'python database.py --rebuild' first.&quot;)
+        sys.exit(1)
+
+    # Setup Retrieval
+    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
+    vectorstore = Chroma(
+        persist_directory=config.CHROMA_DB_PATH,
+        embedding_function=embeddings,
+    )
+    retriever = vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS})
+
+    # Setup LLM
+    llm = OllamaLLM(model=config.OLLAMA_MODEL)
+
+    # Define the Prompt Template
+    template = &quot;&quot;&quot;You are an expert in the field of the question you are asked. Answer the question based only on the following context: {context}. Make sure you answer in the same language as the question. Make sure the asnwer is based on the context only. If the answer is not in the context, say so. 
+
+    Question: {question}
+    &quot;&quot;&quot;
+    prompt = ChatPromptTemplate.from_template(template)
+
+    # Create the Chain (LCEL style)
+    chain = (
+        {&quot;context&quot;: retriever, &quot;question&quot;: RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return chain
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=&quot;RAG Query Engine&quot;,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            &quot;Examples:\n&quot;
+            &quot;  python query.py --file          # Run using prompt.txt\n&quot;
+            &quot;  python query.py --question \&quot;...\&quot; # Ask a specific question\n&quot;
+            &quot;  python query.py --interactive   # Start a live chat&quot;
+        )
+    )
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(&quot;--interactive&quot;, action=&quot;store_true&quot;, help=&quot;Start an interactive chat session.&quot;)
+    group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question.&quot;)
+    group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Use content in prompt.txt.&quot;)
+
+    args = parser.parse_args()
+    rag_chain = get_rag_chain()
+
+    if args.file:
+        user_prompt = config.load_prompt()
+        print(f&quot;[query] Running batch prompt from {config.PROMPT_FILE}...&quot;)
+        response = rag_chain.invoke(user_prompt)
+        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
+
+    elif args.question:
+        print(f&quot;[query] Processing: {args.question}&quot;)
+        response = rag_chain.invoke(args.question)
+        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
+
+    elif args.interactive:
+        print(&quot;\n--- INTERACTIVE MODE ---&quot;)
+        print(&quot;Type 'exit' or 'quit' to end.\n&quot;)
+        while True:
+            user_input = input(&quot;You: &quot;).strip()
+            if user_input.lower() in [&quot;exit&quot;, &quot;quit&quot;]:
+                break
+            if not user_input: continue
+
+            print(&quot;Thinking...&quot;)
+            response = rag_chain.invoke(user_input)
+            print(f&quot;AI: {response}\n&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>config.py</code></strong>: </li>
+</ul>
+<p>&nbsp;</p>
+<p>Configuration file for models, paths, and chunking settings</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">&quot;&quot;&quot;
+config.py — Shared configuration for RAG pipeline.
+This file manages models, paths, and environment-specific path conversions.
+&quot;&quot;&quot;
+
+import os
+import re
+import sys
+import argparse
+
+# --- Models ---
+OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
+EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
+
+# --- Vector Store ---
+CHROMA_DB_PATH = &quot;./databases/NAMED_RAG&quot;      # Directory for the Chroma database
+
+# --- Chunking &amp; Retrieval ---
+CHUNK_SIZE    = 500                    # Characters per chunk
+CHUNK_OVERLAP = 50                     # Overlap between chunks
+TOP_K_RESULTS = 5                      # Number of chunks to retrieve per query
+
+# --- Input Files ---
+FOLDERS_FILE = &quot;folders.txt&quot;           # File containing paths to scan
+PROMPT_FILE  = &quot;prompt.txt&quot;            # File containing the main prompt/question
+
+# --- Path Helpers ---
+
+def _win_to_wsl(path: str) -&gt; str:
+    &quot;&quot;&quot;
+    Automatically converts Windows paths to WSL paths.
+    C:\\Users\\Docs -&gt; /mnt/c/Users/Docs
+    &quot;&quot;&quot;
+    path = path.strip()
+    # Match C:\... or C:/...
+    m = re.match(r'^([A-Za-z]):[/\\\\](.*)', path)
+    if m:
+        drive, rest = m.groups()
+        rest = rest.replace('\\', '/')
+        return f&quot;/mnt/{drive.lower()}/{rest}&quot;
+    # If already Unix-style or relative, just fix slashes
+    return path.replace('\\', '/')
+
+def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
+    &quot;&quot;&quot;Reads and normalizes folder paths from the folders file.&quot;&quot;&quot;
+    if not os.path.exists(filepath):
+        return []
+
+    folders = []
+    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
+        for raw in fh:
+            line = raw.strip()
+            if not line or line.startswith(&quot;#&quot;):
+                continue
+
+            unix_path = _win_to_wsl(line)
+            # Ensure the directory exists before adding
+            if os.path.isdir(unix_path):
+                folders.append(unix_path)
+            else:
+                print(f&quot;[config] WARNING: Folder not found: {unix_path}&quot;)
+
+    return folders
+
+def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
+    &quot;&quot;&quot;Reads the content of the prompt file.&quot;&quot;&quot;
+    if not os.path.exists(filepath):
+        return &quot;No prompt found. Please check prompt.txt.&quot;
+    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
+        return fh.read().strip()
+
+# --- Help &amp; Verification ---
+if __name__ == &quot;__main__&quot;:
+    parser = argparse.ArgumentParser(
+        description=&quot;Configuration &amp; Path Verifier&quot;,
+        epilog=&quot;Run this script to verify your WSL mount points and model settings.&quot;
+    )
+    # Parse to allow --help but we don't need actual arguments
+    _ = parser.parse_known_args()
+
+    print(&quot;=&quot;*40)
+    print(&quot;Configuration Check&quot;)
+    print(&quot;=&quot;*40)
+    print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
+    print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
+    print(f&quot;Database Path:   {os.path.abspath(CHROMA_DB_PATH)}&quot;)
+
+    print(&quot;\n--- Folder Path Verification ---&quot;)
+    active_folders = load_folders()
+    if not active_folders:
+        print(&quot;  [!] No valid folders found. Check your folders.txt file.&quot;)
+    else:
+        for f in active_folders:
+            print(f&quot;  [✓] Detected: {f}&quot;)
+
+    print(&quot;\n--- Prompt Preview ---&quot;)
+    p_content = load_prompt()
+    preview = (p_content[:75] + '...') if len(p_content) &gt; 75 else p_content
+    print(f&quot;  Content: {preview}&quot;)
+    print(&quot;=&quot;*40)
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>folders.txt</code></strong> </li>
+</ul>
+<p>&nbsp;</p>
+<pre><code class="language-bash"># folders.txt — List of document folders to index.
+#
+# • One folder per line.
+# • Lines starting with '#' and blank lines are ignored.
+# • Windows paths are converted to WSL paths automatically.
+#   Examples of accepted formats:
+#       C:\Users\mak\Documents\finance
+#       D:/Projects/reports
+#       /home/mak/docs/hr
+#       ./documents/legal
+
+# Windows-style examples (converted automatically):
+#D:\Projects\legal
+#D:\Projects\reports
+
+# Unix / relative examples:
+# /home/mak/extra_docs
+# ./documents/local_folder
+
+/home/mak/Desktop/AurelSystemsInc/drawing
+/home/mak/Desktop/AurelSystemsInc/guidelines
+/home/mak/Desktop/AurelSystemsInc/helpfiles
+</code></pre></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3 id="nanotube-builder-and-mesher">Nanotube Builder and Mesher</h3>
+<p>&nbsp;</p>
+<p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Access the tool <a href="Tools_Nanotube.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p>The channel profile is described by two <strong>wall functions</strong> over the <strong>axial coordinate</strong> <code>ξ</code>:</p>
+<p>&nbsp;</p>
+<ul>
+<li><code>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)</code></li>
+<li><code>w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</code></li>
+</ul>
+<p>&nbsp;</p>
+<p>The <strong>local channel radius</strong> at any point along the axis is:</p>
+<p>&nbsp;</p>
+<ul>
+<li><code>r(ξ) = (w₂ − w₁) / 2</code></li>
+</ul>
+<p>&nbsp;</p>
+<p>The <strong>centerline position</strong> is the midpoint between <code>w₁</code> and <code>w₂</code>, producing a tube whose axis can curve and whose radius varies continuously along its length.</p>
+<p>&nbsp;</p>
+<p><strong>Parameters</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Range</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>α₁</strong></td>
+<td style="text-align: left;">[0, 1]</td>
+<td style="text-align: left;"><strong>Asymmetry amplitude</strong> — shifts the centerline, producing a curved or off-axis channel</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>α₂</strong></td>
+<td style="text-align: left;">[0, 1]</td>
+<td style="text-align: left;"><strong>Corrugation amplitude</strong> — modulates the radius periodically, creating constrictions and expansions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>α₃</strong></td>
+<td style="text-align: left;">[0.5, 4]</td>
+<td style="text-align: left;"><strong>Wavenumber multiplier</strong> — controls the spatial frequency of the α₁ modulation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>r₀</strong></td>
+<td style="text-align: left;">[0.2, 2]</td>
+<td style="text-align: left;"><strong>Minimum base radius</strong> — sets the baseline channel width</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>L</strong></td>
+<td style="text-align: left;">[2, 40]</td>
+<td style="text-align: left;"><strong>Tube length</strong> in the <code>ξ</code> domain</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nₐ</strong></td>
+<td style="text-align: left;">&gt;20</td>
+<td style="text-align: left;"><strong>Axial mesh points</strong> — higher values give a smoother profile along the length</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nᵣ</strong></td>
+<td style="text-align: left;">&gt;8</td>
+<td style="text-align: left;"><strong>Radial mesh points</strong> — higher values give a rounder cross-section</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Each parameter has a <strong>slider</strong> for quick exploration and a <strong>number input</strong> for precise entry. Press <strong>Enter</strong> or leave the field to <strong>apply</strong> a typed value.</p>
+<p>&nbsp;</p>
+<p>Live <strong>vertex</strong>, <strong>face</strong>, and <strong>estimated file size</strong> statistics update automatically as you adjust these values.</p>
+<p>&nbsp;</p>
+<p><strong>Viewport Navigation</strong></p>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Left-click drag</td>
+<td style="text-align: left;"><strong>Pan</strong> — recenters the view</td>
+</tr>
+<tr>
+<td style="text-align: left;">Right-click drag</td>
+<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Shift + drag</td>
+<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scroll wheel</td>
+<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;">Pinch (touch)</td>
+<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;">Single finger (touch)</td>
+<td style="text-align: left;"><strong>Pan</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>+</code> / <code>−</code> buttons</td>
+<td style="text-align: left;"><strong>Step zoom</strong> in / out</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>RST</code> button</td>
+<td style="text-align: left;"><strong>Reset</strong> zoom, pan, and rotation to defaults</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Select a format, check the <strong>estimated file size</strong>, then click <strong>Download</strong>.</p>
+<p>&nbsp;</p>
+<p>The exported file contains the following information:</p>
+<p>&nbsp;</p>
+<ul>
+<li><code>surface</code> — <code>outer</code> or <code>inner</code></li>
+<li><code>face_indices</code> — semicolon-separated list of all face IDs the vertex belongs to</li>
+<li><code>nx, ny, nz</code> — surface normal vector</li>
+<li><code>u, v</code> — UV texture coordinates</li>
+</ul></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
         <section class="card span-2">
             <div class="card-content"><h3 id="drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</h3>
 <p>&nbsp;</p>
@@ -765,497 +2464,6 @@ color_map_rgba = {
 }
 </code></pre></div>
         </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
-            <div class="card-content"><h3 id="local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
-<p>&nbsp;</p>
-<p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
-<p>&nbsp;</p>
-<p><strong>Workflow reference</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>You must have <strong><code>Ollama</code></strong> installed and have <strong><code>pulled</code></strong> the required models (<strong><code>embedding</code></strong> and <strong><code>LLM</code></strong>) (for example: <code>ollama pull gemma4:latest</code>) for the scripts to work.</li>
-<li>Before running any script, <strong><code>Ollama</code></strong> must be running in the background: <strong><code>ollama serve</code></strong>.</li>
-<li>Use <strong><code>--help</code></strong> to see all available options for each script.</li>
-</ul>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Command</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Setup <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
-<td style="text-align: left;"><code>python database.py --rebuild</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Update <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
-<td style="text-align: left;"><code>python database.py --append</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Ask</strong> a question (uses file: <code>prompt.txt</code>)</td>
-<td style="text-align: left;"><code>python query.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Ask</strong> on command line</td>
-<td style="text-align: left;"><code>python query.py -q "..."</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Ask</strong> in interactive chat</td>
-<td style="text-align: left;"><code>python query.py --interactive</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Edit</strong> shared settings (models, paths, chunking)</td>
-<td style="text-align: left;"><code>config.py</code></td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>Changing models or settings</strong></p>
-<p>&nbsp;</p>
-<p>Open <strong><code>config.py</code></strong> and edit the values:</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
-EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model (a very forgiving model)
-CHUNK_SIZE      = 500                   # Number of characters per chunk
-CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
-TOP_K_RESULTS   = 5                     # Number of chunks to retrieve
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Steps to prepare the WSL environment</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>Update and upgrade: <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code> </li>
-<li>Install dependencies: <code>sudo apt install -y build-essential python3-pip python3-venv curl git libmagic-dev poppler-utils tesseract-ocr</code>.</li>
-<li>Create a python virtual environment: <code>python3 -m venv venv</code> </li>
-<li>Activate it: <code>source venv/bin/activate</code>. </li>
-<li>Install pip packages: <code>pip install -r requirements.txt</code>.</li>
-<li>Install Ollama: <code>https://ollama.com/download</code> or <code>curl -fsSL https://ollama.com/install.sh | sh</code>.</li>
-<li>Pull the required model: <code>ollama pull gemma4:latest</code> and <code>ollama pull nomic-embed-text</code>.</li>
-</ul>
-<p>&nbsp;</p>
-<p>The <strong>requirements.txt</strong>:</p>
-<pre><code class="language-bash">langchain
-langchain-community
-langchain-core
-langchain-ollama
-chromadb
-python-dotenv
-langchain-unstructured
-langchain-text-splitters
-langchain-community
-langchain-core
-langchain-ollama
-chromadb
-python-dotenv
-langchain-unstructured
-langchain-text-splitters
-</code></pre>
-<p>&nbsp;</p>
-<h4>Scripts</h4>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>database.py</code></strong>: </li>
-</ul>
-<p>&nbsp;</p>
-<p>Builds or updates the <strong><code>ChromaDB</code></strong> database from the <strong>folders</strong> listed in <strong><code>folders.txt</code></strong>.</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">import argparse
-import os
-import shutil
-import sys
-import uuid
-
-# LangChain Imports
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_ollama import OllamaEmbeddings
-from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
-from langchain_unstructured import UnstructuredLoader
-
-import config
-from tqdm import tqdm
-
-# Priority mapping for loaders
-SPECIFIC_LOADERS = {
-    &quot;.pdf&quot;: PyPDFLoader,
-    &quot;.html&quot;: BSHTMLLoader,
-    &quot;.htm&quot;: BSHTMLLoader,
-    &quot;.txt&quot;: TextLoader,
-}
-
-# Document loading
-def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
-    &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
-    docs: list[Document] = []
-    folder_path = os.path.abspath(folder_path)
-    error_dir = os.path.join(folder_path, &quot;.not_indexed&quot;)
-
-    # Gather all files first for accurate progress
-    files_to_process = []
-    for root, dirs, files in os.walk(folder_path):
-        if &quot;.not_indexed&quot; in root:
-            continue
-        for filename in files:
-            files_to_process.append(os.path.join(root, filename))
-
-    # tqdm.write() ensures &quot;echoing&quot; doesn't break the progress bar
-    for file_path in tqdm(files_to_process, desc=f&quot;Scanning {os.path.basename(folder_path)}&quot;, unit=&quot;file&quot;):
-        filename = os.path.basename(file_path)
-        ext = os.path.splitext(filename)[1].lower()
-
-        if append_mode and file_path in indexed_sources:
-            tqdm.write(f&quot;  [Skip] Already indexed: {filename}&quot;)
-            continue
-
-        loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
-
-        try:
-            tqdm.write(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
-            loader = loader_cls(file_path)
-            docs.extend(loader.load())
-        except Exception as exc:
-            tqdm.write(f&quot;  [!! Error] Failed to read {filename}: {exc}&quot;)
-            if not os.path.exists(error_dir):
-                os.makedirs(error_dir)
-            try:
-                dest = os.path.join(error_dir, filename)
-                if os.path.exists(dest):
-                    dest = f&quot;{dest}_{uuid.uuid4().hex[:4]}&quot;
-                shutil.move(file_path, dest)
-                tqdm.write(f&quot;  [Moved] {filename} -&gt; .not_indexed/&quot;)
-            except Exception as move_exc:
-                tqdm.write(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
-    return docs
-
-# Main Logic
-def main():
-    parser = argparse.ArgumentParser(
-        description=(
-            &quot;Vector Database Manager\n\n&quot;
-            &quot;Manages the ChromaDB store for engineering document analysis.\n&quot;
-            &quot;This script tracks which files are indexed to avoid duplicate processing.&quot;
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            &quot;Usage Examples:\n&quot;
-            &quot;  python database.py --append    # Only index new files (Recommended)\n&quot;
-            &quot;  python database.py --rebuild   # Wipe and re-index all folders\n&quot;
-        )
-    )
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(&quot;--rebuild&quot;, action=&quot;store_true&quot;, help=&quot;Wipe and rebuild the DB from scratch.&quot;)
-    group.add_argument(&quot;--append&quot;, action=&quot;store_true&quot;, help=&quot;Add only new files.&quot;)
-
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(1)
-
-    args = parser.parse_args()
-    folders = config.load_folders()
-    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
-    indexed_sources = set()
-
-    # 1. Initialize Mode
-    if args.rebuild:
-        if os.path.exists(config.CHROMA_DB_PATH):
-            print(f&quot;[db] Action: Wiping database at {config.CHROMA_DB_PATH}&quot;)
-            shutil.rmtree(config.CHROMA_DB_PATH)
-    elif os.path.exists(config.CHROMA_DB_PATH):
-        vectorstore = Chroma(persist_directory=config.CHROMA_DB_PATH, embedding_function=embeddings)
-        existing_data = vectorstore.get()
-        indexed_sources = set(m.get('source') for m in existing_data['metadatas'])
-        print(f&quot;[db] Action: Append mode. Found {len(indexed_sources)} files already in database.&quot;)
-
-    # 2. Document Collection
-    all_new_docs = []
-    for f in folders:
-        # Keeping the folder header print
-        print(f&quot;\n[db] Scanning Folder: {f}&quot;)
-        folder_docs = load_folder(f, indexed_sources, args.append)
-        all_new_docs.extend(folder_docs)
-
-    if not all_new_docs:
-        print(&quot;\n[db] Result: No new documents to index. Database is up to date.&quot;)
-        return
-
-    # 3. Chunking &amp; Embedding
-    print(f&quot;\n[db] Splitting {len(all_new_docs)} documents into chunks...&quot;)
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=config.CHUNK_SIZE, 
-        chunk_overlap=config.CHUNK_OVERLAP
-    )
-    chunks = splitter.split_documents(all_new_docs)
-
-    print(f&quot;[db] Embedding {len(chunks)} chunks using '{config.EMBEDDING_MODEL}'...&quot;)
-
-    # Batch processing for the progress bar
-    batch_size = 50 
-
-    if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
-        # Initial chunk to create the store
-        vectorstore = Chroma.from_documents(
-            documents=chunks[:batch_size], 
-            embedding=embeddings, 
-            persist_directory=config.CHROMA_DB_PATH
-        )
-        start_idx = batch_size
-    else:
-        start_idx = 0
-
-    # Indexing Progress Bar
-    for i in tqdm(range(start_idx, len(chunks), batch_size), desc=&quot;Indexing Chunks&quot;, unit=&quot;batch&quot;):
-        batch = chunks[i : i + batch_size]
-        vectorstore.add_documents(batch)
-
-    print(f&quot;\n[db] ✓ Success! Added {len(chunks)} new chunks to the vector store.&quot;)
-
-if __name__ == &quot;__main__&quot;:
-    main()
-</code></pre>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>query.py</code></strong>: </li>
-</ul>
-<p>&nbsp;</p>
-<p>Queries the <strong><code>database</code></strong> using the <strong><code>prompt</code></strong> in <strong><code>prompt.txt</code></strong> or a <strong><code>custom query</code></strong>.</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">import argparse
-import sys
-import os
-import config
-
-# Imports matching database.py
-from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings, OllamaLLM
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-
-def get_rag_chain():
-    &quot;&quot;&quot;Helper to initialize the RAG chain using LCEL.&quot;&quot;&quot;
-    if not os.path.exists(config.CHROMA_DB_PATH):
-        print(f&quot;[error] Database not found at {config.CHROMA_DB_PATH}. Run 'python database.py --rebuild' first.&quot;)
-        sys.exit(1)
-
-    # Setup Retrieval
-    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
-    vectorstore = Chroma(
-        persist_directory=config.CHROMA_DB_PATH,
-        embedding_function=embeddings,
-    )
-    retriever = vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS})
-
-    # Setup LLM
-    llm = OllamaLLM(model=config.OLLAMA_MODEL)
-
-    # Define the Prompt Template
-    template = &quot;&quot;&quot;You are an expert in the field of the question you are asked. Answer the question based only on the following context: {context}. Make sure you answer in the same language as the question. Make sure the asnwer is based on the context only. If the answer is not in the context, say so. 
-
-    Question: {question}
-    &quot;&quot;&quot;
-    prompt = ChatPromptTemplate.from_template(template)
-
-    # Create the Chain (LCEL style)
-    chain = (
-        {&quot;context&quot;: retriever, &quot;question&quot;: RunnablePassthrough()}
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
-    return chain
-
-def main():
-    parser = argparse.ArgumentParser(
-        description=&quot;RAG Query Engine&quot;,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            &quot;Examples:\n&quot;
-            &quot;  python query.py --file          # Run using prompt.txt\n&quot;
-            &quot;  python query.py --question \&quot;...\&quot; # Ask a specific question\n&quot;
-            &quot;  python query.py --interactive   # Start a live chat&quot;
-        )
-    )
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(&quot;--interactive&quot;, action=&quot;store_true&quot;, help=&quot;Start an interactive chat session.&quot;)
-    group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question.&quot;)
-    group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Use content in prompt.txt.&quot;)
-
-    args = parser.parse_args()
-    rag_chain = get_rag_chain()
-
-    if args.file:
-        user_prompt = config.load_prompt()
-        print(f&quot;[query] Running batch prompt from {config.PROMPT_FILE}...&quot;)
-        response = rag_chain.invoke(user_prompt)
-        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
-
-    elif args.question:
-        print(f&quot;[query] Processing: {args.question}&quot;)
-        response = rag_chain.invoke(args.question)
-        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
-
-    elif args.interactive:
-        print(&quot;\n--- INTERACTIVE MODE ---&quot;)
-        print(&quot;Type 'exit' or 'quit' to end.\n&quot;)
-        while True:
-            user_input = input(&quot;You: &quot;).strip()
-            if user_input.lower() in [&quot;exit&quot;, &quot;quit&quot;]:
-                break
-            if not user_input: continue
-
-            print(&quot;Thinking...&quot;)
-            response = rag_chain.invoke(user_input)
-            print(f&quot;AI: {response}\n&quot;)
-
-if __name__ == &quot;__main__&quot;:
-    main()
-</code></pre>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>config.py</code></strong>: </li>
-</ul>
-<p>&nbsp;</p>
-<p>Configuration file for models, paths, and chunking settings</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">&quot;&quot;&quot;
-config.py — Shared configuration for RAG pipeline.
-This file manages models, paths, and environment-specific path conversions.
-&quot;&quot;&quot;
-
-import os
-import re
-import sys
-import argparse
-
-# --- Models ---
-OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
-EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
-
-# --- Vector Store ---
-CHROMA_DB_PATH = &quot;./databases/NAMED_RAG&quot;      # Directory for the Chroma database
-
-# --- Chunking &amp; Retrieval ---
-CHUNK_SIZE    = 500                    # Characters per chunk
-CHUNK_OVERLAP = 50                     # Overlap between chunks
-TOP_K_RESULTS = 5                      # Number of chunks to retrieve per query
-
-# --- Input Files ---
-FOLDERS_FILE = &quot;folders.txt&quot;           # File containing paths to scan
-PROMPT_FILE  = &quot;prompt.txt&quot;            # File containing the main prompt/question
-
-# --- Path Helpers ---
-
-def _win_to_wsl(path: str) -&gt; str:
-    &quot;&quot;&quot;
-    Automatically converts Windows paths to WSL paths.
-    C:\\Users\\Docs -&gt; /mnt/c/Users/Docs
-    &quot;&quot;&quot;
-    path = path.strip()
-    # Match C:\... or C:/...
-    m = re.match(r'^([A-Za-z]):[/\\\\](.*)', path)
-    if m:
-        drive, rest = m.groups()
-        rest = rest.replace('\\', '/')
-        return f&quot;/mnt/{drive.lower()}/{rest}&quot;
-    # If already Unix-style or relative, just fix slashes
-    return path.replace('\\', '/')
-
-def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
-    &quot;&quot;&quot;Reads and normalizes folder paths from the folders file.&quot;&quot;&quot;
-    if not os.path.exists(filepath):
-        return []
-
-    folders = []
-    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
-        for raw in fh:
-            line = raw.strip()
-            if not line or line.startswith(&quot;#&quot;):
-                continue
-
-            unix_path = _win_to_wsl(line)
-            # Ensure the directory exists before adding
-            if os.path.isdir(unix_path):
-                folders.append(unix_path)
-            else:
-                print(f&quot;[config] WARNING: Folder not found: {unix_path}&quot;)
-
-    return folders
-
-def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
-    &quot;&quot;&quot;Reads the content of the prompt file.&quot;&quot;&quot;
-    if not os.path.exists(filepath):
-        return &quot;No prompt found. Please check prompt.txt.&quot;
-    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
-        return fh.read().strip()
-
-# --- Help &amp; Verification ---
-if __name__ == &quot;__main__&quot;:
-    parser = argparse.ArgumentParser(
-        description=&quot;Configuration &amp; Path Verifier&quot;,
-        epilog=&quot;Run this script to verify your WSL mount points and model settings.&quot;
-    )
-    # Parse to allow --help but we don't need actual arguments
-    _ = parser.parse_known_args()
-
-    print(&quot;=&quot;*40)
-    print(&quot;Configuration Check&quot;)
-    print(&quot;=&quot;*40)
-    print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
-    print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
-    print(f&quot;Database Path:   {os.path.abspath(CHROMA_DB_PATH)}&quot;)
-
-    print(&quot;\n--- Folder Path Verification ---&quot;)
-    active_folders = load_folders()
-    if not active_folders:
-        print(&quot;  [!] No valid folders found. Check your folders.txt file.&quot;)
-    else:
-        for f in active_folders:
-            print(f&quot;  [✓] Detected: {f}&quot;)
-
-    print(&quot;\n--- Prompt Preview ---&quot;)
-    p_content = load_prompt()
-    preview = (p_content[:75] + '...') if len(p_content) &gt; 75 else p_content
-    print(f&quot;  Content: {preview}&quot;)
-    print(&quot;=&quot;*40)
-</code></pre>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>folders.txt</code></strong> </li>
-</ul>
-<p>&nbsp;</p>
-<pre><code class="language-bash"># folders.txt — List of document folders to index.
-#
-# • One folder per line.
-# • Lines starting with '#' and blank lines are ignored.
-# • Windows paths are converted to WSL paths automatically.
-#   Examples of accepted formats:
-#       C:\Users\mak\Documents\finance
-#       D:/Projects/reports
-#       /home/mak/docs/hr
-#       ./documents/legal
-
-# Windows-style examples (converted automatically):
-#D:\Projects\legal
-#D:\Projects\reports
-
-# Unix / relative examples:
-# /home/mak/extra_docs
-# ./documents/local_folder
-
-/home/mak/Desktop/AurelSystemsInc/drawing
-/home/mak/Desktop/AurelSystemsInc/guidelines
-/home/mak/Desktop/AurelSystemsInc/helpfiles
-</code></pre></div>
-        </section>
 
         <section class="card span-2">
             <div class="card-content"><h3 id="creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</h3>
@@ -1489,1044 +2697,6 @@ triangulation = np.empty((0, 5)) # connect COM to each set of three points
 index_col = np.arange(triangulation.shape[0]).reshape(-1, 1)
 triangulation_for_comsol = np.hstack((index_col, triangulation))
 np.savetxt(output_filenames_triangulation_for_comsol, triangulation_for_comsol, delimiter=&quot;,&quot;, fmt=&quot;%.6f&quot;)
-</code></pre></div>
-        </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
-            <div class="card-content"><h3 id="an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</h3>
-<p>&nbsp;</p>
-<p>This is a lightweight, single-file web application that mimics the <strong>Jupyter Notebook</strong> experience locally. It leverages <strong>Pyodide</strong> to run a full Python environment directly in browser without needing a remote backend. </p>
-<p>&nbsp;</p>
-<ul>
-<li>Access the <strong><code>.html</code></strong> file <a href="Tools_ipynb.html"><strong>here</strong></a>.</li>
-</ul>
-<p>&nbsp;</p>
-<p>It also has a sidebar <strong>assistant</strong> powered by <strong>Puter.ai</strong> that sees current code and output to provide debugging help or code suggestions. </p>
-<p>&nbsp;</p>
-<ol>
-<li><strong>Navigate to the directory</strong> containing <strong><code>.html</code></strong> file.</li>
-<li><strong>Start a Python local server</strong> by running the following command in terminal:<br />
-<code>bash
-    python -m http.server 8000</code></li>
-<li><strong>Access the dashboard</strong> by opening browser and navigating to <strong><code>http://localhost:8000/FILENAME.html</code></strong>.</li>
-</ol>
-<p>&nbsp;</p>
-<h4>Script</h4>
-<p>&nbsp;</p>
-<pre><code class="language-bash">&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-    &lt;title&gt;Numerical Dashboard with AI Companion&lt;/title&gt;
-    &lt;script src=&quot;https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;https://cdn.plot.ly/plotly-2.27.0.min.js&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;https://js.puter.com/v2/&quot;&gt;&lt;/script&gt;
-    &lt;style&gt;
-        * { box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; }
-        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 1rem; background: #f8fafc; color: #1e293b; display: flex; gap: 0; height: 100vh; }
-        .main-content { flex: 1; background: white; padding: 2rem; border-radius: 12px 0 0 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); min-width: 300px; overflow-y: auto; height: calc(100vh - 2rem); }
-        .chat-sidebar { width: 350px; min-width: 250px; max-width: 600px; background: white; padding: 1.5rem; border-radius: 0 12px 12px 0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: calc(100vh - 2rem); position: sticky; top: 1rem; overflow: hidden; }
-        h2 { margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
-        textarea { width: 100%; height: 250px; font-family: 'Cascadia Code', monospace; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f1f5f9; box-sizing: border-box; }
-        button { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 1rem; }
-        #output { margin-top: 1.5rem; padding: 12px; background: #0f172a; color: #f8fafc; border-radius: 6px; min-height: 40px; white-space: pre-wrap; font-family: monospace; font-size: 13px; }
-        #plot-area { margin-top: 1.5rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px; min-height: 450px; }
-        .status-bar { font-size: 0.85rem; padding: 8px 12px; border-radius: 4px; margin-bottom: 1rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-        #chat-history { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; font-size: 14px; background: #fcfcfc; }
-        .chat-input-wrapper { display: flex; gap: 5px; }
-        #chat-input { flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; }
-        .api-label { font-size: 11px; font-weight: bold; color: #64748b; display: block; margin-bottom: 4px; }
-        .msg { margin-bottom: 10px; padding: 8px; border-radius: 6px; }
-        .user-msg { background: #dbeafe; color: #1e40af; }
-        .ai-msg { background: #f1f5f9; color: #334155; }
-        .cell { margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
-        .cell-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
-        .cell-type { font-size: 12px; font-weight: bold; color: #64748b; }
-        .cell-actions { display: flex; gap: 8px; }
-        .cell-actions button { padding: 4px 8px; font-size: 11px; margin: 0; }
-        .cell-actions .run-btn { background: #16a34a; }
-        .cell-actions .delete-btn { background: #dc2626; }
-        .cell-actions .add-above-btn, .cell-actions .add-below-btn { background: #64748b; padding: 4px 6px; font-size: 11px; }
-        .cell textarea { border: none; border-radius: 0; resize: none; transition: height 0.2s; }
-        .cell textarea.collapsed { height: 38px !important; overflow: hidden; }
-        .cell textarea.expanded { height: 250px; }
-        .cell-output { padding: 12px; background: #0f172a; color: #f8fafc; border-radius: 0; min-height: 30px; font-family: monospace; font-size: 13px; white-space: pre-wrap; }
-        .markdown-cell { background: #fafafa; }
-        .markdown-cell textarea { background: #fafafa; font-family: -apple-system, system-ui, sans-serif; }
-        .markdown-content { padding: 12px; font-family: -apple-system, system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
-        .markdown-content h1, .markdown-content h2, .markdown-content h3 { margin-top: 0; color: #0f172a; }
-        .markdown-content code { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-family: 'Cascadia Code', monospace; font-size: 13px; }
-        .markdown-content pre { background: #0f172a; color: #f8fafc; padding: 12px; border-radius: 6px; overflow-x: auto; }
-        .editable { cursor: pointer; }
-        .cell.dragging { opacity: 0.5; border: 2px dashed #3b82f6; }
-        .cell.drag-over { border-top: 2px solid #3b82f6; }
-        .cell-actions .move-btn { background: #64748b; }
-        .cell-expand { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 12px; color: #64748b; padding: 2px 6px; background: #f1f5f9; border-radius: 3px; z-index: 5; }
-        .cell-expand:hover { background: #e2e8f0; }
-        .add-cell-bar { display: flex; align-items: center; gap: 15px; padding: 8px 20px; margin: 10px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; background: transparent; }
-        .add-cell-bar:hover { background: #f8fafc; }
-        .add-cell-btn { background: none; border: none; color: #94a3b8; font-size: 12px; cursor: pointer; padding: 4px 10px; border-radius: 4px; }
-        .add-cell-btn:hover { background: #e2e8f0; color: #475569; }
-        .cell-type-select { padding: 4px 8px; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #475569; }
-        .resizer { width: 10px; cursor: col-resize; background: #e2e8f0; display: flex; align-items: center; justify-content: center; height: calc(100vh - 2rem); position: sticky; top: 1rem; border-radius: 4px; overflow: hidden; }
-        .resizer:hover, .resizer.active { background: #3b82f6; }
-        .resizer::before { content: '⋮'; color: #94a3b8; font-size: 16px; writing-mode: vertical-rl; }
-        .resizer:hover::before, .resizer.active::before { color: white; }
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div class=&quot;main-content&quot;&gt;
-    &lt;h2&gt;Numerical Analysis Dashboard&lt;/h2&gt;
-    &lt;div id=&quot;status&quot; class=&quot;status-bar&quot;&gt;Initializing Pyodide...&lt;/div&gt;
-    &lt;div style=&quot;margin-bottom: 1rem; padding: 1rem; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px;&quot;&gt;
-        &lt;div style=&quot;font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 8px;&quot;&gt;Install Python Packages&lt;/div&gt;
-        &lt;div style=&quot;display: flex; gap: 10px; align-items: center;&quot;&gt;
-            &lt;input type=&quot;text&quot; id=&quot;package-input&quot; placeholder=&quot;Enter package names (e.g., scipy, matplotlib)&quot; style=&quot;flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;&quot;&gt;
-            &lt;button id=&quot;install-btn&quot; onclick=&quot;installPackages()&quot; style=&quot;margin: 0; padding: 8px 16px; font-size: 13px;&quot;&gt;Install&lt;/button&gt;
-        &lt;/div&gt;
-        &lt;div id=&quot;install-status&quot; style=&quot;margin-top: 8px; font-size: 12px; color: #64748b;&quot;&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div id=&quot;cells-container&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;add-cell-bar&quot;&gt;
-        &lt;button class=&quot;add-cell-btn&quot; onclick=&quot;addCell('code')&quot; title=&quot;Insert code cell below&quot;&gt;+ Code&lt;/button&gt;
-        &lt;button class=&quot;add-cell-btn&quot; onclick=&quot;addCell('markdown')&quot; title=&quot;Insert markdown cell below&quot;&gt;+ Markdown&lt;/button&gt;
-    &lt;/div&gt;
-    &lt;div id=&quot;plot-area&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;resizer&quot; id=&quot;resizer&quot;&gt;&lt;/div&gt;
-
-&lt;div class=&quot;chat-sidebar&quot; id=&quot;chat-sidebar&quot;&gt;
-    &lt;h3&gt;AI Assistant&lt;/h3&gt;
-    &lt;div id=&quot;puter-auth-bar&quot; style=&quot;margin-bottom:12px;&quot;&gt;
-        &lt;div id=&quot;puter-status&quot; style=&quot;font-size:12px; color:#64748b; margin-bottom:6px;&quot;&gt;Not connected to Puter&lt;/div&gt;
-        &lt;button id=&quot;puter-connect-btn&quot; onclick=&quot;connectPuter()&quot; style=&quot;margin:0; padding:8px 14px; font-size:12px; width:100%;&quot;&gt;Connect Puter Account&lt;/button&gt;
-        &lt;button id=&quot;puter-signout-btn&quot; onclick=&quot;signOut()&quot; style=&quot;display:none; margin-top:6px; padding:8px 14px; font-size:12px; width:100%; background:#ef4444; color:white; border:none; border-radius:6px; cursor:pointer;&quot;&gt;Sign Out&lt;/button&gt;
-    &lt;/div&gt;
-    &lt;div id=&quot;model-bar&quot; style=&quot;margin-bottom:12px; display:none;&quot;&gt;
-        &lt;span class=&quot;api-label&quot;&gt;MODEL:&lt;/span&gt;
-        &lt;select id=&quot;model-selector&quot; style=&quot;width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; background:#f1f5f9;&quot;&gt;
-            &lt;option value=&quot;&quot;&gt;Loading models...&lt;/option&gt;
-        &lt;/select&gt;
-    &lt;/div&gt;
-    &lt;div id=&quot;chat-history&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;chat-input-wrapper&quot;&gt;
-        &lt;input type=&quot;text&quot; id=&quot;chat-input&quot; placeholder=&quot;Ask a question...&quot; onkeypress=&quot;if(event.key==='Enter') sendChat()&quot;&gt;
-        &lt;button onclick=&quot;sendChat()&quot; style=&quot;margin:0; padding:8px;&quot;&gt;Send&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;script&gt;
-    let pyodide;
-
-    let directoryHandle = null;
-    let isMounting = false;
-
-    async function getDirectoryHandle() {
-        if (!directoryHandle) {
-            directoryHandle = await window.showDirectoryPicker({
-                mode: 'readwrite'
-            });
-        }
-        return directoryHandle;
-    }
-
-    async function setupEnvironment() {
-        try {
-            pyodide = await loadPyodide();
-            await pyodide.loadPackage(['micropip']);
-
-            pyodide.FS.mkdir('/root');
-
-            document.getElementById('status').innerText = &quot;Status: Server Active | Python Ready&quot;;
-        } catch (err) {
-            document.getElementById('status').innerText = &quot;Error: &quot; + err.message;
-        }
-    }
-
-    const resizer = document.getElementById('resizer');
-    const chatSidebar = document.getElementById('chat-sidebar');
-    let isResizing = false;
-
-    resizer.addEventListener('mousedown', (e) =&gt; {
-        isResizing = true;
-        resizer.classList.add('active');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-    });
-
-    document.addEventListener('mousemove', (e) =&gt; {
-        if (!isResizing) return;
-        const newWidth = window.innerWidth - e.clientX;
-        if (newWidth &gt;= 250 &amp;&amp; newWidth &lt;= 600) {
-            chatSidebar.style.width = newWidth + 'px';
-        }
-    });
-
-    document.addEventListener('mouseup', () =&gt; {
-        if (isResizing) {
-            isResizing = false;
-            resizer.classList.remove('active');
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-        }
-    });
-
-    async function installPackages() {
-        const input = document.getElementById('package-input');
-        const status = document.getElementById('install-status');
-        const packages = input.value.trim().split(/[\s,]+/).filter(p =&gt; p);
-
-        if (!packages.length) {
-            status.innerText = &quot;Please enter at least one package name.&quot;;
-            status.style.color = &quot;#dc2626&quot;;
-            return;
-        }
-
-        status.innerText = `Installing: ${packages.join(', ')}...`;
-        status.style.color = &quot;#1e40af&quot;;
-
-        try {
-            await pyodide.loadPackage(packages);
-            status.innerText = `Successfully installed: ${packages.join(', ')}`;
-            status.style.color = &quot;#16a34a&quot;;
-            input.value = '';
-        } catch (err) {
-            status.innerText = `Installation failed: ${err.message}`;
-            status.style.color = &quot;#dc2626&quot;;
-        }
-    }
-
-    let cellCounter = 0;
-
-    function addCell(type, afterId = null) {
-        const container = document.getElementById('cells-container');
-        const id = 'cell-' + (++cellCounter);
-        const isMarkdown = type === 'markdown';
-
-        const cell = document.createElement('div');
-        cell.className = 'cell' + (isMarkdown ? ' markdown-cell' : '');
-        cell.id = id;
-        cell.draggable = true;
-
-        cell.innerHTML = `
-            &lt;div class=&quot;cell-header&quot;&gt;
-                &lt;span class=&quot;cell-type&quot; style=&quot;cursor: grab;&quot; title=&quot;Drag to reorder&quot;&gt;☰ ${isMarkdown ? 'Markdown' : 'Code'}&lt;/span&gt;
-                &lt;div class=&quot;cell-actions&quot;&gt;
-                    &lt;select id=&quot;${id}-type&quot; class=&quot;cell-type-select&quot; onchange=&quot;updateCellType('${id}', this.value)&quot;&gt;
-                        &lt;option value=&quot;code&quot; ${!isMarkdown ? 'selected' : ''}&gt;Code&lt;/option&gt;
-                        &lt;option value=&quot;markdown&quot; ${isMarkdown ? 'selected' : ''}&gt;Markdown&lt;/option&gt;
-                    &lt;/select&gt;
-                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'code')&quot; title=&quot;Add code above&quot;&gt;↑C&lt;/button&gt;
-                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'markdown')&quot; title=&quot;Add markdown above&quot;&gt;↑M&lt;/button&gt;
-                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'code')&quot; title=&quot;Add code below&quot;&gt;↓C&lt;/button&gt;
-                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'markdown')&quot; title=&quot;Add markdown below&quot;&gt;↓M&lt;/button&gt;
-                    &lt;button class=&quot;run-btn&quot; onclick=&quot;runCell('${id}')&quot;&gt;Run&lt;/button&gt;
-                    &lt;button class=&quot;delete-btn&quot; onclick=&quot;deleteCell('${id}')&quot;&gt;Delete&lt;/button&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;textarea id=&quot;${id}-input&quot; class=&quot;collapsed&quot; rows=&quot;1&quot; placeholder=&quot;${isMarkdown ? 'Enter markdown text...' : 'Enter Python code...'}&quot; ${isMarkdown ? 'ondblclick=&quot;toggleMarkdownEdit(\'' + id + '\')&quot;' : ''} oninput=&quot;autoResize(this)&quot; onclick=&quot;expandCell('${id}')&quot;&gt;${isMarkdown ? '# Heading\n\nEnter your markdown here...' : '# your code here'}&lt;/textarea&gt;
-            &lt;span class=&quot;cell-expand&quot; onclick=&quot;toggleExpand('${id}')&quot; title=&quot;Click to expand&quot;&gt;⬇&lt;/span&gt;
-            ${isMarkdown ? `&lt;div id=&quot;${id}-rendered&quot; class=&quot;markdown-content&quot; style=&quot;display:none;&quot; onclick=&quot;toggleMarkdownEdit('${id}')&quot;&gt;&lt;/div&gt;` : ''}
-            &lt;div id=&quot;${id}-output&quot; class=&quot;cell-output&quot; style=&quot;display: none;&quot;&gt;&lt;/div&gt;
-        `;
-
-        setTimeout(() =&gt; {
-            const textarea = document.getElementById(id + '-input');
-            autoResize(textarea);
-        }, 0);
-
-        cell.addEventListener('dragstart', (e) =&gt; {
-            cell.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', id);
-        });
-
-        cell.addEventListener('dragend', () =&gt; {
-            cell.classList.remove('dragging');
-            document.querySelectorAll('.cell').forEach(c =&gt; c.classList.remove('drag-over'));
-        });
-
-        cell.addEventListener('dragover', (e) =&gt; {
-            e.preventDefault();
-            const dragging = document.querySelector('.dragging');
-            if (dragging &amp;&amp; dragging !== cell) {
-                cell.classList.add('drag-over');
-            }
-        });
-
-        cell.addEventListener('dragleave', () =&gt; {
-            cell.classList.remove('drag-over');
-        });
-
-        cell.addEventListener('drop', (e) =&gt; {
-            e.preventDefault();
-            const draggedId = e.dataTransfer.getData('text/plain');
-            const dragged = document.getElementById(draggedId);
-            if (dragged &amp;&amp; dragged !== cell) {
-                container.insertBefore(dragged, cell);
-            }
-            cell.classList.remove('drag-over');
-        });
-
-        if (afterId) {
-            const afterCell = document.getElementById(afterId);
-            if (afterCell &amp;&amp; afterCell.nextSibling) {
-                container.insertBefore(cell, afterCell.nextSibling);
-            } else {
-                container.appendChild(cell);
-            }
-        } else {
-            container.appendChild(cell);
-        }
-    }
-
-    function createCellElement(type) {
-        const container = document.getElementById('cells-container');
-        const id = 'cell-' + (++cellCounter);
-        const isMarkdown = type === 'markdown';
-
-        const cell = document.createElement('div');
-        cell.className = 'cell' + (isMarkdown ? ' markdown-cell' : '');
-        cell.id = id;
-        cell.draggable = true;
-
-        cell.innerHTML = `
-            &lt;div class=&quot;cell-header&quot;&gt;
-                &lt;span class=&quot;cell-type&quot; style=&quot;cursor: grab;&quot; title=&quot;Drag to reorder&quot;&gt;☰ ${isMarkdown ? 'Markdown' : 'Code'}&lt;/span&gt;
-                &lt;div class=&quot;cell-actions&quot;&gt;
-                    &lt;select id=&quot;${id}-type&quot; class=&quot;cell-type-select&quot; onchange=&quot;updateCellType('${id}', this.value)&quot;&gt;
-                        &lt;option value=&quot;code&quot; ${!isMarkdown ? 'selected' : ''}&gt;Code&lt;/option&gt;
-                        &lt;option value=&quot;markdown&quot; ${isMarkdown ? 'selected' : ''}&gt;Markdown&lt;/option&gt;
-                    &lt;/select&gt;
-                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'code')&quot; title=&quot;Add code above&quot;&gt;↑C&lt;/button&gt;
-                    &lt;button class=&quot;add-above-btn&quot; onclick=&quot;addCellAt('${id}', 'above', 'markdown')&quot; title=&quot;Add markdown above&quot;&gt;↑M&lt;/button&gt;
-                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'code')&quot; title=&quot;Add code below&quot;&gt;↓C&lt;/button&gt;
-                    &lt;button class=&quot;add-below-btn&quot; onclick=&quot;addCellAt('${id}', 'below', 'markdown')&quot; title=&quot;Add markdown below&quot;&gt;↓M&lt;/button&gt;
-                    &lt;button class=&quot;run-btn&quot; onclick=&quot;runCell('${id}')&quot;&gt;Run&lt;/button&gt;
-                    &lt;button class=&quot;delete-btn&quot; onclick=&quot;deleteCell('${id}')&quot;&gt;Delete&lt;/button&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;textarea id=&quot;${id}-input&quot; class=&quot;collapsed&quot; rows=&quot;1&quot; placeholder=&quot;${isMarkdown ? 'Enter markdown text...' : 'Enter Python code...'}&quot; ${isMarkdown ? 'ondblclick=&quot;toggleMarkdownEdit(\'' + id + '\')&quot;' : ''} oninput=&quot;autoResize(this)&quot; onclick=&quot;expandCell('${id}')&quot;&gt;${isMarkdown ? '# Heading\n\nEnter your markdown here...' : '# your code here'}&lt;/textarea&gt;
-            &lt;span class=&quot;cell-expand&quot; onclick=&quot;toggleExpand('${id}')&quot; title=&quot;Click to expand&quot;&gt;⬇&lt;/span&gt;
-            ${isMarkdown ? `&lt;div id=&quot;${id}-rendered&quot; class=&quot;markdown-content&quot; style=&quot;display:none;&quot; onclick=&quot;toggleMarkdownEdit('${id}')&quot;&gt;&lt;/div&gt;` : ''}
-            &lt;div id=&quot;${id}-output&quot; class=&quot;cell-output&quot; style=&quot;display: none;&quot;&gt;&lt;/div&gt;
-        `;
-
-        setTimeout(() =&gt; {
-            const textarea = document.getElementById(id + '-input');
-            autoResize(textarea);
-        }, 0);
-
-        cell.addEventListener('dragstart', (e) =&gt; {
-            cell.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', id);
-        });
-
-        cell.addEventListener('dragend', () =&gt; {
-            cell.classList.remove('dragging');
-            document.querySelectorAll('.cell').forEach(c =&gt; c.classList.remove('drag-over'));
-        });
-
-        cell.addEventListener('dragover', (e) =&gt; {
-            e.preventDefault();
-            const dragging = document.querySelector('.dragging');
-            if (dragging &amp;&amp; dragging !== cell) {
-                cell.classList.add('drag-over');
-            }
-        });
-
-        cell.addEventListener('dragleave', () =&gt; {
-            cell.classList.remove('drag-over');
-        });
-
-        cell.addEventListener('drop', (e) =&gt; {
-            e.preventDefault();
-            const draggedId = e.dataTransfer.getData('text/plain');
-            const dragged = document.getElementById(draggedId);
-            if (dragged &amp;&amp; dragged !== cell) {
-                container.insertBefore(dragged, cell);
-            }
-            cell.classList.remove('drag-over');
-        });
-
-        return cell;
-    }
-
-    function toggleMarkdownEdit(cellId) {
-        const input = document.getElementById(cellId + '-input');
-        const rendered = document.getElementById(cellId + '-rendered');
-
-        if (input.style.display !== 'none') {
-            rendered.innerHTML = parseMarkdown(input.value);
-            input.style.display = 'none';
-            rendered.style.display = 'block';
-        } else {
-            input.style.display = 'block';
-            rendered.style.display = 'none';
-        }
-    }
-
-    function parseMarkdown(text) {
-        let html = text
-            .replace(/^### (.*$)/gim, '&lt;h3&gt;$1&lt;/h3&gt;')
-            .replace(/^## (.*$)/gim, '&lt;h2&gt;$1&lt;/h2&gt;')
-            .replace(/^# (.*$)/gim, '&lt;h1&gt;$1&lt;/h1&gt;')
-            .replace(/\*\*(.*?)\*\*/g, '&lt;strong&gt;$1&lt;/strong&gt;')
-            .replace(/\*(.*?)\*/g, '&lt;em&gt;$1&lt;/em&gt;')
-            .replace(/`([^`]+)`/g, '&lt;code&gt;$1&lt;/code&gt;')
-            .replace(/```([\s\S]*?)```/g, '&lt;pre&gt;&lt;code&gt;$1&lt;/code&gt;&lt;/pre&gt;')
-            .replace(/^\- (.*$)/gim, '&lt;li&gt;$1&lt;/li&gt;')
-            .replace(/^\d+\. (.*$)/gim, '&lt;li&gt;$1&lt;/li&gt;')
-            .replace(/\n/g, '&lt;br&gt;');
-        return html;
-    }
-
-    async function runCell(cellId) {
-        const input = document.getElementById(cellId + '-input');
-        const output = document.getElementById(cellId + '-output');
-        const rendered = document.getElementById(cellId + '-rendered');
-        const cell = document.getElementById(cellId);
-        const isMarkdown = cell.classList.contains('markdown-cell');
-
-        if (isMarkdown) {
-            if (input.style.display !== 'none') {
-                rendered.innerHTML = parseMarkdown(input.value);
-                input.style.display = 'none';
-                rendered.style.display = 'block';
-            }
-            output.style.display = 'none';
-            return;
-        }
-
-        const code = input.value;
-        output.style.display = 'block';
-        output.innerText = 'Running...';
-
-        try {
-            const isMounted = pyodide.FS.mounts.some(m =&gt; m.mountpoint === '/root');
-
-            if (!isMounted) {
-                try {
-                    pyodide.FS.unmount('/root');
-                } catch (e) {}
-
-                try {
-                    pyodide.FS.rmdir('/root');
-                } catch (e) {}
-
-                pyodide.FS.mkdir('/root');
-                const handle = await getDirectoryHandle();
-                await pyodide.mountNativeFS('/root', handle);
-            }
-
-            output.innerText = '';
-
-            pyodide.setStdout({
-                batched: (str) =&gt; {
-                    output.innerText += str + '\n';
-                }
-            });
-
-            let result = await pyodide.runPythonAsync(code);
-
-            if (result !== undefined &amp;&amp; result !== null) {
-                const resultStr = result.toString();
-                if (output.innerText.trim() !== resultStr.trim()) {
-                    output.innerText += resultStr;
-                }
-            } else if (output.innerText === '') {
-                output.innerText = 'Success';
-            }
-        } catch (err) {
-            output.innerText = 'Error: ' + err.message;
-        }
-    }
-
-    function deleteCell(cellId) {
-        document.getElementById(cellId).remove();
-    }
-
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-    }
-
-    function expandCell(cellId) {
-        const textarea = document.getElementById(cellId + '-input');
-        textarea.classList.remove('collapsed');
-        textarea.classList.add('expanded');
-        autoResize(textarea);
-    }
-
-    function toggleExpand(cellId) {
-        const textarea = document.getElementById(cellId + '-input');
-        const expandIcon = document.querySelector('#' + cellId + ' .cell-expand');
-
-        if (textarea.classList.contains('collapsed')) {
-            textarea.classList.remove('collapsed');
-            textarea.classList.add('expanded');
-            autoResize(textarea);
-            expandIcon.innerHTML = '⬆';
-        } else {
-            textarea.classList.remove('expanded');
-            textarea.classList.add('collapsed');
-            textarea.style.height = '38px';
-            expandIcon.innerHTML = '⬇';
-        }
-    }
-
-    function addCellAt(cellId, position, type) {
-        const container = document.getElementById('cells-container');
-        const currentCell = document.getElementById(cellId);
-        const cellType = type || 'code';
-
-        const newCell = createCellElement(cellType);
-
-        if (position === 'above') {
-            container.insertBefore(newCell, currentCell);
-        } else {
-            if (currentCell.nextSibling) {
-                container.insertBefore(newCell, currentCell.nextSibling);
-            } else {
-                container.appendChild(newCell);
-            }
-        }
-    }
-
-    function updateCellType(cellId, type) {
-        const cell = document.getElementById(cellId);
-        const isMarkdown = type === 'markdown';
-
-        if (isMarkdown) {
-            cell.classList.add('markdown-cell');
-        } else {
-            cell.classList.remove('markdown-cell');
-        }
-
-        const typeLabel = cell.querySelector('.cell-type');
-        typeLabel.innerHTML = '☰ ' + (isMarkdown ? 'Markdown' : 'Code');
-    }
-
-    async function loadModels() {
-        const selector = document.getElementById('model-selector');
-        const modelBar = document.getElementById('model-bar');
-        modelBar.style.display = 'block';
-        try {
-            const models = await puter.ai.listModels();
-            const priority = ['claude', 'openai', 'google', 'meta', 'mistral', 'deepseek', 'xai'];
-            models.sort((a, b) =&gt; {
-                const ai = priority.findIndex(p =&gt; (a.id || '').toLowerCase().includes(p));
-                const bi = priority.findIndex(p =&gt; (b.id || '').toLowerCase().includes(p));
-                return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-            });
-            selector.innerHTML = models.map(m =&gt; {
-                const label = m.name || m.id;
-                return `&lt;option value=&quot;${m.id}&quot;&gt;${label}&lt;/option&gt;`;
-            }).join('');
-            const defaultModel = models.find(m =&gt; m.id &amp;&amp; m.id.includes('claude-sonnet-4'));
-            if (defaultModel) selector.value = defaultModel.id;
-        } catch (err) {
-            selector.innerHTML = '&lt;option value=&quot;&quot;&gt;Failed to load models&lt;/option&gt;';
-        }
-    }
-
-    async function connectPuter() {
-        const btn = document.getElementById('puter-connect-btn');
-        const statusEl = document.getElementById('puter-status');
-        const signoutBtn = document.getElementById('puter-signout-btn');
-
-        btn.disabled = true;
-        btn.innerText = 'Connecting...';
-
-        try {
-            await puter.auth.signIn({ attempt_temp_user_creation: true });
-            const user = await puter.auth.getUser();
-            statusEl.innerText = `Connected as: ${user.username}`;
-            statusEl.style.color = '#16a34a';
-            btn.style.display = 'none';
-            signoutBtn.style.display = 'block';
-            await loadModels();
-        } catch (err) {
-            statusEl.innerText = 'Connection failed. Try again.';
-            statusEl.style.color = '#dc2626';
-            // Explicitly reset button state on failure
-            btn.disabled = false;
-            btn.innerText = 'Connect Puter Account';
-        } finally {
-            // Safety check: if sign-in didn't complete, re-enable button
-            if (!puter.auth.isSignedIn()) {
-                btn.disabled = false;
-                btn.innerText = 'Connect Puter Account';
-            }
-        }
-    }
-
-    function signOut() {
-        puter.auth.signOut();
-
-        const btn = document.getElementById('puter-connect-btn');
-        const signoutBtn = document.getElementById('puter-signout-btn');
-
-        // Reset the UI elements
-        document.getElementById('puter-status').innerText = &quot;Not connected to Puter&quot;;
-        document.getElementById('puter-status').style.color = '#64748b';
-
-        // Force reset the connect button state
-        btn.style.display = 'block';
-        btn.disabled = false;
-        btn.innerText = 'Connect Puter Account';
-
-        signoutBtn.style.display = 'none';
-
-        // Hide and clear the model selector
-        document.getElementById('model-bar').style.display = 'none';
-        document.getElementById('model-selector').innerHTML = '&lt;option value=&quot;&quot;&gt;Loading models...&lt;/option&gt;';
-
-        // Clear chat history
-        document.getElementById('chat-history').innerHTML = '';
-    }
-
-    async function sendChat() {
-        const input = document.getElementById('chat-input');
-        const history = document.getElementById('chat-history');
-        const text = input.value.trim();
-
-        if (!text) return;
-
-        if (!puter.auth.isSignedIn()) {
-            history.innerHTML += `&lt;div class=&quot;msg ai-msg&quot; style=&quot;color:#b45309&quot;&gt;&lt;b&gt;Note:&lt;/b&gt; Please connect your Puter account first.&lt;/div&gt;`;
-            history.scrollTop = history.scrollHeight;
-            return;
-        }
-
-        const cells = document.querySelectorAll('.cell');
-        let contextData = &quot;Current Dashboard State:\n&quot;;
-        cells.forEach((c, i) =&gt; {
-            const cInput = document.getElementById(c.id + '-input')?.value || &quot;&quot;;
-            const cOutput = document.getElementById(c.id + '-output')?.innerText || &quot;&quot;;
-            contextData += `[Cell ${i+1} Code]:\n${cInput}\n[Cell ${i+1} Output]:\n${cOutput}\n---\n`;
-        });
-
-        const fullPrompt = `Dashboard Context:\n${contextData}\n\nUser Question: ${text}\n\nNote: Local files are at '/root/'. If providing code, use that path.`;
-
-        const model = document.getElementById('model-selector').value;
-        history.innerHTML += `&lt;div class=&quot;msg user-msg&quot;&gt;&lt;b&gt;You:&lt;/b&gt; ${text}&lt;/div&gt;`;
-        input.value = '';
-
-        try {
-            const response = await puter.ai.chat(fullPrompt, { model });
-            const aiText = response?.message?.content?.[0]?.text || response?.toString() || &quot;Ready.&quot;;
-            const formattedAiText = parseMarkdown(aiText);
-
-            history.innerHTML += `&lt;div class=&quot;msg ai-msg&quot;&gt;&lt;b&gt;AI:&lt;/b&gt;&lt;div class=&quot;markdown-content&quot;&gt;${formattedAiText}&lt;/div&gt;&lt;/div&gt;`;
-        } catch (err) {
-            history.innerHTML += `&lt;div class=&quot;msg ai-msg&quot; style=&quot;color:red&quot;&gt;&lt;b&gt;Error:&lt;/b&gt; ${err.message}&lt;/div&gt;`;
-        }
-        history.scrollTop = history.scrollHeight;
-    }
-
-    window.addEventListener('load', () =&gt; {
-        if (puter.auth.isSignedIn()) {
-            puter.auth.getUser().then(user =&gt; {
-                document.getElementById('puter-status').innerText = `Connected as: ${user.username}`;
-                document.getElementById('puter-status').style.color = '#16a34a';
-                document.getElementById('puter-connect-btn').style.display = 'none';
-                document.getElementById('puter-signout-btn').style.display = 'block';
-                loadModels();
-            });
-        }
-    });
-
-    setupEnvironment();
-&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre></div>
-        </section>
-
-        <section class="card span-2">
-            <div class="card-content"><h3 id="bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</h3>
-<p>&nbsp;</p>
-<p>This is a script to generate <strong><code>.GPX</code></strong> files from the <strong>old</strong> <a href="https://www.fitbit.com/"><strong>Fitbit</strong></a> data, so that it can be imported into <a href="https://www.strava.com/"><strong>Strava</strong></a>. </p>
-<p>&nbsp;</p>
-<ul>
-<li>Save the script as <code>script_name.py</code> and run it next to the <code>Takeout</code> directory. </li>
-</ul>
-<p>&nbsp;</p>
-<p><strong>Script</strong> </p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">import bisect
-import csv
-import json
-import os
-import sys
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-import xml.etree.ElementTree as ET
-
-if sys.platform == 'win32':
-    RAW_ROOT = Path(r&quot;c:\Users\MAK\Downloads\Takeout\Fitbit&quot;)
-else:
-    RAW_ROOT = Path(&quot;/mnt/c/Users/MAK/Downloads/Takeout/Fitbit&quot;)
-
-HEALTH_DATA_DIR = RAW_ROOT / &quot;Health Fitness Data_GoogleData&quot;
-JSON_DATA_DIR = RAW_ROOT / &quot;Global Export Data&quot;
-GPS_DATA_DIR = RAW_ROOT / &quot;Physical Activity_GoogleData&quot;
-HEART_RATE_DIR = GPS_DATA_DIR
-OUTPUT_DIR = RAW_ROOT / &quot;Workout_GPX_Exports&quot;
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-def parse_csv_datetime(value: str):
-    if not value:
-        return None
-    try:
-        if value.endswith('Z'):
-            value = value[:-1] + '+00:00'
-        return datetime.fromisoformat(value)
-    except ValueError:
-        return None
-
-def parse_json_start(value: str):
-    if not value:
-        return None
-    for fmt in ['%m/%d/%y %H:%M:%S', '%m/%d/%Y %H:%M:%S']:
-        try:
-            return datetime.strptime(value, fmt).replace(tzinfo=timezone.utc)
-        except ValueError:
-            continue
-    return None
-
-def load_exercise_metadata():
-    rows = []
-    for csv_file in sorted(HEALTH_DATA_DIR.glob('UserExercises_*.csv')):
-        with open(csv_file, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                exercise_id = row.get('exercise_id')
-                if not exercise_id:
-                    continue
-                start_time = parse_csv_datetime(row.get('exercise_start', ''))
-                end_time = parse_csv_datetime(row.get('exercise_end', ''))
-                if not start_time or not end_time:
-                    continue
-                rows.append({
-                    'exercise_id': exercise_id,
-                    'activity_name': row.get('activity_name', 'Unknown'),
-                    'start_time': start_time,
-                    'end_time': end_time,
-                    'utc_offset': row.get('utc_offset', ''),
-                    'cutoff_time': end_time,
-                    'source_csv': csv_file.name,
-                    'row': row,
-                })
-    return rows
-
-def load_gps_points():
-    gps_by_date = {}
-    for csv_file in sorted(GPS_DATA_DIR.glob('gps_location_*.csv')):
-        with open(csv_file, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                try:
-                    ts = datetime.fromisoformat(row['timestamp'].replace('Z', '+00:00'))
-                    lat = float(row['latitude'])
-                    lon = float(row['longitude'])
-                    ele = float(row['altitude'])
-                except Exception:
-                    continue
-                date_key = ts.date()
-                gps_by_date.setdefault(date_key, []).append({
-                    'timestamp': ts,
-                    'latitude': lat,
-                    'longitude': lon,
-                    'altitude': ele,
-                })
-    for pts in gps_by_date.values():
-        pts.sort(key=lambda p: p['timestamp'])
-    return gps_by_date
-
-def load_heart_rate_data():
-    heart_rate_by_date = {}
-    for csv_file in sorted(HEART_RATE_DIR.glob('heart_rate_*.csv')):
-        with open(csv_file, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                try:
-                    ts = datetime.fromisoformat(row['timestamp'].replace('Z', '+00:00'))
-                    bpm = int(float(row['beats per minute']))
-                except Exception:
-                    continue
-                date_key = ts.date()
-                heart_rate_by_date.setdefault(date_key, []).append({
-                    'timestamp': ts,
-                    'bpm': bpm,
-                })
-    for date_key, hrs in list(heart_rate_by_date.items()):
-        hrs.sort(key=lambda h: h['timestamp'])
-        heart_rate_by_date[date_key] = {
-            'records': hrs,
-            'timestamps': [h['timestamp'] for h in hrs],
-        }
-    return heart_rate_by_date
-
-def find_nearest_heart_rate(timestamp, heart_rate_by_date, max_delta=timedelta(seconds=30)):
-    best = None
-    best_delta = max_delta
-    for day_offset in (-1, 0, 1):
-        day = (timestamp + timedelta(days=day_offset)).date()
-        hr_day = heart_rate_by_date.get(day)
-        if not hr_day:
-            continue
-        timestamps = hr_day['timestamps']
-        hrs = hr_day['records']
-        index = bisect.bisect_left(timestamps, timestamp)
-        candidates = []
-        if index &gt; 0:
-            candidates.append(hrs[index - 1])
-        if index &lt; len(hrs):
-            candidates.append(hrs[index])
-        for hr in candidates:
-            delta = abs(hr['timestamp'] - timestamp)
-            if delta &lt; best_delta:
-                best = hr
-                best_delta = delta
-                if delta == timedelta(0):
-                    return best
-    return best
-
-def build_csv_index(metadata_rows):
-    index = {}
-    for row in metadata_rows:
-        key = row['start_time'].isoformat()
-        index.setdefault(key, []).append(row)
-    return index
-
-def match_activity_to_csv(activity, csv_index):
-    key = activity['start_time'].isoformat()
-    candidates = csv_index.get(key, [])
-    if candidates:
-        return candidates[0]
-    best = None
-    best_delta = timedelta.max
-    for rows in csv_index.values():
-        for candidate in rows:
-            delta = abs(candidate['start_time'] - activity['start_time'])
-            if delta &lt; best_delta and delta &lt;= timedelta(seconds=5):
-                best = candidate
-                best_delta = delta
-    return best
-
-def parse_exercise_json():
-    activities = []
-    for json_file in sorted(JSON_DATA_DIR.glob('exercise-*.json')):
-        try:
-            with open(json_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except Exception:
-            continue
-        if not isinstance(data, list):
-            continue
-        for item in data:
-            start_time = parse_json_start(item.get('startTime') or item.get('originalStartTime') or '')
-            duration_ms = None
-            for field in ['duration', 'originalDuration', 'activeDuration']:
-                if field in item and item[field] is not None:
-                    try:
-                        duration_ms = int(item[field])
-                        break
-                    except (ValueError, TypeError):
-                        continue
-            if not start_time or duration_ms is None:
-                continue
-            activities.append({
-                'json_file': json_file.name,
-                'logId': str(item.get('logId', '')),
-                'activityTypeId': str(item.get('activityTypeId', '')),
-                'activityName': item.get('activityName', 'Unknown'),
-                'start_time': start_time,
-                'duration_seconds': int(duration_ms / 1000),
-                'end_time': start_time + timedelta(milliseconds=duration_ms),
-                'hasGps': bool(item.get('hasGps', False)),
-                'raw': item,
-            })
-    return activities
-
-def build_gpx(activity, points):
-    gpx = ET.Element('gpx', {
-        'version': '1.1',
-        'creator': 'Fitbit Exercise JSON GPX Export',
-        'xmlns': 'http://www.topografix.com/GPX/1/1',
-        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        'xmlns:gpxtpx': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1',
-        'xsi:schemaLocation': 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd',
-    })
-    metadata = ET.SubElement(gpx, 'metadata')
-    time_elem = ET.SubElement(metadata, 'time')
-    time_elem.text = activity['start_time'].isoformat().replace('+00:00', 'Z')
-    trk = ET.SubElement(gpx, 'trk')
-    name = ET.SubElement(trk, 'name')
-    name.text = f&quot;{activity['activityName']}&quot;
-    cmt = ET.SubElement(trk, 'cmt')
-    cmt.text = activity['activityName']
-    desc = ET.SubElement(trk, 'desc')
-    desc.text = (
-        f&quot;Source JSON: {activity['json_file']} | &quot;
-        f&quot;Duration: {activity['duration_seconds']}s | &quot;
-        f&quot;LogId: {activity['logId']} | ActivityTypeId: {activity['activityTypeId']}&quot;
-    )
-    trkseg = ET.SubElement(trk, 'trkseg')
-    for point in points:
-        trkpt = ET.SubElement(trkseg, 'trkpt', {
-            'lat': f&quot;{point['latitude']:.7f}&quot;,
-            'lon': f&quot;{point['longitude']:.7f}&quot;,
-        })
-        ele = ET.SubElement(trkpt, 'ele')
-        ele.text = f&quot;{point['altitude']:.1f}&quot;
-        ts_elem = ET.SubElement(trkpt, 'time')
-        ts_elem.text = point['timestamp'].isoformat().replace('+00:00', 'Z')
-        if point.get('heart_rate') is not None:
-            extensions = ET.SubElement(trkpt, 'extensions')
-            tpe = ET.SubElement(extensions, 'gpxtpx:TrackPointExtension')
-            hr_elem = ET.SubElement(tpe, 'gpxtpx:hr')
-            hr_elem.text = str(point['heart_rate'])
-    indent_xml(gpx)
-    return ET.tostring(gpx, encoding='unicode')
-
-def indent_xml(element, level=0):
-    indent = '\n' + ('  ' * level)
-    if len(element):
-        if not element.text or not element.text.strip():
-            element.text = indent + '  '
-        for child in element:
-            indent_xml(child, level + 1)
-        if not child.tail or not child.tail.strip():
-            child.tail = indent
-    else:
-        if level and (not element.tail or not element.tail.strip()):
-            element.tail = indent
-
-def points_for_activity(activity, gps_by_date, heart_rate_by_date):
-    if not gps_by_date:
-        return []
-    start = activity['start_time']
-    end = activity['end_time']
-    buffer = timedelta(seconds=5)
-    pts = []
-    for day_offset in (-1, 0, 1):
-        day = (start + timedelta(days=day_offset)).date()
-        for point in gps_by_date.get(day, []):
-            if start - buffer &lt;= point['timestamp'] &lt;= end + buffer:
-                pts.append(point)
-    pts.sort(key=lambda p: p['timestamp'])
-    for point in pts:
-        hr = find_nearest_heart_rate(point['timestamp'], heart_rate_by_date)
-        if hr:
-            point['heart_rate'] = hr['bpm']
-    return pts
-
-def filename_for_activity(activity, exercise_id, cutoff_time):
-    start_str = activity['start_time'].strftime('%Y%m%dT%H%M%SZ')
-    end_str = activity['end_time'].strftime('%Y%m%dT%H%M%SZ')
-    cutoff_str = cutoff_time.strftime('%Y%m%dT%H%M%SZ')
-    return (
-        f&quot;{exercise_id}_{start_str}_{end_str}_{activity['duration_seconds']}s_&quot;
-        f&quot;{cutoff_str}_{activity['logId']}_{activity['activityTypeId']}.gpx&quot;
-    )
-
-def main():
-    print('Loading exercise metadata from CSV...')
-    csv_rows = load_exercise_metadata()
-    csv_index = build_csv_index(csv_rows)
-    print(f'  Loaded {len(csv_rows)} exercise metadata rows.')
-
-    print('Loading exercise JSON logs...')
-    activities = parse_exercise_json()
-    print(f'  Loaded {len(activities)} JSON activity entries.')
-
-    print('Matching JSON activities to CSV exercise IDs...')
-    matched = []
-    unmatched = []
-    for activity in activities:
-        csv_match = match_activity_to_csv(activity, csv_index)
-        if csv_match:
-            activity['exercise_id'] = csv_match['exercise_id']
-            activity['csv_start_time'] = csv_match['start_time']
-            activity['csv_end_time'] = csv_match['end_time']
-            activity['cutoff_time'] = csv_match['cutoff_time']
-            activity['csv_activity_name'] = csv_match['activity_name']
-            matched.append(activity)
-        else:
-            unmatched.append(activity)
-
-    print(f'  Matched {len(matched)} activities, {len(unmatched)} unmatched.')
-
-    print('Loading GPS point data...')
-    gps_by_date = load_gps_points()
-    total_points = sum(len(v) for v in gps_by_date.values())
-    print(f'  Loaded {total_points} GPS points on {len(gps_by_date)} days.')
-
-    print('Loading heart rate point data...')
-    heart_rate_by_date = load_heart_rate_data()
-    total_hr_points = sum(len(v['records']) for v in heart_rate_by_date.values())
-    print(f'  Loaded {total_hr_points} heart rate points on {len(heart_rate_by_date)} days.')
-
-    report_path = OUTPUT_DIR / 'exercise_json_gpx_summary.csv'
-    with open(report_path, 'w', newline='', encoding='utf-8') as summary_file:
-        writer = csv.writer(summary_file)
-        writer.writerow([
-            'exercise_id', 'json_file', 'logId', 'activityTypeId', 'activityName',
-            'csv_start_time', 'csv_end_time', 'csv_cutoff_time', 'json_start_time',
-            'json_end_time', 'duration_seconds', 'matched', 'gps_point_count', 'hr_point_count', 'gpx_file'
-        ])
-
-        generated = 0
-        for activity in matched:
-            points = points_for_activity(activity, gps_by_date, heart_rate_by_date)
-            gpx_file_name = None
-            if points:
-                gpx_file_name = filename_for_activity(activity, activity['exercise_id'], activity['cutoff_time'])
-                gpx_content = build_gpx(activity, points)
-                path = OUTPUT_DIR / gpx_file_name
-                with open(path, 'w', encoding='utf-8') as out_f:
-                    out_f.write('&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;\n')
-                    out_f.write(gpx_content)
-                generated += 1
-            writer.writerow([
-                activity['exercise_id'],
-                activity['json_file'],
-                activity['logId'],
-                activity['activityTypeId'],
-                activity['activityName'],
-                activity.get('csv_start_time').isoformat() if activity.get('csv_start_time') else '',
-                activity.get('csv_end_time').isoformat() if activity.get('csv_end_time') else '',
-                activity.get('cutoff_time').isoformat().replace('+00:00', 'Z') if activity.get('cutoff_time') else '',
-                activity['start_time'].isoformat().replace('+00:00', 'Z'),
-                activity['end_time'].isoformat().replace('+00:00', 'Z'),
-                activity['duration_seconds'],
-                'yes',
-                len(points),
-                sum(1 for p in points if p.get('heart_rate') is not None),
-                gpx_file_name or '',
-            ])
-
-    if unmatched:
-        print('WARNING: Some JSON activities did not match a CSV exercise row.')
-        for activity in unmatched[:10]:
-            print(f&quot;  Unmatched logId={activity['logId']} start={activity['start_time'].isoformat()} duration={activity['duration_seconds']}s&quot;)
-        if len(unmatched) &gt; 10:
-            print(f'  ... plus {len(unmatched)-10} more')
-
-    print(f'Generated {generated} GPX files to {OUTPUT_DIR}')
-    print(f'Summary saved to {report_path}')
-
-if __name__ == '__main__':
-    main()
-
 </code></pre></div>
         </section>
         <section class="card span-1 empty"></section>
@@ -3565,142 +3735,6 @@ exit
         </section>
 
         <section class="card span-2">
-            <div class="card-content"><h3 id="nanotube-builder-and-mesher">Nanotube Builder and Mesher</h3>
-<p>&nbsp;</p>
-<p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>.</p>
-<p>&nbsp;</p>
-<ul>
-<li>Access the tool <a href="Tools_Nanotube.html"><strong>here</strong></a>.</li>
-</ul>
-<p>&nbsp;</p>
-<p>The channel profile is described by two <strong>wall functions</strong> over the <strong>axial coordinate</strong> <code>ξ</code>:</p>
-<p>&nbsp;</p>
-<ul>
-<li><code>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)</code></li>
-<li><code>w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</code></li>
-</ul>
-<p>&nbsp;</p>
-<p>The <strong>local channel radius</strong> at any point along the axis is:</p>
-<p>&nbsp;</p>
-<ul>
-<li><code>r(ξ) = (w₂ − w₁) / 2</code></li>
-</ul>
-<p>&nbsp;</p>
-<p>The <strong>centerline position</strong> is the midpoint between <code>w₁</code> and <code>w₂</code>, producing a tube whose axis can curve and whose radius varies continuously along its length.</p>
-<p>&nbsp;</p>
-<p><strong>Parameters</strong></p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Symbol</th>
-<th style="text-align: left;">Range</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>α₁</strong></td>
-<td style="text-align: left;">[0, 1]</td>
-<td style="text-align: left;"><strong>Asymmetry amplitude</strong> — shifts the centerline, producing a curved or off-axis channel</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>α₂</strong></td>
-<td style="text-align: left;">[0, 1]</td>
-<td style="text-align: left;"><strong>Corrugation amplitude</strong> — modulates the radius periodically, creating constrictions and expansions</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>α₃</strong></td>
-<td style="text-align: left;">[0.5, 4]</td>
-<td style="text-align: left;"><strong>Wavenumber multiplier</strong> — controls the spatial frequency of the α₁ modulation</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>r₀</strong></td>
-<td style="text-align: left;">[0.2, 2]</td>
-<td style="text-align: left;"><strong>Minimum base radius</strong> — sets the baseline channel width</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>L</strong></td>
-<td style="text-align: left;">[2, 40]</td>
-<td style="text-align: left;"><strong>Tube length</strong> in the <code>ξ</code> domain</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Nₐ</strong></td>
-<td style="text-align: left;">&gt;20</td>
-<td style="text-align: left;"><strong>Axial mesh points</strong> — higher values give a smoother profile along the length</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Nᵣ</strong></td>
-<td style="text-align: left;">&gt;8</td>
-<td style="text-align: left;"><strong>Radial mesh points</strong> — higher values give a rounder cross-section</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p>Each parameter has a <strong>slider</strong> for quick exploration and a <strong>number input</strong> for precise entry. Press <strong>Enter</strong> or leave the field to <strong>apply</strong> a typed value.</p>
-<p>&nbsp;</p>
-<p>Live <strong>vertex</strong>, <strong>face</strong>, and <strong>estimated file size</strong> statistics update automatically as you adjust these values.</p>
-<p>&nbsp;</p>
-<p><strong>Viewport Navigation</strong></p>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Action</th>
-<th style="text-align: left;">Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Left-click drag</td>
-<td style="text-align: left;"><strong>Pan</strong> — recenters the view</td>
-</tr>
-<tr>
-<td style="text-align: left;">Right-click drag</td>
-<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
-</tr>
-<tr>
-<td style="text-align: left;">Shift + drag</td>
-<td style="text-align: left;"><strong>Rotate</strong> the channel</td>
-</tr>
-<tr>
-<td style="text-align: left;">Scroll wheel</td>
-<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
-</tr>
-<tr>
-<td style="text-align: left;">Pinch (touch)</td>
-<td style="text-align: left;"><strong>Zoom</strong> in / out</td>
-</tr>
-<tr>
-<td style="text-align: left;">Single finger (touch)</td>
-<td style="text-align: left;"><strong>Pan</strong></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>+</code> / <code>−</code> buttons</td>
-<td style="text-align: left;"><strong>Step zoom</strong> in / out</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>RST</code> button</td>
-<td style="text-align: left;"><strong>Reset</strong> zoom, pan, and rotation to defaults</td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p>Select a format, check the <strong>estimated file size</strong>, then click <strong>Download</strong>.</p>
-<p>&nbsp;</p>
-<p>The exported file contains the following information:</p>
-<p>&nbsp;</p>
-<ul>
-<li><code>surface</code> — <code>outer</code> or <code>inner</code></li>
-<li><code>face_indices</code> — semicolon-separated list of all face IDs the vertex belongs to</li>
-<li><code>nx, ny, nz</code> — surface normal vector</li>
-<li><code>u, v</code> — UV texture coordinates</li>
-</ul></div>
-        </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
             <div class="card-content"><h3 id="cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</h3>
 <p>&nbsp;</p>
 <p>This is a suite of MATLAB code for the <strong>COSMO-SAC (COSMO Segment Activity Coefficient)</strong> model. </p>
@@ -3965,6 +3999,7 @@ end
 end
 </code></pre></div>
         </section>
+        <section class="card span-1 empty"></section>
 
     </div>
 </body>
