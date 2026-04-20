@@ -1,6 +1,6 @@
 ### Chemical Reaction Systems Analyzer
 
-A **web-based** tool for analyzing **chemical reaction systems** based atom reducndency principle. The analyzer takes a list of chemical formulas and their phases, constructs an atom-formula matrix, and computes independent chemical reactions from the null-space vectors using reduced row echelon form (RREF).
+A **web-based** tool for analyzing **chemical reaction systems** based on the **atom reducndency principle**. The analyzer takes a list of chemical formulas and their phases, constructs an atom-formula matrix, and computes independent chemical reactions from the null-space vectors using reduced row echelon form (RREF).
 
 - **Access** the tool [**here**](Tools_ChemicalSystems.html).
 
