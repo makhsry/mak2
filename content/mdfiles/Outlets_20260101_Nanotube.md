@@ -52,3 +52,5 @@ The exported file contains the following information:
 - `face_indices` — semicolon-separated list of all face IDs the vertex belongs to
 - `nx, ny, nz` — surface normal vector
 - `u, v` — UV texture coordinates
+
+![Nanotube Builder and Mesher](images/Images_Outlets_20260101_Nanotube.png)

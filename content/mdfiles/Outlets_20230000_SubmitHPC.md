@@ -22,6 +22,8 @@ ${CALL_COMSOL_AS} batch -mpibootstrap slurm \
     ${COMSOL_METHOD_}
 ```
 
+![HPC Job Management Tools](images/Images_Outlets_20230000_SubmitHPC.png)
+
 #### Script
 
 ```bash

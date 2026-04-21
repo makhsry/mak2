@@ -13,6 +13,8 @@ It also has a sidebar **assistant** powered by **Puter.ai** that sees current co
     ```
 3.  **Access the dashboard** by opening browser and navigating to **`http://localhost:8000/FILENAME.html`**.
 
+![An Interactive Local Python Notebook (PyCompute + Puter.js)](images/Images_Outlets_20260401_Dashboard.png)
+
 #### Script
 
 ```bash

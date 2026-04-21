@@ -14,3 +14,5 @@ The settings include:
 - **Drivetrain:** Interactive selection for Front Ring (50T/34T) and Rear Cassette (11T–34T) gears.
 - **Wheel Calibration:** Presets for various tire sizes (700x23C up to 700x32C) with manual circumference input.
 - **Rider Profile:** Defaults are FTP 250W, Mass 85kg, Height 178cm, Shoulder Width 31cm.
+
+![Bike Trainer Dashboard](images/Images_Outlets_20260418_BikeTrainer.png)

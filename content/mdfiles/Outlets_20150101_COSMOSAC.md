@@ -16,6 +16,9 @@ This is a suite of MATLAB code for the **COSMO-SAC (COSMO Segment Activity Coeff
 - **`sProfiles.xlsx`**: Stores the calculated **`sigma-densities`** and **`profiles`** for each component.
 - **`MixGamma.xlsx`**: Stores the final matrix containing **`mole fractions (x)`**, **`activity coefficients (γ)`**, and **`ln γ`**.
 
+![COSMO-SAC Activity Coefficient Model](images/Images_Outlets_20150101_COSMOSAC.png)
+
+
 #### **Scripts Details**
 
 - **1. `eqCOSMO.m`**
