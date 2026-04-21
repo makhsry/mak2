@@ -125,21 +125,21 @@ def generate_tab_page(tab_name, files, source_dir, output_dir, all_tabs):
 
 def main():
     parser = argparse.ArgumentParser(description="Portfolio Site Generator - Alternating Layout")
-    parser.add_argument("--source", default=".", help="Source directory")
+    parser.add_argument("--input", default=".", help="Source directory")
     parser.add_argument("--output", default=None, help="Output directory (defaults to source)")
     args = parser.parse_args()
 
-    source_path = Path(args.source)
+    source_path = Path(args.input)
     output_path = Path(args.output) if args.output else source_path
 
-    md_files = get_md_files(args.source)
+    md_files = get_md_files(args.input)
     tabs = {}
     for f in md_files:
         tabs.setdefault(f['tab'], []).append(f)
 
     all_tabs = list(tabs.keys())
     for tab_name, files in tabs.items():
-        generate_tab_page(tab_name, files, args.source, output_path, all_tabs)
+        generate_tab_page(tab_name, files, args.input, output_path, all_tabs)
 
 if __name__ == "__main__":
     main()
