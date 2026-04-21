@@ -2,11 +2,11 @@
 
 This is a suite of MATLAB code for the **COSMO-SAC (COSMO Segment Activity Coefficient)** model. 
 
-- An **`.html`** version of the calculator can be found [**here**](Tools_COSMOSAC_Calculator.html). 
+- An **`.html`** version of the calculator can be found [**here**](_COSMOSAC_Calculator.html). 
 
 **Usage Instructions**
 
-- The Excel file (**[`inputQM.xlsx`](Tools_COSMOSAC_inputQM.xlsx)**) must have sheets named after your **`components`** (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.
+- The Excel file (**[`inputQM.xlsx`](_COSMOSAC_inputQM.xlsx)**) must have sheets named after your **`components`** (e.g., '67-63-0-2d' or 'Z1') containing the required QM output data.
 - Set your desired **`SYSTEMP`** (Temperature in **Kelvin**).
 - Update **`ListCOMP`** with the sheet names from your **`inputQM.xlsx`** file.
 - Run the script **`eqCOSMO.m`**.

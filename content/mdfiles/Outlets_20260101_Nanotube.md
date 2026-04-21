@@ -2,7 +2,7 @@
 
 An **interactive browser-based tool** for **parametric design** and **3D visualization** of nanochannel geometries, **mesh generation** in real time, and **export**.
 
-- Access the tool [**here**](Tools_Nanotube.html).
+- Access the tool [**here**](_Nanotube.html).
 
 The channel profile is described by two **wall functions** over the **axial coordinate** `ξ`:
 

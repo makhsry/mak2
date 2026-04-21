@@ -2,7 +2,7 @@
 
 This is a lightweight, single-file web application that mimics the **Jupyter Notebook** experience locally. It leverages **Pyodide** to run a full Python environment directly in browser without needing a remote backend. 
 
-- Access the **`.html`** file [**here**](Tools_Dashboard.html).
+- Access the **`.html`** file [**here**](_Dashboard.html).
 
 It also has a sidebar **assistant** powered by **Puter.ai** that sees current code and output to provide debugging help or code suggestions. 
 

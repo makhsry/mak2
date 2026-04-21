@@ -2,17 +2,18 @@
 
 A Python-based static site generator that converts **Markdown files** into a professional, multi-page portfolio website with an **alternating grid layout**.
 
-- **`content/`**: Contains all **Markdown content**, **CSS**, and the **build script**.
-- `build_site.py`: Generate the HTML files from the Markdown files.
-- `build_toc.py`: Generate the table of contents for each HTML file.
-- `build_links.py`: Generate the internal links of contents for the HTML files.
-- `main.css`: The primary styling file.
+- **`mdfiles/`**: Contains all **Markdown content**, **CSS**, and the **build script**.
+- **`images/`**: Contains all **images** used in the Markdown files.
+- **`build_site.py`**: Generate the **HTML files** from the Markdown files.
+- **`build_toc.py`**: Generate the **table of contents** for each HTML file.
+- **`build_linkheaders.py`**: Generate the **internal links of contents** for the HTML files.
+- **`main.css`**: The **primary styling file**.
 
-The python script `build_site.py` will parse all `.md` files, apply an **alternating A/B grid layout** (where content cards span 2 columns and empty cards span 1), and output the results to the same directory. 
+The python script **`build_site.py`** will parse all **`.md`** files, apply an **alternating A/B grid layout** (where content cards span 2 columns and empty cards span 1), and output the results to the same directory. 
 
-The `markdown` library is used to parse the `.md` files.
+The **`markdown`** library is used to parse the **`.md`** files.
 
-To ensure content is correctly grouped and sorted, this naming pattern is followed for Markdown files in the `content/` directory:
+To ensure content is correctly grouped and sorted, this naming pattern is followed for Markdown files in the **`mdfiles/`** directory:
 
 `Tab_Priority_Title.md`
 

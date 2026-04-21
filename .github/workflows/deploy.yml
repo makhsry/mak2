@@ -43,7 +43,7 @@ jobs:
           # 
           python3 build_site.py --input mdfiles --output .
           #
-          python3 build_links.py
+          python3 build_linkheaders.py
 
       - name: Commit and Push Generated Files
         run: |

@@ -2,7 +2,7 @@
 
 A dynamic, single-page dashboard designed for **indoor cycling** using my **Minoura MAG-500** bike trainer. 
 
-- Access the dashboard [**here**](Tools_BikeTrainer.html)
+- Access the dashboard [**here**](_BikeTrainer.html)
 
 It utilizes a power model to estimate intensity based on environmental and mechanical factors:
 - **Gravitational Power:** Calculates power required to overcome slope/grade.
