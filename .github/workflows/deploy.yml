@@ -34,12 +34,12 @@ jobs:
         run: |
           cd content
           #
-          python3 build_toc.py Educations --output Educations_99999999_TOC.md
-          python3 build_toc.py Experiences --output Experiences_99999999_TOC.md
-          python3 build_toc.py Publications --output Publications_99999999_TOC.md
+          python3 build_toc.py Educations --input . --output Educations_99999999_TOC.md
+          python3 build_toc.py Experiences --input . --output Experiences_99999999_TOC.md
+          python3 build_toc.py Publications --input . --output Publications_99999999_TOC.md
           # 
-          python3 build_toc.py Outlets --output Outlets_99999999_TOC.md
-          python3 build_toc.py Writeups --output Writeups_99999999_TOC.md
+          python3 build_toc.py Outlets --input . --output Outlets_99999999_TOC.md
+          python3 build_toc.py Writeups --input . --output Writeups_99999999_TOC.md
           # 
           python3 build_site.py
           #

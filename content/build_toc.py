@@ -23,13 +23,13 @@ def clean_header(header):
 def main():
     parser = argparse.ArgumentParser(description="Generate a Table of Contents for a specific tab of Markdown files.")
     parser.add_argument("tab", help="The tab prefix of the files (e.g., Experiences, Educations, About, Garage)")
-    parser.add_argument("--dir", default=".", help="Directory to search (defaults to current directory)")
+    parser.add_argument("--input", default=".", help="Directory to search (defaults to current directory)")
     parser.add_argument("--output", help="File to write the TOC to (optional)")
     args = parser.parse_args()
 
-    source_path = Path(args.dir)
+    source_path = Path(args.input)
     if not source_path.exists():
-        print(f"Error: Directory '{args.dir}' does not exist.")
+        print(f"Error: Directory '{args.input}' does not exist.")
         return
 
     # Find matching files starting with the tab prefix
