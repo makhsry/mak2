@@ -19,4 +19,4 @@ Designed and implemented a **data-driven graphical user interface** for real-tim
 - Designed pipelines for **real-time data ingestion and synchronization** from multiple sensor sources, ensuring temporal alignment and reliable analytics under dynamic plant conditions.
 - Collaborated with process engineers and control specialists to translate sensor insights into actionable process improvements and control strategies.
 
-![Experiences_20220201_PMTC_GUI](media/Images_Experiences_20220201_PMTC_GUI.jpg)
+![Experiences_20220201_PMTC_GUI](images/Images_Experiences_20220201_PMTC_GUI.jpg)

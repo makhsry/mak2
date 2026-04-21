@@ -20,4 +20,4 @@ Investigated nanoscale water flow mechanisms to reduce **nanobubble formation** 
 - Implemented post-processing scripts in **Python** for automated extraction and visualization of simulation results, including **pressure profiles, density distributions, and flow characteristics**.
 - Collaborated with a **multidisciplinary team** to validate simulation results against theoretical models and experimental data, enhancing cross-domain communication and interpretation.
 
-![Experiences_20220501_UBC_Cavitation](media/Images_Experiences_20220501_UBC_Cavitation.jpg)
+![Experiences_20220501_UBC_Cavitation](images/Images_Experiences_20220501_UBC_Cavitation.jpg)
