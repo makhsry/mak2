@@ -282,7 +282,73 @@
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #4dd0e144;
-            height: 250px;
+            height: 300px;
+            position: relative;
+        }
+
+        /* Multiselect Dropdown */
+        .dropdown-check-list {
+            display: inline-block;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 4px 30px 4px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background: #fff;
+            font-size: 0.85em;
+            color: black;
+            min-width: 120px;
+        }
+
+        .dropdown-check-list .anchor:after {
+            position: absolute;
+            content: "";
+            border-left: 2px solid #666;
+            border-top: 2px solid #666;
+            padding: 2px;
+            right: 10px;
+            top: 40%;
+            transform: rotate(-135deg);
+        }
+
+        .dropdown-check-list ul.items {
+            padding: 5px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            position: absolute;
+            background: #fff;
+            width: 100%;
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-check-list.visible ul.items {
+            display: block;
+        }
+
+        .dropdown-check-list ul.items li {
+            padding: 3px 8px;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: black;
+        }
+
+        .dropdown-check-list ul.items li:hover {
+            background: #f8f9fa;
         }
 
         .rgibbs-tbl {
@@ -490,8 +556,7 @@
                 <h3>&#9881; RGIBBS &mdash; Gibbs Free Energy Minimization</h3>
                 <p style="font-size:0.88em;color:#b2ebf2;margin-top:0;">
                     Ideal gas (&gamma;&nbsp;=&nbsp;1) &bull; Reactor duty&nbsp;=&nbsp;0 &bull;
-                    Shomate data for: H&#8322;, O&#8322;, N&#8322;, H&#8322;O, CO, CO&#8322;, CH&#8324;,
-                    NO, NO&#8322;, SO&#8322;, SO&#8323;, NH&#8323;, HCl, Cl&#8322;.
+                    with Shomate data.
                 </p>
                 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
                     <div class="rgibbs-input-item" style="flex:1;min-width:140px;">
@@ -520,7 +585,13 @@
                     <div id="rgibbs_table"></div>
 
                     <div class="rgibbs-charts-container">
-                        <div class="chart-box"><canvas id="chart_moles"></canvas></div>
+                        <div class="chart-box">
+                            <div id="species_filter_dropdown" class="dropdown-check-list">
+                                <span class="anchor" onclick="toggleSpeciesFilter()">Filter Species</span>
+                                <ul id="species_filter_items" class="items"></ul>
+                            </div>
+                            <canvas id="chart_moles"></canvas>
+                        </div>
                         <div class="chart-box"><canvas id="chart_temp"></canvas></div>
                     </div>
 
@@ -1329,6 +1400,8 @@
         // RGIBBS Solver
         let moleChart = null;
         let tempChart = null;
+        let currentHistory = null;
+        let selectedSpeciesIndices = [];
 
         function _executeRGibbs(subs) {
             const R = 8.314e-3;  // kJ/(mol·K)
@@ -1379,6 +1452,12 @@
                 moles: chemicals.map(() => []),
                 temp: []
             };
+
+            // Initialize/Reset species filter if chemical list changed or first run
+            if (selectedSpeciesIndices.length === 0 || selectedSpeciesIndices.length !== nS) {
+                selectedSpeciesIndices = chemicals.map((_, i) => i);
+                populateSpeciesFilter();
+            }
 
             for (iteration = 1; iteration <= maxIter; iteration++) {
                 // Update composition at current T
@@ -1497,7 +1576,33 @@
             document.getElementById('rgibbs_log').textContent = log.join('\n');
             document.getElementById('rgibbs_results').classList.remove('hidden');
 
+            currentHistory = history;
             updateCharts(history);
+        }
+
+        function toggleSpeciesFilter() {
+            document.getElementById('species_filter_dropdown').classList.toggle('visible');
+        }
+
+        function populateSpeciesFilter() {
+            const list = document.getElementById('species_filter_items');
+            list.innerHTML = chemicals.map((c, i) => `
+                <li>
+                    <input type="checkbox" id="cb_spec_${i}" data-index="${i}" 
+                           ${selectedSpeciesIndices.includes(i) ? 'checked' : ''} 
+                           onchange="updateSelectedSpecies()">
+                    <label for="cb_spec_${i}">${c.label}</label>
+                </li>
+            `).join('');
+        }
+
+        function updateSelectedSpecies() {
+            const checkboxes = document.querySelectorAll('#species_filter_items input[type="checkbox"]');
+            selectedSpeciesIndices = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => parseInt(cb.getAttribute('data-index')));
+
+            if (currentHistory) updateCharts(currentHistory);
         }
 
         function updateCharts(history) {
@@ -1522,7 +1627,7 @@
                             borderColor: `hsl(${(i * 360 / chemicals.length) % 360}, 70%, 50%)`,
                             fill: false,
                             tension: 0.1
-                        }))
+                        })).filter((_, i) => selectedSpeciesIndices.includes(i))
                     },
                     options: {
                         responsive: true,
