@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        MAG-500 Trainer App
+        Indoor Bike Trainer (MAG-500)
     </title>
     <link href="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack.min.css" rel="stylesheet" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
@@ -324,7 +324,7 @@
                         border-radius: 0;">
                             <div class="big-stat" style="flex: 1.5;">
                                 <span class="label">
-                                    MAG500 CONFIG
+                                    Trainer Configuration
                                 </span>
                                 <div class="gear-grid" id="mag-group" style="justify-content: center; 
                                 margin: 10px 0;">
@@ -337,7 +337,7 @@
                                         <span id="val-grade" style="color:var(--accent)">0.0%
                                         </span>
                                     </div>
-                                    <input type="range" id="in-grade" min="0" max="15" step="0.1" value="4.3"
+                                    <input type="range" id="in-grade" min="0" max="15" step="0.1" value="1.0"
                                         oninput="updateState('grade', this.value)">
                                 </div>
                                 <div id="phase-display" class="phase-tag">
@@ -346,7 +346,7 @@
                             </div>
                             <div class="big-stat">
                                 <span class="label">
-                                    EST. INTENSITY
+                                    Intensity (Estimated %)
                                 </span>
                                 <span class="value" id="disp-intensity">
                                     0%
@@ -354,7 +354,7 @@
                             </div>
                             <div class="big-stat">
                                 <span class="label">
-                                    ACTUAL PHYSICS POWER
+                                    Power (Computed W)
                                 </span>
                                 <span class="value" id="disp-power">
                                     0W
@@ -363,7 +363,7 @@
                         </div>
                         <div class="panel" style="border-left: none; border-radius: 0;">
                             <h2>
-                                ● LIVE CONTROLS
+                                ● Speed and Cadence
                             </h2>
                             <div style="display:flex; 
                             justify-content:space-between; 
@@ -372,10 +372,10 @@
                                     Cadence (RPM)
                                 </span>
                                 <span id="val-cad">
-                                    90
+                                    0.0
                                 </span>
                             </div>
-                            <input type="range" id="in-cad" min="0" max="130" step="1" value="90"
+                            <input type="range" id="in-cad" min="0" max="240" step="1" value="0.0"
                                 oninput="updateState('rpm', this.value)">
                             <div style="display:flex; 
                             justify-content:space-between; 
@@ -387,26 +387,26 @@
                                     0.0
                                 </span>
                             </div>
-                            <input type="range" id="in-speed" min="0" max="70" step="0.1" value="30.2"
+                            <input type="range" id="in-speed" min="0" max="150" step="0.1" value="0.0"
                                 oninput="updateState('speed', this.value)">
                         </div>
                         <div class="panel" style="border-right: none; border-radius: 0;">
                             <h2>
-                                ● RIDER CONFIG
+                                ● Rider Information
                             </h2>
                             <div style="display:grid; 
                             grid-template-columns: 1fr 1fr; 
                             gap: 10px;">
                                 <div>
                                     <span class="label">
-                                        FTP (W)
+                                        Functional Threshold Power (FTP) (W)
                                     </span>
                                     <input type="number" id="in-ftp" value="250"
                                         oninput="updateState('ftp', this.value)">
                                 </div>
                                 <div>
                                     <span class="label">
-                                        Mass (kg)
+                                        Weight (kg)
                                     </span>
                                     <input type="number" id="in-mass" value="85"
                                         oninput="updateState('mass', this.value)">
@@ -422,20 +422,20 @@
                                     <span class="label">
                                         Width (cm)
                                     </span>
-                                    <input type="number" id="in-w" value="31"
+                                    <input type="number" id="in-w" value="35"
                                         oninput="updateState('width', this.value)">
                                 </div>
                             </div>
                         </div>
                         <div class="panel full" style="border-left: none; border-right: none; border-radius: 0;">
                             <h2>
-                                ● DRIVETRAIN (ACTIVE GEARS)
+                                ● Drivetrain (Active Gears)
                             </h2>
                             <div style="display:flex; 
                             gap:30px">
                                 <div style="flex:1">
                                     <span class="label">
-                                        Front Ring
+                                        Front Cassette
                                     </span>
                                     <div style="display:flex; 
                                     gap:10px; 
@@ -494,8 +494,18 @@
                         <div class="panel full"
                             style="border-left: none; border-right: none; border-bottom: none; border-radius: 0;">
                             <h2>
-                                ● LOGIC & PARAMETERS
+                                ● ALGORITHM & PARAMETERS
                             </h2>
+                            <div
+                                style="color: var(--text-dim); font-size: 0.7rem; line-height: 1.4; margin-bottom: 10px; padding: 8px; background: rgba(0,0,0,0.3); border-left: 2px solid var(--accent);">
+                                <strong style="color: var(--accent);">Parameter Definitions:</strong><br>
+                                C<sub>wheel</sub>: Wheel circumference (m) | T<sub>f</sub>: Front gear teeth |
+                                T<sub>r</sub>: Rear gear teeth | RPM: Cadence (revolutions/min) | FTP: Functional
+                                Threshold Power (W) | m: Rider mass (kg) | g: Gravity (9.81 m/s²) | v: Velocity (m/s) |
+                                grade: Road incline (%) | C<sub>rr</sub>: Rolling resistance coefficient (0.004) | ρ:
+                                Air density (1.225 kg/m³) | C<sub>d</sub>: Drag coefficient (0.88) | W: Shoulder width
+                                (cm) | H: Height (cm)
+                            </div>
                             <div class="math-block">
                                 $$Intensity = \frac{P_{total}}{FTP} \cdot 100\% \quad | \quad v = \frac{RPM \cdot (T_{f}
                                 / T_{r}) \cdot C_{wheel}}{60}$$
@@ -522,7 +532,7 @@
                                             &lt; 60%
                                         </td>
                                         <td>
-                                            Recovery
+                                            Recovery (&lt; 60% FTP)
                                         </td>
                                         <td>
                                             Green
@@ -533,7 +543,7 @@
                                             60% – 75%
                                         </td>
                                         <td>
-                                            Aerobic
+                                            Aerobic (60 – 75% FTP)
                                         </td>
                                         <td>
                                             Blue
@@ -544,7 +554,7 @@
                                             75% – 90%
                                         </td>
                                         <td>
-                                            Tempo
+                                            Tempo (75 – 90% FTP)
                                         </td>
                                         <td>
                                             Yellow
@@ -555,7 +565,7 @@
                                             90% – 105%
                                         </td>
                                         <td>
-                                            Threshold
+                                            Threshold (90 – 105% FTP)
                                         </td>
                                         <td>
                                             Orange
@@ -566,7 +576,7 @@
                                             105% – 120%
                                         </td>
                                         <td>
-                                            VO2 Max
+                                            VO2 Max (105 – 120% FTP)
                                         </td>
                                         <td>
                                             Red
@@ -577,7 +587,7 @@
                                             &gt; 120%
                                         </td>
                                         <td>
-                                            Neuromuscular
+                                            Neuromuscular (&gt; 120% FTP)
                                         </td>
                                         <td>
                                             Purple
@@ -642,7 +652,7 @@
                     style="flex: 0 0 50%; background: var(--panel); border-top: 1px solid var(--border); display: flex; flex-direction: column; padding: 10px; gap: 8px; overflow: hidden;">
                     <div id="camera-name-a2"
                         style="font-size: 0.7rem; color: var(--accent); text-align: center; min-height: 14px;">Cadence
-                    </div>
+                        (Pedaling)</div>
                     <div id="figure-a2"
                         style="flex: 1; background: #000; border: 1px solid var(--border); border-radius: 3px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
                         <svg style="width: 90%; height: 90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
@@ -660,9 +670,31 @@
             </div>
         </div>
         <div class="grid-stack-item" gs-x="8" gs-y="10" gs-w="4" gs-h="2" gs-id="panel-c">
-            <div class="grid-stack-item-content" style="display: flex; justify-content: center; align-items: center;">
-                <div class="label" style="font-size: 1rem; text-align: center;">
-                    Panel C
+            <div class="grid-stack-item-content"
+                style="display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
+                <h2 style="margin: 0 0 10px 0;">● Record Training Session</h2>
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+                    <div style="font-size: 1.2rem; color: var(--accent); font-weight: bold; min-width: 100px;">
+                        <span id="recording-time">00:00:00</span>
+                    </div>
+                    <button id="btn-set-location"
+                        style="font-size: 0.75rem; padding: 6px 12px; background: #9d7aff; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px;">Set
+                        Current Location</button>
+                    <button id="btn-record"
+                        style="font-size: 0.75rem; padding: 6px 12px; background: var(--accent); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px;">Start
+                        Recording</button>
+                    <button id="btn-stop-record"
+                        style="font-size: 0.75rem; padding: 6px 12px; background: #ff6b6b; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; display: none;">Stop
+                        Recording</button>
+                    <button id="btn-export-gpx"
+                        style="font-size: 0.75rem; padding: 6px 12px; background: #00d4ff; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; display: none;">Export
+                        as GPX</button>
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-dim); display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div>Points: <span id="recording-points" style="color: var(--accent);">0</span></div>
+                    <div>Distance: <span id="recording-distance" style="color: var(--accent);">0.0 km</span></div>
+                    <div>Elevation Gain: <span id="recording-elevation" style="color: var(--accent);">0 m</span></div>
+                    <div id="location-status" style="color: var(--text-dim); font-size: 0.65rem;"></div>
                 </div>
             </div>
         </div>
@@ -741,44 +773,44 @@
                 ftp: 250,
                 mass: 85,
                 height: 178,
-                width: 31,
-                grade: 4.3,
+                width: 25,
+                grade: 0,
                 rpm: 90,
                 speed: 30.2,
                 fRing: 50,
                 rCog: 15,
                 circ: 2.105,
-                magLevel: 3
+                magLevel: 1
             };
             const zones = [
                 {
                     limit: 0.60,
-                    label: "RECOVERY",
+                    label: "Recovery",
                     color: "var(--recovery)"
                 },
                 {
                     limit: 0.75,
-                    label: "AEROBIC",
+                    label: "Aerobic",
                     color: "var(--aerobic)"
                 },
                 {
                     limit: 0.90,
-                    label: "TEMPO",
+                    label: "Tempo",
                     color: "var(--tempo)"
                 },
                 {
                     limit: 1.05,
-                    label: "THRESHOLD",
+                    label: "Threshold",
                     color: "var(--threshold)"
                 },
                 {
                     limit: 1.20,
-                    label: "VO2 MAX",
+                    label: "VO2 max",
                     color: "var(--vo2)"
                 },
                 {
                     limit: Infinity,
-                    label: "NEUROMUSCULAR",
+                    label: "Neuromuscular",
                     color: "var(--neuro)"
                 }
             ];
@@ -786,7 +818,7 @@
             function updateWheelPreset(val) {
                 if (val !== "custom") {
                     document.getElementById
-                    ('in-circ').value = val;
+                        ('in-circ').value = val;
                     updateState('circ', val);
                 }
             }
@@ -938,6 +970,243 @@
                 );
                 render();
             }
+
+            // Recording and GPX Export Functionality
+            let recordingActive = false;
+            let recordingStartTime = null;
+            let recordingTimer = null;
+            let recordedData = [];
+            let recordedPoints = [];
+            let startLatitude = 37.7749; // Default: San Francisco
+            let startLongitude = -122.4194;
+            let startElevation = 0;
+            let cumulativeDistance = 0;
+            let cumulativeElevationGain = 0;
+            let previousElevation = 0;
+            let lastRecordTime = 0;
+            const RECORD_INTERVAL = 2000; // Record every 2 seconds
+
+            function haversineDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Earth's radius in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            function updateRecordingDisplay() {
+                const elapsed = Date.now() - recordingStartTime;
+                const seconds = Math.floor(elapsed / 1000) % 60;
+                const minutes = Math.floor(elapsed / 60000) % 60;
+                const hours = Math.floor(elapsed / 3600000);
+                document.getElementById('recording-time').innerText =
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                document.getElementById('recording-points').innerText = recordedPoints.length;
+
+                // Display cumulative distance
+                const distanceKm = cumulativeDistance / 1000;
+                document.getElementById('recording-distance').innerText = distanceKm.toFixed(2) + ' km';
+
+                // Display cumulative elevation gain
+                document.getElementById('recording-elevation').innerText = Math.round(cumulativeElevationGain) + ' m';
+            }
+
+            function recordDataPoint() {
+                const currentTime = Date.now();
+                const timeDelta = lastRecordTime === 0 ? RECORD_INTERVAL / 1000 : (currentTime - lastRecordTime) / 1000;
+                lastRecordTime = currentTime;
+
+                // Distance traveled in this interval = speed × time
+                const v = state.speed / 3.6; // m/s
+                const distanceInInterval = v * timeDelta;
+                cumulativeDistance += distanceInInterval;
+
+                // Current elevation based on cumulative distance and grade
+                const currentElevation = startElevation + (cumulativeDistance / 1000 * (state.grade / 100)) * 1000;
+
+                // Accumulate elevation gain only for uphill movement
+                const elevationChange = currentElevation - previousElevation;
+                if (elevationChange > 0) {
+                    cumulativeElevationGain += elevationChange;
+                }
+                previousElevation = currentElevation;
+
+                // Simulate movement along latitude (1 degree latitude ≈ 111 km)
+                const distanceKm = cumulativeDistance / 1000;
+                const currentLat = startLatitude + (distanceKm / 111);
+
+                const elapsed = (currentTime - recordingStartTime) / 1000;
+                const timestamp = new Date(recordingStartTime + elapsed * 1000);
+
+                recordedData.push({
+                    timestamp: timestamp.toISOString(),
+                    speed: state.speed,
+                    rpm: state.rpm,
+                    power: Math.round((state.mass * 9.81 * v * (state.grade / 100)) +
+                        (state.mass * 9.81 * v * 0.004) +
+                        (0.5 * 1.225 * 0.88 * ((state.width / 100) * (0.75 * (state.height / 100))) * Math.pow(v, 3))),
+                    grade: state.grade,
+                    magLevel: state.magLevel,
+                    fRing: state.fRing,
+                    rCog: state.rCog,
+                    ftp: state.ftp,
+                    mass: state.mass
+                });
+
+                recordedPoints.push({
+                    lat: currentLat,
+                    lon: startLongitude,
+                    ele: currentElevation,
+                    timestamp: timestamp
+                });
+            }
+
+            document.getElementById('btn-record').addEventListener('click', () => {
+                recordingActive = true;
+                recordingStartTime = Date.now();
+                recordedData = [];
+                recordedPoints = [{ lat: startLatitude, lon: startLongitude, ele: startElevation, timestamp: new Date() }];
+                cumulativeDistance = 0;
+                cumulativeElevationGain = 0;
+                previousElevation = startElevation;
+                lastRecordTime = 0;
+
+                document.getElementById('btn-record').style.display = 'none';
+                document.getElementById('btn-stop-record').style.display = 'inline-block';
+                document.getElementById('btn-export-gpx').style.display = 'none';
+                document.getElementById('btn-set-location').disabled = true;
+
+                recordingTimer = setInterval(() => {
+                    if (recordingActive) {
+                        recordDataPoint();
+                        updateRecordingDisplay();
+                    }
+                }, RECORD_INTERVAL);
+            });
+
+            document.getElementById('btn-stop-record').addEventListener('click', () => {
+                recordingActive = false;
+                clearInterval(recordingTimer);
+
+                document.getElementById('btn-record').style.display = 'inline-block';
+                document.getElementById('btn-stop-record').style.display = 'none';
+                document.getElementById('btn-export-gpx').style.display = 'inline-block';
+                document.getElementById('btn-set-location').disabled = false;
+            });
+
+            document.getElementById('btn-set-location').addEventListener('click', () => {
+                if (recordingActive) {
+                    alert('Stop recording before setting a new start location.');
+                    return;
+                }
+
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser.');
+                    return;
+                }
+
+                const statusEl = document.getElementById('location-status');
+                statusEl.innerText = 'Detecting location...';
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        startLatitude = position.coords.latitude;
+                        startLongitude = position.coords.longitude;
+                        startElevation = position.coords.altitude || 0;
+
+                        statusEl.innerText = `Start: ${startLatitude.toFixed(4)}°, ${startLongitude.toFixed(4)}° (${Math.round(startElevation)}m)`;
+
+                        // Reset recording display and tracking variables
+                        recordedData = [];
+                        recordedPoints = [];
+                        cumulativeDistance = 0;
+                        cumulativeElevationGain = 0;
+                        previousElevation = startElevation;
+                        lastRecordTime = 0;
+                        document.getElementById('recording-time').innerText = '00:00:00';
+                        document.getElementById('recording-points').innerText = '0';
+                        document.getElementById('recording-distance').innerText = '0.0 km';
+                        document.getElementById('recording-elevation').innerText = '0 m';
+                        document.getElementById('btn-export-gpx').style.display = 'none';
+                    },
+                    (error) => {
+                        let errorMsg = 'Unable to get location.';
+                        if (error.code === error.PERMISSION_DENIED) errorMsg = 'Location permission denied.';
+                        else if (error.code === error.POSITION_UNAVAILABLE) errorMsg = 'Location unavailable.';
+                        else if (error.code === error.TIMEOUT) errorMsg = 'Location request timeout.';
+
+                        statusEl.innerText = errorMsg;
+                        statusEl.style.color = 'var(--vo2)';
+                    }
+                );
+            });
+
+            document.getElementById('btn-export-gpx').addEventListener('click', () => {
+                if (recordedPoints.length < 2) {
+                    alert('Not enough recorded data points to export.');
+                    return;
+                }
+
+                // Build GPX XML
+                let gpxXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+                gpxXml += '<gpx version="1.1" creator="MAG-500 Trainer App" ';
+                gpxXml += 'xmlns="http://www.topografix.com/GPX/1/1" ';
+                gpxXml += 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ';
+                gpxXml += 'xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" ';
+                gpxXml += 'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n';
+
+                gpxXml += '  <metadata>\n';
+                gpxXml += `    <time>${new Date(recordingStartTime).toISOString()}</time>\n`;
+                gpxXml += '    <name>MAG-500 Training Session</name>\n';
+                gpxXml += `    <desc>Recorded session with ${recordedData.length} data points</desc>\n`;
+                gpxXml += '  </metadata>\n';
+
+                gpxXml += '  <trk>\n';
+                gpxXml += '    <name>Training Track</name>\n';
+                gpxXml += '    <trkseg>\n';
+
+                for (let point of recordedPoints) {
+                    gpxXml += `      <trkpt lat="${point.lat.toFixed(7)}" lon="${point.lon.toFixed(7)}">\n`;
+                    gpxXml += `        <ele>${point.ele.toFixed(1)}</ele>\n`;
+                    gpxXml += `        <time>${point.timestamp.toISOString()}</time>\n`;
+                    gpxXml += '      </trkpt>\n';
+                }
+
+                gpxXml += '    </trkseg>\n';
+                gpxXml += '  </trk>\n';
+                gpxXml += '</gpx>\n';
+
+                // Download GPX file
+                const blob = new Blob([gpxXml], { type: 'application/gpx+xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const timestamp = new Date(recordingStartTime).toISOString().replace(/[:.]/g, '-');
+                a.href = url;
+                a.download = `training_${timestamp}.gpx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Reset for new recording
+                recordedData = [];
+                recordedPoints = [];
+                cumulativeDistance = 0;
+                cumulativeElevationGain = 0;
+                previousElevation = startElevation;
+                lastRecordTime = 0;
+                document.getElementById('recording-time').innerText = '00:00:00';
+                document.getElementById('recording-points').innerText = '0';
+                document.getElementById('recording-distance').innerText = '0.0 km';
+                document.getElementById('recording-elevation').innerText = '0 m';
+                document.getElementById('btn-export-gpx').style.display = 'none';
+                document.getElementById('btn-record').style.display = 'inline-block';
+            });
+
             window.onload = init;
         </script>
 </body>
