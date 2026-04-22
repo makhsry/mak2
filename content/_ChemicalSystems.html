@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>Chemical System Analyzer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <!-- Extended Shomate thermodynamic database (~150 gas-phase species, NIST WebBook) -->
+    <script src="_ChemicalSystems_shomate_db.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -184,6 +186,200 @@
             margin: 0;
             padding-left: 20px;
         }
+
+        .rgibbs-section {
+            margin-top: 25px;
+            padding: 22px;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            border-radius: 10px;
+            color: #e0f7fa;
+        }
+
+        .rgibbs-section h3 {
+            color: #4dd0e1;
+            margin-top: 0;
+            border-bottom: 1px solid #4dd0e155;
+            padding-bottom: 8px;
+        }
+
+        .rgibbs-section h4 {
+            color: #4dd0e1;
+            margin-bottom: 8px;
+        }
+
+        .btn-rgibbs {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            letter-spacing: 1px;
+        }
+
+        .btn-rgibbs:hover {
+            background: linear-gradient(135deg, #0077b6, #023e8a);
+        }
+
+        .rgibbs-input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .rgibbs-input-item label {
+            display: block;
+            font-size: 0.82em;
+            color: #b2ebf2;
+            margin-bottom: 3px;
+        }
+
+        .rgibbs-input-item input {
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #4dd0e1;
+            color: #fff;
+            border-radius: 5px;
+            padding: 7px;
+        }
+
+        .rgibbs-log {
+            background: #0d1117;
+            color: #58a6ff;
+            font-family: monospace;
+            font-size: 0.8em;
+            padding: 12px;
+            border-radius: 6px;
+            max-height: 280px;
+            overflow-y: auto;
+            white-space: pre;
+            margin-top: 8px;
+        }
+
+        .rgibbs-tbl {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            color: #111;
+        }
+
+        .rgibbs-tbl th {
+            background: rgba(77, 208, 225, 0.35);
+            padding: 8px;
+            border: 1px solid #4dd0e1;
+            color: #111;
+        }
+
+        .rgibbs-tbl td {
+            padding: 8px;
+            border: 1px solid rgba(77, 208, 225, 0.4);
+            text-align: center;
+            color: #111;
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .sok {
+            color: #69ff47;
+            font-weight: bold;
+        }
+
+        .swarn {
+            color: #ffd166;
+            font-weight: bold;
+        }
+
+        /* Missing-species modal */
+        .mm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mm-box {
+            background: #1a2a3a;
+            color: #e0f7fa;
+            border-radius: 12px;
+            padding: 26px;
+            max-width: 540px;
+            width: 92%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #4dd0e1;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .mm-box h3 {
+            color: #ffd166;
+            margin-top: 0;
+        }
+
+        .mm-row {
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            background: rgba(77, 208, 225, 0.07);
+            border-radius: 6px;
+            border-left: 3px solid #ffd166;
+        }
+
+        .mm-row label {
+            display: block;
+            color: #ffd166;
+            font-weight: bold;
+            font-size: 0.87em;
+            margin-bottom: 5px;
+        }
+
+        .mm-filter {
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #4dd0e1;
+            color: #fff;
+            border-radius: 4px;
+            padding: 6px;
+            margin-bottom: 4px;
+            font-size: 0.84em;
+        }
+
+        .mm-sel {
+            width: 100%;
+            box-sizing: border-box;
+            background: #0d1117;
+            color: #e0f7fa;
+            border: 1px solid #4dd0e1;
+            border-radius: 4px;
+            padding: 7px;
+            font-size: 0.84em;
+        }
+
+        .mm-btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .mm-cancel {
+            background: #444;
+            color: #fff;
+        }
+
+        .mm-proceed {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: #fff;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -265,6 +461,44 @@
 
             <h3>Independent Chemical Reactions</h3>
             <div id="reactionsDisplay"></div>
+
+            <!-- RGIBBS Panel — only visible after Run -->
+            <div id="rgibbsSetupPanel" class="hidden rgibbs-section">
+                <h3>&#9881; RGIBBS &mdash; Gibbs Free Energy Minimization</h3>
+                <p style="font-size:0.88em;color:#b2ebf2;margin-top:0;">
+                    Ideal gas (&gamma;&nbsp;=&nbsp;1) &bull; Reactor duty&nbsp;=&nbsp;0 &bull;
+                    Shomate data for: H&#8322;, O&#8322;, N&#8322;, H&#8322;O, CO, CO&#8322;, CH&#8324;,
+                    NO, NO&#8322;, SO&#8322;, SO&#8323;, NH&#8323;, HCl, Cl&#8322;.
+                </p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <div class="rgibbs-input-item" style="flex:1;min-width:140px;">
+                        <label>Temperature (&deg;C)</label>
+                        <input type="number" id="rgibbs_T" value="25" step="1">
+                    </div>
+                    <div class="rgibbs-input-item" style="flex:1;min-width:140px;">
+                        <label>Pressure (kPa)</label>
+                        <input type="number" id="rgibbs_P" value="101.325" step="0.1">
+                    </div>
+                    <div class="rgibbs-input-item" style="flex:1;min-width:140px;">
+                        <label>Reactor Duty (kJ/s)</label>
+                        <input type="number" id="rgibbs_duty" value="0" step="1" placeholder="0">
+                    </div>
+                    <div class="rgibbs-input-item" style="flex:1;min-width:140px;">
+                        <label>Max Iterations</label>
+                        <input type="number" id="rgibbs_maxIter" value="100" step="10">
+                    </div>
+                </div>
+                <h4>Initial Molar Flows (mol/s)</h4>
+                <div id="rgibbs_flows" class="rgibbs-input-grid"></div>
+                <button class="btn-rgibbs" onclick="runRGibbs()">&#9654; Run RGIBBS</button>
+                <div id="rgibbs_results" class="hidden">
+                    <h4 style="margin-top:18px;">Equilibrium Composition</h4>
+                    <div id="rgibbs_status" style="margin-bottom:8px;"></div>
+                    <div id="rgibbs_table"></div>
+                    <h4 style="margin-top:14px;">Solver Log</h4>
+                    <div id="rgibbs_log" class="rgibbs-log"></div>
+                </div>
+            </div>
         </div>
 
         <div class="footnote">
@@ -274,6 +508,22 @@
                 <li>Chemical Reaction Equilibrium Analysis: Theory and Algorithms by William R. Smith and Ronald W.
                     Missen (1982)</li>
             </ol>
+        </div>
+    </div>
+
+    <!-- Missing-species substitution modal -->
+    <div id="mmOverlay" class="mm-overlay">
+        <div class="mm-box">
+            <h3>&#9888; Unknown Species &mdash; Select Substitutes</h3>
+            <p style="font-size:0.88em;color:#b2ebf2;margin-bottom:14px;">The following species have <strong>no Shomate
+                    data</strong>. Choose a thermodynamically similar substitute for each, or cancel.</p>
+            <div id="mmList"></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+                <button class="mm-btn mm-cancel"
+                    onclick="document.getElementById('mmOverlay').style.display='none'">&#10005; Cancel</button>
+                <button class="mm-btn mm-proceed" onclick="confirmRGibbsWithSubs()">&#9654; Proceed with
+                    Substitutes</button>
+            </div>
         </div>
     </div>
 
@@ -864,6 +1114,314 @@
             }
             document.getElementById('reactionsDisplay').innerHTML = reactionsHtml || "No independent reactions.";
             document.getElementById('resultsArea').classList.remove('hidden');
+            // Show RGIBBS panel and populate flow inputs
+            document.getElementById('rgibbsSetupPanel').classList.remove('hidden');
+            buildRGibbsFlowInputs();
+        }
+
+        function buildRGibbsFlowInputs() {
+            const div = document.getElementById('rgibbs_flows');
+            div.innerHTML = chemicals.map((c, i) =>
+                `<div class="rgibbs-input-item"><label>${c.label}</label>
+                 <input type="number" id="rgibbs_n${i}" value="1.0" step="0.1" min="0"></div>`
+            ).join('');
+        }
+
+        // Shomate database — loaded from shomate_db.js (window.SHOMATE)
+        // Falls back to empty object if external file unavailable; species without
+        // data get G°=0 with a warning in the solver log.
+        // To add species: edit shomate_db.js. Format: [A,B,C,D,E,F,G,H_sh,Hf298_kJ/mol]
+        // H°(T)-H°(298) = A*t+B*t²/2+C*t³/3+D*t⁴/4-E/t+F-H  (kJ/mol, t=T/1000)
+        // S°(T) = A*ln(t)+B*t+C*t²/2+D*t³/3-E/(2t²)+G         (J/mol/K)
+        const SHOMATE = window.SHOMATE || {  // window.SHOMATE set by shomate_db.js
+            // Minimal inline fallback (used only if shomate_db.js fails to load)
+            'H2': [33.066178, -11.363417, 11.432816, -2.772874, -0.158558, -9.980797, 172.707974, 0.0, 0.0],
+            'O2': [31.32234, -20.23531, 57.86644, -36.50624, -0.007374, -8.903471, 246.7945, 0.0, 0.0],
+            'N2': [26.09200, 8.218801, -1.976141, 0.159274, 0.044434, -7.989230, 221.0200, 0.0, 0.0],
+            'F2': [31.30318, -20.23096, 54.32386, -33.87437, -0.227440, -9.950752, 246.9929, 0.0, 0.0],
+            'Cl2': [33.05060, 12.22940, -12.06510, 4.38533, -0.159494, -10.83480, 259.0290, 0.0, 0.0],
+            'Br2': [36.89720, 0.158424, -0.067272, 0.019133, -0.025000, 25.48678, 258.6918, 30.91079, 30.910],
+            'I2': [37.79800, 0.448800, -0.111400, 0.009000, -0.236600, 53.69400, 280.0690, 62.42067, 62.421],
+            'S2': [31.52230, 7.792690, -2.059400, 0.204060, -0.447280, 99.50600, 256.2700, 128.60000, 128.600],
+            // Monatomic gases
+            'H': [20.78600, 4.850638, -1.582916, 0.161815, -0.002010, 211.8020, 197.9009, 217.99900, 217.999],
+            'O': [21.11859, -0.516219, 7.990500, -2.244899, 0.055590, 231.7120, 161.0590, 249.17300, 249.173],
+            'N': [21.13326, 0.030680, 0.132800, -0.009390, -0.000860, 453.6380, 182.1959, 472.68000, 472.680],
+            'F': [22.74612, -0.072040, 0.107010, -0.010580, -0.035370, 158.8020, 176.4388, 79.38000, 79.380],
+            'Cl': [21.28930, 0.103570, -0.118260, 0.005460, -0.014030, 105.4120, 162.9140, 121.30200, 121.302],
+            'S': [23.77440, -8.847850, 12.52820, -3.929960, -0.102350, 229.1540, 187.5560, 277.05100, 277.051],
+            // Water & peroxide
+            'H2O': [30.09200, 6.832514, 6.793435, -2.534480, 0.082139, -250.8810, 223.3967, -241.8264, -241.826],
+            'H2O2': [34.25667, 55.18445, -35.95177, 9.861427, -0.166160, -128.9705, 220.7619, -136.1065, -136.107],
+            // Hydrogen halides
+            'HF': [29.13788, -0.492833, 0.767160, -0.071792, -0.108596, -272.5050, 172.0450, -272.5497, -272.550],
+            'HCl': [32.12392, -13.45805, 19.86442, -6.853470, -0.049672, -101.6802, 228.6866, -92.17171, -92.172],
+            'HBr': [29.07293, 4.484704, -0.527750, 0.026300, -0.023510, -34.93695, 219.8200, -36.24197, -36.242],
+            'HI': [26.15686, 10.24633, -7.548551, 2.213998, 0.126611, 14.41533, 234.4904, 26.50000, 26.500],
+            // Carbon oxides
+            'CO': [25.56759, 6.096130, 4.054656, -2.671301, 0.131021, -118.0089, 227.3665, -110.5271, -110.527],
+            'CO2': [24.99735, 55.18696, -33.69137, 7.948387, -0.136638, -403.6075, 228.2431, -393.5224, -393.522],
+            'COS': [23.75513, 60.00674, -38.78947, 8.695788, -0.023090, -150.1790, 241.6935, -142.1189, -142.119],
+            'CS2': [25.56100, 81.70190, -56.50260, 14.14490, -0.167490, 104.5100, 265.8060, 116.9430, 116.943],
+            // Nitrogen compounds
+            'NH3': [19.99563, 49.77119, -15.37599, 1.921168, 0.189174, -53.10760, 203.8591, -45.89806, -45.898],
+            'NO': [23.83491, 12.58878, -1.139011, -1.497459, 0.214194, 83.35783, 237.1219, 90.29114, 90.291],
+            'NO2': [16.10857, 75.89525, -54.38740, 14.30777, 0.239423, 26.17464, 240.5386, 33.09502, 33.095],
+            'N2O': [27.67988, 51.14898, -30.64454, 6.847911, -0.157906, 71.24934, 238.6164, 82.04824, 82.048],
+            'N2O4': [23.43000, 218.5000, -164.8000, 44.38000, -1.800000, 14.88000, 300.6000, 9.07900, 9.079],
+            'HNO3': [18.99145, 154.2246, -128.7169, 35.54059, 0.381059, -142.9481, 260.0325, -134.3062, -134.306],
+            // Sulfur compounds
+            'H2S': [26.88412, 18.67809, 3.434227, -3.378454, 0.135882, -28.91211, 233.3747, -20.50202, -20.502],
+            'SO2': [21.43049, 74.35094, -57.75217, 16.35534, 0.086731, -305.7688, 254.8872, -296.8422, -296.842],
+            'SO3': [24.02503, 119.4607, -98.83041, 30.61186, -0.404441, -427.4676, 253.5170, -395.7654, -395.765],
+            'O3': [21.66157, 79.86001, -66.02603, 19.58363, -0.079250, 132.9407, 243.4174, 142.6745, 142.674],
+            'OH': [32.27846, -11.36397, 15.42647, -5.763384, -0.059785, 32.72800, 203.7921, 38.98760, 38.988],
+            'CH4': [-0.703029, 108.4773, -42.52157, 5.862788, 0.678565, -76.84376, 158.7163, -74.87310, -74.873],
+            'CH3OH': [14.70837, 102.6272, -57.98218, 12.22956, 0.296535, -208.9162, 202.6861, -200.9401, -201.000],
+            'HCHO': [5.193767, 93.23249, -44.85457, 7.882279, 0.551175, -119.3591, 202.4099, -108.6991, -108.700],
+            'HCOOH': [18.21620, 100.0690, -64.58510, 16.65650, -0.027010, -457.9660, 228.0510, -410.0690, -378.700],
+            'C2H2': [40.68697, -39.24760, 81.49948, -42.71543, 0.160200, 204.4360, 244.1282, 226.7314, 226.731],
+            'C2H4': [-6.387880, 184.4019, -112.9718, 28.49593, 0.315540, 1.272183, 219.0408, 52.43030, 52.400],
+            'C2H6': [-3.027797, 211.6380, -107.4440, 20.23361, 0.363459, -90.42726, 201.0145, -83.79890, -83.852],
+            'C2H5OH': [-8.872100, 282.7389, -178.7458, 46.35552, 0.484127, -273.9961, 224.6024, -234.9442, -235.100],
+            'CH3CHO': [-5.089150, 164.4372, -93.23033, 20.01011, 0.623730, -173.0120, 218.1460, -166.2220, -166.190],
+            // C3
+            'C3H6': [3.834210, 234.9892, -160.5510, 44.18030, 0.073240, -11.19180, 227.3026, 20.41667, 20.000],
+            'C3H8': [-23.17110, 363.7434, -222.9311, 52.43684, 0.626619, -154.4892, 225.6938, -103.8470, -104.680],
+            // C4
+            'C4H10': [-5.589411, 415.0862, -243.9456, 54.32133, 1.280560, -175.8224, 248.7745, -133.2185, -126.200],
+            'C4H8': [-1.437700, 369.9940, -244.2190, 63.27210, 0.501670, -57.94250, 259.4720, -17.23180, -0.630],
+            'C4H6': [10.35240, 302.9090, -211.4030, 57.25800, 0.160900, 83.97800, 251.5490, 110.0000, 111.900],
+            // C6
+            'C6H6': [-39.19780, 513.6408, -384.9599, 115.2856, 0.399770, 60.29720, 282.3264, 82.93010, 82.880],
+            'C6H12': [-50.76100, 668.5590, -439.9450, 113.1100, 1.180000, -145.3500, 316.1540, -123.3680, -123.400],
+            // Ammonia-related
+            'N2H4': [9.994600, 192.1310, -111.1380, 23.09240, 0.199890, 95.06300, 221.5590, 50.62700, 50.627],
+        };
+
+        // G°(T) in kJ/mol via Shomate equation
+        function shomateG(formula, T_K) {
+            const key = formula.replace(/\(.*?\)/g, '').replace(/\^.*/, '').trim();
+            const d = SHOMATE[key]; if (!d) return null;
+            const [A, B, C, D, E, F, G, Hs, Hf298] = d;
+            const t = T_K / 1000, t2 = t * t, t3 = t2 * t, t4 = t3 * t;
+            const dH = A * t + B * t2 / 2 + C * t3 / 3 + D * t4 / 4 - E / t + F - Hs;   // kJ/mol
+            const S = A * Math.log(t) + B * t + C * t2 / 2 + D * t3 / 3 - E / (2 * t2) + G; // J/mol/K
+            return (Hf298 + dH) - T_K * S / 1000; // kJ/mol
+        }
+
+        // LU decomposition with partial pivoting — solves M·x = b
+        function solveLU(M, b) {
+            const n = b.length;
+            const A = M.map(r => [...r]); // clone
+            const x = [...b];
+            const p = Array.from({ length: n }, (_, i) => i);
+            for (let k = 0; k < n; k++) {
+                let mx = Math.abs(A[k][k]), mr = k;
+                for (let i = k + 1; i < n; i++) if (Math.abs(A[i][k]) > mx) { mx = Math.abs(A[i][k]); mr = i; }
+                if (mr !== k) { [A[k], A[mr]] = [A[mr], A[k]];[x[k], x[mr]] = [x[mr], x[k]]; }
+                for (let i = k + 1; i < n; i++) {
+                    if (Math.abs(A[k][k]) < 1e-14) continue;
+                    const f = A[i][k] / A[k][k]; A[i][k] = 0;
+                    for (let j = k + 1; j < n; j++) A[i][j] -= f * A[k][j];
+                    x[i] -= f * x[k];
+                }
+            }
+            const sol = new Array(n).fill(0);
+            for (let i = n - 1; i >= 0; i--) {
+                sol[i] = x[i];
+                for (let j = i + 1; j < n; j++) sol[i] -= A[i][j] * sol[j];
+                if (Math.abs(A[i][i]) > 1e-14) sol[i] /= A[i][i]; else sol[i] = 0;
+            }
+            return sol;
+        }
+
+        // RGIBBS pre-flight: detect unknown species, show modal if needed
+        let _rgibbsMissingLabels = [];
+
+        function runRGibbs() {
+            _rgibbsMissingLabels = chemicals
+                .map(c => c.label)
+                .filter(lbl => shomateG(lbl, 298.15) === null);
+
+            if (_rgibbsMissingLabels.length === 0) { _executeRGibbs({}); return; }
+
+            const dbKeys = Object.keys(SHOMATE).sort();
+            const opts = dbKeys.map(k =>
+                `<option value="${k}">${k} (Hf298\u202f=\u202f${SHOMATE[k][8].toFixed(1)} kJ/mol)</option>`
+            ).join('');
+            document.getElementById('mmList').innerHTML = _rgibbsMissingLabels.map(lbl => `
+                <div class="mm-row">
+                    <label>\u26a0 "${lbl}" not in database — select substitute:</label>
+                    <input class="mm-filter" type="text" placeholder="Filter…"
+                           oninput="filterMM('mmSel_${lbl}',this.value)">
+                    <select class="mm-sel" id="mmSel_${lbl}">
+                        <option value="">-- select --</option>${opts}
+                    </select>
+                </div>`).join('');
+            document.getElementById('mmOverlay').style.display = 'flex';
+        }
+
+        function filterMM(selId, q) {
+            q = q.trim().toLowerCase();
+            Array.from(document.getElementById(selId).options).forEach(o => { o.hidden = q && !o.value.toLowerCase().includes(q); });
+        }
+
+        function confirmRGibbsWithSubs() {
+            const subs = {};
+            for (const lbl of _rgibbsMissingLabels) {
+                const val = document.getElementById(`mmSel_${lbl}`)?.value;
+                if (!val) { alert(`Please select a substitute for "${lbl}"`); return; }
+                subs[lbl] = val;
+            }
+            document.getElementById('mmOverlay').style.display = 'none';
+            _executeRGibbs(subs);
+        }
+
+        // RGIBBS Solver
+        function _executeRGibbs(subs) {
+            const R = 8.314e-3;  // kJ/(mol·K)
+            const EPS = 1e-9;
+            const T_C = parseFloat(document.getElementById('rgibbs_T').value);
+            const T_K = T_C + 273.15;
+            const maxIter = parseInt(document.getElementById('rgibbs_maxIter').value) || 100;
+            const reactorDuty = parseFloat(document.getElementById('rgibbs_duty').value) || 0.0;
+            const log = [`RGIBBS  T=${T_C}°C (${T_K.toFixed(2)} K)  reactorDuty=${reactorDuty} kJ/s`];
+
+            const nS = chemicals.length;
+
+            // Collect G° for each species
+            // G° with substitution map
+            const G0safe = chemicals.map(c => {
+                const key = subs[c.label] || c.label;
+                const g = shomateG(key, T_K);
+                if (g === null) { log.push(`⚠ ${c.label}: no data, G°=0`); return 0.0; }
+                if (subs[c.label]) log.push(`⚡ ${c.label} → using ${key} (Hf298=${SHOMATE[key][8].toFixed(1)} kJ/mol)`);
+                return g;
+            });
+
+            // Build atom list (skip __special__ rows)
+            const atomSetR = new Set();
+            chemicals.forEach(c => Object.keys(c.atoms).forEach(a => { if (!a.startsWith('__special__')) atomSetR.add(a); }));
+            const atomsR = Array.from(atomSetR);
+            const nA = atomsR.length;
+            // Constraint matrix A  [nA × nS]
+            const Amat = atomsR.map(a => chemicals.map(c => c.atoms[a] || 0));
+            log.push(`Atoms: [${atomsR.join(', ')}]  nA=${nA}  nS=${nS}`);
+
+            // Initial molar flows
+            let n = chemicals.map((_, i) => Math.max(parseFloat(document.getElementById(`rgibbs_n${i}`).value) || EPS, EPS));
+
+            // Computebi (once): b_atom = Σ_j A[a,j]*y_j_initial
+            const n0sum = n.reduce((s, v) => s + v, 0);
+            const y0 = n.map(v => v / n0sum);
+            const bi = Amat.map(row => row.reduce((s, aij, j) => s + aij * y0[j], 0));
+            log.push(`bi = [${bi.map(v => v.toFixed(6)).join(', ')}]`);
+
+            let moleMSD = 1e6;
+            const tolMole = 1e-9;
+            let converged = false;
+            let iteration = 0;
+
+            for (iteration = 1; iteration <= maxIter; iteration++) {
+                // ComputeFlowRate_Fractions
+                const Nsum = n.reduce((s, v) => s + v, 0);
+                const y = n.map(v => v / Nsum);
+
+                // ComputeBi: Bi = A·y - bi
+                const Bi = Amat.map((row, a) => row.reduce((s, aij, j) => s + aij * y[j], 0) - bi[a]);
+
+                // ComputeStandardStateProperties + ComputeActivityCoefficients (ideal gas, γ=1)
+                // μ_i = G°_i(T) + R*T*ln(y_i)   [kJ/mol]
+                const mue = y.map((yi, i) => {
+                    const yiSafe = Math.abs(yi) < EPS ? EPS : yi;
+                    return G0safe[i] + R * T_K * Math.log(yiSafe); // kJ/mol
+                });
+
+                // ComputeHessian: H_ij = (R*T/Nsum)*(δ_ij/y_i - 1)
+                const H = Array.from({ length: nS }, (_, i) =>
+                    Array.from({ length: nS }, (_, j) => {
+                        const yi = Math.abs(y[i]) < EPS ? EPS : y[i];
+                        return (R * T_K / Nsum) * ((i === j ? 1.0 / yi : 0) - 1.0);
+                    })
+                );
+
+                // Build KKT system  LHS [(nS+nA)×(nS+nA)], RHS [nS+nA]
+                const sz = nS + nA;
+                const LHS = Array.from({ length: sz }, () => new Array(sz).fill(0));
+                const RHS = new Array(sz).fill(0);
+
+                // Top-left: Hessian
+                for (let i = 0; i < nS; i++) for (let j = 0; j < nS; j++) LHS[i][j] = H[i][j];
+                // Top-right: A^T
+                for (let i = 0; i < nS; i++) for (let a = 0; a < nA; a++) LHS[i][nS + a] = Amat[a][i];
+                // Bottom-left: A
+                for (let a = 0; a < nA; a++) for (let j = 0; j < nS; j++) LHS[nS + a][j] = Amat[a][j];
+                // RHS top = μ (Jacobian), RHS bottom = Bi
+                for (let i = 0; i < nS; i++) RHS[i] = mue[i];
+                for (let a = 0; a < nA; a++) RHS[nS + a] = Bi[a];
+
+                // SolveODEs (LU)
+                const sol = solveLU(LHS, RHS);
+
+                // UpdateAlphaMole — compute proposed new moles, find alpha
+                let alphaMin = 1.0;
+                for (let i = 0; i < nS; i++) {
+                    const delta = -sol[i]; // changeInMole = -Solution[i]
+                    const newMole = n[i] + delta;
+                    if (newMole < 0) {
+                        const ratio = n[i] / (-delta);
+                        if (ratio > 0 && ratio < alphaMin) alphaMin = ratio;
+                    }
+                }
+                const alpha = Math.min(alphaMin, 1.0);
+                const newN = n.map((ni, i) => Math.max(ni + alpha * (-sol[i]), 0));
+
+                // CheckConvergedMSD_Moles
+                const msd = newN.reduce((s, v, i) => {
+                    const d = v - n[i]; return s + d * d;
+                }, 0) / nS;
+                const convFlag = Math.abs(moleMSD - msd) < tolMole;
+
+                log.push(`Iter ${iteration}: Nsum=${Nsum.toFixed(4)}  α=${alpha.toFixed(4)}  MSD=${msd.toExponential(3)}  Δ=${Math.abs(moleMSD - msd).toExponential(3)}`);
+
+                moleMSD = convFlag ? moleMSD : msd;
+                n = newN;
+
+                if (convFlag) { converged = true; break; }
+            } // end iteration
+
+            // Build results
+            const NsumFinal = n.reduce((s, v) => s + v, 0);
+            const yFinal = n.map(v => v / NsumFinal);
+            const GtotalFinal = n.reduce((s, ni, i) => {
+                const yi = Math.abs(yFinal[i]) < EPS ? EPS : yFinal[i];
+                return s + ni * (G0safe[i] + R * T_K * Math.log(yi));
+            }, 0);
+
+            const statusHtml = converged
+                ? `<span class="sok">✔ Converged in ${iteration} iteration(s) — MSD = ${moleMSD.toExponential(3)}</span>`
+                : `<span class="swarn">⚠ Did not converge in ${maxIter} iterations — MSD = ${moleMSD.toExponential(3)}</span>`;
+
+            let tableHtml = `<table class="rgibbs-tbl">
+                <thead><tr><th>Species</th><th>n⁰ (mol/s)</th><th>n* (mol/s)</th><th>y* (mol%)</th><th>G°(T) (kJ/mol)</th></tr></thead><tbody>`;
+            chemicals.forEach((c, i) => {
+                const n0 = parseFloat(document.getElementById(`rgibbs_n${i}`).value) || 0;
+                tableHtml += `<tr><td>${c.label}</td><td>${n0.toFixed(4)}</td>
+                    <td>${n[i].toFixed(6)}</td><td>${(yFinal[i] * 100).toFixed(3)}%</td>
+                    <td>${G0safe[i].toFixed(3)}</td></tr>`;
+            });
+            tableHtml += `</tbody><tfoot>
+                <tr><td colspan="2" style="text-align:right;padding:6px 8px;"><em>Total G (kJ/s):</em></td>
+                    <td colspan="3" style="text-align:left;padding:6px 8px;">${GtotalFinal.toFixed(4)}</td></tr>
+                <tr><td colspan="2" style="text-align:right;padding:6px 8px;"><em>Reactor Duty (kJ/s):</em></td>
+                    <td colspan="3" style="text-align:left;padding:6px 8px;">${reactorDuty.toFixed(4)}</td></tr>
+                </tfoot></table>`;
+
+            document.getElementById('rgibbs_status').innerHTML = statusHtml;
+            document.getElementById('rgibbs_table').innerHTML = tableHtml;
+            document.getElementById('rgibbs_log').textContent = log.join('\n');
+            document.getElementById('rgibbs_results').classList.remove('hidden');
         }
     </script>
 

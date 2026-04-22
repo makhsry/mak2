@@ -1,6 +1,8 @@
 ### Chemical Reaction Systems Analyzer
 
-A **web-based** tool for analyzing **chemical reaction systems** based on the **atom reducndency principle**. The analyzer takes a list of chemical formulas and their phases, constructs an atom-formula matrix, and computes independent chemical reactions from the null-space vectors using reduced row echelon form (RREF).
+A **web-based** tool for analyzing **chemical reaction systems** and **Gibbs free energy minimization**. 
+
+This is a **demo** of the **Gibbs Reactor Module** in **CADSIM Plus (Aurel Systems Inc.)**. For the simplicity of this demo, all chemicals are treated as **ideal gases**, and their thermodynamic properties are pulled from the **Shomate** thermodynamic database provided by the **NIST**.
 
 - **Access** the tool [**here**](_ChemicalSystems.html).
 
