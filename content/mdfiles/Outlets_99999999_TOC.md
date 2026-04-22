@@ -1,7 +1,7 @@
 ## Outlets
 
 - Chemical Reaction Systems Analyzer
-- Bike Trainer Dashboard (Minoura MAG-500)
+- Bike Trainer Dashboard
 - Bring Old Fitbit Data to Strava
 - An Interactive Local Python Notebook (PyCompute + Puter.js)
 - Local RAG Pipeline — Ollama + ChromaDB + LangChain
