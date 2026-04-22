@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Gibbs Free Energy Minimization for Chemical Systems</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Extended Shomate thermodynamic database (~150 gas-phase species, NIST WebBook) -->
     <script src="_ChemicalSystems_shomate_db.js"></script>
     <style>
@@ -260,6 +261,28 @@
             overflow-y: auto;
             white-space: pre;
             margin-top: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .rgibbs-charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .rgibbs-charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #4dd0e144;
+            height: 250px;
         }
 
         .rgibbs-tbl {
@@ -495,6 +518,12 @@
                     <h4 style="margin-top:18px;">Equilibrium Composition</h4>
                     <div id="rgibbs_status" style="margin-bottom:8px;"></div>
                     <div id="rgibbs_table"></div>
+
+                    <div class="rgibbs-charts-container">
+                        <div class="chart-box"><canvas id="chart_moles"></canvas></div>
+                        <div class="chart-box"><canvas id="chart_temp"></canvas></div>
+                    </div>
+
                     <h4 style="margin-top:14px;">Solver Log</h4>
                     <div id="rgibbs_log" class="rgibbs-log"></div>
                 </div>
@@ -1210,6 +1239,25 @@
             return (Hf298 + dH) - T_K * S / 1000; // kJ/mol
         }
 
+        // H(T) in kJ/mol via Shomate equation
+        function shomateH(formula, T_K) {
+            const key = formula.replace(/\(.*?\)/g, '').replace(/\^.*/, '').trim();
+            const d = SHOMATE[key]; if (!d) return null;
+            const [A, B, C, D, E, F, G, Hs, Hf298] = d;
+            const t = T_K / 1000, t2 = t * t, t3 = t2 * t, t4 = t3 * t;
+            const dH = A * t + B * t2 / 2 + C * t3 / 3 + D * t4 / 4 - E / t + F - Hs;   // kJ/mol
+            return Hf298 + dH; // kJ/mol
+        }
+
+        // Cp(T) in J/mol/K via Shomate equation
+        function shomateCp(formula, T_K) {
+            const key = formula.replace(/\(.*?\)/g, '').replace(/\^.*/, '').trim();
+            const d = SHOMATE[key]; if (!d) return null;
+            const [A, B, C, D, E, F, G, Hs, Hf298] = d;
+            const t = T_K / 1000, t2 = t * t, t3 = t2 * t;
+            return A + B * t + C * t2 + D * t3 + E / (t * t); // J/mol/K
+        }
+
         // LU decomposition with partial pivoting — solves M·x = b
         function solveLU(M, b) {
             const n = b.length;
@@ -1279,97 +1327,100 @@
         }
 
         // RGIBBS Solver
+        let moleChart = null;
+        let tempChart = null;
+
         function _executeRGibbs(subs) {
             const R = 8.314e-3;  // kJ/(mol·K)
             const EPS = 1e-9;
-            const T_C = parseFloat(document.getElementById('rgibbs_T').value);
-            const T_K = T_C + 273.15;
+            let T_C = parseFloat(document.getElementById('rgibbs_T').value);
+            let T_K = T_C + 273.15;
             const maxIter = parseInt(document.getElementById('rgibbs_maxIter').value) || 100;
             const reactorDuty = parseFloat(document.getElementById('rgibbs_duty').value) || 0.0;
-            const log = [`RGIBBS  T=${T_C}°C (${T_K.toFixed(2)} K)  reactorDuty=${reactorDuty} kJ/s`];
+            const log = [`RGIBBS  Initial T=${T_C}°C (${T_K.toFixed(2)} K)  reactorDuty=${reactorDuty} kJ/s`];
 
             const nS = chemicals.length;
 
-            // Collect G° for each species
-            // G° with substitution map
-            const G0safe = chemicals.map(c => {
-                const key = subs[c.label] || c.label;
-                const g = shomateG(key, T_K);
-                if (g === null) { log.push(`⚠ ${c.label}: no data, G°=0`); return 0.0; }
-                if (subs[c.label]) log.push(`⚡ ${c.label} → using ${key} (Hf298=${SHOMATE[key][8].toFixed(1)} kJ/mol)`);
-                return g;
-            });
+            // Initial molar flows
+            let n = chemicals.map((_, i) => Math.max(parseFloat(document.getElementById(`rgibbs_n${i}`).value) || EPS, EPS));
+            const n0 = [...n];
+
+            // Calculate Inlet Enthalpy H_in at T_inlet
+            // Assumption: Inlet temperature is the same as the user-defined T for start
+            const Hin = n0.reduce((sum, ni, i) => {
+                const key = subs[chemicals[i].label] || chemicals[i].label;
+                const h = shomateH(key, T_K) || 0;
+                return sum + ni * h;
+            }, 0);
+            log.push(`Inlet Enthalpy (Hin) = ${Hin.toFixed(4)} kJ/s`);
 
             // Build atom list (skip __special__ rows)
             const atomSetR = new Set();
             chemicals.forEach(c => Object.keys(c.atoms).forEach(a => { if (!a.startsWith('__special__')) atomSetR.add(a); }));
             const atomsR = Array.from(atomSetR);
             const nA = atomsR.length;
-            // Constraint matrix A  [nA × nS]
             const Amat = atomsR.map(a => chemicals.map(c => c.atoms[a] || 0));
             log.push(`Atoms: [${atomsR.join(', ')}]  nA=${nA}  nS=${nS}`);
 
-            // Initial molar flows
-            let n = chemicals.map((_, i) => Math.max(parseFloat(document.getElementById(`rgibbs_n${i}`).value) || EPS, EPS));
-
-            // Computebi (once): b_atom = Σ_j A[a,j]*y_j_initial
-            const n0sum = n.reduce((s, v) => s + v, 0);
-            const y0 = n.map(v => v / n0sum);
-            const bi = Amat.map(row => row.reduce((s, aij, j) => s + aij * y0[j], 0));
+            // bi = Σ_j A[a,j]*n0_j
+            const bi = Amat.map(row => row.reduce((s, aij, j) => s + aij * n0[j], 0));
             log.push(`bi = [${bi.map(v => v.toFixed(6)).join(', ')}]`);
 
             let moleMSD = 1e6;
+            let tempDelta = 1e6;
             const tolMole = 1e-9;
+            const tolTemp = 1e-4; // K
             let converged = false;
             let iteration = 0;
 
+            // History for plotting
+            const history = {
+                iter: [],
+                moles: chemicals.map(() => []),
+                temp: []
+            };
+
             for (iteration = 1; iteration <= maxIter; iteration++) {
-                // ComputeFlowRate_Fractions
-                const Nsum = n.reduce((s, v) => s + v, 0);
-                const y = n.map(v => v / Nsum);
-
-                // ComputeBi: Bi = A·y - bi
-                const Bi = Amat.map((row, a) => row.reduce((s, aij, j) => s + aij * y[j], 0) - bi[a]);
-
-                // ComputeStandardStateProperties + ComputeActivityCoefficients (ideal gas, γ=1)
-                // μ_i = G°_i(T) + R*T*ln(y_i)   [kJ/mol]
-                const mue = y.map((yi, i) => {
-                    const yiSafe = Math.abs(yi) < EPS ? EPS : yi;
-                    return G0safe[i] + R * T_K * Math.log(yiSafe); // kJ/mol
+                // Update composition at current T
+                const G0current = chemicals.map(c => {
+                    const key = subs[c.label] || c.label;
+                    const g = shomateG(key, T_K);
+                    if (g === null) log.push(`⚠ No G data for ${c.label} (key: ${key})`);
+                    return g || 0.0;
                 });
 
-                // ComputeHessian: H_ij = (R*T/Nsum)*(δ_ij/y_i - 1)
-                const H = Array.from({ length: nS }, (_, i) =>
+                const Nsum = n.reduce((s, v) => s + v, 0);
+                const y = n.map(v => v / Nsum);
+                const Bi = Amat.map((row, a) => row.reduce((s, aij, j) => s + aij * n[j], 0) - bi[a]);
+
+                const mue = y.map((yi, i) => {
+                    const yiSafe = Math.abs(yi) < EPS ? EPS : yi;
+                    return G0current[i] + R * T_K * Math.log(yiSafe); // kJ/mol
+                });
+
+                const H_mat = Array.from({ length: nS }, (_, i) =>
                     Array.from({ length: nS }, (_, j) => {
                         const yi = Math.abs(y[i]) < EPS ? EPS : y[i];
                         return (R * T_K / Nsum) * ((i === j ? 1.0 / yi : 0) - 1.0);
                     })
                 );
 
-                // Build KKT system  LHS [(nS+nA)×(nS+nA)], RHS [nS+nA]
                 const sz = nS + nA;
-                const LHS = Array.from({ length: sz }, () => new Array(sz).fill(0));
-                const RHS = new Array(sz).fill(0);
+                const LHS_kkt = Array.from({ length: sz }, () => new Array(sz).fill(0));
+                const RHS_kkt = new Array(sz).fill(0);
 
-                // Top-left: Hessian
-                for (let i = 0; i < nS; i++) for (let j = 0; j < nS; j++) LHS[i][j] = H[i][j];
-                // Top-right: A^T
-                for (let i = 0; i < nS; i++) for (let a = 0; a < nA; a++) LHS[i][nS + a] = Amat[a][i];
-                // Bottom-left: A
-                for (let a = 0; a < nA; a++) for (let j = 0; j < nS; j++) LHS[nS + a][j] = Amat[a][j];
-                // RHS top = μ (Jacobian), RHS bottom = Bi
-                for (let i = 0; i < nS; i++) RHS[i] = mue[i];
-                for (let a = 0; a < nA; a++) RHS[nS + a] = Bi[a];
+                for (let i = 0; i < nS; i++) for (let j = 0; j < nS; j++) LHS_kkt[i][j] = H_mat[i][j];
+                for (let i = 0; i < nS; i++) for (let a = 0; a < nA; a++) LHS_kkt[i][nS + a] = Amat[a][i];
+                for (let a = 0; a < nA; a++) for (let j = 0; j < nS; j++) LHS_kkt[nS + a][j] = Amat[a][j];
+                for (let i = 0; i < nS; i++) RHS_kkt[i] = mue[i];
+                for (let a = 0; a < nA; a++) RHS_kkt[nS + a] = Bi[a];
 
-                // SolveODEs (LU)
-                const sol = solveLU(LHS, RHS);
+                const sol = solveLU(LHS_kkt, RHS_kkt);
 
-                // UpdateAlphaMole — compute proposed new moles, find alpha
                 let alphaMin = 1.0;
                 for (let i = 0; i < nS; i++) {
-                    const delta = -sol[i]; // changeInMole = -Solution[i]
-                    const newMole = n[i] + delta;
-                    if (newMole < 0) {
+                    const delta = -sol[i];
+                    if (n[i] + delta < 0) {
                         const ratio = n[i] / (-delta);
                         if (ratio > 0 && ratio < alphaMin) alphaMin = ratio;
                     }
@@ -1377,51 +1428,133 @@
                 const alpha = Math.min(alphaMin, 1.0);
                 const newN = n.map((ni, i) => Math.max(ni + alpha * (-sol[i]), 0));
 
-                // CheckConvergedMSD_Moles
                 const msd = newN.reduce((s, v, i) => {
                     const d = v - n[i]; return s + d * d;
                 }, 0) / nS;
-                const convFlag = Math.abs(moleMSD - msd) < tolMole;
 
-                log.push(`Iter ${iteration}: Nsum=${Nsum.toFixed(4)}  α=${alpha.toFixed(4)}  MSD=${msd.toExponential(3)}  Δ=${Math.abs(moleMSD - msd).toExponential(3)}`);
+                // --- Temperature Update (Newton Step) ---
+                const H_target = Hin + reactorDuty;
+                const H_out = newN.reduce((sum, ni, i) => {
+                    const key = subs[chemicals[i].label] || chemicals[i].label;
+                    return sum + ni * (shomateH(key, T_K) || 0);
+                }, 0);
+                const Cp_out = newN.reduce((sum, ni, i) => {
+                    const key = subs[chemicals[i].label] || chemicals[i].label;
+                    return sum + ni * (shomateCp(key, T_K) || 0) / 1000; // kJ/s/K
+                }, 0);
 
-                moleMSD = convFlag ? moleMSD : msd;
+                let deltaT = 0;
+                if (Math.abs(Cp_out) > 1e-12) {
+                    deltaT = (H_target - H_out) / Cp_out;
+                    const stepLimit = 100.0; // Increased step limit
+                    deltaT = Math.max(-stepLimit, Math.min(stepLimit, deltaT));
+                }
+
+                const moleConv = msd < tolMole;
+                const tempConv = Math.abs(deltaT) < tolTemp;
+
+                log.push(`Iter ${iteration}: T=${(T_K - 273.15).toFixed(2)}°C  MSD=${msd.toExponential(3)}  Hout=${H_out.toFixed(2)}  deltaT=${deltaT.toFixed(4)}`);
+
+                // Store history
+                history.iter.push(iteration);
+                newN.forEach((val, i) => history.moles[i].push(val));
+                history.temp.push(T_K - 273.15);
+
                 n = newN;
+                T_K += deltaT;
 
-                if (convFlag) { converged = true; break; }
-            } // end iteration
+                if (moleConv && tempConv) { converged = true; break; }
+            }
 
-            // Build results
+            // Update UI
             const NsumFinal = n.reduce((s, v) => s + v, 0);
             const yFinal = n.map(v => v / NsumFinal);
             const GtotalFinal = n.reduce((s, ni, i) => {
                 const yi = Math.abs(yFinal[i]) < EPS ? EPS : yFinal[i];
-                return s + ni * (G0safe[i] + R * T_K * Math.log(yi));
+                const key = subs[chemicals[i].label] || chemicals[i].label;
+                return s + ni * ((shomateG(key, T_K) || 0) + R * T_K * Math.log(yi));
             }, 0);
 
             const statusHtml = converged
-                ? `<span class="sok">✔ Converged in ${iteration} iteration(s) — MSD = ${moleMSD.toExponential(3)}</span>`
-                : `<span class="swarn">⚠ Did not converge in ${maxIter} iterations — MSD = ${moleMSD.toExponential(3)}</span>`;
+                ? `<span class="sok">✔ Converged in ${iteration} iteration(s) — Final T: ${(T_K - 273.15).toFixed(2)}°C</span>`
+                : `<span class="swarn">⚠ Did not converge in ${maxIter} iterations — Final T: ${(T_K - 273.15).toFixed(2)}°C</span>`;
 
             let tableHtml = `<table class="rgibbs-tbl">
-                <thead><tr><th>Species</th><th>n⁰ (mol/s)</th><th>n* (mol/s)</th><th>y* (mol%)</th><th>G°(T) (kJ/mol)</th></tr></thead><tbody>`;
+                <thead><tr><th>Species</th><th>n⁰ (mol/s)</th><th>n* (mol/s)</th><th>y* (mol%)</th></tr></thead><tbody>`;
             chemicals.forEach((c, i) => {
-                const n0 = parseFloat(document.getElementById(`rgibbs_n${i}`).value) || 0;
-                tableHtml += `<tr><td>${c.label}</td><td>${n0.toFixed(4)}</td>
-                    <td>${n[i].toFixed(6)}</td><td>${(yFinal[i] * 100).toFixed(3)}%</td>
-                    <td>${G0safe[i].toFixed(3)}</td></tr>`;
+                tableHtml += `<tr><td>${c.label}</td><td>${n0[i].toFixed(4)}</td>
+                    <td>${n[i].toFixed(6)}</td><td>${(yFinal[i] * 100).toFixed(3)}%</td></tr>`;
             });
             tableHtml += `</tbody><tfoot>
                 <tr><td colspan="2" style="text-align:right;padding:6px 8px;"><em>Total G (kJ/s):</em></td>
-                    <td colspan="3" style="text-align:left;padding:6px 8px;">${GtotalFinal.toFixed(4)}</td></tr>
-                <tr><td colspan="2" style="text-align:right;padding:6px 8px;"><em>Reactor Duty (kJ/s):</em></td>
-                    <td colspan="3" style="text-align:left;padding:6px 8px;">${reactorDuty.toFixed(4)}</td></tr>
+                    <td colspan="2" style="text-align:left;padding:6px 8px;">${GtotalFinal.toFixed(4)}</td></tr>
+                <tr><td colspan="2" style="text-align:right;padding:6px 8px;"><em>Equilibrium T (&deg;C):</em></td>
+                    <td colspan="2" style="text-align:left;padding:6px 8px;">${(T_K - 273.15).toFixed(2)}</td></tr>
                 </tfoot></table>`;
 
             document.getElementById('rgibbs_status').innerHTML = statusHtml;
             document.getElementById('rgibbs_table').innerHTML = tableHtml;
             document.getElementById('rgibbs_log').textContent = log.join('\n');
             document.getElementById('rgibbs_results').classList.remove('hidden');
+
+            updateCharts(history);
+        }
+
+        function updateCharts(history) {
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js not loaded. Skipping plots.');
+                return;
+            }
+            try {
+                const ctxMoles = document.getElementById('chart_moles').getContext('2d');
+                const ctxTemp = document.getElementById('chart_temp').getContext('2d');
+
+                if (moleChart) moleChart.destroy();
+                if (tempChart) tempChart.destroy();
+
+                moleChart = new Chart(ctxMoles, {
+                    type: 'line',
+                    data: {
+                        labels: history.iter,
+                        datasets: chemicals.map((c, i) => ({
+                            label: c.label,
+                            data: history.moles[i],
+                            borderColor: `hsl(${(i * 360 / chemicals.length) % 360}, 70%, 50%)`,
+                            fill: false,
+                            tension: 0.1
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Molar Flows (mol/s)' }, legend: { display: false } },
+                        scales: { x: { title: { display: true, text: 'Iteration' } } }
+                    }
+                });
+
+                tempChart = new Chart(ctxTemp, {
+                    type: 'line',
+                    data: {
+                        labels: history.iter,
+                        datasets: [{
+                            label: 'Temperature (°C)',
+                            data: history.temp,
+                            borderColor: '#ff5722',
+                            backgroundColor: 'rgba(255, 87, 34, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Reactor Temperature (°C)' }, legend: { display: false } },
+                        scales: { x: { title: { display: true, text: 'Iteration' } } }
+                    }
+                });
+            } catch (err) {
+                console.error('Error updating charts:', err);
+            }
         }
     </script>
 
