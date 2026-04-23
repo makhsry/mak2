@@ -574,6 +574,25 @@
                         <label>Max Iterations</label>
                         <input type="number" id="rgibbs_maxIter" value="100" step="10">
                     </div>
+                    <div class="rgibbs-input-item" style="flex:1;min-width:200px;">
+                        <label>Equilibrium Basis</label>
+                        <select id="rgibbs_basis" onchange="toggleBasis()">
+                            <option value="atoms">Atom Balances (Global)</option>
+                            <option value="reactions">Specific Reactions (Local)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="reactions_container" class="hidden"
+                    style="background: rgba(255,255,255,0.05); padding:15px; border-radius:8px; border: 1px solid #4dd0e133; margin-bottom: 20px;">
+                    <h4 style="margin-top:0; color:#4dd0e1;">Active Reactions</h4>
+                    <div id="reactions_list" style="margin-bottom:10px;"></div>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="custom_reaction_input" placeholder="e.g. CH4 + H2O <=> CO + 3 H2"
+                            style="flex:1; background:rgba(255,255,255,0.1); border:1px solid #4dd0e1; color:white;">
+                        <button onclick="addCustomReaction()"
+                            style="background:#17a2b8; padding:8px 12px; width:auto;">Add</button>
+                    </div>
                 </div>
                 <h4>Initial Molar Flows (mol/s)</h4>
                 <div id="rgibbs_flows" class="rgibbs-input-grid"></div>
@@ -1063,6 +1082,106 @@
             return { A, p, rank };
         }
 
+        let allReactions = [];
+
+        function toggleBasis() {
+            const basis = document.getElementById('rgibbs_basis').value;
+            const container = document.getElementById('reactions_container');
+            if (basis === 'reactions') {
+                container.classList.remove('hidden');
+                renderReactionsList();
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function renderReactionsList() {
+            const listDiv = document.getElementById('reactions_list');
+            if (allReactions.length === 0) {
+                listDiv.innerHTML = '<div style="color:#888; font-size:0.9em; font-style:italic;">No reactions defined.</div>';
+                return;
+            }
+
+            listDiv.innerHTML = allReactions.map((rxn, idx) => {
+                const reactants = [], products = [];
+                rxn.coeffs.forEach((val, i) => {
+                    if (Math.abs(val) < 1e-9) return;
+                    let displayVal = Math.abs(val).toFixed(4).replace(/\.?0+$/, "");
+                    let term = `${displayVal === '1' ? '' : displayVal} ${chemicals[i].label}`;
+                    if (val < 0) reactants.push(term); else products.push(term);
+                });
+                const rxnStr = `${reactants.join(' + ')} \u21D4 ${products.join(' + ')}`;
+
+                // Balance check
+                let balanced = true;
+                if (rxn.isCustom) {
+                    const atomSet = new Set();
+                    chemicals.forEach(c => Object.keys(c.atoms).forEach(a => { if (!a.startsWith('__special__')) atomSet.add(a); }));
+                    const atoms = Array.from(atomSet);
+                    for (const a of atoms) {
+                        let sum = 0;
+                        rxn.coeffs.forEach((val, i) => { sum += val * (chemicals[i].atoms[a] || 0); });
+                        if (Math.abs(sum) > 1e-6) { balanced = false; break; }
+                    }
+                }
+
+                return `
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:5px;">
+                        <input type="checkbox" ${rxn.active ? 'checked' : ''} onchange="allReactions[${idx}].active = this.checked">
+                        <span style="flex:1; font-family:monospace; font-size:0.9em; ${balanced ? '' : 'color:#ff6b6b;'}">
+                            ${rxnStr} ${balanced ? '' : ' <span title="Unbalanced reaction! Atoms not conserved.">[\u26A0]</span>'}
+                        </span>
+                        <button onclick="allReactions.splice(${idx}, 1); renderReactionsList();" style="background:none; border:none; color:#dc3545; cursor:pointer; padding:0 5px;">\u00D7</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addCustomReaction() {
+            const input = document.getElementById('custom_reaction_input');
+            const rxnStr = input.value.trim();
+            if (!rxnStr) return;
+
+            // Simple parser: split by <=> or <=> or \u21D4 or => or =
+            const parts = rxnStr.split(/<=>|<->|\u21D4|=>|=/);
+            if (parts.length !== 2) {
+                alert("Invalid reaction format. Use: Reactants <=> Products");
+                return;
+            }
+
+            const coeffs = new Array(chemicals.length).fill(0);
+
+            function parseSide(sideStr, multiplier) {
+                const terms = sideStr.split('+');
+                for (let term of terms) {
+                    term = term.trim();
+                    if (!term) continue;
+                    // Match coefficient and label. Coefficient is optional.
+                    const match = term.match(/^([\d\.]+)?\s*(.+)$/);
+                    if (!match) continue;
+                    let cVal = parseFloat(match[1]) || 1.0;
+                    let label = match[2].trim();
+
+                    // Find matching chemical
+                    const idx = chemicals.findIndex(c => c.label === label || c.label.split('(')[0] === label);
+                    if (idx === -1) {
+                        throw new Error(`Species "${label}" not found in system list.`);
+                    }
+                    coeffs[idx] += multiplier * cVal;
+                }
+            }
+
+            try {
+                parseSide(parts[0], -1); // Reactants
+                parseSide(parts[1], 1);  // Products
+                allReactions.push({ coeffs, active: true, isCustom: true });
+                renderReactionsList();
+                input.value = '';
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
         function processSystem() {
             if (chemicals.length === 0) return;
             let atomSet = new Set();
@@ -1098,6 +1217,7 @@
 
             // Extract and display null-space vectors
             let nullspaceText = '';
+            allReactions = []; // Reset auto-reactions
             if (chemicals.length - rank > 0) {
                 nullspaceText += `Null-space basis (${chemicals.length - rank} vector(s)):\n\n`;
                 for (let j = rank; j < chemicals.length; j++) {
@@ -1107,6 +1227,9 @@
                     for (let i = 0; i < rank; i++) {
                         vector[p[i]] = -A[i][j];
                     }
+
+                    allReactions.push({ coeffs: [...vector], active: true, isCustom: false });
+
                     nullspaceText += "  [";
                     nullspaceText += vector.map((v, idx) => {
                         const val = Math.abs(v) < 1e-9 ? 0 : v;
@@ -1121,25 +1244,26 @@
 
             // Generate reactions from null-space vectors
             let reactionsHtml = '';
-            for (let j = rank; j < chemicals.length; j++) {
-                let coeffs = new Array(chemicals.length).fill(0);
-                coeffs[p[j]] = 1.0;
-                for (let i = 0; i < rank; i++) coeffs[p[i]] = -A[i][j];
+            allReactions.forEach((rxn, idx) => {
                 let reactants = [], products = [];
-                coeffs.forEach((val, idx) => {
+                rxn.coeffs.forEach((val, i) => {
                     if (Math.abs(val) < 1e-9) return;
-                    let cName = chemicals[idx].label;
+                    let cName = chemicals[i].label;
                     let displayVal = Math.abs(val).toFixed(4).replace(/\.?0+$/, "");
                     let term = `${displayVal === '1' ? '' : displayVal} ${cName}`;
                     if (val < 0) reactants.push(term); else products.push(term);
                 });
-                reactionsHtml += `<div class="equation">Reaction ${j - rank + 1}: ${reactants.join(' + ')} &hArr; ${products.join(' + ')}</div>`;
-            }
+                reactionsHtml += `<div class="equation">Reaction ${idx + 1}: ${reactants.join(' + ')} &hArr; ${products.join(' + ')}</div>`;
+            });
+
             document.getElementById('reactionsDisplay').innerHTML = reactionsHtml || "No independent reactions.";
             document.getElementById('resultsArea').classList.remove('hidden');
             // Show RGIBBS panel and populate flow inputs
             document.getElementById('rgibbsSetupPanel').classList.remove('hidden');
             buildRGibbsFlowInputs();
+
+            // Sync with basis toggle
+            toggleBasis();
         }
 
         function buildRGibbsFlowInputs() {
@@ -1389,6 +1513,16 @@
                 populateSpeciesFilter();
             }
 
+            const basisMode = document.getElementById('rgibbs_basis').value;
+            const activeRxns = allReactions.filter(r => r.active);
+            const nR = activeRxns.length;
+            const Nmat = activeRxns.map(r => r.coeffs); // nR x nS
+
+            if (basisMode === 'reactions' && nR === 0) {
+                alert("No active reactions selected for 'Specific Reactions' mode.");
+                return;
+            }
+
             for (iteration = 1; iteration <= maxIter; iteration++) {
                 // Update composition at current T
                 const G0current = chemicals.map(c => {
@@ -1400,42 +1534,89 @@
 
                 const Nsum = n.reduce((s, v) => s + v, 0);
                 const y = n.map(v => v / Nsum);
-                const Bi = Amat.map((row, a) => row.reduce((s, aij, j) => s + aij * n[j], 0) - bi[a]);
 
                 const mue = y.map((yi, i) => {
                     const yiSafe = Math.abs(yi) < EPS ? EPS : yi;
                     return G0current[i] + R * T_K * Math.log(yiSafe); // kJ/mol
                 });
 
-                const H_mat = Array.from({ length: nS }, (_, i) =>
-                    Array.from({ length: nS }, (_, j) => {
-                        const yi = Math.abs(y[i]) < EPS ? EPS : y[i];
-                        return (R * T_K / Nsum) * ((i === j ? 1.0 / yi : 0) - 1.0);
-                    })
-                );
+                let deltaN = new Array(nS).fill(0);
 
-                const sz = nS + nA;
-                const LHS_kkt = Array.from({ length: sz }, () => new Array(sz).fill(0));
-                const RHS_kkt = new Array(sz).fill(0);
+                if (basisMode === 'atoms') {
+                    // Global Equilibrium Path (Existing)
+                    const Bi = Amat.map((row, a) => row.reduce((s, aij, j) => s + aij * n[j], 0) - bi[a]);
+                    const H_mat = Array.from({ length: nS }, (_, i) =>
+                        Array.from({ length: nS }, (_, j) => {
+                            const yi = Math.abs(y[i]) < EPS ? EPS : y[i];
+                            return (R * T_K / Nsum) * ((i === j ? 1.0 / yi : 0) - 1.0);
+                        })
+                    );
 
-                for (let i = 0; i < nS; i++) for (let j = 0; j < nS; j++) LHS_kkt[i][j] = H_mat[i][j];
-                for (let i = 0; i < nS; i++) for (let a = 0; a < nA; a++) LHS_kkt[i][nS + a] = Amat[a][i];
-                for (let a = 0; a < nA; a++) for (let j = 0; j < nS; j++) LHS_kkt[nS + a][j] = Amat[a][j];
-                for (let i = 0; i < nS; i++) RHS_kkt[i] = mue[i];
-                for (let a = 0; a < nA; a++) RHS_kkt[nS + a] = Bi[a];
+                    const sz = nS + nA;
+                    const LHS_kkt = Array.from({ length: sz }, () => new Array(sz).fill(0));
+                    const RHS_kkt = new Array(sz).fill(0);
 
-                const sol = solveLU(LHS_kkt, RHS_kkt);
+                    for (let i = 0; i < nS; i++) for (let j = 0; j < nS; j++) LHS_kkt[i][j] = H_mat[i][j];
+                    for (let i = 0; i < nS; i++) for (let a = 0; a < nA; a++) LHS_kkt[i][nS + a] = Amat[a][i];
+                    for (let a = 0; a < nA; a++) for (let j = 0; j < nS; j++) LHS_kkt[nS + a][j] = Amat[a][j];
+                    for (let i = 0; i < nS; i++) RHS_kkt[i] = mue[i];
+                    for (let a = 0; a < nA; a++) RHS_kkt[nS + a] = Bi[a];
+
+                    const sol = solveLU(LHS_kkt, RHS_kkt);
+                    deltaN = n.map((_, i) => -sol[i]);
+                } else {
+                    // Specific Reactions Path (New)
+                    // (N * H * N') * dXi = -N * mu
+                    // Here N is nR x nS, so N * H * N' is nR x nR
+                    const Hessian = Array.from({ length: nS }, (_, i) =>
+                        Array.from({ length: nS }, (_, j) => {
+                            const yi = Math.abs(y[i]) < EPS ? EPS : y[i];
+                            return (R * T_K / Nsum) * ((i === j ? 1.0 / yi : 0) - 1.0);
+                        })
+                    );
+
+                    const LHS_rxn = Array.from({ length: nR }, () => new Array(nR).fill(0));
+                    const RHS_rxn = new Array(nR).fill(0);
+
+                    for (let r = 0; r < nR; r++) {
+                        // RHS: - Σ_i N[r,i] * mu[i]
+                        RHS_rxn[r] = -activeRxns[r].coeffs.reduce((sum, nri, i) => sum + nri * mue[i], 0);
+
+                        for (let s = 0; r >= s && s < nR; s++) {
+                            // LHS: Σ_i Σ_j N[r,i] * H[i,j] * N[s,j]
+                            let val = 0;
+                            for (let i = 0; i < nS; i++) {
+                                for (let j = 0; j < nS; j++) {
+                                    val += activeRxns[r].coeffs[i] * Hessian[i][j] * activeRxns[s].coeffs[j];
+                                }
+                            }
+                            LHS_rxn[r][s] = val;
+                            if (r !== s) LHS_rxn[s][r] = val;
+                        }
+                    }
+
+                    // Add small regularization to avoid singularity if reactions are redundant
+                    for (let r = 0; r < nR; r++) LHS_rxn[r][r] += 1e-12;
+
+                    const dXi = solveLU(LHS_rxn, RHS_rxn);
+
+                    // deltaN = Σ_r N[r,i] * dXi[r]
+                    for (let i = 0; i < nS; i++) {
+                        for (let r = 0; r < nR; r++) {
+                            deltaN[i] += activeRxns[r].coeffs[i] * dXi[r];
+                        }
+                    }
+                }
 
                 let alphaMin = 1.0;
                 for (let i = 0; i < nS; i++) {
-                    const delta = -sol[i];
-                    if (n[i] + delta < 0) {
-                        const ratio = n[i] / (-delta);
+                    if (n[i] + deltaN[i] < 0) {
+                        const ratio = n[i] / (-deltaN[i]);
                         if (ratio > 0 && ratio < alphaMin) alphaMin = ratio;
                     }
                 }
-                const alpha = Math.min(alphaMin, 1.0);
-                const newN = n.map((ni, i) => Math.max(ni + alpha * (-sol[i]), 0));
+                const alpha = Math.min(alphaMin, 1.0) * 0.95; // Damping
+                const newN = n.map((ni, i) => Math.max(ni + alpha * deltaN[i], 0));
 
                 const msd = newN.reduce((s, v, i) => {
                     const d = v - n[i]; return s + d * d;
@@ -1455,7 +1636,7 @@
                 let deltaT = 0;
                 if (Math.abs(Cp_out) > 1e-12) {
                     deltaT = (H_target - H_out) / Cp_out;
-                    const stepLimit = 100.0; // Increased step limit
+                    const stepLimit = 50.0;
                     deltaT = Math.max(-stepLimit, Math.min(stepLimit, deltaT));
                 }
 
