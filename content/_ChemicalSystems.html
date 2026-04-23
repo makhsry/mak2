@@ -627,127 +627,51 @@
     </div>
 
     <script>
-        // Periodic Table - Master list of valid elements
+        // Periodic Table - Master list of valid elements with atomic weights
         const periodicTable = {
-            1: ["Hydrogen", "H"],
-            2: ["Helium", "He"],
-            3: ["Lithium", "Li"],
-            4: ["Beryllium", "Be"],
-            5: ["Boron", "B"],
-            6: ["Carbon", "C"],
-            7: ["Nitrogen", "N"],
-            8: ["Oxygen", "O"],
-            9: ["Fluorine", "F"],
-            10: ["Neon", "Ne"],
-            11: ["Sodium", "Na"],
-            12: ["Magnesium", "Mg"],
-            13: ["Aluminum", "Al"],
-            14: ["Silicon", "Si"],
-            15: ["Phosphorus", "P"],
-            16: ["Sulfur", "S"],
-            17: ["Chlorine", "Cl"],
-            18: ["Argon", "Ar"],
-            19: ["Potassium", "K"],
-            20: ["Calcium", "Ca"],
-            21: ["Scandium", "Sc"],
-            22: ["Titanium", "Ti"],
-            23: ["Vanadium", "V"],
-            24: ["Chromium", "Cr"],
-            25: ["Manganese", "Mn"],
-            26: ["Iron", "Fe"],
-            27: ["Cobalt", "Co"],
-            28: ["Nickel", "Ni"],
-            29: ["Copper", "Cu"],
-            30: ["Zinc", "Zn"],
-            31: ["Gallium", "Ga"],
-            32: ["Germanium", "Ge"],
-            33: ["Arsenic", "As"],
-            34: ["Selenium", "Se"],
-            35: ["Bromine", "Br"],
-            36: ["Krypton", "Kr"],
-            37: ["Rubidium", "Rb"],
-            38: ["Strontium", "Sr"],
-            39: ["Yttrium", "Y"],
-            40: ["Zirconium", "Zr"],
-            41: ["Niobium", "Nb"],
-            42: ["Molybdenum", "Mo"],
-            43: ["Technetium", "Tc"],
-            44: ["Ruthenium", "Ru"],
-            45: ["Rhodium", "Rh"],
-            46: ["Palladium", "Pd"],
-            47: ["Silver", "Ag"],
-            48: ["Cadmium", "Cd"],
-            49: ["Indium", "In"],
-            50: ["Tin", "Sn"],
-            51: ["Antimony", "Sb"],
-            52: ["Tellurium", "Te"],
-            53: ["Iodine", "I"],
-            54: ["Xenon", "Xe"],
-            55: ["Cesium", "Cs"],
-            56: ["Barium", "Ba"],
-            57: ["Lanthanum", "La"],
-            58: ["Cerium", "Ce"],
-            59: ["Praseodymium", "Pr"],
-            60: ["Neodymium", "Nd"],
-            61: ["Promethium", "Pm"],
-            62: ["Samarium", "Sm"],
-            63: ["Europium", "Eu"],
-            64: ["Gadolinium", "Gd"],
-            65: ["Terbium", "Tb"],
-            66: ["Dysprosium", "Dy"],
-            67: ["Holmium", "Ho"],
-            68: ["Erbium", "Er"],
-            69: ["Thulium", "Tm"],
-            70: ["Ytterbium", "Yb"],
-            71: ["Lutetium", "Lu"],
-            72: ["Hafnium", "Hf"],
-            73: ["Tantalum", "Ta"],
-            74: ["Tungsten", "W"],
-            75: ["Rhenium", "Re"],
-            76: ["Osmium", "Os"],
-            77: ["Iridium", "Ir"],
-            78: ["Platinum", "Pt"],
-            79: ["Gold", "Au"],
-            80: ["Mercury", "Hg"],
-            81: ["Thallium", "Tl"],
-            82: ["Lead", "Pb"],
-            83: ["Bismuth", "Bi"],
-            84: ["Polonium", "Po"],
-            85: ["Astatine", "At"],
-            86: ["Radon", "Rn"],
-            87: ["Francium", "Fr"],
-            88: ["Radium", "Ra"],
-            89: ["Actinium", "Ac"],
-            90: ["Thorium", "Th"],
-            91: ["Protactinium", "Pa"],
-            92: ["Uranium", "U"],
-            93: ["Neptunium", "Np"],
-            94: ["Plutonium", "Pu"],
-            95: ["Americium", "Am"],
-            96: ["Curium", "Cm"],
-            97: ["Berkelium", "Bk"],
-            98: ["Californium", "Cf"],
-            99: ["Einsteinium", "Es"],
-            100: ["Fermium", "Fm"],
-            101: ["Mendelevium", "Md"],
-            102: ["Nobelium", "No"],
-            103: ["Lawrencium", "Lr"],
-            104: ["Rutherfordium", "Rf"],
-            105: ["Dubnium", "Db"],
-            106: ["Seaborgium", "Sg"],
-            107: ["Bohrium", "Bh"],
-            108: ["Hassium", "Hs"],
-            109: ["Meitnerium", "Mt"],
-            110: ["Darmstadtium", "Ds"],
-            111: ["Roentgenium", "Rg"],
-            112: ["Copernicium", "Cn"],
-            113: ["Nihonium", "Nh"],
-            114: ["Flerovium", "Fl"],
-            115: ["Moscovium", "Mc"],
-            116: ["Livermorium", "Lv"],
-            117: ["Tennessine", "Ts"],
-            118: ["Oganesson", "Og"],
+            1: ["Hydrogen", "H", 1.008], 2: ["Helium", "He", 4.0026], 3: ["Lithium", "Li", 6.94], 4: ["Beryllium", "Be", 9.0122],
+            5: ["Boron", "B", 10.81], 6: ["Carbon", "C", 12.011], 7: ["Nitrogen", "N", 14.007], 8: ["Oxygen", "O", 15.999],
+            9: ["Fluorine", "F", 18.998], 10: ["Neon", "Ne", 20.180], 11: ["Sodium", "Na", 22.990], 12: ["Magnesium", "Mg", 24.305],
+            13: ["Aluminum", "Al", 26.982], 14: ["Silicon", "Si", 28.085], 15: ["Phosphorus", "P", 30.974], 16: ["Sulfur", "S", 32.06],
+            17: ["Chlorine", "Cl", 35.45], 18: ["Argon", "Ar", 39.948], 19: ["Potassium", "K", 39.098], 20: ["Calcium", "Ca", 40.078],
+            21: ["Scandium", "Sc", 44.956], 22: ["Titanium", "Ti", 47.867], 23: ["Vanadium", "V", 50.942], 24: ["Chromium", "Cr", 51.996],
+            25: ["Manganese", "Mn", 54.938], 26: ["Iron", "Fe", 55.845], 27: ["Cobalt", "Co", 58.933], 28: ["Nickel", "Ni", 58.693],
+            29: ["Copper", "Cu", 63.546], 30: ["Zinc", "Zn", 65.38], 31: ["Gallium", "Ga", 69.723], 32: ["Germanium", "Ge", 72.630],
+            33: ["Arsenic", "As", 74.922], 34: ["Selenium", "Se", 78.971], 35: ["Bromine", "Br", 79.904], 36: ["Krypton", "Kr", 83.798],
+            37: ["Rubidium", "Rb", 85.468], 38: ["Strontium", "Sr", 87.62], 39: ["Yttrium", "Y", 88.906], 40: ["Zirconium", "Zr", 91.224],
+            41: ["Niobium", "Nb", 92.906], 42: ["Molybdenum", "Mo", 95.95], 43: ["Technetium", "Tc", 98], 44: ["Ruthenium", "Ru", 101.07],
+            45: ["Rhodium", "Rh", 102.91], 46: ["Palladium", "Pd", 106.42], 47: ["Silver", "Ag", 107.87], 48: ["Cadmium", "Cd", 112.41],
+            49: ["Indium", "In", 114.82], 50: ["Tin", "Sn", 118.71], 51: ["Antimony", "Sb", 121.76], 52: ["Tellurium", "Te", 127.60],
+            53: ["Iodine", "I", 126.90], 54: ["Xenon", "Xe", 131.29], 55: ["Cesium", "Cs", 132.91], 56: ["Barium", "Ba", 137.33],
+            57: ["Lanthanum", "La", 138.91], 58: ["Cerium", "Ce", 140.12], 59: ["Praseodymium", "Pr", 140.91], 60: ["Neodymium", "Nd", 144.24],
+            61: ["Promethium", "Pm", 145], 62: ["Samarium", "Sm", 150.36], 63: ["Europium", "Eu", 151.96], 64: ["Gadolinium", "Gd", 157.25],
+            65: ["Terbium", "Tb", 158.93], 66: ["Dysprosium", "Dy", 162.50], 67: ["Holmium", "Ho", 164.93], 68: ["Erbium", "Er", 167.26],
+            69: ["Thulium", "Tm", 168.93], 70: ["Ytterbium", "Yb", 173.05], 71: ["Lutetium", "Lu", 174.97], 72: ["Hafnium", "Hf", 178.49],
+            73: ["Tantalum", "Ta", 180.95], 74: ["Tungsten", "W", 183.84], 75: ["Rhenium", "Re", 186.21], 76: ["Osmium", "Os", 190.23],
+            77: ["Iridium", "Ir", 192.22], 78: ["Platinum", "Pt", 195.08], 79: ["Gold", "Au", 196.97], 80: ["Mercury", "Hg", 200.59],
+            81: ["Thallium", "Tl", 204.38], 82: ["Lead", "Pb", 207.2], 83: ["Bismuth", "Bi", 208.98], 84: ["Polonium", "Po", 209],
+            85: ["Astatine", "At", 210], 86: ["Radon", "Rn", 222], 87: ["Francium", "Fr", 223], 88: ["Radium", "Ra", 226],
+            89: ["Actinium", "Ac", 227], 90: ["Thorium", "Th", 232.04], 91: ["Protactinium", "Pa", 231.04], 92: ["Uranium", "U", 238.03],
+            93: ["Neptunium", "Np", 237], 94: ["Plutonium", "Pu", 244], 95: ["Americium", "Am", 243], 96: ["Curium", "Cm", 247],
+            97: ["Berkelium", "Bk", 247], 98: ["Californium", "Cf", 251], 99: ["Einsteinium", "Es", 252], 100: ["Fermium", "Fm", 257],
+            101: ["Mendelevium", "Md", 258], 102: ["Nobelium", "No", 259], 103: ["Lawrencium", "Lr", 266], 104: ["Rutherfordium", "Rf", 267],
+            105: ["Dubnium", "Db", 268], 106: ["Seaborgium", "Sg", 269], 107: ["Bohrium", "Bh", 270], 108: ["Hassium", "Hs", 269],
+            109: ["Meitnerium", "Mt", 278], 110: ["Darmstadtium", "Ds", 281], 111: ["Roentgenium", "Rg", 282], 112: ["Copernicium", "Cn", 285],
+            113: ["Nihonium", "Nh", 286], 114: ["Flerovium", "Fl", 289], 115: ["Moscovium", "Mc", 290], 116: ["Livermorium", "Lv", 293],
+            117: ["Tennessine", "Ts", 294], 118: ["Oganesson", "Og", 294],
         };
+
+        function getMolarMass(atoms) {
+            let mass = 0;
+            for (const [symbol, count] of Object.entries(atoms)) {
+                if (symbol.startsWith('__special__')) continue;
+                const entry = Object.values(periodicTable).find(e => e[1] === symbol);
+                if (entry && entry[2]) {
+                    mass += entry[2] * count;
+                }
+            }
+            return mass;
+        }
 
         // Extract valid element symbols from periodic table for quick lookup
         const validElements = new Set();
@@ -1401,6 +1325,8 @@
         let tempChart = null;
         let currentHistory = null;
         let selectedSpeciesIndices = [];
+        let showTotalMolar = false;
+        let showTotalMass = false;
 
         function _executeRGibbs(subs) {
             const R = 8.314e-3;  // kJ/(mol·K)
@@ -1445,11 +1371,16 @@
             let converged = false;
             let iteration = 0;
 
+            // Pre-calculate molar masses
+            const molarMasses = chemicals.map(c => getMolarMass(c.atoms));
+
             // History for plotting
             const history = {
                 iter: [],
                 moles: chemicals.map(() => []),
-                temp: []
+                temp: [],
+                totalMolar: [],
+                totalMass: []
             };
 
             // Initialize/Reset species filter if chemical list changed or first run
@@ -1538,6 +1469,11 @@
                 newN.forEach((val, i) => history.moles[i].push(val));
                 history.temp.push(T_K - 273.15);
 
+                const totMol = newN.reduce((s, v) => s + v, 0);
+                const totMass = newN.reduce((s, v, i) => s + v * molarMasses[i], 0);
+                history.totalMolar.push(totMol);
+                history.totalMass.push(totMass);
+
                 n = newN;
                 T_K += deltaT;
 
@@ -1585,7 +1521,7 @@
 
         function populateSpeciesFilter() {
             const list = document.getElementById('species_filter_items');
-            list.innerHTML = chemicals.map((c, i) => `
+            let html = chemicals.map((c, i) => `
                 <li>
                     <input type="checkbox" id="cb_spec_${i}" data-index="${i}" 
                            ${selectedSpeciesIndices.includes(i) ? 'checked' : ''} 
@@ -1593,13 +1529,28 @@
                     <label for="cb_spec_${i}">${c.label}</label>
                 </li>
             `).join('');
+
+            html += `
+                <li style="border-top:1px solid #eee; margin-top:5px; padding-top:5px;">
+                    <input type="checkbox" id="cb_tot_molar" ${showTotalMolar ? 'checked' : ''} onchange="updateSelectedSpecies()">
+                    <label for="cb_tot_molar" style="font-weight:bold; color:#0077b6;">Σ Molar Flow</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="cb_tot_mass" ${showTotalMass ? 'checked' : ''} onchange="updateSelectedSpecies()">
+                    <label for="cb_tot_mass" style="font-weight:bold; color:#9c27b0;">Σ Mass Flow</label>
+                </li>
+            `;
+            list.innerHTML = html;
         }
 
         function updateSelectedSpecies() {
-            const checkboxes = document.querySelectorAll('#species_filter_items input[type="checkbox"]');
+            const checkboxes = document.querySelectorAll('#species_filter_items input[id^="cb_spec_"]');
             selectedSpeciesIndices = Array.from(checkboxes)
                 .filter(cb => cb.checked)
                 .map(cb => parseInt(cb.getAttribute('data-index')));
+
+            showTotalMolar = document.getElementById('cb_tot_molar').checked;
+            showTotalMass = document.getElementById('cb_tot_mass').checked;
 
             if (currentHistory) updateCharts(currentHistory);
         }
@@ -1616,23 +1567,70 @@
                 if (moleChart) moleChart.destroy();
                 if (tempChart) tempChart.destroy();
 
+                const moleDatasets = chemicals.map((c, i) => ({
+                    label: c.label,
+                    data: history.moles[i],
+                    borderColor: `hsl(${(i * 360 / chemicals.length) % 360}, 70%, 50%)`,
+                    fill: false,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                })).filter((_, i) => selectedSpeciesIndices.includes(i));
+
+                if (showTotalMolar) {
+                    moleDatasets.push({
+                        label: 'Σ Molar Flow',
+                        data: history.totalMolar,
+                        borderColor: '#0077b6',
+                        borderWidth: 3,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.1,
+                        yAxisID: 'y'
+                    });
+                }
+
+                if (showTotalMass) {
+                    moleDatasets.push({
+                        label: 'Σ Mass Flow (g/s)',
+                        data: history.totalMass,
+                        borderColor: '#9c27b0',
+                        borderWidth: 3,
+                        borderDash: [2, 2],
+                        fill: false,
+                        tension: 0.1,
+                        yAxisID: 'y-mass'
+                    });
+                }
+
                 moleChart = new Chart(ctxMoles, {
                     type: 'line',
                     data: {
                         labels: history.iter,
-                        datasets: chemicals.map((c, i) => ({
-                            label: c.label,
-                            data: history.moles[i],
-                            borderColor: `hsl(${(i * 360 / chemicals.length) % 360}, 70%, 50%)`,
-                            fill: false,
-                            tension: 0.1
-                        })).filter((_, i) => selectedSpeciesIndices.includes(i))
+                        datasets: moleDatasets
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { title: { display: true, text: 'Molar Flows (mol/s)' }, legend: { display: false } },
-                        scales: { x: { title: { display: true, text: 'Iteration' } } }
+                        plugins: {
+                            title: { display: true, text: 'Flow Rates Convergence' },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { title: { display: true, text: 'Iteration' } },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Molar Flow (mol/s)' }
+                            },
+                            'y-mass': {
+                                type: 'linear',
+                                display: showTotalMass,
+                                position: 'right',
+                                title: { display: true, text: 'Mass Flow (g/s)' },
+                                grid: { drawOnChartArea: false }
+                            }
+                        }
                     }
                 });
 
