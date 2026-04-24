@@ -1,0 +1,5 @@
+### Unveiling the Surprising Role of PFOA Dimerization in UV/Sulfite Wastewater Treatment
+
+In the paper [**Decomposition of PFOA in IEX regeneration wastewater: Comparison of UV/sulfur-based processes, key parameters and submicellar aggregates on degradation kinetics**](https://www.sciencedirect.com/science/article/pii/S1385894723065907), we revealed the significance of **PFOA dimerization** in **UV/sulfite degradation**. We showed that PFOA exists as **dimers** in **saline waste streams**, and this **dimerization** affects the **degradation kinetics** significantly. We also found that excluding dimerization in degradation models **overestimates** the required **fluence** for treatment.
+
+![The surprising role of PFOA dimerization in UV/Sulfite Wastewater Treatment](images/Images_Publications_20241205_PFOACEJ.jpg)
