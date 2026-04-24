@@ -1,4 +1,4 @@
-### Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
+### Draft: Physiochemical Population Balance Model (PBM) with Dissipative Particle Dynamics (DPD) in LAMMPS
 
 This is a [**LAMMPS**](https://www.lammps.org/)-based implementation of a [**Physiochemical Population Balance Model (PBM)**](https://en.wikipedia.org/wiki/Population_balance_equation) using [**Dissipative Particle Dynamics (DPD)**](https://en.wikipedia.org/wiki/Dissipative_particle_dynamics) for structural evolution and [**Transition State Theory (TST)**](https://en.wikipedia.org/wiki/Transition_state_theory) for chemical kinetics.
 

@@ -1,4 +1,4 @@
-### Raman Spectroscopy for Mineral Detection and Sorting
+### Draft: Raman Spectroscopy for Mineral Detection and Sorting
 
 A critical aspect of **mineral processing** is selecting the appropriate technique to **extract minerals from mined ore**, which heavily relies on **accurate species identification**. This task can be challenging even for experienced professionals—minerals like chalcopyrite, pyrite, and gold can be easily mistaken for each other due to their **similar visual appearances** (e.g., yellowish color with metallic luster). Such misidentifications can lead to incorrect processing choices, such as using flotation to extract non-existent species, resulting in substantial financial, material, and time losses. This issue is exacerbated with **low-grade ore samples**, which are increasingly common due to continuous mineral exploration and the declining grades and availability of mineral resources.
 
