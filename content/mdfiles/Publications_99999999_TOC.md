@@ -5,6 +5,7 @@
 - The Surprising Role of PFOA Dimerization in UV/S Processes
 - Raman Spectroscopy based Controller for Cocrystallization
 - Machine Learning Interatomic Potentials for Nanohardness Prediction
+- Molecular Level Analysis of Cocrystal Formation
 - Variable Density Mass Transfer Correction
 - Falling Film Mass Transfer & Penetration Theory
 - Thermokinetic Model of Phase Inversion
