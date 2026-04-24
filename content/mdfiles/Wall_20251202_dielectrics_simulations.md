@@ -1,4 +1,4 @@
-### Draft: Dielectric Properties from Polarization Theory
+### _Draft_: Dielectric Properties from Polarization Theory
 
 The scale-up of the electromagnetic heating requires reliable and accessible information on material response under electromagnetic field (dielectric constant) and dynamics of heat-up process that is govern by conversion/loss of electromagnetic energy to the atomistic/molecular frictional process. The literature on dielectric response measurement and modelings, particularly for particulate materials, suffer from discrepancies in reported values, even for the same material. Current observations of dielectric response suggests that material characteristics such as particle size distribution and heterogeneity, compactness, presence of grain boundaries, structural defects, phase transitions and etc. affect measured dielectric response.
 

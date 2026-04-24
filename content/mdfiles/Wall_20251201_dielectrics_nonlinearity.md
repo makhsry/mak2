@@ -1,4 +1,4 @@
-### Draft: Derivation of Empirically–Observed Linearity Correlation of Dielectric Properties from Polarization Theory
+### _Draft_: Derivation of Empirically–Observed Linearity Correlation of Dielectric Properties from Polarization Theory
 
 Compiling vast experimental dielectric response indicates a relatively weak frequency dependency in the ratio of real (&epsilon;&prime;) and imaginary parts (&epsilon;&Prime;) that collectively had been formulated as &epsilon;&prime; / &epsilon;&Prime; &equiv; &vartheta; tan(n&pi;/2) or alternatively (&epsilon;&prime; - 1) / &epsilon;&Prime; &equiv; &vartheta; tan(n&pi;/2). The parameter &vartheta; represents the dependency on the field frequency, where &vartheta; = 1 corresponds to cases where no frequency-dependency is observed in data and &vartheta; = &vartheta;(&omega;) is for the field frequency dependent case. The choice of arbitrary function &vartheta; = &vartheta;(&omega;) in the field frequency dependent regime resulted in a vast type of empirical dielectric response models/correlations.
 
