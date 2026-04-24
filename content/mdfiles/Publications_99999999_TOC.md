@@ -7,6 +7,7 @@
 - Machine Learning Interatomic Potentials for Nanohardness Prediction
 - Molecular Level Analysis of Cocrystal Formation
 - Incomplete Cocrystallization of Ibuprofen and Nicotinamide
+- TEMPO-Oxidation of Native Cellulose Molecules
 - Variable Density Mass Transfer Correction
 - Falling Film Mass Transfer & Penetration Theory
 - Thermokinetic Model of Phase Inversion
