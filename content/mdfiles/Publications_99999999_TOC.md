@@ -6,6 +6,7 @@
 - Raman Spectroscopy based Controller for Cocrystallization
 - Machine Learning Interatomic Potentials for Nanohardness Prediction
 - Molecular Level Analysis of Cocrystal Formation
+- Incomplete Cocrystallization of Ibuprofen and Nicotinamide
 - Variable Density Mass Transfer Correction
 - Falling Film Mass Transfer & Penetration Theory
 - Thermokinetic Model of Phase Inversion
