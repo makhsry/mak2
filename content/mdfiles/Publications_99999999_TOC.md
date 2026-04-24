@@ -9,6 +9,7 @@
 - Incomplete Cocrystallization of Ibuprofen and Nicotinamide
 - TEMPO-Oxidation of Native Cellulose Molecules
 - Variable Density Mass Transfer Correction
+- Direct-Air CO₂ Capture in Biomass
 - Falling Film Mass Transfer & Penetration Theory
 - Thermokinetic Model of Phase Inversion
 - Modeling Drying of a Coated Paper
