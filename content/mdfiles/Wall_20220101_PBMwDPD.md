@@ -404,7 +404,7 @@ with open("setup_potential.lmp", "w") as f:
     f.write(content)
 ```
 
-- `**dynamics_compute_natoms.lmp`**
+- **`dynamics_compute_natoms.lmp`**
 ```bash
 lines = []
 lines.append("variable nA0 atom type==1")
