@@ -6,7 +6,7 @@ A **web app** that takes a **color-coded pattern image** (e.g., a design, logo o
 
 **Note:** To run this app **locally**, you need to intiiate a **server** first. To do so, open **terminal** and run **`python -m http.server 8000`** in the folder where the file is saved. Then use this link: **`http://localhost:8000/_RoutPlanner.html`**. 
 
-![RoutPlanner_App](media/Images_Outlets_20250901_RoutPlanner.png)
+![RoutPlanner_App](images/Images_Outlets_20250901_RoutPlanner.png)
 
 This app was originally written as an ipython notebook and here is what it does:
 
