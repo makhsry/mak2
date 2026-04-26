@@ -1,260 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>HPC COMSOL Workflow Generator</title>
     <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; max-width: 1000px; margin: auto; }
-        .container { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .section { background: #f1f5f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .section-title { font-weight: bold; margin-bottom: 15px; color: #475569; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        button { cursor: pointer; border: none; border-radius: 6px; padding: 14px; font-weight: 600; width: 100%; font-size: 1rem; transition: 0.2s; }
-        .btn-gen { background: var(--primary); color: white; }
-        .btn-gen:hover { background: #1d4ed8; }
-        .btn-dl { background: #10b981; color: white; margin-top: 15px; display: none; }
-        pre { background: #0f172a; color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; margin-top: 20px; display: none; font-family: 'Fira Code', monospace; line-height: 1.5; }
+        /* CSS Formatting from RoutePatternMapper applied below */
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --primary: #000;
+            --bg: #fff;
+            --text: #1a1a1a;
+            --border: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 {
+            font-family: 'Bodoni Moda', serif;
+            font-weight: 700;
+            color: #000;
+            margin-top: 0;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            border-bottom: 4px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-family: 'Bodoni Moda', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #000;
+            position: relative;
+            padding-bottom: 0.5rem;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: #000;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            background: #fff;
+            color: #000;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #000;
+        }
+
+        button {
+            cursor: pointer;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            padding: 14px;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-gen {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-gen:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-dl {
+            background: #fff;
+            color: #000;
+            margin-top: 15px;
+            display: none;
+            border-width: 2px;
+        }
+
+        pre {
+            background: #fafafa;
+            color: #000;
+            padding: 20px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-top: 20px;
+            display: none;
+            font-family: 'monospace';
+            line-height: 1.5;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>COMSOL 6.2 Job Architect</h2>
+    <div class="container">
+        <h2>COMSOL Job Architect</h2>
 
-    <div class="section">
-        <div class="section-title">Workflow Logic (confirmresume)</div>
-        <div class="grid">
-            <div>
-                <label>Job Type</label>
-                <select id="jobType" onchange="toggleResumeUI()">
-                    <option value="new">New Job (this_is_new_job)</option>
-                    <option value="resume">Resume Terminated (this_is_resume_job)</option>
-                </select>
-            </div>
-            <div id="resumeInput" style="display:none">
-                <label>Recovery Directory</label>
-                <input type="text" id="recoveryDir" placeholder="e.g., job_20240101_120000/rec">
-            </div>
-            <div>
-                <label>Cleanup .comsol? (comsolcleanup)</label>
-                <select id="doCleanup">
-                    <option value="no">No (Keep root files)</option>
-                    <option value="yes">Yes (rm -rvf $SCRATCH/.comsol/*)</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Infrastructure & Resources</div>
-        <div class="grid">
-            <div>
-                <label>Cluster</label>
-                <select id="cluster" onchange="populateNodes()">
-                    <option value="sockeye">Sockeye (UBC)</option>
-                    <option value="graham">Graham</option>
-                    <option value="cedar">Cedar</option>
-                    <option value="narval">Narval</option>
-                    <option value="beluga">Beluga</option>
-                    <option value="niagara">Niagara</option>
-                </select>
-            </div>
-            <div>
-                <label>Account (get_membership)</label>
-                <input type="text" id="account" placeholder="st-amadiseh-1">
-            </div>
-            <div style="grid-column: 1 / -1;">
-                <label>Node Configuration (options_on_cluster)</label>
-                <select id="nodeConfig"></select>
-            </div>
-            <div>
-                <label>Wall-time (HH-MM)</label>
-                <input type="text" id="walltime" value="01-00">
-            </div>
-            <div>
-                <label>Nodes (nodesbyuser)</label>
-                <input type="number" id="nodesCount" value="1">
+        <div class="section">
+            <div class="section-title">Workflow Logic</div>
+            <div class="grid">
+                <div>
+                    <label>Job Type</label>
+                    <select id="jobType" onchange="toggleResumeUI()">
+                        <option value="new">New Job (this_is_new_job)</option>
+                        <option value="resume">Resume Terminated (this_is_resume_job)</option>
+                    </select>
+                </div>
+                <div id="resumeInput" style="display:none">
+                    <label>Recovery Directory</label>
+                    <input type="text" id="recoveryDir" placeholder="e.g., job_20240101_120000/rec">
+                </div>
+                <div>
+                    <label>Cleanup .comsol? (comsolcleanup)</label>
+                    <select id="doCleanup">
+                        <option value="no">No (Keep root files)</option>
+                        <option value="yes">Yes (rm -rvf $SCRATCH/.comsol/*)</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="section">
-        <div class="section-title">Model Parameters</div>
-        <div class="grid">
-            <div style="grid-column: 1 / -1;">
-                <label>Input File (.mph)</label>
-                <input type="text" id="inputFile" placeholder="my_model.mph">
-            </div>
-            <div>
-                <label>Study Tag (COMSOL_EXTRA_STUDY)</label>
-                <input type="text" id="studyTag" placeholder="e.g. std1 (or leave blank)">
-            </div>
-            <div>
-                <label>Job Name</label>
-                <input type="text" id="jobName" value="comsol_job">
+        <div class="section">
+            <div class="section-title">Infrastructure & Resources</div>
+            <div class="grid">
+                <div>
+                    <label>Cluster</label>
+                    <select id="cluster" onchange="populateNodes()">
+                        <option value="sockeye">Sockeye (UBC)</option>
+                        <option value="graham">Graham</option>
+                        <option value="cedar">Cedar</option>
+                        <option value="narval">Narval</option>
+                        <option value="beluga">Beluga</option>
+                        <option value="niagara">Niagara</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Account (get_membership)</label>
+                    <input type="text" id="account" placeholder="st-amadiseh-1">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label>Node Configuration (options_on_cluster)</label>
+                    <select id="nodeConfig"></select>
+                </div>
+                <div>
+                    <label>Wall-time (HH-MM)</label>
+                    <input type="text" id="walltime" value="01-00">
+                </div>
+                <div>
+                    <label>Nodes (nodesbyuser)</label>
+                    <input type="number" id="nodesCount" value="1">
+                </div>
             </div>
         </div>
+
+        <div class="section">
+            <div class="section-title">Model Parameters</div>
+            <div class="grid">
+                <div style="grid-column: 1 / -1;">
+                    <label>Input File (.mph)</label>
+                    <input type="text" id="inputFile" placeholder="my_model.mph">
+                </div>
+                <div>
+                    <label>Study Tag (COMSOL_EXTRA_STUDY)</label>
+                    <input type="text" id="studyTag" placeholder="e.g. std1 (or leave blank)">
+                </div>
+                <div>
+                    <label>Job Name</label>
+                    <input type="text" id="jobName" value="comsol_job">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-gen" onclick="generateWorkflow()">Generate .sh Script</button>
+        <pre id="preview"></pre>
+        <button id="dlBtn" class="btn-dl" onclick="downloadScript()">Download submit_job.sh</button>
     </div>
 
-    <button class="btn-gen" onclick="generateWorkflow()">Generate .sh Script</button>
-    <pre id="preview"></pre>
-    <button id="dlBtn" class="btn-dl" onclick="downloadScript()">Download submit_job.sh</button>
-</div>
+    <script>
+        const serverOptions = {
+            sockeye: [
+                { cpu: 32, ram: "186G", arch: "NONE", label: "Opt 1: 192GB/32 cores (Skylake)" },
+                { cpu: 32, ram: "376G", arch: "NONE", label: "Opt 2: 384GB/32 cores (Skylake)" },
+                { cpu: 32, ram: "754G", arch: "NONE", label: "Opt 3: 768GB/32 cores (Skylake)" },
+                { cpu: 24, ram: "186G", arch: "NONE", label: "Opt 4: 192GB/24 cores (GPU)", gpu: true },
+                { cpu: 40, ram: "186G", arch: "NONE", label: "Opt 5: 192GB/40 cores (Cascade)" },
+                { cpu: 40, ram: "376G", arch: "NONE", label: "Opt 6: 384GB/40 cores (Cascade)" },
+                { cpu: 40, ram: "754G", arch: "NONE", label: "Opt 7: 768GB/40 cores (Cascade)" },
+                { cpu: 24, ram: "186G", arch: "NONE", label: "Opt 8: 192GB/24 cores (GPU)", gpu: true }
+            ],
+            graham: [
+                { cpu: 32, ram: "125G", arch: "broadwell", label: "Opt 1: 125GB/32 cores (Broadwell)" },
+                { cpu: 32, ram: "502G", arch: "broadwell", label: "Opt 2: 502GB/32 cores (Broadwell)" },
+                { cpu: 32, ram: "250G", arch: "broadwell", label: "Opt 3: 250GB/32 cores (Broadwell)" },
+                { cpu: 64, ram: "3022G", arch: "broadwell", label: "Opt 4: 3022GB/64 cores (Broadwell)" },
+                { cpu: 32, ram: "124G", arch: "broadwell", label: "Opt 5: GPU", gpu: true },
+                { cpu: 28, ram: "187G", arch: "skylake", label: "Opt 6: GPU", gpu: true },
+                { cpu: 40, ram: "377G", arch: "cascade", label: "Opt 7: GPU", gpu: true },
+                { cpu: 16, ram: "187G", arch: "skylake", label: "Opt 8: GPU", gpu: true },
+                { cpu: 44, ram: "187G", arch: "cascade", label: "Opt 9: GPU", gpu: true },
+                { cpu: 44, ram: "187G", arch: "cascade", label: "Opt 10: 187GB/44 cores (Cascade)" },
+                { cpu: 128, ram: "2000G", arch: "NONE", label: "Opt 11: GPU", gpu: true },
+                { cpu: 32, ram: "256G", arch: "cascade", label: "Opt 12: GPU", gpu: true },
+                { cpu: 64, ram: "125G", arch: "NONE", label: "Opt 13: GPU", gpu: true }
+            ],
+            cedar: [
+                { cpu: 32, ram: "125G", arch: "broadwell", label: "Opt 1: 125G/32c" },
+                { cpu: 32, ram: "250G", arch: "broadwell", label: "Opt 2: 250G/32c" },
+                { cpu: 32, ram: "502G", arch: "broadwell", label: "Opt 3: 502G/32c" },
+                { cpu: 32, ram: "1510G", arch: "broadwell", label: "Opt 4: 1510G/32c" },
+                { cpu: 32, ram: "4000G", arch: "NONE", label: "Opt 5: 4000G (EPYC)" },
+                { cpu: 40, ram: "6000G", arch: "cascade", label: "Opt 6: 6000G (Cascade)" },
+                { cpu: 24, ram: "125G", arch: "broadwell", label: "Opt 7: GPU", gpu: true },
+                { cpu: 24, ram: "250G", arch: "broadwell", label: "Opt 8: GPU", gpu: true },
+                { cpu: 32, ram: "187G", arch: "cascade", label: "Opt 9: GPU", gpu: true },
+                { cpu: 48, ram: "187G", arch: "skylake", label: "Opt 10: 187G/48c (Skylake)" },
+                { cpu: 48, ram: "187G", arch: "cascade", label: "Opt 11: 187G/48c (Cascade)" }
+            ],
+            narval: [
+                { cpu: 64, ram: "249G", arch: "NONE", label: "Opt 1: 249G/64c" },
+                { cpu: 64, ram: "2009G", arch: "NONE", label: "Opt 2: 2009G/64c" },
+                { cpu: 64, ram: "4000G", arch: "NONE", label: "Opt 3: 4000G/64c" },
+                { cpu: 48, ram: "498G", arch: "NONE", label: "Opt 4: GPU", gpu: true }
+            ],
+            beluga: [
+                { cpu: 40, ram: "92G", arch: "NONE", label: "Opt 1: 92G/40c" },
+                { cpu: 40, ram: "186G", arch: "NONE", label: "Opt 2: 186G/40c" },
+                { cpu: 40, ram: "752G", arch: "NONE", label: "Opt 3: 752G/40c" },
+                { cpu: 40, ram: "186G", arch: "NONE", label: "Opt 4: GPU", gpu: true }
+            ],
+            niagara: [
+                { cpu: 40, ram: "NONE", arch: "NONE", label: "Standard: 188G/40c" }
+            ]
+        };
 
-<script>
-    const serverOptions = {
-        sockeye: [
-            { cpu: 32, ram: "186G", arch: "NONE", label: "Opt 1: 192GB/32 cores (Skylake)" },
-            { cpu: 32, ram: "376G", arch: "NONE", label: "Opt 2: 384GB/32 cores (Skylake)" },
-            { cpu: 32, ram: "754G", arch: "NONE", label: "Opt 3: 768GB/32 cores (Skylake)" },
-            { cpu: 24, ram: "186G", arch: "NONE", label: "Opt 4: 192GB/24 cores (GPU)", gpu:true },
-            { cpu: 40, ram: "186G", arch: "NONE", label: "Opt 5: 192GB/40 cores (Cascade)" },
-            { cpu: 40, ram: "376G", arch: "NONE", label: "Opt 6: 384GB/40 cores (Cascade)" },
-            { cpu: 40, ram: "754G", arch: "NONE", label: "Opt 7: 768GB/40 cores (Cascade)" },
-            { cpu: 24, ram: "186G", arch: "NONE", label: "Opt 8: 192GB/24 cores (GPU)", gpu:true }
-        ],
-        graham: [
-            { cpu: 32, ram: "125G", arch: "broadwell", label: "Opt 1: 125GB/32 cores (Broadwell)" },
-            { cpu: 32, ram: "502G", arch: "broadwell", label: "Opt 2: 502GB/32 cores (Broadwell)" },
-            { cpu: 32, ram: "250G", arch: "broadwell", label: "Opt 3: 250GB/32 cores (Broadwell)" },
-            { cpu: 64, ram: "3022G", arch: "broadwell", label: "Opt 4: 3022GB/64 cores (Broadwell)" },
-            { cpu: 32, ram: "124G", arch: "broadwell", label: "Opt 5: GPU", gpu:true },
-            { cpu: 28, ram: "187G", arch: "skylake", label: "Opt 6: GPU", gpu:true },
-            { cpu: 40, ram: "377G", arch: "cascade", label: "Opt 7: GPU", gpu:true },
-            { cpu: 16, ram: "187G", arch: "skylake", label: "Opt 8: GPU", gpu:true },
-            { cpu: 44, ram: "187G", arch: "cascade", label: "Opt 9: GPU", gpu:true },
-            { cpu: 44, ram: "187G", arch: "cascade", label: "Opt 10: 187GB/44 cores (Cascade)" },
-            { cpu: 128, ram: "2000G", arch: "NONE", label: "Opt 11: GPU", gpu:true },
-            { cpu: 32, ram: "256G", arch: "cascade", label: "Opt 12: GPU", gpu:true },
-            { cpu: 64, ram: "125G", arch: "NONE", label: "Opt 13: GPU", gpu:true }
-        ],
-        cedar: [
-            { cpu: 32, ram: "125G", arch: "broadwell", label: "Opt 1: 125G/32c" },
-            { cpu: 32, ram: "250G", arch: "broadwell", label: "Opt 2: 250G/32c" },
-            { cpu: 32, ram: "502G", arch: "broadwell", label: "Opt 3: 502G/32c" },
-            { cpu: 32, ram: "1510G", arch: "broadwell", label: "Opt 4: 1510G/32c" },
-            { cpu: 32, ram: "4000G", arch: "NONE", label: "Opt 5: 4000G (EPYC)" },
-            { cpu: 40, ram: "6000G", arch: "cascade", label: "Opt 6: 6000G (Cascade)" },
-            { cpu: 24, ram: "125G", arch: "broadwell", label: "Opt 7: GPU", gpu:true },
-            { cpu: 24, ram: "250G", arch: "broadwell", label: "Opt 8: GPU", gpu:true },
-            { cpu: 32, ram: "187G", arch: "cascade", label: "Opt 9: GPU", gpu:true },
-            { cpu: 48, ram: "187G", arch: "skylake", label: "Opt 10: 187G/48c (Skylake)" },
-            { cpu: 48, ram: "187G", arch: "cascade", label: "Opt 11: 187G/48c (Cascade)" }
-        ],
-        narval: [
-            { cpu: 64, ram: "249G", arch: "NONE", label: "Opt 1: 249G/64c" },
-            { cpu: 64, ram: "2009G", arch: "NONE", label: "Opt 2: 2009G/64c" },
-            { cpu: 64, ram: "4000G", arch: "NONE", label: "Opt 3: 4000G/64c" },
-            { cpu: 48, ram: "498G", arch: "NONE", label: "Opt 4: GPU", gpu:true }
-        ],
-        beluga: [
-            { cpu: 40, ram: "92G", arch: "NONE", label: "Opt 1: 92G/40c" },
-            { cpu: 40, ram: "186G", arch: "NONE", label: "Opt 2: 186G/40c" },
-            { cpu: 40, ram: "752G", arch: "NONE", label: "Opt 3: 752G/40c" },
-            { cpu: 40, ram: "186G", arch: "NONE", label: "Opt 4: GPU", gpu:true }
-        ],
-        niagara: [
-            { cpu: 40, ram: "NONE", arch: "NONE", label: "Standard: 188G/40c" }
-        ]
-    };
-
-    function populateNodes() {
-        const cluster = document.getElementById('cluster').value;
-        const select = document.getElementById('nodeConfig');
-        select.innerHTML = '';
-        serverOptions[cluster].forEach(opt => {
-            const el = document.createElement('option');
-            el.value = JSON.stringify(opt);
-            el.textContent = opt.label;
-            select.appendChild(el);
-        });
-    }
-
-    function toggleResumeUI() {
-        const isResume = document.getElementById('jobType').value === 'resume';
-        document.getElementById('resumeInput').style.display = isResume ? 'block' : 'none';
-    }
-
-    function generateWorkflow() {
-        const type = document.getElementById('jobType').value;
-        const cluster = document.getElementById('cluster').value;
-        const account = document.getElementById('account').value || "def-madiseh";
-        const nodeOpt = JSON.parse(document.getElementById('nodeConfig').value);
-        const walltime = document.getElementById('walltime').value.replace('-', ':');
-        const nodes = document.getElementById('nodesCount').value;
-        const input = document.getElementById('inputFile').value || "model.mph";
-        const study = document.getElementById('studyTag').value;
-        const jobName = document.getElementById('jobName').value;
-        const cleanup = document.getElementById('doCleanup').value;
-
-        let s = `#!/bin/bash\n`;
-        s += `#SBATCH --account=${account}\n`;
-        s += `#SBATCH --nodes=${nodes}\n`;
-        s += `#SBATCH --cpus-per-task=${nodeOpt.cpu}\n`;
-        s += `#SBATCH --ntasks-per-node=1\n`;
-        s += `#SBATCH --time=${walltime}:00\n`;
-        if(nodeOpt.ram !== "NONE") s += `#SBATCH --mem=${nodeOpt.ram}\n`;
-        if(nodeOpt.arch !== "NONE") s += `#SBATCH --constraint=${nodeOpt.arch}\n`;
-        s += `#SBATCH --job-name=${jobName}\n`;
-        s += `#SBATCH --output=out.out\n#SBATCH --error=err.err\n#SBATCH --mail-type=ALL\n\n`;
-
-        s += `# --- Environment Initialization ---\n`;
-        if(cleanup === 'yes') s += `echo "Cleaning comsol root..."\nrm -rvf $SCRATCH/.comsol/* $HOME/.comsol/*\n`;
-        s += `ulimit -s unlimited\n`;
-
-        let cmd = "comsol";
-        if(cluster === 'sockeye') {
-            s += `PATH2COMSOL='//arc/project/st-amadiseh-1/comsol/comsol62/multiphysics/bin'\n`;
-            s += `module load gcc openmpi openjdk/11.0.20.1_1\n`;
-            cmd = "${PATH2COMSOL}/comsol";
-        } else {
-            if(cluster === 'niagara') s += `module load CCEnv\n`;
-            s += `module load StdEnv/2020 StdEnv/2023 comsol/6.2\n`;
-            if(cluster === 'narval') s += `export I_MPI_COLL_EXTERNAL=0\n`;
+        function populateNodes() {
+            const cluster = document.getElementById('cluster').value;
+            const select = document.getElementById('nodeConfig');
+            select.innerHTML = '';
+            serverOptions[cluster].forEach(opt => {
+                const el = document.createElement('option');
+                el.value = JSON.stringify(opt);
+                el.textContent = opt.label;
+                select.appendChild(el);
+            });
         }
 
-        s += `\n# --- Directory Orchestration (get_desk_ready) ---\n`;
-        s += `TIMESTAMP=$(date +"%Y%m%d_%H%M%S")\n`;
-        s += `WORK_DIR="job_\${TIMESTAMP}"\n`;
-        s += `mkdir -p \${WORK_DIR}/tmp \${WORK_DIR}/rec\n`;
-
-        if(type === 'new') {
-            s += `echo "Initializing NEW job workflow..."\n`;
-            s += `cp ./${input} \${WORK_DIR}/ \n`;
-            s += `cd \${WORK_DIR}\n`;
-        } else {
-            const recSource = document.getElementById('recoveryDir').value || "rec";
-            s += `echo "Initializing RESUME job workflow..."\n`;
-            s += `cp -r ${recSource}/* \${WORK_DIR}/rec/ 2>/dev/null || true\n`;
-            s += `cp ./${input} \${WORK_DIR}/ \n`;
-            s += `cd \${WORK_DIR}\n`;
+        function toggleResumeUI() {
+            const isResume = document.getElementById('jobType').value === 'resume';
+            document.getElementById('resumeInput').style.display = isResume ? 'block' : 'none';
         }
 
-        const studyFlag = study ? `-study ${study} ` : "";
-        const resumeFlag = type === 'resume' ? "-recover -continue " : "";
-        
-        s += `\n# --- Execution (submit_for_comsol) ---\n`;
-        s += `\${CMD:-${cmd}} batch -mpibootstrap slurm -inputfile ${input} -outputfile solved_${input} -batchlog comsol.log -tmpdir ./tmp -recoverydir ./rec -alivetime 15 ${studyFlag}${resumeFlag}\n`;
+        function generateWorkflow() {
+            const type = document.getElementById('jobType').value;
+            const cluster = document.getElementById('cluster').value;
+            const account = document.getElementById('account').value || "def-madiseh";
+            const nodeOpt = JSON.parse(document.getElementById('nodeConfig').value);
+            const walltime = document.getElementById('walltime').value.replace('-', ':');
+            const nodes = document.getElementById('nodesCount').value;
+            const input = document.getElementById('inputFile').value || "model.mph";
+            const study = document.getElementById('studyTag').value;
+            const jobName = document.getElementById('jobName').value;
+            const cleanup = document.getElementById('doCleanup').value;
 
-        document.getElementById('preview').textContent = s;
-        document.getElementById('preview').style.display = 'block';
-        document.getElementById('dlBtn').style.display = 'block';
-    }
+            let s = `#!/bin/bash\n`;
+            s += `#SBATCH --account=${account}\n`;
+            s += `#SBATCH --nodes=${nodes}\n`;
+            s += `#SBATCH --cpus-per-task=${nodeOpt.cpu}\n`;
+            s += `#SBATCH --ntasks-per-node=1\n`;
+            s += `#SBATCH --time=${walltime}:00\n`;
+            if (nodeOpt.ram !== "NONE") s += `#SBATCH --mem=${nodeOpt.ram}\n`;
+            if (nodeOpt.arch !== "NONE") s += `#SBATCH --constraint=${nodeOpt.arch}\n`;
+            s += `#SBATCH --job-name=${jobName}\n`;
+            s += `#SBATCH --output=out.out\n#SBATCH --error=err.err\n#SBATCH --mail-type=ALL\n\n`;
 
-    function downloadScript() {
-        const text = document.getElementById('preview').textContent;
-        const blob = new Blob([text], { type: 'text/plain' });
-        const anchor = document.createElement('a');
-        anchor.download = 'submit_job.sh';
-        anchor.href = window.URL.createObjectURL(blob);
-        anchor.click();
-    }
+            s += `# --- Environment Initialization ---\n`;
+            if (cleanup === 'yes') s += `echo "Cleaning comsol root..."\nrm -rvf $SCRATCH/.comsol/* $HOME/.comsol/*\n`;
+            s += `ulimit -s unlimited\n`;
 
-    populateNodes();
-</script>
+            let cmd = "comsol";
+            if (cluster === 'sockeye') {
+                s += `PATH2COMSOL='//arc/project/st-amadiseh-1/comsol/comsol62/multiphysics/bin'\n`;
+                s += `module load gcc openmpi openjdk/11.0.20.1_1\n`;
+                cmd = "${PATH2COMSOL}/comsol";
+            } else {
+                if (cluster === 'niagara') s += `module load CCEnv\n`;
+                s += `module load StdEnv/2020 StdEnv/2023 comsol/6.2\n`;
+                if (cluster === 'narval') s += `export I_MPI_COLL_EXTERNAL=0\n`;
+            }
+
+            s += `\n# --- Directory Orchestration (get_desk_ready) ---\n`;
+            s += `TIMESTAMP=$(date +"%Y%m%d_%H%M%S")\n`;
+            s += `WORK_DIR="job_\${TIMESTAMP}"\n`;
+            s += `mkdir -p \${WORK_DIR}/tmp \${WORK_DIR}/rec\n`;
+
+            if (type === 'new') {
+                s += `echo "Initializing NEW job workflow..."\n`;
+                s += `cp ./${input} \${WORK_DIR}/ \n`;
+                s += `cd \${WORK_DIR}\n`;
+            } else {
+                const recSource = document.getElementById('recoveryDir').value || "rec";
+                s += `echo "Initializing RESUME job workflow..."\n`;
+                s += `cp -r ${recSource}/* \${WORK_DIR}/rec/ 2>/dev/null || true\n`;
+                s += `cp ./${input} \${WORK_DIR}/ \n`;
+                s += `cd \${WORK_DIR}\n`;
+            }
+
+            const studyFlag = study ? `-study ${study} ` : "";
+            const resumeFlag = type === 'resume' ? "-recover -continue " : "";
+
+            s += `\n# --- Execution (submit_for_comsol) ---\n`;
+            s += `\${CMD:-${cmd}} batch -mpibootstrap slurm -inputfile ${input} -outputfile solved_${input} -batchlog comsol.log -tmpdir ./tmp -recoverydir ./rec -alivetime 15 ${studyFlag}${resumeFlag}\n`;
+
+            document.getElementById('preview').textContent = s;
+            document.getElementById('preview').style.display = 'block';
+            document.getElementById('dlBtn').style.display = 'block';
+        }
+
+        function downloadScript() {
+            const text = document.getElementById('preview').textContent;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'submit_job.sh';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.click();
+        }
+
+        populateNodes();
+    </script>
 </body>
+
 </html>
