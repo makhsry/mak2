@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Pattern Mapper</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="_RoutPlanner_style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <h1>Route Pattern Mapper</h1>
+            <p>Converts a pattern image to GPS routes and exports to GPX files.</p>
+        </div>
+        <div class="header-right">
+            <div id="status-bar" class="status-bar">
+                <div id="status-hint" class="hint-text">hint: Enter location(s) using ';' for multiple cities, then
+                    Download</div>
+                <div id="status-log" class="log-text">>> Ready</div>
+            </div>
+        </div>
+    </header>
+
+
+    <main>
+        <aside class="controls">
+            <section class="control-group">
+                <h3>1. Choose Location</h3>
+                <div class="input-wrapper">
+                    <input type="text" id="place_name" placeholder="Vancouver, BC; Burnaby, BC"
+                        value="Vancouver, BC, Canada">
+                    <select id="network_type">
+                        <option value="bike">Bike</option>
+                        <option value="walk">Walk</option>
+                        <option value="drive">Drive</option>
+                    </select>
+                </div>
+                <button id="btn-fetch-map">Download Street Network</button>
+            </section>
+
+            <section class="control-group">
+                <h3>2. Pattern Image</h3>
+                <div class="input-wrapper">
+                    <input type="file" id="image_input" accept="image/*">
+                </div>
+                <button id="btn-process-image" disabled>Pattern Image</button>
+            </section>
+
+
+
+            <section class="control-group">
+                <h3>3. Adjust Overlay</h3>
+                <div class="slider-grid">
+                    <div class="slider-item">
+                        <label>Scale</label>
+                        <input type="range" id="scale" min="0.01" max="1" step="0.01" value="0.5">
+                        <span id="val-scale">0.50</span>
+                    </div>
+                    <div class="slider-item">
+                        <label>Offset X</label>
+                        <input type="range" id="offset_x" min="-0.5" max="0.5" step="0.01" value="0.1">
+                        <span id="val-offset-x">0.10</span>
+                    </div>
+                    <div class="slider-item">
+                        <label>Offset Y</label>
+                        <input type="range" id="offset_y" min="-0.5" max="0.5" step="0.01" value="0.1">
+                        <span id="val-offset-y">0.10</span>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label>Outermost Color (Anchor)</label>
+                    <select id="anchor_color">
+                        <option value="">Auto</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>4. Match & Export</h3>
+                <button id="btn-snap-route" disabled style="margin-bottom: 0.5rem;">Match to known ways?</button>
+                <button id="btn-export-gpx" disabled>Export GPX Files</button>
+            </section>
+        </aside>
+
+        <section class="display-area">
+            <div id="map"></div>
+            <div class="preview-panel">
+                <canvas id="canvas_original" title="Original Image"></canvas>
+                <canvas id="canvas_mask" title="Color Masks / Routes"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Define OpenCV Callback Before Loading -->
+    <script>
+        function onOpenCvReady() {
+            window.cvLoaded = true;
+            if (window.initCvApp) window.initCvApp();
+        }
+    </script>
+    <!-- OpenCV.js -->
+    <script async src="https://docs.opencv.org/4.5.4/opencv.js" onload="onOpenCvReady();"></script>
+    <!-- App Logic -->
+    <script src="_RoutPlanner_app.js"></script>
+</body>
+
+</html>
