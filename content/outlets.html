@@ -29,7 +29,7 @@
 <li><a href="#an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</a></li>
 <li><a href="#local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</a></li>
 <li><a href="#nanotube-builder-and-mesher">Nanotube Builder and Mesher</a></li>
-<li><a href="#drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</a></li>
+<li><a href="#drawing-to-gpx-route-pattern-mapper">Drawing to GPX (Route Pattern Mapper)</a></li>
 <li><a href="#creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</a></li>
 <li><a href="#hpc-job-management-tools">HPC Job Management Tools</a></li>
 <li><a href="#cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</a></li>
@@ -1134,24 +1134,30 @@ if __name__ == &quot;__main__&quot;:
 
         <section class="card span-1 empty"></section>
         <section class="card span-2">
-            <div class="card-content"><h3 id="drawing-to-gpx-route-pattern-mapper-python-application">Drawing to GPX (Route Pattern Mapper — Python Application)</h3>
+            <div class="card-content"><h3 id="drawing-to-gpx-route-pattern-mapper">Drawing to GPX (Route Pattern Mapper)</h3>
 <p>&nbsp;</p>
-<p>A <strong>Python notebook</strong> that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo, or artwork), overlays it onto a real city street network from <strong>OpenStreetMap</strong>, extracts <strong>GPS coordinates</strong> for each color layer, and exports the result as one or more <strong>GPX track files</strong> — ready to be used in any <strong>GPS-capable</strong> navigation app or <strong>fitness tracker</strong>.</p>
-<p>&nbsp;</p>
-<p><strong>What It Does</strong></p>
-<p>&nbsp;</p>
-<p>The notebook performs the following stages in order:</p>
+<p>A <strong>web app</strong> that takes a <strong>color-coded pattern image</strong> (e.g., a design, logo or similar), overlays it onto a <strong>(multi)-city street network</strong> (downloaded from OpenStreetMap), extracts <strong>GPS coordinates</strong> for each color layer, and outputs the result as one or more <strong>GPX track files</strong> — ready to be used in any <strong>GPS-capable</strong> navigation apps.</p>
 <p>&nbsp;</p>
 <ul>
-<li><strong>Downloads a city's street network</strong> from OpenStreetMap</li>
-<li><strong>Loads a pattern image</strong> and converts it to HSV color space</li>
-<li><strong>Detects which colors are present</strong> in the image above a minimum threshold</li>
-<li><strong>Creates binary masks</strong> for each detected color</li>
-<li><strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary</li>
-<li><strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position</li>
-<li><strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal</li>
-<li><strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude)</li>
-<li><strong>Exports one <code>.gpx</code> file per color</strong> layer</li>
+<li><strong>Access</strong> the tool <a href="_RoutPlanner.html"><strong>here</strong></a>. </li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Note:</strong> To run this app <strong>locally</strong>, you need to intiiate a <strong>server</strong> first. To do so, open <strong>terminal</strong> and run <strong><code>python -m http.server 8000</code></strong> in the folder where the file is saved. Then use this link: <strong><code>http://localhost:8000/_RoutPlanner.html</code></strong>. </p>
+<p>&nbsp;</p>
+<p><img alt="RoutPlanner_App" src="media/Images_Outlets_20250901_RoutPlanner.png" /></p>
+<p>&nbsp;</p>
+<p>This app was originally written as an ipython notebook and here is what it does:</p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Downloads a (multi)-city's street network</strong> from OpenStreetMap.</li>
+<li><strong>Loads a pattern image</strong> and converts it to HSV color space.</li>
+<li><strong>Detects which colors are present</strong> in the image above a minimum threshold.</li>
+<li><strong>Creates binary masks</strong> for each detected color.</li>
+<li><strong>Extracts the outer contour</strong> of each color region and produces a skeletal boundary.</li>
+<li><strong>Overlays the pattern</strong> onto the street map at a user-specified scale and position.</li>
+<li><strong>Orders the boundary pixels</strong> into a continuous path using nearest-neighbor traversal.</li>
+<li><strong>Converts pixel positions to GPS coordinates</strong> (latitude/longitude).</li>
+<li><strong>Exports one <code>.gpx</code> file per color</strong> layer.</li>
 </ul>
 <p>&nbsp;</p>
 <p><strong>Key Parameters Reference</strong></p>
