@@ -5,8 +5,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nanochannel Builder</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
+    :root {
+      --primary: #000;
+      --bg: #fff;
+      --text: #1a1a1a;
+      --border: #000;
+      --muted: #f0f0f0;
+      --accent-blue: #000;
+      /* muted to BW system */
+      --accent-green: #000;
+    }
+
     *,
     *::before,
     *::after {
@@ -15,82 +28,173 @@
       padding: 0;
     }
 
-    html,
     body {
-      height: 100%;
-      background: #050a12;
-      font-family: 'JetBrains Mono', 'Courier New', monospace;
-      color: #c8e0ff;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
-    #app {
-      display: flex;
-      height: 100vh;
+    /* Typography */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 700;
+      color: #000;
     }
 
-    /* ── Sidebar ── */
-    #sidebar {
-      width: 290px;
-      min-width: 290px;
-      background: linear-gradient(180deg, #0a1628 0%, #060e1c 100%);
-      border-right: 1px solid #1a2d4a;
-      padding: 20px 18px;
-      overflow-y: auto;
+    /* Header */
+    header {
+      padding: 1.5rem 2rem;
+      background: #fff;
+      border-bottom: 4px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .header-left h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .header-left p {
+      margin: 0.5rem 0 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Status bar */
+    .status-bar {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #fff;
+      min-width: 340px;
+      height: 80px;
+      text-align: left;
+      border: 1px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       display: flex;
       flex-direction: column;
-      gap: 0;
+      justify-content: center;
+      gap: 0.25rem;
     }
 
-    #sidebar::-webkit-scrollbar {
+    .hint-text {
+      color: blue;
+      font-weight: 700;
+    }
+
+    .log-text {
+      color: #000;
+    }
+
+    /* Main layout */
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar / Controls */
+    aside.controls {
+      width: 320px;
+      min-width: 320px;
+      padding: 2rem;
+      border-right: 1px solid var(--border);
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      overflow-y: auto;
+    }
+
+    aside.controls::-webkit-scrollbar {
       width: 4px;
     }
 
-    #sidebar::-webkit-scrollbar-track {
+    aside.controls::-webkit-scrollbar-track {
       background: transparent;
     }
 
-    #sidebar::-webkit-scrollbar-thumb {
-      background: #1a2d4a;
-      border-radius: 2px;
+    aside.controls::-webkit-scrollbar-thumb {
+      background: #ccc;
     }
 
+    /* Control sections */
+    .control-group h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .control-group h3::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 30px;
+      height: 3px;
+      background: #000;
+    }
+
+    /* Section label (uppercase tag, like .section-label in Nanotube)  */
     .section-label {
-      color: #4a9eff;
-      font-size: 10px;
+      font-size: 0.7rem;
       letter-spacing: 2px;
-      margin-bottom: 10px;
       text-transform: uppercase;
+      color: #000;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-family: 'Inter', sans-serif;
     }
 
-    .section {
-      margin-bottom: 22px;
-    }
-
-    /* equations box */
+    /* Equations box */
     .eq-box {
-      background: rgba(74, 158, 255, 0.05);
-      border: 1px solid #1a2d4a;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 10px;
-      color: #7db3e8;
+      background: #f8f8f8;
+      border: 1px solid #000;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #1a1a1a;
       line-height: 2;
-      margin-bottom: 22px;
+      margin-bottom: 0;
+      font-family: 'Courier New', monospace;
     }
 
     .eq-box .eq-sub {
-      color: #3a5a7a;
+      color: #555;
       margin-top: 4px;
     }
 
-    /* validity table */
+    /* Validity table */
     .val-table {
-      background: #060e1c;
-      border: 1px solid #1a2d4a;
-      border-radius: 7px;
+      background: #f8f8f8;
+      border: 1px solid #000;
       overflow: hidden;
-      font-size: 11px;
+      font-size: 0.8rem;
     }
 
     .val-row {
@@ -98,8 +202,8 @@
       grid-template-columns: 34px 70px 1fr;
       align-items: center;
       gap: 8px;
-      padding: 7px 10px;
-      border-bottom: 1px solid #0d1829;
+      padding: 6px 10px;
+      border-bottom: 1px solid #e0e0e0;
     }
 
     .val-row:last-child {
@@ -107,26 +211,30 @@
     }
 
     .val-sym {
-      color: #c8e0ff;
+      color: #000;
       font-weight: 700;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1rem;
     }
 
     .val-range {
-      color: #4adf80;
-      font-size: 10px;
-      background: rgba(40, 160, 80, 0.08);
+      color: #000;
+      font-size: 0.75rem;
+      background: #e8e8e8;
       padding: 2px 6px;
-      border-radius: 4px;
+      font-family: 'Courier New', monospace;
     }
 
     .val-note {
-      color: #2a4a6a;
-      font-size: 10px;
+      color: #666;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    /* param control */
+    /* Parameter controls */
     .param-control {
-      margin-bottom: 16px;
+      margin-bottom: 1.25rem;
     }
 
     .param-header {
@@ -137,34 +245,54 @@
     }
 
     .param-label {
-      color: #7db3e8;
-      font-size: 13px;
-      font-weight: 700;
+      color: #000;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .param-range {
-      color: #2a4a6a;
-      font-size: 10px;
+      color: #888;
+      font-size: 0.75rem;
+      font-family: 'Courier New', monospace;
     }
 
-    .param-slider {
-      width: 100%;
-      accent-color: #4a9eff;
+    /* Shared input / select / button base */
+    input,
+    select,
+    button {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: #000;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #000;
+    }
+
+    /* Range slider */
+    input[type="range"] {
+      accent-color: #000;
+      padding: 0;
+      border: none;
+      height: 2px;
+      background: #ccc;
       cursor: pointer;
-      margin-bottom: 6px;
+      width: 100%;
       display: block;
+      margin-bottom: 6px;
     }
 
+    /* Number input */
     .param-input {
       width: 100%;
-      padding: 5px 8px;
-      border-radius: 5px;
-      background: #060e1c;
-      border: 1px solid #1a2d4a;
-      color: #c8e0ff;
-      font-size: 12px;
-      font-family: inherit;
-      outline: none;
       appearance: textfield;
       -moz-appearance: textfield;
     }
@@ -174,56 +302,114 @@
       opacity: 0.4;
     }
 
-    .param-input:hover,
-    .param-input:focus {
-      border-color: #4a9eff;
+    /* Primary action button */
+    button {
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+      width: 100%;
     }
 
-    /* toggle switch */
+    button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #ccc;
+      color: #666;
+      border-color: #ccc;
+    }
+
+    /* Format buttons */
+    .fmt-row {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .fmt-btn {
+      flex: 1;
+      padding: 0.65rem 0;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s;
+      width: auto;
+    }
+
+    .fmt-btn+.fmt-btn {
+      border-left: none;
+    }
+
+    .fmt-btn.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .fmt-btn:hover:not(.active) {
+      background: #f0f0f0;
+    }
+
+    /* Toggle switch */
     .toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 0.75rem;
     }
 
     .toggle-label {
-      color: #7db3e8;
-      font-size: 12px;
+      color: #1a1a1a;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .toggle {
       width: 36px;
       height: 20px;
-      border-radius: 10px;
+      border-radius: 0;
       cursor: pointer;
       position: relative;
       transition: background 0.2s;
       flex-shrink: 0;
+      border: 1px solid #000;
     }
 
     .toggle-knob {
       position: absolute;
       top: 3px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
+      width: 12px;
+      height: 12px;
       background: #fff;
       transition: left 0.2s;
     }
 
-    /* mesh density stats */
+    /* Stats grid */
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 4px;
+      gap: 4px;
+      margin-bottom: 0.75rem;
     }
 
     .stat-card {
-      background: #060e1c;
-      border: 1px solid #1a2d4a;
-      border-radius: 6px;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
       padding: 6px 8px;
     }
 
@@ -232,127 +418,115 @@
     }
 
     .stat-val {
-      font-size: 13px;
+      font-size: 0.85rem;
       font-weight: 700;
+      color: #000;
+      font-family: 'Courier New', monospace;
     }
 
     .stat-lbl {
-      color: #2a4a6a;
-      font-size: 9px;
+      color: #888;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       margin-top: 2px;
     }
 
-    .size-section-label {
-      color: #4a9eff;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      margin: 10px 0 6px;
-    }
-
+    /* File size rows */
     .size-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #060e1c;
-      border: 1px solid #1a2d4a;
-      border-radius: 5px;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-bottom: none;
       padding: 5px 10px;
-      margin-bottom: 4px;
+    }
+
+    .size-row:last-child {
+      border-bottom: 1px solid #e0e0e0;
     }
 
     .size-lbl {
-      color: #3a5a7a;
-      font-size: 10px;
+      color: #666;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .size-val {
-      color: #c8e0ff;
-      font-size: 11px;
+      color: #000;
+      font-size: 0.8rem;
       font-weight: 700;
+      font-family: 'Courier New', monospace;
     }
 
-    /* export */
-    .fmt-row {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .fmt-btn {
-      flex: 1;
-      padding: 6px 0;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid #1a2d4a;
-      background: transparent;
-      color: #4a6a8a;
-      font-size: 11px;
-      font-family: inherit;
-      transition: all 0.15s;
-    }
-
-    .fmt-btn.active {
-      background: rgba(74, 158, 255, 0.2);
-      border-color: #4a9eff;
-      color: #c8e0ff;
-    }
-
-    .fmt-desc {
-      color: #3a5a7a;
-      font-size: 10px;
-      line-height: 1.6;
-      margin-bottom: 10px;
-    }
-
+    /* Size estimate row */
     .size-est-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(74, 158, 255, 0.06);
-      border: 1px solid #1a2d4a;
-      border-radius: 6px;
-      padding: 6px 10px;
-      margin-bottom: 10px;
+      background: #f8f8f8;
+      border: 1px solid #000;
+      padding: 0.6rem 0.85rem;
+      margin-bottom: 0.75rem;
     }
 
     .size-est-lbl {
-      color: #4a6a8a;
-      font-size: 10px;
+      color: #666;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .size-est-val {
-      color: #ffaa44;
-      font-size: 12px;
+      color: #000;
+      font-size: 0.85rem;
       font-weight: 700;
+      font-family: 'Courier New', monospace;
     }
 
-    .download-btn {
-      width: 100%;
-      padding: 10px 0;
-      border-radius: 7px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #1a4a8a, #0d2a5a);
-      border: 1px solid #4a9eff;
-      color: #c8e0ff;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: inherit;
-      letter-spacing: 1px;
+    /* Format description */
+    .fmt-desc {
+      color: #666;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
+    /* Export message */
     .export-msg {
-      margin-top: 8px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      background: rgba(40, 160, 80, 0.12);
-      border: 1px solid #1a6a30;
-      color: #4adf80;
-      font-size: 10px;
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: #f8f8f8;
+      border: 1px solid #000;
+      border-left: 4px solid #000;
+      color: #000;
+      font-size: 0.75rem;
       line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       display: none;
     }
 
-    /* canvas area */
+    /* Density separator */
+    .density-sep {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Canvas area */
+    .display-area {
+      flex: 1;
+      position: relative;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+    }
+
     #canvas-wrap {
       flex: 1;
       position: relative;
@@ -362,89 +536,106 @@
       display: block;
     }
 
+    /* Hint overlay */
     #hint {
       position: absolute;
-      bottom: 20px;
+      bottom: 1.5rem;
       left: 50%;
       transform: translateX(-50%);
-      color: #1a3a5a;
-      font-size: 11px;
-      letter-spacing: 1px;
+      color: rgba(0, 0, 0, 0.35);
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
       pointer-events: none;
       white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
     }
 
+    /* Zoom buttons */
     #zoom-btns {
       position: absolute;
-      right: 20px;
-      bottom: 20px;
+      right: 1.5rem;
+      bottom: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .zoom-btn {
       width: 36px;
       height: 36px;
-      border-radius: 8px;
-      background: rgba(10, 22, 40, 0.85);
-      border: 1px solid #1a2d4a;
-      color: #4a9eff;
-      font-size: 20px;
+      border-radius: 0;
+      background: #fff;
+      border: 1px solid #000;
+      color: #000;
+      font-size: 18px;
       line-height: 36px;
       text-align: center;
       cursor: pointer;
-      font-family: monospace;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
       user-select: none;
+      transition: all 0.15s;
+    }
+
+    .zoom-btn:hover {
+      background: #000;
+      color: #fff;
     }
 
     .zoom-btn.rst {
-      color: #3a5a7a;
-      font-size: 10px;
-    }
-
-    /* title */
-    .app-tag {
-      color: #4a9eff;
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .app-title {
-      color: #c8e0ff;
-      font-size: 18px;
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
-    .density-sep {
-      border-top: 1px solid #1a2d4a;
-      padding-top: 14px;
-      margin-top: 4px;
+    /* Input divider */
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
 
 <body>
-  <div id="app">
-    <!-- ══ SIDEBAR ══ -->
-    <div id="sidebar">
-      <div class="app-title">Nanochannel Builder</div>
 
-      <!-- Equations -->
-      <div class="eq-box">
-        <div class="section-label" style="margin-bottom:6px">GOVERNING EQUATIONS</div>
-        <div>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)</div>
-        <div>w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</div>
-        <div class="eq-sub">r(ξ) = (w₂ − w₁) / 2</div>
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <h1>Nanochannel Builder</h1>
+      <p>Interactive nanotube geometry builder with mesh export.</p>
+    </div>
+    <div class="header-right">
+      <div class="status-bar">
+        <div class="hint-text">hint: Adjust parameters, then Download mesh in CSV / OBJ / JSON</div>
+        <div class="log-text" id="status-log">>> Ready</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Sidebar -->
+    <aside class="controls">
+
+      <!-- 1. Governing Equations -->
+      <div class="control-group">
+        <h3>1. Governing Equations</h3>
+        <div class="eq-box">
+          <div class="section-label" style="margin-bottom:6px">Governing Equations</div>
+          <div>w₁(ξ) = α₁ sin(α₃πξ/5) + α₂ sin(7πξ/5)</div>
+          <div>w₂(ξ) = r₀ + α₁ sin(α₃πξ/5) − α₂ sin(7πξ/5)</div>
+          <div class="eq-sub" style="margin-top:6px">r(ξ) = (w₂ − w₁) / 2</div>
+        </div>
       </div>
 
-      <!-- Validity ranges -->
-      <div class="section">
-        <div class="section-label">VALIDITY RANGES</div>
+      <!-- 2. Validity Ranges -->
+      <div class="control-group">
+        <h3>2. Validity Ranges</h3>
         <div class="val-table">
           <div class="val-row"><span class="val-sym">α₁</span><span class="val-range">[0, 1]</span><span
               class="val-note">asymmetry amplitude</span></div>
@@ -463,84 +654,84 @@
         </div>
       </div>
 
-      <!-- Parameters -->
-      <div class="section">
-        <div class="section-label">PARAMETERS</div>
+      <!-- 3. Parameters -->
+      <div class="control-group">
+        <h3>3. Parameters</h3>
 
         <div class="param-control">
           <div class="param-header"><span class="param-label">α₁</span><span class="param-range">[0, 1]</span></div>
-          <input class="param-slider" type="range" id="sl-a1" min="0" max="1" step="0.01" value="0">
+          <input type="range" id="sl-a1" min="0" max="1" step="0.01" value="0">
           <input class="param-input" type="number" id="in-a1" min="0" max="1" step="0.01" value="0">
         </div>
         <div class="param-control">
           <div class="param-header"><span class="param-label">α₂</span><span class="param-range">[0, 1]</span></div>
-          <input class="param-slider" type="range" id="sl-a2" min="0" max="1" step="0.01" value="0.4">
+          <input type="range" id="sl-a2" min="0" max="1" step="0.01" value="0.4">
           <input class="param-input" type="number" id="in-a2" min="0" max="1" step="0.01" value="0.4">
         </div>
         <div class="param-control">
           <div class="param-header"><span class="param-label">α₃</span><span class="param-range">[0.5, 4]</span></div>
-          <input class="param-slider" type="range" id="sl-a3" min="0.5" max="4" step="0.1" value="1">
+          <input type="range" id="sl-a3" min="0.5" max="4" step="0.1" value="1">
           <input class="param-input" type="number" id="in-a3" min="0.5" max="4" step="0.1" value="1">
         </div>
         <div class="param-control">
           <div class="param-header"><span class="param-label">r₀</span><span class="param-range">[0.2, 2]</span></div>
-          <input class="param-slider" type="range" id="sl-r0" min="0.2" max="2" step="0.05" value="1">
+          <input type="range" id="sl-r0" min="0.2" max="2" step="0.05" value="1">
           <input class="param-input" type="number" id="in-r0" min="0.2" max="2" step="0.05" value="1">
         </div>
         <div class="param-control">
-          <div class="param-header"><span class="param-label">L (length)</span><span class="param-range">[2, 40]</span>
+          <div class="param-header"><span class="param-label">L (Length)</span><span class="param-range">[2, 40]</span>
           </div>
-          <input class="param-slider" type="range" id="sl-len" min="2" max="40" step="0.5" value="10">
+          <input type="range" id="sl-len" min="2" max="40" step="0.5" value="10">
           <input class="param-input" type="number" id="in-len" min="2" max="40" step="0.5" value="10">
         </div>
 
-        <!-- Mesh density sub-section -->
+        <!-- Mesh Density -->
         <div class="density-sep">
-          <div class="section-label">MESH DENSITY</div>
+          <div class="section-label">Mesh Density</div>
           <div class="param-control">
-            <div class="param-header"><span class="param-label">Nₐ axial pts</span><span class="param-range">[20,
+            <div class="param-header"><span class="param-label">Nₐ Axial Pts</span><span class="param-range">[20,
                 ∞)</span></div>
             <input class="param-input" type="number" id="in-na" min="20" step="10" value="200">
           </div>
           <div class="param-control">
-            <div class="param-header"><span class="param-label">Nᵣ radial pts</span><span class="param-range">[8,
+            <div class="param-header"><span class="param-label">Nᵣ Radial Pts</span><span class="param-range">[8,
                 ∞)</span></div>
             <input class="param-input" type="number" id="in-nr" min="8" step="4" value="48">
           </div>
 
-          <!-- Live stats -->
           <div class="stats-grid" id="stats-grid"></div>
-          <div class="size-section-label">EST. FILE SIZES</div>
+
+          <div class="section-label" style="margin-top:0.75rem">Est. File Sizes</div>
           <div id="size-rows"></div>
         </div>
       </div>
 
-      <!-- Display toggles -->
-      <div class="section">
-        <div class="section-label">DISPLAY</div>
+      <!-- 4. Display -->
+      <div class="control-group">
+        <h3>4. Display</h3>
         <div class="toggle-row">
           <span class="toggle-label">Wireframe</span>
-          <div class="toggle" id="tog-wire" style="background:#4a9eff" onclick="toggleSwitch('wire')">
+          <div class="toggle" id="tog-wire" style="background:#000" onclick="toggleSwitch('wire')">
             <div class="toggle-knob" id="knob-wire" style="left:18px"></div>
           </div>
         </div>
         <div class="toggle-row">
-          <span class="toggle-label">Inner flow tube</span>
-          <div class="toggle" id="tog-inner" style="background:#4a9eff" onclick="toggleSwitch('inner')">
+          <span class="toggle-label">Inner Flow Tube</span>
+          <div class="toggle" id="tog-inner" style="background:#000" onclick="toggleSwitch('inner')">
             <div class="toggle-knob" id="knob-inner" style="left:18px"></div>
           </div>
         </div>
         <div class="toggle-row">
-          <span class="toggle-label">Auto-rotate</span>
-          <div class="toggle" id="tog-rot" style="background:#4a9eff" onclick="toggleSwitch('rot')">
+          <span class="toggle-label">Auto-Rotate</span>
+          <div class="toggle" id="tog-rot" style="background:#000" onclick="toggleSwitch('rot')">
             <div class="toggle-knob" id="knob-rot" style="left:18px"></div>
           </div>
         </div>
       </div>
 
-      <!-- Export -->
-      <div class="section">
-        <div class="section-label">EXPORT MESH</div>
+      <!-- 5. Export -->
+      <div class="control-group">
+        <h3>5. Export Mesh</h3>
         <div class="fmt-row">
           <button class="fmt-btn active" id="fmt-csv" onclick="setFmt('csv')">CSV</button>
           <button class="fmt-btn" id="fmt-obj" onclick="setFmt('obj')">OBJ</button>
@@ -548,29 +739,31 @@
         </div>
         <div class="fmt-desc" id="fmt-desc">Vertices + normals + UVs for both surfaces in a flat table.</div>
         <div class="size-est-row">
-          <span class="size-est-lbl" id="est-lbl">est. CSV size</span>
+          <span class="size-est-lbl" id="est-lbl">Est. CSV Size</span>
           <span class="size-est-val" id="est-val">—</span>
         </div>
-        <button class="download-btn" onclick="doExport()">⬇ DOWNLOAD <span id="dl-fmt">CSV</span></button>
+        <button onclick="doExport()">⬇ Download <span id="dl-fmt">CSV</span></button>
         <div class="export-msg" id="export-msg"></div>
       </div>
-    </div><!-- /sidebar -->
 
-    <!-- ══ CANVAS ══ -->
-    <div id="canvas-wrap">
-      <div id="hint">DRAG TO PAN · RIGHT-DRAG / SHIFT-DRAG TO ROTATE · SCROLL TO ZOOM</div>
-      <div id="zoom-btns">
-        <div class="zoom-btn" onclick="adjustZoom(-1.2)">+</div>
-        <div class="zoom-btn" onclick="adjustZoom(1.2)">−</div>
-        <div class="zoom-btn rst" onclick="resetZoom()">RST</div>
+    </aside><!-- /controls -->
+
+    <!-- Canvas -->
+    <div class="display-area">
+      <div id="canvas-wrap">
+        <div id="hint">Drag to Pan · Shift-Drag / Right-Drag to Rotate · Scroll to Zoom</div>
+        <div id="zoom-btns">
+          <div class="zoom-btn" onclick="adjustZoom(-1.2)">+</div>
+          <div class="zoom-btn" onclick="adjustZoom(1.2)">−</div>
+          <div class="zoom-btn rst" onclick="resetZoom()">RST</div>
+        </div>
       </div>
     </div>
-  </div>
+
+  </main>
 
   <script>
-    // ══════════════════════════════════════════════════════
     //  STATE
-    // ══════════════════════════════════════════════════════
     const state = {
       a1: 0, a2: 0.4, a3: 1, r0: 1, tubeLength: 10,
       axialSegs: 200, radialSegs: 48,
@@ -578,12 +771,10 @@
       exportFmt: 'csv',
     };
 
-    // ══════════════════════════════════════════════════════
-    //  THREE.JS SETUP
-    // ══════════════════════════════════════════════════════
+    // THREE.JS SETUP
     const wrap = document.getElementById('canvas-wrap');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x080c14);
+    scene.background = new THREE.Color(0xf0f0f0);
 
     const camera = new THREE.PerspectiveCamera(55, wrap.clientWidth / wrap.clientHeight, 0.01, 100);
     camera.position.set(0, 1.5, 5.5);
@@ -594,22 +785,20 @@
     renderer.setSize(wrap.clientWidth, wrap.clientHeight);
     wrap.appendChild(renderer.domElement);
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0x8ab4f8, 0.6));
+    // Lights — adjusted for light BG
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
     const dir1 = new THREE.DirectionalLight(0xffffff, 2.0);
     dir1.position.set(3, 5, 4); scene.add(dir1);
-    const dir2 = new THREE.DirectionalLight(0xff6030, 1.2);
+    const dir2 = new THREE.DirectionalLight(0x334466, 1.0);
     dir2.position.set(-4, -2, -3); scene.add(dir2);
-    const pt = new THREE.PointLight(0x60aaff, 1.5, 20);
+    const pt = new THREE.PointLight(0x2255aa, 1.2, 20);
     pt.position.set(0, 0, 3); scene.add(pt);
 
-    // Grid
-    const grid = new THREE.GridHelper(14, 20, 0x1a2a4a, 0x0d1829);
+    // Grid — subtle on white
+    const grid = new THREE.GridHelper(14, 20, 0xbbbbbb, 0xdddddd);
     grid.position.y = -1.8; scene.add(grid);
 
-    // ══════════════════════════════════════════════════════
-    //  GEOMETRY
-    // ══════════════════════════════════════════════════════
+    // GEOMETRY
     function computeTubePath(a1, a2, a3, r0, segments, length) {
       const center = [], radii = [];
       for (let i = 0; i <= segments; i++) {
@@ -680,10 +869,10 @@
 
       const outerGeo = buildTubeMesh(center, radii, Na, Nr);
       const outerMat = new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(0.15, 0.55, 0.95),
+        color: new THREE.Color(0.1, 0.3, 0.8),
         metalness: 0.1, roughness: 0.25,
-        transmission: 0.55, thickness: 0.5,
-        transparent: true, opacity: 0.72,
+        transmission: 0.45, thickness: 0.5,
+        transparent: true, opacity: 0.78,
         side: THREE.DoubleSide, wireframe,
       });
       const outerMesh = new THREE.Mesh(outerGeo, outerMat);
@@ -695,9 +884,9 @@
         const innerRadii = radii.map(r => r * 0.35);
         const innerGeo = buildTubeMesh(center, innerRadii, Na, Nr);
         const innerMat = new THREE.MeshPhysicalMaterial({
-          color: new THREE.Color(0.95, 0.4, 0.15),
+          color: new THREE.Color(0.85, 0.25, 0.1),
           metalness: 0.2, roughness: 0.15,
-          emissive: new THREE.Color(0.4, 0.1, 0.0), emissiveIntensity: 0.3,
+          emissive: new THREE.Color(0.3, 0.05, 0.0), emissiveIntensity: 0.3,
           side: THREE.DoubleSide, wireframe,
         });
         const innerMesh = new THREE.Mesh(innerGeo, innerMat);
@@ -706,20 +895,17 @@
         tubeMeshes.push(innerMesh);
       }
       updateStats();
+      document.getElementById('status-log').textContent = '>> Mesh rebuilt — ' + state.axialSegs + ' axial × ' + state.radialSegs + ' radial';
     }
 
-    // ══════════════════════════════════════════════════════
-    //  ANIMATION
-    // ══════════════════════════════════════════════════════
+    // ANIMATION
     const rot = { x: 0.2, y: 0 };
     let zoom = 5.5;
-    // pan offset: how much the camera lookAt target is shifted
     const pan = { x: 0, y: 0 };
     const ZOOM_MIN = 1, ZOOM_MAX = 20;
     const mouse = { down: false, button: 0, lastX: 0, lastY: 0, pinchDist: 0 };
 
     function updateCamera() {
-      // Camera orbits around (pan.x, pan.y, 0) at distance zoom
       const sinX = Math.sin(rot.x), cosX = Math.cos(rot.x);
       const sinY = Math.sin(rot.y), cosY = Math.cos(rot.y);
       camera.position.set(
@@ -733,7 +919,6 @@
     function animate() {
       requestAnimationFrame(animate);
       if (state.autoRot && !mouse.down) rot.y += 0.003;
-      // Meshes sit at origin; camera orbits around pan target
       tubeMeshes.forEach(m => { m.rotation.x = 0; m.rotation.y = 0; });
       updateCamera();
       renderer.render(scene, camera);
@@ -746,16 +931,10 @@
       camera.updateProjectionMatrix();
     });
 
-    // ══════════════════════════════════════════════════════
-    //  MOUSE / TOUCH
-    // ══════════════════════════════════════════════════════
+    // MOUSE / TOUCH
     const canvas = renderer.domElement;
     canvas.style.cursor = 'grab';
     canvas.addEventListener('contextmenu', e => e.preventDefault());
-
-    function isRotateMode(e) {
-      return e.button === 2 || e.shiftKey;
-    }
 
     canvas.addEventListener('mousedown', e => {
       mouse.down = true;
@@ -764,7 +943,7 @@
       mouse.lastY = e.clientY;
       state.autoRot = false;
       updateToggleUI('rot', false);
-      canvas.style.cursor = isRotateMode(e) ? 'crosshair' : 'grabbing';
+      canvas.style.cursor = (e.button === 2 || e.shiftKey) ? 'crosshair' : 'grabbing';
     });
 
     window.addEventListener('mousemove', e => {
@@ -773,35 +952,26 @@
       const dy = e.clientY - mouse.lastY;
       mouse.lastX = e.clientX;
       mouse.lastY = e.clientY;
-
       if (mouse.button === 2 || e.shiftKey) {
-        // Rotate
         rot.y += dx * 0.008;
         rot.x += dy * 0.008;
       } else {
-        // Pan — scale by zoom so speed feels consistent
         const panScale = zoom * 0.0014;
-        // Right = camera's local X, Up = camera's local Y (approximate in world space)
         const cosY = Math.cos(rot.y), sinY = Math.sin(rot.y);
         const cosX = Math.cos(rot.x);
-        // world right vector (horizontal pan)
         pan.x -= dx * panScale * cosY;
-        pan.y -= dy * panScale * cosX;   // vertical pan in screen-Y
-        pan.x += dy * panScale * sinY * Math.sin(rot.x); // tilt correction
+        pan.y -= dy * panScale * cosX;
+        pan.x += dy * panScale * sinY * Math.sin(rot.x);
       }
     });
 
-    window.addEventListener('mouseup', () => {
-      mouse.down = false;
-      canvas.style.cursor = 'grab';
-    });
+    window.addEventListener('mouseup', () => { mouse.down = false; canvas.style.cursor = 'grab'; });
 
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
       zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + e.deltaY * 0.01));
     }, { passive: false });
 
-    // Touch: single-finger pan, two-finger pinch-zoom, two-finger rotate
     let touchPrev = [];
     canvas.addEventListener('touchstart', e => {
       touchPrev = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
@@ -815,9 +985,7 @@
     canvas.addEventListener('touchmove', e => {
       e.preventDefault();
       const cur = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
-
       if (e.touches.length === 1 && touchPrev.length >= 1) {
-        // Single finger: pan
         const dx = cur[0].x - touchPrev[0].x;
         const dy = cur[0].y - touchPrev[0].y;
         const panScale = zoom * 0.0014;
@@ -828,22 +996,18 @@
         pan.x += dy * panScale * sinY * Math.sin(rot.x);
         state.autoRot = false; updateToggleUI('rot', false);
       } else if (e.touches.length === 2 && touchPrev.length >= 2) {
-        // Pinch: zoom
         const dx = cur[0].x - cur[1].x, dy = cur[0].y - cur[1].y;
         const dist = Math.hypot(dx, dy);
         zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + (mouse.pinchDist - dist) * 0.03));
         mouse.pinchDist = dist;
       }
-
       touchPrev = cur;
     }, { passive: false });
 
     function adjustZoom(delta) { zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + delta)); }
     function resetZoom() { zoom = 5.5; pan.x = 0; pan.y = 0; rot.x = 0.2; rot.y = 0; }
 
-    // ══════════════════════════════════════════════════════
-    //  PARAM BINDING
-    // ══════════════════════════════════════════════════════
+    // PARAM BINDING
     function bindParam(key, slId, inId, min, max, uncapped) {
       const sl = slId ? document.getElementById(slId) : null;
       const inp = document.getElementById(inId);
@@ -858,9 +1022,7 @@
         return true;
       }
 
-      if (sl) {
-        sl.addEventListener('input', () => { apply(sl.value); rebuildMesh(); });
-      }
+      if (sl) sl.addEventListener('input', () => { apply(sl.value); rebuildMesh(); });
       inp.addEventListener('change', () => { if (apply(inp.value)) rebuildMesh(); });
       inp.addEventListener('keydown', e => { if (e.key === 'Enter') { if (apply(inp.value)) rebuildMesh(); inp.blur(); } });
     }
@@ -873,7 +1035,6 @@
     bindParam('axialSegs', null, 'in-na', 20, Infinity, true);
     bindParam('radialSegs', null, 'in-nr', 8, Infinity, true);
 
-    // integer rounding for density inputs
     ['in-na', 'in-nr'].forEach(id => {
       const el = document.getElementById(id);
       el.addEventListener('change', () => {
@@ -883,16 +1044,14 @@
       });
     });
 
-    // ══════════════════════════════════════════════════════
-    //  TOGGLES
-    // ══════════════════════════════════════════════════════
+    // TOGGLES
     const toggleState = { wire: true, inner: true, rot: true };
 
     function updateToggleUI(key, val) {
       toggleState[key] = val;
       const tog = document.getElementById('tog-' + key);
       const knob = document.getElementById('knob-' + key);
-      tog.style.background = val ? '#4a9eff' : '#1a2d4a';
+      tog.style.background = val ? '#000' : '#ccc';
       knob.style.left = val ? '18px' : '3px';
     }
 
@@ -904,9 +1063,7 @@
       if (key === 'rot') { state.autoRot = next; }
     }
 
-    // ══════════════════════════════════════════════════════
-    //  LIVE STATS + FILE SIZE
-    // ══════════════════════════════════════════════════════
+    // LIVE STATS + FILE SIZE
     function fmtBytes(b) {
       if (b < 1024) return b + ' B';
       if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
@@ -919,26 +1076,21 @@
       const facesPerSurf = Na * Nr * 2;
       const totalVerts = vertsPerSurf * 2;
       const totalFaces = facesPerSurf * 2;
-      const totalPoints = totalVerts;
 
       const csvB = totalVerts * 80;
       const objB = totalVerts * 76 + totalFaces * 20;
       const jsonB = totalVerts * 120 + totalFaces * 18 + 500;
 
-      const cards = [
-        { lbl: 'total points', val: totalPoints.toLocaleString(), color: '#ffaa44', full: true },
-        { lbl: 'verts / surface', val: vertsPerSurf.toLocaleString(), color: '#4adf80', full: false },
-        { lbl: 'faces / surface', val: facesPerSurf.toLocaleString(), color: '#4adf80', full: false },
-        { lbl: 'total vertices', val: totalVerts.toLocaleString(), color: '#4a9eff', full: false },
-        { lbl: 'total faces', val: totalFaces.toLocaleString(), color: '#4a9eff', full: false },
-      ];
-
-      document.getElementById('stats-grid').innerHTML = cards.map(c =>
-        `<div class="stat-card${c.full ? ' full' : ''}">
-      <div class="stat-val" style="color:${c.color}">${c.val}</div>
-      <div class="stat-lbl">${c.lbl}</div>
-    </div>`
-      ).join('');
+      document.getElementById('stats-grid').innerHTML = [
+        { lbl: 'total points', val: totalVerts.toLocaleString(), full: true },
+        { lbl: 'verts / surface', val: vertsPerSurf.toLocaleString(), full: false },
+        { lbl: 'faces / surface', val: facesPerSurf.toLocaleString(), full: false },
+        { lbl: 'total vertices', val: totalVerts.toLocaleString(), full: false },
+        { lbl: 'total faces', val: totalFaces.toLocaleString(), full: false },
+      ].map(c => `<div class="stat-card${c.full ? ' full' : ''}">
+        <div class="stat-val">${c.val}</div>
+        <div class="stat-lbl">${c.lbl}</div>
+      </div>`).join('');
 
       document.getElementById('size-rows').innerHTML = [
         { lbl: 'CSV est. size', val: fmtBytes(csvB) },
@@ -946,14 +1098,11 @@
         { lbl: 'JSON est. size', val: fmtBytes(jsonB) },
       ].map(r => `<div class="size-row"><span class="size-lbl">${r.lbl}</span><span class="size-val">${r.val}</span></div>`).join('');
 
-      // Export panel size estimate
       const bytes = state.exportFmt === 'csv' ? csvB : state.exportFmt === 'obj' ? objB : jsonB;
       document.getElementById('est-val').textContent = fmtBytes(bytes);
     }
 
-    // ══════════════════════════════════════════════════════
-    //  EXPORT FORMAT
-    // ══════════════════════════════════════════════════════
+    // EXPORT FORMAT
     const fmtDescs = {
       csv: 'x, y, z, face_indices first — then nx, ny, nz, u, v per vertex for both surfaces.',
       obj: 'Positions then faces first, followed by normals and UVs. Two named objects: outer & inner.',
@@ -966,14 +1115,12 @@
         document.getElementById('fmt-' + f).classList.toggle('active', f === fmt);
       });
       document.getElementById('fmt-desc').textContent = fmtDescs[fmt];
-      document.getElementById('est-lbl').textContent = 'est. ' + fmt.toUpperCase() + ' size';
+      document.getElementById('est-lbl').textContent = 'Est. ' + fmt.toUpperCase() + ' Size';
       document.getElementById('dl-fmt').textContent = fmt.toUpperCase();
       updateStats();
     }
 
-    // ══════════════════════════════════════════════════════
-    //  MESH DATA + EXPORT
-    // ══════════════════════════════════════════════════════
+    // MESH DATA + EXPORT
     function getMeshData(center, radii, Na, Nr) {
       const frames = computeFrenetFrames(center);
       const verts = [], norms = [], uvCoords = [], faces = [];
@@ -1016,7 +1163,6 @@
       const innerData = getMeshData(center, radii.map(r => r * 0.35), Na, Nr);
 
       if (fmt === 'csv') {
-        // Build a vertex→face lookup so each vertex row knows which faces it belongs to
         const buildFaceLookup = (data) => {
           const lookup = new Array(data.verts.length).fill(null).map(() => []);
           data.faces.forEach(([a, b, c], fi) => { lookup[a].push(fi); lookup[b].push(fi); lookup[c].push(fi); });
@@ -1034,26 +1180,18 @@
         addSurf(outerData, 'outer'); addSurf(innerData, 'inner');
         downloadBlob(rows.join('\n'), 'nanotube_mesh.csv', 'text/csv');
       } else if (fmt === 'obj') {
-        // OBJ: positions first, then faces, then normals and UVs as comments/attributes after
         const lines = ['# Nanotube mesh export'];
         const addObj = (data, name, offset) => {
           lines.push(`o ${name}`);
-          // 1) positions
           data.verts.forEach(([x, y, z]) => lines.push(`v ${x.toFixed(6)} ${y.toFixed(6)} ${z.toFixed(6)}`));
-          // 2) faces (referencing positions only, 1-based)
-          data.faces.forEach(([a, b, c]) => {
-            lines.push(`f ${a + 1 + offset} ${b + 1 + offset} ${c + 1 + offset}`);
-          });
-          // 3) normals
+          data.faces.forEach(([a, b, c]) => { lines.push(`f ${a + 1 + offset} ${b + 1 + offset} ${c + 1 + offset}`); });
           data.norms.forEach(([nx, ny, nz]) => lines.push(`vn ${nx.toFixed(6)} ${ny.toFixed(6)} ${nz.toFixed(6)}`));
-          // 4) UVs
           data.uvCoords.forEach(([u, v]) => lines.push(`vt ${u.toFixed(6)} ${v.toFixed(6)}`));
         };
         addObj(outerData, 'outer_surface', 0);
         addObj(innerData, 'inner_surface', outerData.verts.length);
         downloadBlob(lines.join('\n'), 'nanotube_mesh.obj', 'text/plain');
       } else {
-        // JSON: vertices with x/y/z + face_indices inline, then normals/uvs separately
         const buildVertexList = (data) => {
           const faceLookup = new Array(data.verts.length).fill(null).map(() => []);
           data.faces.forEach(([a, b, c], fi) => { faceLookup[a].push(fi); faceLookup[b].push(fi); faceLookup[c].push(fi); });
@@ -1077,12 +1215,11 @@
       const msg = document.getElementById('export-msg');
       msg.textContent = `✓ Exported ${fmt.toUpperCase()} — ${totalV.toLocaleString()} vertices · ${totalF.toLocaleString()} faces`;
       msg.style.display = 'block';
+      document.getElementById('status-log').textContent = `>> Exported ${fmt.toUpperCase()} — ${totalV.toLocaleString()} verts`;
       setTimeout(() => { msg.style.display = 'none'; }, 3500);
     }
 
-    // ══════════════════════════════════════════════════════
-    //  INIT
-    // ══════════════════════════════════════════════════════
+    // INIT
     rebuildMesh();
   </script>
 </body>

@@ -4,64 +4,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        Indoor Bike Trainer (MAG-500)
-    </title>
+    <title>Indoor Bike Trainer (MAG-500)</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap">
     <link href="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack.min.css" rel="stylesheet" />
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
+        /* Design Tokens */
         :root {
-            --bg-color: #0f172a;
-            --tile-color: #1e293b;
-            --text-color: #f8fafc;
-            --bg: #11110f;
-            --panel: #1c1c18;
-            --accent: #ff6b00;
-            --text-dim: #888880;
-            --text-bright: #e0e0d5;
-            --border: #32322d;
-            --recovery: #00e676;
-            --aerobic: #00d4ff;
-            --tempo: #ffd740;
-            --threshold: #ff9100;
-            --vo2: #ff3d57;
-            --neuro: #aa77ff;
+            --primary: #000;
+            --bg: #fff;
+            --text: #1a1a1a;
+            --border: #000;
+            --muted: #f0f0f0;
+            --panel: #f8f8f8;
+            --text-dim: #666;
+
+            /* Zone colors kept functional but mapped to BW-adjacent tones for tags */
+            --recovery: #2a7a2a;
+            --aerobic: #1a4a8a;
+            --tempo: #7a6a00;
+            --threshold: #8a4000;
+            --vo2: #8a0010;
+            --neuro: #4a1a8a;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body,
         html {
-            margin: 0;
-            padding: 0;
             height: 100vh;
             width: 100vw;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: var(--bg);
+            color: var(--text);
             overflow: hidden;
-            font-family: 'Consolas', monospace;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
         }
 
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: 'Bodoni Moda', serif;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* GridStack shell */
         .grid-stack {
-            background: var(--bg-color);
+            background: var(--muted);
             height: 100vh !important;
         }
 
         .grid-stack-item-content {
-            background-color: var(--tile-color);
-            border-radius: 12px;
+            background: #fff;
+            border-radius: 0;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+            border: 1px solid var(--border);
         }
 
+        /* Trainer wrapper */
         .trainer-wrapper {
-            background: var(--bg);
-            color: var(--text-bright);
-            padding: 0px;
+            background: #fff;
+            color: var(--text);
             overflow-y: auto;
             height: 100%;
         }
@@ -69,120 +87,170 @@
         .trainer-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 0;
             max-width: 100%;
-            margin: 0;
         }
 
+        /* Panel */
         .panel {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 4px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 1.25rem;
         }
 
         .full {
             grid-column: 1 / -1;
         }
 
+        /* Section headings */
         h2 {
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            color: var(--text-dim);
-            margin: 0 0 15px 0;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 5px;
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #000;
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            position: relative;
+            letter-spacing: -0.3px;
         }
 
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: #000;
+        }
+
+        /* Big stat display */
         .big-stat {
             text-align: center;
             flex: 1;
-            border-right: 1px solid var(--border);
+            border-right: 1px solid #e0e0e0;
+            padding: 0.5rem 1rem;
         }
 
         .big-stat:last-child {
             border-right: none;
         }
 
+        /* Labels */
         .label {
             display: block;
             font-size: 0.65rem;
             color: var(--text-dim);
-            margin-bottom: 5px;
+            margin-bottom: 0.35rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
+        /* Value display */
         .value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--accent);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            font-family: 'Bodoni Moda', serif;
+            letter-spacing: -1px;
         }
 
+        /* Gear / mag buttons */
         .gear-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
             flex: 1;
         }
 
         .btn {
-            background: var(--bg);
+            background: #fff;
             border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 5px 8px;
+            color: #666;
+            padding: 4px 8px;
             cursor: pointer;
             font-size: 0.75rem;
-            min-width: 42px;
+            min-width: 40px;
             text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.15s ease;
+            border-radius: 0;
+        }
+
+        .btn:hover {
+            background: #f0f0f0;
         }
 
         .btn.active {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: #2a1a0a;
+            background: #000;
+            color: #fff;
+            border-color: #000;
         }
 
+        /* Phase / zone tag */
         .phase-tag {
             font-size: 0.7rem;
-            padding: 3px 12px;
-            border-radius: 3px;
-            margin-top: 10px;
+            padding: 3px 14px;
+            margin-top: 0.75rem;
             display: inline-block;
-            color: #000;
-            font-weight: 800;
+            color: #fff;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-radius: 0;
+            font-family: 'Inter', sans-serif;
         }
 
+        /* Inputs & selects */
         input[type="number"],
+        input[type="text"],
         select {
-            background: #000;
+            background: #fff;
             border: 1px solid var(--border);
-            color: var(--accent);
-            padding: 4px;
-            text-align: center;
-            font-family: inherit;
+            color: #000;
+            padding: 0.5rem 0.65rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
             width: 100%;
-            box-sizing: border-box;
+            border-radius: 0;
+            outline: none;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            box-shadow: 0 0 0 2px #000;
         }
 
         input[type="range"] {
             width: 100%;
-            accent-color: var(--accent);
-            margin: 10px 0;
+            accent-color: #000;
+            margin: 0.5rem 0;
             cursor: pointer;
+            padding: 0;
+            border: none;
+            height: 2px;
+            background: #ccc;
+            display: block;
         }
 
+        /* Math block */
         .math-block {
-            color: var(--text-bright);
-            padding: 10px 0;
+            color: #1a1a1a;
+            padding: 0.75rem 0;
             font-size: 0.95rem;
             text-align: center;
         }
 
+        /* Table */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 1rem;
             font-size: 0.75rem;
             color: var(--text-dim);
             border: 1px solid var(--border);
@@ -190,34 +258,51 @@
 
         th {
             background: #000;
-            color: var(--accent);
+            color: #fff;
             text-align: left;
-            padding: 8px;
+            padding: 8px 10px;
             border-bottom: 1px solid var(--border);
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.7rem;
         }
 
         td {
-            padding: 8px;
-            border-bottom: 1px solid var(--border);
+            padding: 7px 10px;
+            border-bottom: 1px solid #e8e8e8;
+            font-family: 'Inter', sans-serif;
         }
 
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* SoundCloud panel */
         .sc-controls {
             display: flex;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            gap: 10px;
+            padding: 0.65rem;
+            background: #f8f8f8;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
             align-items: center;
         }
 
         #playlist-url {
             flex-grow: 1;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: white;
-            padding: 8px;
-            border-radius: 6px;
+            background: #fff;
+            border: 1px solid var(--border);
+            color: #000;
+            padding: 0.5rem 0.65rem;
+            border-radius: 0;
             outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+        }
+
+        #playlist-url:focus {
+            box-shadow: 0 0 0 2px #000;
         }
 
         #sc-widget {
@@ -226,7 +311,156 @@
             border: none;
         }
 
-        /* Resizing Handle Styling */
+        /* Action buttons */
+        .action-btn {
+            font-size: 0.75rem;
+            padding: 6px 14px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #000;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 0;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .action-btn.stop {
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+            border-left: 4px solid #000;
+        }
+
+        .action-btn.export {
+            border-left: 4px solid #000;
+        }
+
+        .action-btn.location {
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
+
+        .action-btn.location:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Parameter definition box */
+        .param-defs {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            background: #f8f8f8;
+            border-left: 3px solid #000;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .param-defs strong {
+            color: #000;
+        }
+
+        /* Recording stats row */
+        .rec-stats {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rec-stats span {
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* Camera panels */
+        .camera-label {
+            font-size: 0.65rem;
+            color: #000;
+            text-align: center;
+            min-height: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .camera-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+            padding: 5px 10px;
+            background: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            border-radius: 0;
+            z-index: 10;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.15s;
+        }
+
+        .camera-btn:hover {
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 90%;
+            color: #000;
+        }
+
+        .modal-box h2 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-camera-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 280px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        /* Resizing handles */
         .ui-resizable-handle {
             background-image: none !important;
             opacity: 1 !important;
@@ -281,8 +515,8 @@
             position: absolute;
             width: 8px;
             height: 8px;
-            border-right: 2px solid var(--accent);
-            border-bottom: 2px solid var(--accent);
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
         }
 
         .ui-resizable-se::after {
@@ -307,908 +541,666 @@
         .ui-resizable-w::after {
             content: none;
         }
+
+        /* Recording timer */
+        .recording-timer {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #000;
+            font-family: 'Bodoni Moda', serif;
+            min-width: 100px;
+            letter-spacing: -0.5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="grid-stack">
+
+        <!-- Main Trainer Panel -->
         <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="6" gs-h="12" gs-id="trainer-app">
             <div class="grid-stack-item-content">
                 <div class="trainer-wrapper">
                     <div class="trainer-content">
-                        <div class="panel full" style="display: flex; 
-                        align-items: center;
-                        border-top: none;
-                        border-left: none;
-                        border-right: none;
-                        border-radius: 0;">
-                            <div class="big-stat" style="flex: 1.5;">
-                                <span class="label">
-                                    Trainer Configuration
-                                </span>
-                                <div class="gear-grid" id="mag-group" style="justify-content: center; 
-                                margin: 10px 0;">
-                                </div>
-                                <div style="padding: 0 20px;">
-                                    <div style="display:flex; 
-                                    justify-content:space-between">
-                                        <span class="label">Slope (%)
-                                        </span>
-                                        <span id="val-grade" style="color:var(--accent)">0.0%
-                                        </span>
+
+                        <!-- Trainer Config row -->
+                        <div class="panel full"
+                            style="display:flex; align-items:center; border-top:none; border-left:none; border-right:none; border-radius:0; border-bottom:2px solid #000; gap:0; padding:1rem 1.25rem;">
+                            <div class="big-stat" style="flex:1.5; text-align:left; border-right:1px solid #e0e0e0;">
+                                <span class="label">Trainer Configuration — MAG-500</span>
+                                <div class="gear-grid" id="mag-group"
+                                    style="justify-content:flex-start; margin:0.6rem 0;"></div>
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                                        <span class="label">Slope (%)</span>
+                                        <span id="val-grade"
+                                            style="font-size:0.85rem; font-weight:700; font-family:'Courier New',monospace;">0.0%</span>
                                     </div>
                                     <input type="range" id="in-grade" min="0" max="15" step="0.1" value="1.0"
                                         oninput="updateState('grade', this.value)">
                                 </div>
-                                <div id="phase-display" class="phase-tag">
-                                    —
-                                </div>
+                                <div id="phase-display" class="phase-tag">—</div>
                             </div>
                             <div class="big-stat">
-                                <span class="label">
-                                    Intensity (Estimated %)
-                                </span>
-                                <span class="value" id="disp-intensity">
-                                    0%
-                                </span>
+                                <span class="label">Intensity (Est. %)</span>
+                                <span class="value" id="disp-intensity">0%</span>
                             </div>
                             <div class="big-stat">
-                                <span class="label">
-                                    Power (Computed W)
-                                </span>
-                                <span class="value" id="disp-power">
-                                    0W
-                                </span>
+                                <span class="label">Power (Computed W)</span>
+                                <span class="value" id="disp-power">0W</span>
                             </div>
                         </div>
-                        <div class="panel" style="border-left: none; border-radius: 0;">
-                            <h2>
-                                ● Speed and Cadence
-                            </h2>
-                            <div style="display:flex; 
-                            justify-content:space-between; 
-                            margin-top:10px">
-                                <span class="label">
-                                    Cadence (RPM)
-                                </span>
-                                <span id="val-cad">
-                                    0.0
-                                </span>
+
+                        <!-- Speed & Cadence -->
+                        <div class="panel" style="border-left:none; border-radius:0;">
+                            <h2>Speed &amp; Cadence</h2>
+                            <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
+                                <span class="label">Cadence (RPM)</span>
+                                <span id="val-cad"
+                                    style="font-size:0.8rem; font-weight:700; font-family:'Courier New',monospace;">0</span>
                             </div>
-                            <input type="range" id="in-cad" min="0" max="240" step="1" value="0.0"
+                            <input type="range" id="in-cad" min="0" max="240" step="1" value="0"
                                 oninput="updateState('rpm', this.value)">
-                            <div style="display:flex; 
-                            justify-content:space-between; 
-                            margin-top:10px">
-                                <span class="label">
-                                    Speed (km/h)
-                                </span>
-                                <span id="val-speed">
-                                    0.0
-                                </span>
+                            <div style="display:flex; justify-content:space-between; margin-top:0.75rem;">
+                                <span class="label">Speed (km/h)</span>
+                                <span id="val-speed"
+                                    style="font-size:0.8rem; font-weight:700; font-family:'Courier New',monospace;">0.0</span>
                             </div>
-                            <input type="range" id="in-speed" min="0" max="150" step="0.1" value="0.0"
+                            <input type="range" id="in-speed" min="0" max="150" step="0.1" value="0"
                                 oninput="updateState('speed', this.value)">
                         </div>
-                        <div class="panel" style="border-right: none; border-radius: 0;">
-                            <h2>
-                                ● Rider Information
-                            </h2>
-                            <div style="display:grid; 
-                            grid-template-columns: 1fr 1fr; 
-                            gap: 10px;">
+
+                        <!-- Rider Information -->
+                        <div class="panel" style="border-right:none; border-radius:0;">
+                            <h2>Rider Information</h2>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
                                 <div>
-                                    <span class="label">
-                                        Functional Threshold Power (FTP) (W)
-                                    </span>
+                                    <span class="label">FTP (W)</span>
                                     <input type="number" id="in-ftp" value="250"
                                         oninput="updateState('ftp', this.value)">
                                 </div>
                                 <div>
-                                    <span class="label">
-                                        Weight (kg)
-                                    </span>
+                                    <span class="label">Weight (kg)</span>
                                     <input type="number" id="in-mass" value="85"
                                         oninput="updateState('mass', this.value)">
                                 </div>
                                 <div>
-                                    <span class="label">
-                                        Height (cm)
-                                    </span>
+                                    <span class="label">Height (cm)</span>
                                     <input type="number" id="in-h" value="178"
                                         oninput="updateState('height', this.value)">
                                 </div>
                                 <div>
-                                    <span class="label">
-                                        Width (cm)
-                                    </span>
+                                    <span class="label">Shoulder Width (cm)</span>
                                     <input type="number" id="in-w" value="35"
                                         oninput="updateState('width', this.value)">
                                 </div>
                             </div>
                         </div>
-                        <div class="panel full" style="border-left: none; border-right: none; border-radius: 0;">
-                            <h2>
-                                ● Drivetrain (Active Gears)
-                            </h2>
-                            <div style="display:flex; 
-                            gap:30px">
-                                <div style="flex:1">
-                                    <span class="label">
-                                        Front Cassette
-                                    </span>
-                                    <div style="display:flex; 
-                                    gap:10px; 
-                                    margin-bottom:15px">
-                                        <div class="gear-grid" id="front-btns">
-                                        </div>
-                                        <input type="number" id="man-f" style="width:70px"
+
+                        <!-- Drivetrain -->
+                        <div class="panel full" style="border-left:none; border-right:none; border-radius:0;">
+                            <h2>Drivetrain (Active Gears)</h2>
+                            <div style="display:flex; gap:2rem;">
+                                <div style="flex:1;">
+                                    <span class="label">Front Cassette</span>
+                                    <div style="display:flex; gap:8px; margin-bottom:1rem; align-items:center;">
+                                        <div class="gear-grid" id="front-btns"></div>
+                                        <input type="number" id="man-f" style="width:70px;"
                                             oninput="updateState('fRing', this.value)">
                                     </div>
-                                    <span class="label">
-                                        Rear Cassette
-                                    </span>
-                                    <div style="display:flex; 
-                                    gap:10px">
-                                        <div class="gear-grid" id="rear-btns">
-                                        </div>
-                                        <input type="number" id="man-r" style="width:70px"
+                                    <span class="label">Rear Cassette</span>
+                                    <div style="display:flex; gap:8px; align-items:center;">
+                                        <div class="gear-grid" id="rear-btns"></div>
+                                        <input type="number" id="man-r" style="width:70px;"
                                             oninput="updateState('rCog', this.value)">
                                     </div>
                                 </div>
-                                <div style="width: 300px; 
-                                border-left: 1px solid var(--border); 
-                                padding-left: 20px;">
-                                    <span class="label">
-                                        Wheel Type
-                                    </span>
+                                <div style="width:280px; border-left:1px solid #e0e0e0; padding-left:1.5rem;">
+                                    <span class="label">Wheel Type</span>
                                     <select id="wheel-select" onchange="updateWheelPreset(this.value)"
-                                        style="margin-bottom:10px">
-                                        <option value="2.096">
-                                            700 x 23C
-                                        </option>
-                                        <option value="2.105" selected>
-                                            700 x 25C
-                                        </option>
-                                        <option value="2.136">
-                                            700 x 28C
-                                        </option>
-                                        <option value="2.146">
-                                            700 x 30C
-                                        </option>
-                                        <option value="2.155">
-                                            700 x 32C
-                                        </option>
-                                        <option value="custom">
-                                            Custom
-                                        </option>
+                                        style="margin-bottom:0.75rem;">
+                                        <option value="2.096">700 × 23C</option>
+                                        <option value="2.105" selected>700 × 25C</option>
+                                        <option value="2.136">700 × 28C</option>
+                                        <option value="2.146">700 × 30C</option>
+                                        <option value="2.155">700 × 32C</option>
+                                        <option value="custom">Custom</option>
                                     </select>
-                                    <span class="label">
-                                        Circumference (m)
-                                    </span>
+                                    <span class="label">Circumference (m)</span>
                                     <input type="number" id="in-circ" value="2.105" step="0.001"
                                         oninput="updateState('circ', this.value)">
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Algorithm & Parameters -->
                         <div class="panel full"
-                            style="border-left: none; border-right: none; border-bottom: none; border-radius: 0;">
-                            <h2>
-                                ● ALGORITHM & PARAMETERS
-                            </h2>
-                            <div
-                                style="color: var(--text-dim); font-size: 0.7rem; line-height: 1.4; margin-bottom: 10px; padding: 8px; background: rgba(0,0,0,0.3); border-left: 2px solid var(--accent);">
-                                <strong style="color: var(--accent);">Parameter Definitions:</strong><br>
+                            style="border-left:none; border-right:none; border-bottom:none; border-radius:0;">
+                            <h2>Algorithm &amp; Parameters</h2>
+                            <div class="param-defs">
+                                <strong>Parameter Definitions:</strong><br>
                                 C<sub>wheel</sub>: Wheel circumference (m) | T<sub>f</sub>: Front gear teeth |
-                                T<sub>r</sub>: Rear gear teeth | RPM: Cadence (revolutions/min) | FTP: Functional
-                                Threshold Power (W) | m: Rider mass (kg) | g: Gravity (9.81 m/s²) | v: Velocity (m/s) |
-                                grade: Road incline (%) | C<sub>rr</sub>: Rolling resistance coefficient (0.004) | ρ:
-                                Air density (1.225 kg/m³) | C<sub>d</sub>: Drag coefficient (0.88) | W: Shoulder width
-                                (cm) | H: Height (cm)
+                                T<sub>r</sub>: Rear gear teeth | RPM: Cadence | FTP: Functional Threshold Power (W) |
+                                m: Rider mass (kg) | g: 9.81 m/s² | v: Velocity (m/s) | grade: Road incline (%) |
+                                C<sub>rr</sub>: Rolling resistance (0.004) | ρ: Air density 1.225 kg/m³ |
+                                C<sub>d</sub>: Drag coefficient (0.88) | W: Shoulder width (cm) | H: Height (cm)
                             </div>
                             <div class="math-block">
-                                $$Intensity = \frac{P_{total}}{FTP} \cdot 100\% \quad | \quad v = \frac{RPM \cdot (T_{f}
-                                / T_{r}) \cdot C_{wheel}}{60}$$
+                                $$\text{Intensity} = \frac{P_{total}}{FTP} \cdot 100\% \quad|\quad v = \frac{RPM \cdot
+                                (T_{f}/T_{r}) \cdot C_{wheel}}{60}$$
                                 $$P_{total} = (m \cdot g \cdot v \cdot \text{grade}) + (m \cdot g \cdot v \cdot C_{rr})
-                                + (\frac{1}{2} \rho \cdot C_d \cdot [W \cdot 0.75H] \cdot v^3)$$
+                                + \left(\tfrac{1}{2}\rho \cdot C_d \cdot [W \cdot 0.75H] \cdot v^3\right)$$
                             </div>
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>
-                                            % of FTP
-                                        </th>
-                                        <th>
-                                            Intensity Phase
-                                        </th>
-                                        <th>
-                                            Color Code
-                                        </th>
+                                        <th>% of FTP</th>
+                                        <th>Intensity Phase</th>
+                                        <th>Zone</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>
-                                            &lt; 60%
-                                        </td>
-                                        <td>
-                                            Recovery (&lt; 60% FTP)
-                                        </td>
-                                        <td>
-                                            Green
-                                        </td>
+                                        <td>&lt; 60%</td>
+                                        <td>Recovery (&lt; 60% FTP)</td>
+                                        <td>Green</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            60% – 75%
-                                        </td>
-                                        <td>
-                                            Aerobic (60 – 75% FTP)
-                                        </td>
-                                        <td>
-                                            Blue
-                                        </td>
+                                        <td>60% – 75%</td>
+                                        <td>Aerobic (60 – 75% FTP)</td>
+                                        <td>Blue</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            75% – 90%
-                                        </td>
-                                        <td>
-                                            Tempo (75 – 90% FTP)
-                                        </td>
-                                        <td>
-                                            Yellow
-                                        </td>
+                                        <td>75% – 90%</td>
+                                        <td>Tempo (75 – 90% FTP)</td>
+                                        <td>Yellow</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            90% – 105%
-                                        </td>
-                                        <td>
-                                            Threshold (90 – 105% FTP)
-                                        </td>
-                                        <td>
-                                            Orange
-                                        </td>
+                                        <td>90% – 105%</td>
+                                        <td>Threshold (90 – 105% FTP)</td>
+                                        <td>Orange</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            105% – 120%
-                                        </td>
-                                        <td>
-                                            VO2 Max (105 – 120% FTP)
-                                        </td>
-                                        <td>
-                                            Red
-                                        </td>
+                                        <td>105% – 120%</td>
+                                        <td>VO2 Max (105 – 120% FTP)</td>
+                                        <td>Red</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            &gt; 120%
-                                        </td>
-                                        <td>
-                                            Neuromuscular (&gt; 120% FTP)
-                                        </td>
-                                        <td>
-                                            Purple
-                                        </td>
+                                        <td>&gt; 120%</td>
+                                        <td>Neuromuscular (&gt; 120% FTP)</td>
+                                        <td>Purple</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-        <div class="grid-stack-item" gs-x="6" gs-y="0" gs-w="2" gs-h="12" gs-id="sc-player" gs-no-move="false">
+
+        <!-- SoundCloud Panel -->
+        <div class="grid-stack-item" gs-x="6" gs-y="0" gs-w="2" gs-h="12" gs-id="sc-player">
             <div class="grid-stack-item-content">
                 <div class="sc-controls">
-                    <input type="text" id="playlist-url" placeholder="Paste SoundCloud URL..." />
+                    <input type="text" id="playlist-url" placeholder="Paste SoundCloud URL…" />
                 </div>
                 <iframe id="sc-widget"
-                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/311634062&color=%23ff5500&hide_related=true&show_comments=false&visual=false"
+                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/311634062&color=%23000000&hide_related=true&show_comments=false&visual=false"
                     scrolling="no" frameborder="no">
                 </iframe>
             </div>
         </div>
+
+        <!-- Camera Panel A1 (Speed) -->
         <div class="grid-stack-item" gs-x="8" gs-y="0" gs-w="2" gs-h="5" gs-id="panel-a1">
             <div class="grid-stack-item-content"
-                style="display: flex; flex-direction: column; padding: 0; overflow: hidden; position: relative; height: 100%;">
+                style="display:flex; flex-direction:column; padding:0; overflow:hidden; position:relative; height:100%;">
                 <div
-                    style="flex: 0 0 50%; background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative;">
-                    <video id="camera-feed" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline>
-                    </video>
-                    <button id="btn-camera-a1"
-                        style="position: absolute; top: 8px; right: 8px; font-size: 0.75rem; padding: 6px 12px; background: var(--accent); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; z-index: 10;">Select
-                        Camera</button>
+                    style="flex:0 0 50%; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
+                    <video id="camera-feed" style="width:100%; height:100%; object-fit:cover;" autoplay
+                        playsinline></video>
+                    <button id="btn-camera-a1" class="camera-btn">Select Camera</button>
                 </div>
                 <div
-                    style="flex: 0 0 50%; background: var(--panel); border-top: 1px solid var(--border); display: flex; flex-direction: column; padding: 10px; gap: 8px; overflow: hidden;">
-                    <div id="camera-name-a1"
-                        style="font-size: 0.7rem; color: var(--accent); text-align: center; min-height: 14px;">Speed
-                        (Rear wheel)</div>
+                    style="flex:0 0 50%; background:#f8f8f8; border-top:1px solid #000; display:flex; flex-direction:column; padding:0.75rem; gap:6px; overflow:hidden;">
+                    <div id="camera-name-a1" class="camera-label">Speed (Rear wheel)</div>
                     <div id="figure-a1"
-                        style="flex: 1; background: #000; border: 1px solid var(--border); border-radius: 3px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
-                        <svg style="width: 90%; height: 90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                            <rect x="10" y="10" width="80" height="80" fill="white" opacity="0.8" />
+                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+                        <svg style="width:90%; height:90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                            <rect x="10" y="10" width="80" height="80" fill="#f0f0f0" />
                         </svg>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Camera Panel A2 (Cadence) -->
         <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="2" gs-h="5" gs-id="panel-a2">
             <div class="grid-stack-item-content"
-                style="display: flex; flex-direction: column; padding: 0; overflow: hidden; position: relative; height: 100%;">
+                style="display:flex; flex-direction:column; padding:0; overflow:hidden; position:relative; height:100%;">
                 <div
-                    style="flex: 0 0 50%; background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative;">
-                    <video id="camera-feed-2" style="width: 100%; height: 100%; object-fit: cover;" autoplay
-                        playsinline>
-                    </video>
-                    <button id="btn-camera-a2"
-                        style="position: absolute; top: 8px; right: 8px; font-size: 0.75rem; padding: 6px 12px; background: var(--accent); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; z-index: 10;">Select
-                        Camera</button>
+                    style="flex:0 0 50%; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
+                    <video id="camera-feed-2" style="width:100%; height:100%; object-fit:cover;" autoplay
+                        playsinline></video>
+                    <button id="btn-camera-a2" class="camera-btn">Select Camera</button>
                 </div>
                 <div
-                    style="flex: 0 0 50%; background: var(--panel); border-top: 1px solid var(--border); display: flex; flex-direction: column; padding: 10px; gap: 8px; overflow: hidden;">
-                    <div id="camera-name-a2"
-                        style="font-size: 0.7rem; color: var(--accent); text-align: center; min-height: 14px;">Cadence
-                        (Pedaling)</div>
+                    style="flex:0 0 50%; background:#f8f8f8; border-top:1px solid #000; display:flex; flex-direction:column; padding:0.75rem; gap:6px; overflow:hidden;">
+                    <div id="camera-name-a2" class="camera-label">Cadence (Pedaling)</div>
                     <div id="figure-a2"
-                        style="flex: 1; background: #000; border: 1px solid var(--border); border-radius: 3px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
-                        <svg style="width: 90%; height: 90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                            <rect x="10" y="10" width="80" height="80" fill="white" opacity="0.8" />
+                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+                        <svg style="width:90%; height:90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                            <rect x="10" y="10" width="80" height="80" fill="#f0f0f0" />
                         </svg>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Panel B (placeholder) -->
         <div class="grid-stack-item" gs-x="8" gs-y="5" gs-w="4" gs-h="5" gs-id="panel-b">
-            <div class="grid-stack-item-content" style="display: flex; justify-content: center; align-items: center;">
-                <div class="label" style="font-size: 1rem; text-align: center;">
-                    Panel B
-                </div>
+            <div class="grid-stack-item-content" style="display:flex; justify-content:center; align-items:center;">
+                <span class="label" style="font-size:0.8rem;">Panel B</span>
             </div>
         </div>
+
+        <!-- Record Training Session -->
         <div class="grid-stack-item" gs-x="8" gs-y="10" gs-w="4" gs-h="2" gs-id="panel-c">
             <div class="grid-stack-item-content"
-                style="display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
-                <h2 style="margin: 0 0 10px 0;">● Record Training Session</h2>
-                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
-                    <div style="font-size: 1.2rem; color: var(--accent); font-weight: bold; min-width: 100px;">
-                        <span id="recording-time">00:00:00</span>
+                style="display:flex; flex-direction:column; padding:1rem; overflow:hidden;">
+                <h2 style="margin:0 0 0.75rem 0;">Record Training Session</h2>
+                <div style="display:flex; gap:0.6rem; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap;">
+                    <div class="recording-timer"><span id="recording-time">00:00:00</span></div>
+                    <button id="btn-set-location" class="action-btn location">Set Location</button>
+                    <button id="btn-record" class="action-btn">Start Recording</button>
+                    <button id="btn-stop-record" class="action-btn stop" style="display:none;">Stop Recording</button>
+                    <button id="btn-export-gpx" class="action-btn export" style="display:none;">Export GPX</button>
+                </div>
+                <div class="rec-stats">
+                    <div>Points: <span id="recording-points">0</span></div>
+                    <div>Distance: <span id="recording-distance">0.0 km</span></div>
+                    <div>Elev. Gain: <span id="recording-elevation">0 m</span></div>
+                    <div id="location-status"
+                        style="color:#666; font-size:0.65rem; font-weight:400; text-transform:none; letter-spacing:0;">
                     </div>
-                    <button id="btn-set-location"
-                        style="font-size: 0.75rem; padding: 6px 12px; background: #9d7aff; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px;">Set
-                        Current Location</button>
-                    <button id="btn-record"
-                        style="font-size: 0.75rem; padding: 6px 12px; background: var(--accent); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px;">Start
-                        Recording</button>
-                    <button id="btn-stop-record"
-                        style="font-size: 0.75rem; padding: 6px 12px; background: #ff6b6b; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; display: none;">Stop
-                        Recording</button>
-                    <button id="btn-export-gpx"
-                        style="font-size: 0.75rem; padding: 6px 12px; background: #00d4ff; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; display: none;">Export
-                        as GPX</button>
-                </div>
-                <div style="font-size: 0.7rem; color: var(--text-dim); display: flex; gap: 20px; flex-wrap: wrap;">
-                    <div>Points: <span id="recording-points" style="color: var(--accent);">0</span></div>
-                    <div>Distance: <span id="recording-distance" style="color: var(--accent);">0.0 km</span></div>
-                    <div>Elevation Gain: <span id="recording-elevation" style="color: var(--accent);">0 m</span></div>
-                    <div id="location-status" style="color: var(--text-dim); font-size: 0.65rem;"></div>
                 </div>
             </div>
         </div>
 
-        <div id="camera-modal-a1"
-            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
-            <div
-                style="background: var(--tile-color); border: 1px solid var(--border); border-radius: 8px; padding: 20px; max-width: 400px; color: var(--text-color);">
-                <h2 style="margin-top: 0; color: var(--accent); font-size: 0.9rem;">Select Camera for Speed Panel</h2>
-                <div id="camera-list-a1"
-                    style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
-                </div>
-                <button id="camera-modal-close-a1"
-                    style="width: 100%; padding: 8px; background: var(--accent); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; font-size: 0.75rem;">Close</button>
-            </div>
+    </div><!-- /grid-stack -->
+
+    <!-- Camera Modal A1 -->
+    <div id="camera-modal-a1" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Select Camera — Speed Panel</h2>
+            <div id="camera-list-a1" class="modal-camera-list"></div>
+            <button id="camera-modal-close-a1" class="action-btn" style="width:100%;">Close</button>
         </div>
-        <div id="camera-modal-a2"
-            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
-            <div
-                style="background: var(--tile-color); border: 1px solid var(--border); border-radius: 8px; padding: 20px; max-width: 400px; color: var(--text-color);">
-                <h2 style="margin-top: 0; color: var(--accent); font-size: 0.9rem;">Select Camera for Cadence Panel</h2>
-                <div id="camera-list-a2"
-                    style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
-                </div>
-                <button id="camera-modal-close-a2"
-                    style="width: 100%; padding: 8px; background: var(--accent); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 3px; font-size: 0.75rem;">Close</button>
-            </div>
+    </div>
+
+    <!-- Camera Modal A2 -->
+    <div id="camera-modal-a2" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Select Camera — Cadence Panel</h2>
+            <div id="camera-list-a2" class="modal-camera-list"></div>
+            <button id="camera-modal-close-a2" class="action-btn" style="width:100%;">Close</button>
         </div>
+    </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack-all.js">
-        </script>
-        <script src="https://w.soundcloud.com/player/api.js">
-        </script>
-        <script>
-            // Initialization
-            const grid = GridStack.init
-                (
-                    {
-                        cellHeight: '8.33vh',
-                        column: 12,
-                        margin: 5,
-                        float: true,
-                        disableOneColumnMode: true,
-                        resizable: {
-                            handles: 'all'
-                        }
-                    }
-                );
-            // SoundCloud Integration
-            const widget = SC.Widget
-                (
-                    document.getElementById
-                        (
-                            'sc-widget'
-                        )
-                );
-            document.getElementById
-                (
-                    'playlist-url'
-                ).addEventListener
-                (
-                    'keypress',
-                    (e) => {
-                        if (e.key === 'Enter') widget.load
-                            (e.target.value,
-                                {
-                                    color: '#ff5500',
-                                    auto_play: true,
-                                    visual: false
-                                }
-                            );
-                    }
-                );
-            // Updated default state constants
-            const state = {
-                ftp: 250,
-                mass: 85,
-                height: 178,
-                width: 25,
-                grade: 0,
-                rpm: 90,
-                speed: 30.2,
-                fRing: 50,
-                rCog: 15,
-                circ: 2.105,
-                magLevel: 1
-            };
-            const zones = [
-                {
-                    limit: 0.60,
-                    label: "Recovery",
-                    color: "var(--recovery)"
-                },
-                {
-                    limit: 0.75,
-                    label: "Aerobic",
-                    color: "var(--aerobic)"
-                },
-                {
-                    limit: 0.90,
-                    label: "Tempo",
-                    color: "var(--tempo)"
-                },
-                {
-                    limit: 1.05,
-                    label: "Threshold",
-                    color: "var(--threshold)"
-                },
-                {
-                    limit: 1.20,
-                    label: "VO2 max",
-                    color: "var(--vo2)"
-                },
-                {
-                    limit: Infinity,
-                    label: "Neuromuscular",
-                    color: "var(--neuro)"
-                }
-            ];
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack-all.js"></script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script>
+        // GridStack init
+        const grid = GridStack.init({
+            cellHeight: '8.33vh',
+            column: 12,
+            margin: 5,
+            float: true,
+            disableOneColumnMode: true,
+            resizable: { handles: 'all' }
+        });
 
-            function updateWheelPreset(val) {
-                if (val !== "custom") {
-                    document.getElementById
-                        ('in-circ').value = val;
-                    updateState('circ', val);
-                }
+        // SoundCloud
+        const widget = SC.Widget(document.getElementById('sc-widget'));
+        document.getElementById('playlist-url').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') widget.load(e.target.value, { color: '#000000', auto_play: true, visual: false });
+        });
+
+        // State
+        const state = {
+            ftp: 250, mass: 85, height: 178, width: 25,
+            grade: 0, rpm: 90, speed: 30.2,
+            fRing: 50, rCog: 15, circ: 2.105, magLevel: 1
+        };
+
+        const zones = [
+            { limit: 0.60, label: "Recovery", color: "var(--recovery)" },
+            { limit: 0.75, label: "Aerobic", color: "var(--aerobic)" },
+            { limit: 0.90, label: "Tempo", color: "var(--tempo)" },
+            { limit: 1.05, label: "Threshold", color: "var(--threshold)" },
+            { limit: 1.20, label: "VO2 Max", color: "var(--vo2)" },
+            { limit: Infinity, label: "Neuromuscular", color: "var(--neuro)" }
+        ];
+
+        function updateWheelPreset(val) {
+            if (val !== 'custom') {
+                document.getElementById('in-circ').value = val;
+                updateState('circ', val);
             }
-            function updateState(key, val) {
-                state[key] = parseFloat(val) || 0;
-                if (key === 'circ') {
-                    const select = document.getElementById('wheel-select');
-                    let found = false;
-                    for (let opt of select.options) {
-                        if (parseFloat(opt.value) === state.circ) {
-                            select.value = opt.value;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) select.value = "custom";
+        }
+
+        function updateState(key, val) {
+            state[key] = parseFloat(val) || 0;
+            if (key === 'circ') {
+                const select = document.getElementById('wheel-select');
+                let found = false;
+                for (let opt of select.options) {
+                    if (parseFloat(opt.value) === state.circ) { select.value = opt.value; found = true; break; }
                 }
-                if (key === 'grade') state.magLevel = Math.round((state.grade * 7 / 15) + 1);
-                else if (key === 'magLevel') state.grade = (state.magLevel - 1) * (15 / 7);
-                if (key === 'speed') state.rpm = ((state.speed / 3.6) * 60) / ((state.fRing / state.rCog) * state.circ);
-                else state.speed = ((state.rpm * (state.fRing / state.rCog) * state.circ) / 60) * 3.6;
-                render();
+                if (!found) select.value = 'custom';
             }
-            function render() {
-                const v = state.speed / 3.6;
-                const A = (state.width / 100) * (0.75 * (state.height / 100));
-                const pTotal = Math.max(0, (state.mass * 9.81 * v * (state.grade / 100)) + (state.mass * 9.81 * v * 0.004) + (0.5 * 1.225 * 0.88 * A * Math.pow(v, 3)));
-                const intensity = pTotal / state.ftp;
-                document.getElementById('disp-power').innerText = Math.round(pTotal) + "W";
-                document.getElementById('disp-intensity').innerText = Math.round(intensity * 100) + "%";
-                document.getElementById('in-grade').value = state.grade.toFixed(1);
-                document.getElementById('val-grade').innerText = state.grade.toFixed(1) + "%";
-                document.getElementById('in-cad').value = Math.round(state.rpm);
-                document.getElementById('val-cad').innerText = Math.round(state.rpm);
-                document.getElementById('in-speed').value = state.speed.toFixed(1);
-                document.getElementById('val-speed').innerText = state.speed.toFixed(1);
-                document.getElementById('man-f').value = state.fRing; document.getElementById('man-r').value = state.rCog;
-                document.getElementById('in-circ').value = state.circ;
-                document.querySelectorAll('#mag-group .btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.val) === state.magLevel));
-                const zone = zones.find(z => intensity < z.limit) || zones[zones.length - 1];
-                const tag = document.getElementById('phase-display');
-                tag.innerText = zone.label; tag.style.backgroundColor = zone.color;
-                document.querySelectorAll('#front-btns .btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === state.fRing));
-                document.querySelectorAll('#rear-btns .btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === state.rCog));
+            if (key === 'grade') state.magLevel = Math.round((state.grade * 7 / 15) + 1);
+            else if (key === 'magLevel') state.grade = (state.magLevel - 1) * (15 / 7);
+            if (key === 'speed') state.rpm = ((state.speed / 3.6) * 60) / ((state.fRing / state.rCog) * state.circ);
+            else state.speed = ((state.rpm * (state.fRing / state.rCog) * state.circ) / 60) * 3.6;
+            render();
+        }
+
+        function render() {
+            const v = state.speed / 3.6;
+            const A = (state.width / 100) * (0.75 * (state.height / 100));
+            const pTotal = Math.max(0,
+                (state.mass * 9.81 * v * (state.grade / 100)) +
+                (state.mass * 9.81 * v * 0.004) +
+                (0.5 * 1.225 * 0.88 * A * Math.pow(v, 3))
+            );
+            const intensity = pTotal / state.ftp;
+
+            document.getElementById('disp-power').innerText = Math.round(pTotal) + 'W';
+            document.getElementById('disp-intensity').innerText = Math.round(intensity * 100) + '%';
+            document.getElementById('in-grade').value = state.grade.toFixed(1);
+            document.getElementById('val-grade').innerText = state.grade.toFixed(1) + '%';
+            document.getElementById('in-cad').value = Math.round(state.rpm);
+            document.getElementById('val-cad').innerText = Math.round(state.rpm);
+            document.getElementById('in-speed').value = state.speed.toFixed(1);
+            document.getElementById('val-speed').innerText = state.speed.toFixed(1);
+            document.getElementById('man-f').value = state.fRing;
+            document.getElementById('man-r').value = state.rCog;
+            document.getElementById('in-circ').value = state.circ;
+
+            document.querySelectorAll('#mag-group .btn').forEach(b =>
+                b.classList.toggle('active', parseInt(b.dataset.val) === state.magLevel));
+
+            const zone = zones.find(z => intensity < z.limit) || zones[zones.length - 1];
+            const tag = document.getElementById('phase-display');
+            tag.innerText = zone.label;
+            tag.style.backgroundColor = zone.color;
+
+            document.querySelectorAll('#front-btns .btn').forEach(b =>
+                b.classList.toggle('active', parseInt(b.innerText) === state.fRing));
+            document.querySelectorAll('#rear-btns .btn').forEach(b =>
+                b.classList.toggle('active', parseInt(b.innerText) === state.rCog));
+        }
+
+        // Init buttons
+        function init() {
+            const magGroup = document.getElementById('mag-group');
+            for (let i = 1; i <= 8; i++) {
+                const b = document.createElement('button');
+                b.className = 'btn';
+                b.dataset.val = i;
+                b.innerText = i;
+                b.onclick = () => updateState('magLevel', i);
+                magGroup.appendChild(b);
             }
 
-            // Camera selection logic
-            let activeCameraStream = null;
-
-            async function openCameraModal() {
-                const modal = document.getElementById('camera-modal-a1');
-                const list = document.getElementById('camera-list-a1');
-                modal.style.display = 'flex';
-                list.innerHTML = '<span style="color:var(--text-dim);font-size:0.75rem;">Loading devices…</span>';
-
-                try {
-                    const permStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    permStream.getTracks().forEach(t => t.stop());
-
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    const cameras = devices.filter(d => d.kind === 'videoinput');
-
-                    list.innerHTML = '';
-                    if (cameras.length === 0) {
-                        list.innerHTML = '<span style="color:var(--text-dim);font-size:0.75rem;">No cameras found.</span>';
-                        return;
-                    }
-
-                    cameras.forEach((cam, i) => {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn';
-                        btn.style.cssText = 'width:100%;text-align:left;padding:8px;font-size:0.75rem;';
-                        btn.innerText = cam.label || `Camera ${i + 1}`;
-                        btn.onclick = async () => {
-                            const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId } });
-                            document.getElementById('camera-feed').srcObject = stream;
-                            modal.style.display = 'none';
-                        };
-                        list.appendChild(btn);
-                    });
-                } catch (err) {
-                    list.innerHTML = `<span style="color:var(--vo2);font-size:0.75rem;">Camera access denied: ${err.message}</span>`;
-                }
-            }
-
-            document.getElementById('btn-camera-a1').addEventListener('click', openCameraModal);
-            document.getElementById('camera-modal-close-a1').addEventListener('click', () => {
-                document.getElementById('camera-modal-a1').style.display = 'none';
+            const frontTeeth = [34, 36, 38, 39, 50, 52, 53];
+            const frontBtns = document.getElementById('front-btns');
+            frontTeeth.forEach(t => {
+                const b = document.createElement('button');
+                b.className = 'btn'; b.innerText = t;
+                b.onclick = () => updateState('fRing', t);
+                frontBtns.appendChild(b);
             });
 
-            async function openCameraModalA2() {
-                const modal = document.getElementById('camera-modal-a2');
-                const list = document.getElementById('camera-list-a2');
-                modal.style.display = 'flex';
-                list.innerHTML = '<span style="color:var(--text-dim);font-size:0.75rem;">Loading devices…</span>';
-
-                try {
-                    const permStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    permStream.getTracks().forEach(t => t.stop());
-
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    const cameras = devices.filter(d => d.kind === 'videoinput');
-
-                    list.innerHTML = '';
-                    if (cameras.length === 0) {
-                        list.innerHTML = '<span style="color:var(--text-dim);font-size:0.75rem;">No cameras found.</span>';
-                        return;
-                    }
-
-                    cameras.forEach((cam, i) => {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn';
-                        btn.style.cssText = 'width:100%;text-align:left;padding:8px;font-size:0.75rem;';
-                        btn.innerText = cam.label || `Camera ${i + 1}`;
-                        btn.onclick = async () => {
-                            const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId } });
-                            document.getElementById('camera-feed-2').srcObject = stream;
-                            modal.style.display = 'none';
-                        };
-                        list.appendChild(btn);
-                    });
-                } catch (err) {
-                    list.innerHTML = `<span style="color:var(--vo2);font-size:0.75rem;">Camera access denied: ${err.message}</span>`;
-                }
-            }
-
-            document.getElementById('btn-camera-a2').addEventListener('click', openCameraModalA2);
-            document.getElementById('camera-modal-close-a2').addEventListener('click', () => {
-                document.getElementById('camera-modal-a2').style.display = 'none';
+            const rearTeeth = [11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 28];
+            const rearBtns = document.getElementById('rear-btns');
+            rearTeeth.forEach(t => {
+                const b = document.createElement('button');
+                b.className = 'btn'; b.innerText = t;
+                b.onclick = () => updateState('rCog', t);
+                rearBtns.appendChild(b);
             });
 
-            function init() {
-                const mg = document.getElementById('mag-group');
-                for (let i = 1; i <= 8; i++) {
-                    const b = document.createElement('button'); b.className = 'btn'; b.innerText = 'L' + i; b.dataset.val = i;
-                    b.onclick = () => updateState('magLevel', i); mg.appendChild(b);
+            render();
+        }
+
+        // Camera — A1 (Speed)
+        document.getElementById('btn-camera-a1').addEventListener('click', openCameraModalA1);
+        document.getElementById('camera-modal-close-a1').addEventListener('click', () => {
+            document.getElementById('camera-modal-a1').style.display = 'none';
+        });
+
+        async function openCameraModalA1() {
+            const modal = document.getElementById('camera-modal-a1');
+            const list = document.getElementById('camera-list-a1');
+            modal.style.display = 'flex';
+            list.innerHTML = '<span style="color:#666;font-size:0.75rem;">Loading devices…</span>';
+            try {
+                const permStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                permStream.getTracks().forEach(t => t.stop());
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(d => d.kind === 'videoinput');
+                list.innerHTML = '';
+                if (cameras.length === 0) {
+                    list.innerHTML = '<span style="color:#666;font-size:0.75rem;">No cameras found.</span>';
+                    return;
                 }
-                const fg = document.getElementById('front-btns');
-                [50, 34].forEach(t => {
-                    const b = document.createElement('button'); b.className = 'btn'; b.innerText = t + 'T';
-                    b.onclick = () => updateState('fRing', t); fg.appendChild(b);
-                }
-                );
-                const rg = document.getElementById('rear-btns');
-                [11, 12, 13, 14, 15, 17, 19, 21, 24, 28, 32, 34].forEach(t => {
-                    const b = document.createElement('button'); b.className = 'btn'; b.innerText = t + 'T';
-                    b.onclick = () => updateState('rCog', t); rg.appendChild(b);
-                }
-                );
-                render();
-            }
-
-            // Recording and GPX Export Functionality
-            let recordingActive = false;
-            let recordingStartTime = null;
-            let recordingTimer = null;
-            let recordedData = [];
-            let recordedPoints = [];
-            let startLatitude = 37.7749; // Default: San Francisco
-            let startLongitude = -122.4194;
-            let startElevation = 0;
-            let cumulativeDistance = 0;
-            let cumulativeElevationGain = 0;
-            let previousElevation = 0;
-            let lastRecordTime = 0;
-            const RECORD_INTERVAL = 2000; // Record every 2 seconds
-
-            function haversineDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371; // Earth's radius in km
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c;
-            }
-
-            function updateRecordingDisplay() {
-                const elapsed = Date.now() - recordingStartTime;
-                const seconds = Math.floor(elapsed / 1000) % 60;
-                const minutes = Math.floor(elapsed / 60000) % 60;
-                const hours = Math.floor(elapsed / 3600000);
-                document.getElementById('recording-time').innerText =
-                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                document.getElementById('recording-points').innerText = recordedPoints.length;
-
-                // Display cumulative distance
-                const distanceKm = cumulativeDistance / 1000;
-                document.getElementById('recording-distance').innerText = distanceKm.toFixed(2) + ' km';
-
-                // Display cumulative elevation gain
-                document.getElementById('recording-elevation').innerText = Math.round(cumulativeElevationGain) + ' m';
-            }
-
-            function recordDataPoint() {
-                const currentTime = Date.now();
-                const timeDelta = lastRecordTime === 0 ? RECORD_INTERVAL / 1000 : (currentTime - lastRecordTime) / 1000;
-                lastRecordTime = currentTime;
-
-                // Distance traveled in this interval = speed × time
-                const v = state.speed / 3.6; // m/s
-                const distanceInInterval = v * timeDelta;
-                cumulativeDistance += distanceInInterval;
-
-                // Current elevation based on cumulative distance and grade
-                const currentElevation = startElevation + (cumulativeDistance / 1000 * (state.grade / 100)) * 1000;
-
-                // Accumulate elevation gain only for uphill movement
-                const elevationChange = currentElevation - previousElevation;
-                if (elevationChange > 0) {
-                    cumulativeElevationGain += elevationChange;
-                }
-                previousElevation = currentElevation;
-
-                // Simulate movement along latitude (1 degree latitude ≈ 111 km)
-                const distanceKm = cumulativeDistance / 1000;
-                const currentLat = startLatitude + (distanceKm / 111);
-
-                const elapsed = (currentTime - recordingStartTime) / 1000;
-                const timestamp = new Date(recordingStartTime + elapsed * 1000);
-
-                recordedData.push({
-                    timestamp: timestamp.toISOString(),
-                    speed: state.speed,
-                    rpm: state.rpm,
-                    power: Math.round((state.mass * 9.81 * v * (state.grade / 100)) +
-                        (state.mass * 9.81 * v * 0.004) +
-                        (0.5 * 1.225 * 0.88 * ((state.width / 100) * (0.75 * (state.height / 100))) * Math.pow(v, 3))),
-                    grade: state.grade,
-                    magLevel: state.magLevel,
-                    fRing: state.fRing,
-                    rCog: state.rCog,
-                    ftp: state.ftp,
-                    mass: state.mass
+                cameras.forEach((cam, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn';
+                    btn.style.cssText = 'width:100%;text-align:left;padding:8px;font-size:0.75rem;';
+                    btn.innerText = cam.label || `Camera ${i + 1}`;
+                    btn.onclick = async () => {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId } });
+                        document.getElementById('camera-feed').srcObject = stream;
+                        modal.style.display = 'none';
+                    };
+                    list.appendChild(btn);
                 });
-
-                recordedPoints.push({
-                    lat: currentLat,
-                    lon: startLongitude,
-                    ele: currentElevation,
-                    timestamp: timestamp
-                });
+            } catch (err) {
+                list.innerHTML = `<span style="color:#666;font-size:0.75rem;">Camera access denied: ${err.message}</span>`;
             }
+        }
 
-            document.getElementById('btn-record').addEventListener('click', () => {
-                recordingActive = true;
-                recordingStartTime = Date.now();
-                recordedData = [];
-                recordedPoints = [{ lat: startLatitude, lon: startLongitude, ele: startElevation, timestamp: new Date() }];
-                cumulativeDistance = 0;
-                cumulativeElevationGain = 0;
-                previousElevation = startElevation;
-                lastRecordTime = 0;
+        // Camera — A2 (Cadence)
+        document.getElementById('btn-camera-a2').addEventListener('click', openCameraModalA2);
+        document.getElementById('camera-modal-close-a2').addEventListener('click', () => {
+            document.getElementById('camera-modal-a2').style.display = 'none';
+        });
 
-                document.getElementById('btn-record').style.display = 'none';
-                document.getElementById('btn-stop-record').style.display = 'inline-block';
-                document.getElementById('btn-export-gpx').style.display = 'none';
-                document.getElementById('btn-set-location').disabled = true;
-
-                recordingTimer = setInterval(() => {
-                    if (recordingActive) {
-                        recordDataPoint();
-                        updateRecordingDisplay();
-                    }
-                }, RECORD_INTERVAL);
-            });
-
-            document.getElementById('btn-stop-record').addEventListener('click', () => {
-                recordingActive = false;
-                clearInterval(recordingTimer);
-
-                document.getElementById('btn-record').style.display = 'inline-block';
-                document.getElementById('btn-stop-record').style.display = 'none';
-                document.getElementById('btn-export-gpx').style.display = 'inline-block';
-                document.getElementById('btn-set-location').disabled = false;
-            });
-
-            document.getElementById('btn-set-location').addEventListener('click', () => {
-                if (recordingActive) {
-                    alert('Stop recording before setting a new start location.');
+        async function openCameraModalA2() {
+            const modal = document.getElementById('camera-modal-a2');
+            const list = document.getElementById('camera-list-a2');
+            modal.style.display = 'flex';
+            list.innerHTML = '<span style="color:#666;font-size:0.75rem;">Loading devices…</span>';
+            try {
+                const permStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                permStream.getTracks().forEach(t => t.stop());
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(d => d.kind === 'videoinput');
+                list.innerHTML = '';
+                if (cameras.length === 0) {
+                    list.innerHTML = '<span style="color:#666;font-size:0.75rem;">No cameras found.</span>';
                     return;
                 }
+                cameras.forEach((cam, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn';
+                    btn.style.cssText = 'width:100%;text-align:left;padding:8px;font-size:0.75rem;';
+                    btn.innerText = cam.label || `Camera ${i + 1}`;
+                    btn.onclick = async () => {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId } });
+                        document.getElementById('camera-feed-2').srcObject = stream;
+                        modal.style.display = 'none';
+                    };
+                    list.appendChild(btn);
+                });
+            } catch (err) {
+                list.innerHTML = `<span style="color:#666;font-size:0.75rem;">Camera access denied: ${err.message}</span>`;
+            }
+        }
 
-                if (!navigator.geolocation) {
-                    alert('Geolocation is not supported by your browser.');
-                    return;
-                }
+        // GPX Recording
+        let recordingActive = false;
+        let recordingTimer, recordingStartTime;
+        let recordedData = [], recordedPoints = [];
+        let cumulativeDistance = 0, cumulativeElevationGain = 0, previousElevation = 0;
+        let lastRecordTime = 0;
+        let startLatitude = 49.2827, startLongitude = -123.1207, startElevation = 0;
+        const RECORD_INTERVAL = 5000;
 
-                const statusEl = document.getElementById('location-status');
-                statusEl.innerText = 'Detecting location...';
+        // Live timer display
+        let timerInterval;
+        function startTimerDisplay() {
+            timerInterval = setInterval(() => {
+                if (!recordingActive) return;
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+                const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+                const s = String(elapsed % 60).padStart(2, '0');
+                document.getElementById('recording-time').innerText = `${h}:${m}:${s}`;
+            }, 1000);
+        }
 
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        startLatitude = position.coords.latitude;
-                        startLongitude = position.coords.longitude;
-                        startElevation = position.coords.altitude || 0;
+        function updateRecordingDisplay() {
+            document.getElementById('recording-points').innerText = recordedPoints.length;
+            document.getElementById('recording-distance').innerText = (cumulativeDistance / 1000).toFixed(2) + ' km';
+            document.getElementById('recording-elevation').innerText = Math.round(cumulativeElevationGain) + ' m';
+        }
 
-                        statusEl.innerText = `Start: ${startLatitude.toFixed(4)}°, ${startLongitude.toFixed(4)}° (${Math.round(startElevation)}m)`;
-
-                        // Reset recording display and tracking variables
-                        recordedData = [];
-                        recordedPoints = [];
-                        cumulativeDistance = 0;
-                        cumulativeElevationGain = 0;
-                        previousElevation = startElevation;
-                        lastRecordTime = 0;
-                        document.getElementById('recording-time').innerText = '00:00:00';
-                        document.getElementById('recording-points').innerText = '0';
-                        document.getElementById('recording-distance').innerText = '0.0 km';
-                        document.getElementById('recording-elevation').innerText = '0 m';
-                        document.getElementById('btn-export-gpx').style.display = 'none';
-                    },
-                    (error) => {
-                        let errorMsg = 'Unable to get location.';
-                        if (error.code === error.PERMISSION_DENIED) errorMsg = 'Location permission denied.';
-                        else if (error.code === error.POSITION_UNAVAILABLE) errorMsg = 'Location unavailable.';
-                        else if (error.code === error.TIMEOUT) errorMsg = 'Location request timeout.';
-
-                        statusEl.innerText = errorMsg;
-                        statusEl.style.color = 'var(--vo2)';
-                    }
-                );
+        function recordDataPoint() {
+            const currentTime = Date.now();
+            const timeDelta = lastRecordTime === 0 ? RECORD_INTERVAL / 1000 : (currentTime - lastRecordTime) / 1000;
+            lastRecordTime = currentTime;
+            const v = state.speed / 3.6;
+            cumulativeDistance += v * timeDelta;
+            const currentElevation = startElevation + (cumulativeDistance / 1000 * (state.grade / 100)) * 1000;
+            const elevationChange = currentElevation - previousElevation;
+            if (elevationChange > 0) cumulativeElevationGain += elevationChange;
+            previousElevation = currentElevation;
+            const distanceKm = cumulativeDistance / 1000;
+            const currentLat = startLatitude + (distanceKm / 111);
+            const elapsed = (currentTime - recordingStartTime) / 1000;
+            const timestamp = new Date(recordingStartTime + elapsed * 1000);
+            recordedData.push({
+                timestamp: timestamp.toISOString(), speed: state.speed, rpm: state.rpm,
+                power: Math.round((state.mass * 9.81 * v * (state.grade / 100)) +
+                    (state.mass * 9.81 * v * 0.004) +
+                    (0.5 * 1.225 * 0.88 * ((state.width / 100) * (0.75 * (state.height / 100))) * Math.pow(v, 3))),
+                grade: state.grade, magLevel: state.magLevel, fRing: state.fRing,
+                rCog: state.rCog, ftp: state.ftp, mass: state.mass
             });
+            recordedPoints.push({ lat: currentLat, lon: startLongitude, ele: currentElevation, timestamp });
+        }
 
-            document.getElementById('btn-export-gpx').addEventListener('click', () => {
-                if (recordedPoints.length < 2) {
-                    alert('Not enough recorded data points to export.');
-                    return;
+        document.getElementById('btn-record').addEventListener('click', () => {
+            recordingActive = true;
+            recordingStartTime = Date.now();
+            recordedData = [];
+            recordedPoints = [{ lat: startLatitude, lon: startLongitude, ele: startElevation, timestamp: new Date() }];
+            cumulativeDistance = 0; cumulativeElevationGain = 0;
+            previousElevation = startElevation; lastRecordTime = 0;
+            document.getElementById('btn-record').style.display = 'none';
+            document.getElementById('btn-stop-record').style.display = 'inline-block';
+            document.getElementById('btn-export-gpx').style.display = 'none';
+            document.getElementById('btn-set-location').disabled = true;
+            startTimerDisplay();
+            recordingTimer = setInterval(() => { if (recordingActive) { recordDataPoint(); updateRecordingDisplay(); } }, RECORD_INTERVAL);
+        });
+
+        document.getElementById('btn-stop-record').addEventListener('click', () => {
+            recordingActive = false;
+            clearInterval(recordingTimer);
+            clearInterval(timerInterval);
+            document.getElementById('btn-record').style.display = 'inline-block';
+            document.getElementById('btn-stop-record').style.display = 'none';
+            document.getElementById('btn-export-gpx').style.display = 'inline-block';
+            document.getElementById('btn-set-location').disabled = false;
+        });
+
+        document.getElementById('btn-set-location').addEventListener('click', () => {
+            if (recordingActive) { alert('Stop recording before setting a new start location.'); return; }
+            if (!navigator.geolocation) { alert('Geolocation is not supported by your browser.'); return; }
+            const statusEl = document.getElementById('location-status');
+            statusEl.innerText = 'Detecting location…';
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    startLatitude = position.coords.latitude;
+                    startLongitude = position.coords.longitude;
+                    startElevation = position.coords.altitude || 0;
+                    statusEl.innerText = `Start: ${startLatitude.toFixed(4)}°, ${startLongitude.toFixed(4)}° (${Math.round(startElevation)}m)`;
+                    recordedData = []; recordedPoints = [];
+                    cumulativeDistance = 0; cumulativeElevationGain = 0;
+                    previousElevation = startElevation; lastRecordTime = 0;
+                    document.getElementById('recording-time').innerText = '00:00:00';
+                    document.getElementById('recording-points').innerText = '0';
+                    document.getElementById('recording-distance').innerText = '0.0 km';
+                    document.getElementById('recording-elevation').innerText = '0 m';
+                    document.getElementById('btn-export-gpx').style.display = 'none';
+                },
+                (error) => {
+                    let msg = 'Unable to get location.';
+                    if (error.code === error.PERMISSION_DENIED) msg = 'Location permission denied.';
+                    else if (error.code === error.POSITION_UNAVAILABLE) msg = 'Location unavailable.';
+                    else if (error.code === error.TIMEOUT) msg = 'Location request timeout.';
+                    statusEl.innerText = msg;
+                    statusEl.style.color = '#8a0010';
                 }
+            );
+        });
 
-                // Build GPX XML
-                let gpxXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-                gpxXml += '<gpx version="1.1" creator="MAG-500 Trainer App" ';
-                gpxXml += 'xmlns="http://www.topografix.com/GPX/1/1" ';
-                gpxXml += 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ';
-                gpxXml += 'xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" ';
-                gpxXml += 'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n';
+        document.getElementById('btn-export-gpx').addEventListener('click', () => {
+            if (recordedPoints.length < 2) { alert('Not enough recorded data points to export.'); return; }
+            let gpxXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            gpxXml += '<gpx version="1.1" creator="MAG-500 Trainer App" ';
+            gpxXml += 'xmlns="http://www.topografix.com/GPX/1/1" ';
+            gpxXml += 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ';
+            gpxXml += 'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n';
+            gpxXml += '  <metadata>\n';
+            gpxXml += `    <time>${new Date(recordingStartTime).toISOString()}</time>\n`;
+            gpxXml += '    <n>MAG-500 Training Session</n>\n';
+            gpxXml += `    <desc>Recorded session with ${recordedData.length} data points</desc>\n`;
+            gpxXml += '  </metadata>\n';
+            gpxXml += '  <trk>\n    <n>Training Track</n>\n    <trkseg>\n';
+            for (let pt of recordedPoints) {
+                gpxXml += `      <trkpt lat="${pt.lat.toFixed(7)}" lon="${pt.lon.toFixed(7)}">\n`;
+                gpxXml += `        <ele>${pt.ele.toFixed(1)}</ele>\n`;
+                gpxXml += `        <time>${pt.timestamp.toISOString()}</time>\n`;
+                gpxXml += '      </trkpt>\n';
+            }
+            gpxXml += '    </trkseg>\n  </trk>\n</gpx>\n';
+            const blob = new Blob([gpxXml], { type: 'application/gpx+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const ts = new Date(recordingStartTime).toISOString().replace(/[:.]/g, '-');
+            a.href = url; a.download = `training_${ts}.gpx`;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+            recordedData = []; recordedPoints = [];
+            cumulativeDistance = 0; cumulativeElevationGain = 0;
+            previousElevation = startElevation; lastRecordTime = 0;
+            document.getElementById('recording-time').innerText = '00:00:00';
+            document.getElementById('recording-points').innerText = '0';
+            document.getElementById('recording-distance').innerText = '0.0 km';
+            document.getElementById('recording-elevation').innerText = '0 m';
+            document.getElementById('btn-export-gpx').style.display = 'none';
+            document.getElementById('btn-record').style.display = 'inline-block';
+        });
 
-                gpxXml += '  <metadata>\n';
-                gpxXml += `    <time>${new Date(recordingStartTime).toISOString()}</time>\n`;
-                gpxXml += '    <name>MAG-500 Training Session</name>\n';
-                gpxXml += `    <desc>Recorded session with ${recordedData.length} data points</desc>\n`;
-                gpxXml += '  </metadata>\n';
-
-                gpxXml += '  <trk>\n';
-                gpxXml += '    <name>Training Track</name>\n';
-                gpxXml += '    <trkseg>\n';
-
-                for (let point of recordedPoints) {
-                    gpxXml += `      <trkpt lat="${point.lat.toFixed(7)}" lon="${point.lon.toFixed(7)}">\n`;
-                    gpxXml += `        <ele>${point.ele.toFixed(1)}</ele>\n`;
-                    gpxXml += `        <time>${point.timestamp.toISOString()}</time>\n`;
-                    gpxXml += '      </trkpt>\n';
-                }
-
-                gpxXml += '    </trkseg>\n';
-                gpxXml += '  </trk>\n';
-                gpxXml += '</gpx>\n';
-
-                // Download GPX file
-                const blob = new Blob([gpxXml], { type: 'application/gpx+xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                const timestamp = new Date(recordingStartTime).toISOString().replace(/[:.]/g, '-');
-                a.href = url;
-                a.download = `training_${timestamp}.gpx`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                // Reset for new recording
-                recordedData = [];
-                recordedPoints = [];
-                cumulativeDistance = 0;
-                cumulativeElevationGain = 0;
-                previousElevation = startElevation;
-                lastRecordTime = 0;
-                document.getElementById('recording-time').innerText = '00:00:00';
-                document.getElementById('recording-points').innerText = '0';
-                document.getElementById('recording-distance').innerText = '0.0 km';
-                document.getElementById('recording-elevation').innerText = '0 m';
-                document.getElementById('btn-export-gpx').style.display = 'none';
-                document.getElementById('btn-record').style.display = 'inline-block';
-            });
-
-            window.onload = init;
-        </script>
+        window.onload = init;
+    </script>
 </body>
 
 </html>
