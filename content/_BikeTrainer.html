@@ -766,10 +766,11 @@
                     style="flex:0 0 50%; background:#f8f8f8; border-top:1px solid #000; display:flex; flex-direction:column; padding:0.75rem; gap:6px; overflow:hidden;">
                     <div id="camera-name-a1" class="camera-label">Speed (Rear wheel)</div>
                     <div id="figure-a1"
-                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden;">
-                        <svg style="width:90%; height:90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                            <rect x="10" y="10" width="80" height="80" fill="#f0f0f0" />
-                        </svg>
+                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
+                        <canvas id="canvas-a1" style="width:100%; height:100%; object-fit:contain;"></canvas>
+                        <div id="status-a1"
+                            style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#fff; font-size:10px; padding:2px 5px; font-family:monospace;">
+                            READY</div>
                     </div>
                 </div>
             </div>
@@ -789,10 +790,11 @@
                     style="flex:0 0 50%; background:#f8f8f8; border-top:1px solid #000; display:flex; flex-direction:column; padding:0.75rem; gap:6px; overflow:hidden;">
                     <div id="camera-name-a2" class="camera-label">Cadence (Pedaling)</div>
                     <div id="figure-a2"
-                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden;">
-                        <svg style="width:90%; height:90%;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                            <rect x="10" y="10" width="80" height="80" fill="#f0f0f0" />
-                        </svg>
+                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
+                        <canvas id="canvas-a2" style="width:100%; height:100%; object-fit:contain;"></canvas>
+                        <div id="status-a2"
+                            style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#fff; font-size:10px; padding:2px 5px; font-family:monospace;">
+                            READY</div>
                     </div>
                 </div>
             </div>
@@ -869,9 +871,9 @@
 
         // State
         const state = {
-            ftp: 250, mass: 85, height: 178, width: 25,
+            ftp: 150, mass: 85, height: 178, width: 25,
             grade: 0, rpm: 0, speed: 0,
-            fRing: 50, rCog: 15, circ: 2.105, magLevel: 1
+            fRing: 53, rCog: 11, circ: 2.105, magLevel: 1
         };
 
         const zones = [
@@ -943,6 +945,147 @@
                 b.classList.toggle('active', parseInt(b.innerText) === state.rCog));
         }
 
+        // Vision Processing System
+        class VisionProcessor {
+            constructor(videoId, canvasId, statusId, type) {
+                this.video = document.getElementById(videoId);
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+                this.statusEl = document.getElementById(statusId);
+                this.type = type; // 'speed' or 'cadence'
+                this.active = false;
+                this.prevFrame = null;
+                this.lastDetectionTime = 0;
+                this.frameCount = 0;
+                this.fps = 0;
+                this.lastFpsUpdate = 0;
+
+                // Detection params
+                this.motionThreshold = 25;
+                this.redThreshold = { r: 150, g: 80, b: 80 }; // R > 150, G < 80, B < 80
+            }
+
+            start() {
+                this.active = true;
+                this.requestFrame();
+            }
+
+            stop() {
+                this.active = false;
+            }
+
+            requestFrame() {
+                if (!this.active) return;
+                if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+                    this.process();
+                }
+                requestAnimationFrame(() => this.requestFrame());
+            }
+
+            process() {
+                const w = this.video.videoWidth;
+                const h = this.video.videoHeight;
+                if (this.canvas.width !== w) {
+                    this.canvas.width = w;
+                    this.canvas.height = h;
+                }
+
+                this.ctx.drawImage(this.video, 0, 0, w, h);
+                const frame = this.ctx.getImageData(0, 0, w, h);
+                const data = frame.data;
+
+                let redPixels = [];
+                let motionPixels = 0;
+
+                // Detection loop
+                // We use a coarser grid for performance
+                const step = 1; // Finest grid (processes every pixel)
+                for (let y = 0; y < h; y += step) {
+                    for (let x = 0; x < w; x += step) {
+                        const i = (y * w + x) * 4;
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+
+                        // 1. Red Label Detection
+                        // Heuristic: Red is significantly higher than G and B
+                        if (r > 120 && r > g * 1.8 && r > b * 1.8) {
+                            redPixels.push({ x, y });
+                            // Mark red pixels on canvas for debug
+                            data[i] = 255; data[i + 1] = 0; data[i + 2] = 255;
+                        }
+
+                        // 2. Motion Detection (Grayscale difference)
+                        const gray = (r + g + b) / 3;
+                        if (this.prevFrame) {
+                            const prevGray = this.prevFrame[i / 4];
+                            const diff = Math.abs(gray - prevGray);
+                            if (diff > this.motionThreshold) {
+                                motionPixels++;
+                                // Optional: mark motion
+                                // data[i+1] = 255; // Green overlay for motion
+                            }
+                        }
+                    }
+                }
+
+                // Update prevFrame (sub-sampled grayscale)
+                if (!this.prevFrame || this.prevFrame.length !== (w * h)) {
+                    this.prevFrame = new Float32Array(w * h);
+                }
+                for (let i = 0; i < w * h; i++) {
+                    const idx = i * 4;
+                    this.prevFrame[i] = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                }
+
+                // Analyze Red Blobs
+                let targetFound = false;
+                let targetX = 0, targetY = 0;
+                if (redPixels.length > 10) { // Min noise floor
+                    // Calculate center of mass for the red label
+                    let sumX = 0, sumY = 0;
+                    redPixels.forEach(p => { sumX += p.x; sumY += p.y; });
+                    targetX = sumX / redPixels.length;
+                    targetY = sumY / redPixels.length;
+                    targetFound = true;
+                }
+
+                // Visual Feedback
+                this.ctx.putImageData(frame, 0, 0);
+
+                if (targetFound) {
+                    this.ctx.strokeStyle = '#00ff00';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.strokeRect(targetX - 20, targetY - 10, 40, 20); // 2:1 ratio approx
+                    this.ctx.fillStyle = '#00ff00';
+                    this.ctx.fillText("LABEL DETECTED", targetX - 20, targetY - 15);
+                }
+
+                // Stats Overlay
+                const motionPct = (motionPixels / ((w * h) / (step * step))) * 100;
+                this.frameCount++;
+                const now = Date.now();
+                if (now - this.lastFpsUpdate > 1000) {
+                    this.fps = this.frameCount;
+                    this.frameCount = 0;
+                    this.lastFpsUpdate = now;
+                }
+
+                this.statusEl.innerText = `${this.type.toUpperCase()} | FPS: ${this.fps} | MOTION: ${motionPct.toFixed(1)}% | ${targetFound ? 'RED: YES' : 'RED: NO'}`;
+
+                // Logic Integration: Update state if motion/red detected?
+                // For now, we just log it. In a real app, this would drive RPM.
+                if (targetFound && motionPct > 5) {
+                    this.statusEl.style.color = '#00ff00';
+                } else {
+                    this.statusEl.style.color = '#fff';
+                }
+            }
+        }
+
+        const processorA1 = new VisionProcessor('camera-feed', 'canvas-a1', 'status-a1', 'speed');
+        const processorA2 = new VisionProcessor('camera-feed-2', 'canvas-a2', 'status-a2', 'cadence');
+
         // Init buttons
         function init() {
             const magGroup = document.getElementById('mag-group');
@@ -1006,6 +1149,7 @@
                         const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId } });
                         document.getElementById('camera-feed').srcObject = stream;
                         modal.style.display = 'none';
+                        processorA1.start();
                     };
                     list.appendChild(btn);
                 });
@@ -1044,6 +1188,7 @@
                         const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId } });
                         document.getElementById('camera-feed-2').srcObject = stream;
                         modal.style.display = 'none';
+                        processorA2.start();
                     };
                     list.appendChild(btn);
                 });
