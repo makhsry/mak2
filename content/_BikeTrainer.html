@@ -756,21 +756,23 @@
         <div class="grid-stack-item" gs-x="8" gs-y="0" gs-w="2" gs-h="5" gs-id="panel-a1">
             <div class="grid-stack-item-content"
                 style="display:flex; flex-direction:column; padding:0; overflow:hidden; position:relative; height:100%;">
+                <!-- Upper: Camera View & Detection Merge -->
                 <div
                     style="flex:0 0 50%; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
-                    <video id="camera-feed" style="width:100%; height:100%; object-fit:cover;" autoplay
-                        playsinline></video>
+                    <video id="camera-feed" style="display:none;" autoplay playsinline></video>
+                    <canvas id="canvas-a1" style="width:100%; height:100%; object-fit:cover;"></canvas>
+                    <div id="status-a1"
+                        style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#fff; font-size:10px; padding:2px 5px; font-family:monospace; z-index:11;">
+                        READY</div>
                     <button id="btn-camera-a1" class="camera-btn">Select Camera</button>
                 </div>
+                <!-- Lower: Future Placeholder -->
                 <div
                     style="flex:0 0 50%; background:#f8f8f8; border-top:1px solid #000; display:flex; flex-direction:column; padding:0.75rem; gap:6px; overflow:hidden;">
                     <div id="camera-name-a1" class="camera-label">Speed (Rear wheel)</div>
-                    <div id="figure-a1"
-                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
-                        <canvas id="canvas-a1" style="width:100%; height:100%; object-fit:contain;"></canvas>
-                        <div id="status-a1"
-                            style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#fff; font-size:10px; padding:2px 5px; font-family:monospace;">
-                            READY</div>
+                    <div
+                        style="flex:1; border:1px dashed #ccc; display:flex; justify-content:center; align-items:center; color:#999; font-size:0.7rem;">
+                        PLACEHOLDER
                     </div>
                 </div>
             </div>
@@ -780,21 +782,23 @@
         <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="2" gs-h="5" gs-id="panel-a2">
             <div class="grid-stack-item-content"
                 style="display:flex; flex-direction:column; padding:0; overflow:hidden; position:relative; height:100%;">
+                <!-- Upper: Camera View & Detection Merge -->
                 <div
                     style="flex:0 0 50%; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
-                    <video id="camera-feed-2" style="width:100%; height:100%; object-fit:cover;" autoplay
-                        playsinline></video>
+                    <video id="camera-feed-2" style="display:none;" autoplay playsinline></video>
+                    <canvas id="canvas-a2" style="width:100%; height:100%; object-fit:cover;"></canvas>
+                    <div id="status-a2"
+                        style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#fff; font-size:10px; padding:2px 5px; font-family:monospace; z-index:11;">
+                        READY</div>
                     <button id="btn-camera-a2" class="camera-btn">Select Camera</button>
                 </div>
+                <!-- Lower: Future Placeholder -->
                 <div
                     style="flex:0 0 50%; background:#f8f8f8; border-top:1px solid #000; display:flex; flex-direction:column; padding:0.75rem; gap:6px; overflow:hidden;">
                     <div id="camera-name-a2" class="camera-label">Cadence (Pedaling)</div>
-                    <div id="figure-a2"
-                        style="flex:1; background:#fff; border:1px solid #000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative;">
-                        <canvas id="canvas-a2" style="width:100%; height:100%; object-fit:contain;"></canvas>
-                        <div id="status-a2"
-                            style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#fff; font-size:10px; padding:2px 5px; font-family:monospace;">
-                            READY</div>
+                    <div
+                        style="flex:1; border:1px dashed #ccc; display:flex; justify-content:center; align-items:center; color:#999; font-size:0.7rem;">
+                        PLACEHOLDER
                     </div>
                 </div>
             </div>
