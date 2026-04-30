@@ -2,7 +2,7 @@
 
 An **interactive browser-based tool** for **parametric design** and **3D visualization** of nanochannel geometries, **mesh generation** in real time, and **export**.
 
-- Access the tool [**here**](_Nanotube.html).
+- Access the tool [**here**](tools/Nanotube.html).
 
 The channel profile is described by two **wall functions** over the **axial coordinate** `ξ`:
 
@@ -53,4 +53,4 @@ The exported file contains the following information:
 - `nx, ny, nz` — surface normal vector
 - `u, v` — UV texture coordinates
 
-![Nanotube Builder and Mesher](images/Images_Outlets_20260101_Nanotube.png)
+![Nanotube Builder and Mesher](images/tool_Nanotube.png)

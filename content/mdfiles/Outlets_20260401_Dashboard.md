@@ -2,7 +2,7 @@
 
 This is a lightweight, single-file web application that mimics the **Jupyter Notebook** experience locally. It leverages **Pyodide** to run a full Python environment directly in browser without needing a remote backend. 
 
-- Access the **`.html`** file [**here**](_Dashboard.html).
+- Access the **`.html`** file [**here**](tools/Dashboard.html).
 
 It also has a sidebar **assistant** powered by **Puter.ai** that sees current code and output to provide debugging help or code suggestions. 
 
@@ -13,4 +13,4 @@ It also has a sidebar **assistant** powered by **Puter.ai** that sees current co
     ```
 3.  **Access the dashboard** by opening browser and navigating to **`http://localhost:8000/FILENAME.html`**.
 
-![An Interactive Local Python Notebook (PyCompute + Puter.js)](images/Images_Outlets_20260401_Dashboard.png)
+![An Interactive Local Python Notebook (PyCompute + Puter.js)](images/tool_Dashboard.png)

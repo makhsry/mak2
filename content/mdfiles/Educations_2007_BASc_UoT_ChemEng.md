@@ -19,4 +19,4 @@ Used **Aspen Hysys** and **Aspen Plus** to evaluate **retrofitting** of industri
 - Applied **pinch analysis and exergy analysis** to evaluate and enhance energy integration and thermodynamic efficiency across the system.
 - Assessed **retrofitting feasibility** by integrating performance data, economic viability, and process safety considerations.
 
-![BASc. Chemical Engineering](images/Images_Educations_2007_BASc_UoT_ChemEng.jpg)
+![BASc. Chemical Engineering](images/edu_BASc_ChemEng.jpg)

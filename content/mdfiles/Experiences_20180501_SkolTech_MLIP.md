@@ -19,4 +19,4 @@ Aimed to **expedite the discovery and characterization** of hard materials for u
 - Automated molecular dynamics (MD) simulations using **LAMMPS** and **density functional theory (DFT)** calculations using **VASP** for large-scale material screening **across multiple HPC clusters**.
 - Wrote modular and efficient code in **Python** and **Bash**, managing environments and version control using **Git**.
 
-![Experiences_20180501_SkolTech_MLIP](images/Images_Experiences_20180501_SkolTech_MLIP.jpg)
+![Experiences_20180501_SkolTech_MLIP](images/exp_SkolTech_MLIP.jpg)

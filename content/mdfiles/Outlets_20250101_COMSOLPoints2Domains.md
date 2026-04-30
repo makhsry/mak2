@@ -4,7 +4,7 @@ This is a **`java`** script in **`COMSOL Application Method`** designed to autom
 
 The point cloud data are generated using the **`python`** script that projects a **`convex hull`** to the cloud points and generates respectives faces for each set of points in a **`triangulations`**.
 
-![Creating COMSOL-native Domains from Mesh Points Cloud Data](images/Images_Outlets_20250101_COMSOLPoints2Domains.png)
+![Creating COMSOL-native Domains from Mesh Points Cloud Data](images/tool_COMSOLPoints2Domains.png)
 
 #### Java Script
 

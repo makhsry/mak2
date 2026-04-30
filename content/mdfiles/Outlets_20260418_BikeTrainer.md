@@ -2,7 +2,7 @@
 
 A dynamic, single-page dashboard designed for **indoor cycling** using my **Minoura MAG-500** bike trainer. 
 
-- Access the dashboard [**here**](_BikeTrainer.html)
+- Access the dashboard [**here**](tools/BikeTrainer.html)
 
 Note: For **camera detection** to work, you have to open the `.html` file locally. 
 
@@ -18,4 +18,4 @@ The settings include:
 - **Rider Profile:** Defaults are FTP 250W, Mass 85kg, Height 178cm, Shoulder Width 31cm.
 - **Recording:** Can record a simulated workout and export a GPX file readable by other cycling apps such as Strava.
 
-![Bike Trainer Dashboard](images/Images_Outlets_20260418_BikeTrainer.png)
+![Bike Trainer Dashboard](images/tool_BikeTrainer.png)

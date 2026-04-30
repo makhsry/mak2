@@ -2,11 +2,11 @@
 
 A **web app** that takes a **color-coded pattern image** (e.g., a design, logo or similar), overlays it onto a **(multi)-city street network** (downloaded from OpenStreetMap), extracts **GPS coordinates** for each color layer, and outputs the result as one or more **GPX track files** — ready to be used in any **GPS-capable** navigation apps.
 
-- **Access** the tool [**here**](_RoutPlanner.html). 
+- **Access** the tool [**here**](tools/RoutPlanner.html). 
 
 **Note:** To run this app **locally**, you need to intiiate a **server** first. To do so, open **terminal** and run **`python -m http.server 8000`** in the folder where the file is saved. Then use this link: **`http://localhost:8000/_RoutPlanner.html`**. 
 
-![RoutPlanner_App](images/Images_Outlets_20250901_RoutPlanner.png)
+![RoutPlanner_App](images/tool_RoutPlanner.png)
 
 This app was originally written as an ipython notebook and here is what it does:
 
