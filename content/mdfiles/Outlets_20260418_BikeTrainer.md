@@ -4,7 +4,9 @@ A dynamic, single-page dashboard designed for **indoor cycling** using my **Mino
 
 - Access the dashboard [**here**](_BikeTrainer.html)
 
-It utilizes a power model to estimate intensity based on environmental and mechanical factors:
+Note: For **camera detection** to work, you have to open the `.html` file locally. 
+
+This app utilizes a power model to estimate workout intensity based on environmental and mechanical factors:
 - **Gravitational Power:** Calculates power required to overcome slope/grade.
 - **Rolling Resistance:** Accounts for tire friction based on total mass.
 - **Aerodynamic Drag:** Estimates wind resistance using rider height and shoulder width.
