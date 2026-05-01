@@ -118,11 +118,9 @@
     }
 
     /* Sidebar / Controls */
-    aside.controls {
-      width: 320px;
-      min-width: 320px;
+    aside.controls,
+    aside.simulation {
       padding: 2rem;
-      border-right: 1px solid var(--border);
       background: #fff;
       display: flex;
       flex-direction: column;
@@ -130,15 +128,30 @@
       overflow-y: auto;
     }
 
-    aside.controls::-webkit-scrollbar {
+    aside.controls {
+      width: 320px;
+      min-width: 320px;
+      border-right: 1px solid var(--border);
+    }
+
+    aside.simulation {
+      width: 450px;
+      min-width: 450px;
+      border-left: 1px solid var(--border);
+    }
+
+    aside.controls::-webkit-scrollbar,
+    aside.simulation::-webkit-scrollbar {
       width: 4px;
     }
 
-    aside.controls::-webkit-scrollbar-track {
+    aside.controls::-webkit-scrollbar-track,
+    aside.simulation::-webkit-scrollbar-track {
       background: transparent;
     }
 
-    aside.controls::-webkit-scrollbar-thumb {
+    aside.controls::-webkit-scrollbar-thumb,
+    aside.simulation::-webkit-scrollbar-thumb {
       background: #ccc;
     }
 
@@ -599,6 +612,253 @@
       margin-bottom: 1rem;
     }
 
+    /* Simulation Tables */
+    .sim-section {
+      border-top: 1px solid #eee;
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .sim-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      border: 1px solid #000;
+    }
+
+    .sim-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+      background: #fff;
+    }
+
+    .sim-table th {
+      background: #000;
+      color: #fff;
+      padding: 6px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sim-table td {
+      border: 1px solid #eee;
+      padding: 4px;
+    }
+
+    .sim-table input,
+    .sim-table select {
+      width: 100%;
+      border: none;
+      padding: 2px;
+      font-size: 0.7rem;
+      background: transparent;
+    }
+
+    .sim-table input:focus {
+      background: #f0f0f0;
+      outline: none;
+    }
+
+    .color-swatch {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #000;
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .btn-add {
+      background: #fff;
+      border: 1px solid #000;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-add:hover {
+      background: #eee;
+    }
+
+    .btn-del {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      display: block;
+    }
+
+    /* Potential Controls */
+    .pot-card {
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .pot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+
+    .pot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .pot-param {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pot-param label {
+      font-size: 0.6rem;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    .pot-param input {
+      border: none;
+      border-bottom: 1px solid #ccc;
+      background: transparent;
+      font-size: 0.75rem;
+      padding: 2px 0;
+    }
+
+    /* Simulation Tables */
+    .sim-section {
+      border-top: 1px solid #eee;
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .sim-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      border: 1px solid #000;
+    }
+
+    .sim-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.65rem;
+      background: #fff;
+    }
+
+    .sim-table th {
+      background: #000;
+      color: #fff;
+      padding: 6px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sim-table td {
+      border: 1px solid #eee;
+      padding: 4px;
+    }
+
+    .sim-table input,
+    .sim-table select {
+      width: 100%;
+      border: none;
+      padding: 2px;
+      font-size: 0.65rem;
+      background: transparent;
+    }
+
+    .sim-table input:focus {
+      background: #f0f0f0;
+      outline: none;
+    }
+
+    .color-swatch {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #000;
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .btn-add {
+      background: #fff;
+      border: 1px solid #000;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-add:hover {
+      background: #eee;
+    }
+
+    .btn-del {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      display: block;
+    }
+
+    /* Simulation Playback */
+    .sim-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .btn-play {
+      flex: 1;
+      padding: 12px;
+      background: #000;
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn-play.active {
+      background: #cc0000;
+    }
+
+    .btn-rst {
+      padding: 12px;
+      background: #eee;
+      border: 1px solid #000;
+      cursor: pointer;
+    }
+
+    .sim-param-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      margin-bottom: 8px;
+    }
+
+    .sim-param-row input {
+      width: 60px;
+    }
+
     /* Segment Tabs */
     .segment-tabs {
       display: flex;
@@ -824,8 +1084,105 @@
           <div class="zoom-btn" onclick="adjustZoom(1.2)">−</div>
           <div class="zoom-btn rst" onclick="resetZoom()">RST</div>
         </div>
+        <div id="axes-legend"
+          style="position: absolute; bottom: 1.5rem; left: 1.5rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(0,0,0,0.4); pointer-events: none; border-left: 2px solid #ccc; padding-left: 8px;">
+          <span style="color: #cc0000">X-Axis</span><br>
+          <span style="color: #008800">Y-Axis</span><br>
+          <span style="color: #0000cc">Z-Axis</span>
+        </div>
       </div>
     </div>
+
+    <!-- Simulation Panel -->
+    <aside class="simulation">
+      <div class="control-group">
+        <h3>Simulation</h3>
+        <p class="fmt-desc">Confirm the current geometry to initialize the simulation domain within the tube.</p>
+
+        <button onclick="captureGeometry()"
+          style="background: #000; color: #fff; border: none; padding: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+          ⚡ Capture Geometry
+        </button>
+
+        <div id="sim-status-box" class="eq-box"
+          style="margin-top: 1rem; font-family: 'Inter', sans-serif; min-height: 60px; display: flex; flex-direction: column; justify-content: center; border-style: dashed; opacity: 0.8;">
+          <div id="sim-status-msg" style="text-align: center; font-size: 0.75rem; color: #666;">
+            Waiting for geometry confirmation...
+          </div>
+        </div>
+
+        <div id="sim-meta" style="margin-top: 0.75rem; font-size: 0.7rem; color: #888; display: none;">
+          <div
+            style="border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 4px; font-weight: bold; color: #000;">
+            Domain Metadata</div>
+          <div id="meta-points">Points: -</div>
+          <div id="meta-length">Total Length: -</div>
+          <div id="meta-time">Captured: -</div>
+        </div>
+
+        <!-- 2. Particles -->
+        <div class="sim-section">
+          <div class="section-label">1. Particle Setup</div>
+          <div class="sim-table-wrap">
+            <table class="sim-table">
+              <thead>
+                <tr>
+                  <th>Label</th>
+                  <th>Color</th>
+                  <th>⌀ [nm]</th>
+                  <th>Mass [Da]</th>
+                  <th>Count</th>
+                  <th>Side</th>
+                  <th>Speed [m/s]</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="particle-tbody">
+                <!-- Dynamic rows -->
+              </tbody>
+            </table>
+          </div>
+          <button class="btn-add" onclick="addParticle()">+ Add Particle Type</button>
+        </div>
+
+        <!-- 2. Interactions & Run (Hidden until capture) -->
+        <div id="interaction-sections" style="display: none;">
+          <div class="sim-section">
+            <div class="section-label">2. Particle-Particle Potential</div>
+            <div class="sim-table-wrap">
+              <table class="sim-table">
+                <thead id="pair-thead"></thead>
+                <tbody id="pair-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="sim-section">
+            <div class="section-label">3. Surface Potentials</div>
+            <div id="surface-pot-list"></div>
+          </div>
+
+          <!-- 4. Playback -->
+          <div class="sim-section">
+            <div class="section-label">4. Run Simulation</div>
+            <div class="sim-controls">
+              <button class="btn-play" id="btn-sim-toggle" onclick="toggleSimulation()">▶ Start Simulation</button>
+              <button class="btn-rst" onclick="resetSimulation()">RST</button>
+            </div>
+            <div class="sim-param-row">
+              <label>Timestep [dt]</label>
+              <input type="number" step="0.0001" value="0.005" id="sim-dt"
+                onchange="state.sim.dt = parseFloat(this.value)">
+            </div>
+            <div id="sim-live-stats"
+              style="font-size: 0.7rem; color: #666; margin-top: 0.5rem; font-family: monospace;">
+              Active Particles: 0 | Time: 0.00
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
 
   </main>
 
@@ -833,12 +1190,26 @@
     //  STATE
     const state = {
       segments: [
-        { length: 10, a1: 0, a2: 0.4, a3: 1, r0: 1, spiral: 0, pitch: 0, threadAmp: 0 }
+        { length: 10, a1: 0, a2: 0.4, a3: 1, r0: 1, spiral: 0, pitch: 0, threadAmp: 0, potential: 'none', potParams: {} }
       ],
       selectedSegmentIndex: 0,
+      particles: [
+        { label: 'Ion+', color: '#ff4444', diameter: 0.2, count: 50, mass: 1.0, side: 'left', speed: 2.0 }
+      ],
       axialSegs: 200, radialSegs: 48,
+      innerRadiusFactor: 0.35,   // ratio of inner-tube outer surface to outer-tube radius [0.05, 0.90]
       wireframe: true, showInner: true, autoRot: true,
       exportFmt: 'csv',
+      simulationGeometry: null,
+      sim: {
+        running: false,
+        time: 0,
+        dt: 0.005,
+        activeParticles: [],
+        interactions: {}, // key: "idxA-idxB", value: { epsilon, sigma }
+        surfaceInteractions: [],      // outer tube inner wall: [pIdx][sIdx] = { epsilon, sigma }
+        innerSurfaceInteractions: [], // inner tube outer wall: [pIdx][sIdx] = { epsilon, sigma }
+      }
     };
 
     // THREE.JS SETUP
@@ -878,6 +1249,10 @@
     // Grid — subtle on white
     const grid = new THREE.GridHelper(14, 20, 0xbbbbbb, 0xdddddd);
     grid.position.y = -1.8; scene.add(grid);
+
+    // Axes Helper (Red = X, Green = Y, Blue = Z)
+    const axesHelper = new THREE.AxesHelper(2);
+    scene.add(axesHelper);
 
     // GEOMETRY
     const BLENDING_WIDTH = 1.5;
@@ -1043,7 +1418,7 @@
       tubeMeshes.push(outerMesh);
 
       if (showInner) {
-        const innerGeo = buildTubeMesh(points.map(p => ({ ...p, radius: p.radius * 0.35, threadAmp: p.threadAmp * 0.5 })), Nr);
+        const innerGeo = buildTubeMesh(points.map(p => ({ ...p, radius: p.radius * state.innerRadiusFactor, threadAmp: p.threadAmp * 0.5 })), Nr);
         const innerMat = new THREE.MeshPhysicalMaterial({
           color: new THREE.Color(0.85, 0.25, 0.1),
           metalness: 0.2, roughness: 0.15,
@@ -1156,6 +1531,13 @@
           <input class="param-input" type="number" value="${seg.r0}" onchange="updateSegParam('r0', this.value)">
         </div>
         <div class="param-control">
+          <div class="param-header"><span class="param-label">Inner Tube Ratio</span><span class="param-range">[0.05, 0.90]</span></div>
+          <input type="range" id="in-irf-range" min="0.05" max="0.90" step="0.01" value="${state.innerRadiusFactor}"
+            oninput="updateInnerRadius(this.value)">
+          <input class="param-input" type="number" id="in-irf" min="0.05" max="0.90" step="0.01" value="${state.innerRadiusFactor}"
+            onchange="updateInnerRadius(this.value)">
+        </div>
+        <div class="param-control">
           <div class="param-header"><span class="param-label">Spiral (Center)</span><span class="param-range">[0, 5]</span></div>
           <input type="range" min="0" max="5" step="0.1" value="${seg.spiral}" oninput="updateSegParam('spiral', this.value)">
           <input class="param-input" type="number" value="${seg.spiral}" onchange="updateSegParam('spiral', this.value)">
@@ -1176,6 +1558,104 @@
           <input class="param-input" type="number" value="${seg.length}" onchange="updateSegParam('length', this.value)">
         </div>
       `;
+
+      // Update Simulation Panel
+      updateSimulationUI();
+    }
+
+    function updateSimulationUI() {
+      // Particles
+      const pBody = document.getElementById('particle-tbody');
+      pBody.innerHTML = state.particles.map((p, i) => `
+        <tr>
+          <td><input type="text" value="${p.label}" onchange="updateParticle(${i}, 'label', this.value)" style="min-width:40px"></td>
+          <td><input type="color" value="${p.color}" onchange="updateParticle(${i}, 'color', this.value)" style="width:22px; padding:0; height:18px; cursor:pointer"></td>
+          <td><input type="number" step="0.01" min="0.01" value="${p.diameter !== undefined ? p.diameter : 0.2}" onchange="updateParticle(${i}, 'diameter', this.value)" style="min-width:38px"></td>
+          <td><input type="number" step="0.1" min="0" value="${p.mass}" onchange="updateParticle(${i}, 'mass', this.value)" style="min-width:38px"></td>
+          <td><input type="number" min="1" value="${p.count}" onchange="updateParticle(${i}, 'count', this.value)" style="min-width:34px"></td>
+          <td>
+            <select onchange="updateParticle(${i}, 'side', this.value)">
+              <option value="left" ${p.side === 'left' ? 'selected' : ''}>L</option>
+              <option value="right" ${p.side === 'right' ? 'selected' : ''}>R</option>
+            </select>
+          </td>
+          <td><input type="number" step="0.1" min="0" value="${p.speed !== undefined ? p.speed : 1.0}" onchange="updateParticle(${i}, 'speed', this.value)" style="min-width:50px"></td>
+          <td><span class="btn-del" onclick="removeParticle(${i})">×</span></td>
+        </tr>
+      `).join('');
+
+      if (!state.simulationGeometry) return;
+
+      // 2. Particle-Particle Interactions
+      const pairCont = document.getElementById('pair-tbody');
+      const pairHead = document.getElementById('pair-thead');
+      if (pairHead) pairHead.innerHTML = '';
+      if (pairCont) {
+        // Render as pot-cards (not a table) so the dropdown + dynamic params fit naturally
+        pairCont.closest('table').style.display = 'none';
+        let pairCardsEl = document.getElementById('pair-cards');
+        if (!pairCardsEl) {
+          pairCardsEl = document.createElement('div');
+          pairCardsEl.id = 'pair-cards';
+          pairCont.closest('.sim-table-wrap').parentNode.insertBefore(
+            pairCardsEl, pairCont.closest('.sim-table-wrap').nextSibling
+          );
+        }
+        let pairHtml = '';
+        state.particles.forEach((pA, i) => {
+          for (let j = i; j < state.particles.length; j++) {
+            const key = `${i}-${j}`;
+            if (!state.sim.interactions[key]) state.sim.interactions[key] = defaultInteraction('lj');
+            const inter = state.sim.interactions[key];
+            pairHtml += `
+              <div class="pot-card">
+                <div class="pot-header">
+                  <span>${pA.label} — ${state.particles[j].label}</span>
+                </div>
+                ${potDropdownHTML(inter.type, `setPairPotentialType('${key}',this.value)`)}
+                <div class="pot-grid">
+                  ${potParamsHTML(inter, `state.sim.interactions['${key}']`)}
+                </div>
+              </div>
+            `;
+          }
+        });
+        pairCardsEl.innerHTML = pairHtml;
+      }
+
+      // 3. Surface Interactions (annular gap: outer wall + inner wall, each with selectable potential)
+      const surfCont = document.getElementById('surface-pot-list');
+      if (surfCont) {
+        let html = '';
+        state.particles.forEach((p, pIdx) => {
+          state.segments.forEach((s, sIdx) => {
+            if (!state.sim.surfaceInteractions[pIdx]) state.sim.surfaceInteractions[pIdx] = {};
+            if (!state.sim.innerSurfaceInteractions[pIdx]) state.sim.innerSurfaceInteractions[pIdx] = {};
+            if (!state.sim.surfaceInteractions[pIdx][sIdx]) state.sim.surfaceInteractions[pIdx][sIdx] = defaultInteraction('lj');
+            if (!state.sim.innerSurfaceInteractions[pIdx][sIdx]) state.sim.innerSurfaceInteractions[pIdx][sIdx] = defaultInteraction('lj');
+            const oInter = state.sim.surfaceInteractions[pIdx][sIdx];
+            const iInter = state.sim.innerSurfaceInteractions[pIdx][sIdx];
+            html += `
+              <div class="pot-card">
+                <div class="pot-header" style="font-size:0.65rem">
+                  <span>${p.label} — Seg ${sIdx + 1}</span>
+                </div>
+                <div style="font-size:0.6rem;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">Outer Wall</div>
+                ${potDropdownHTML(oInter.type, `setSurfacePotentialType(${pIdx},${sIdx},'outer',this.value)`)}
+                <div class="pot-grid" style="margin-bottom:8px">
+                  ${potParamsHTML(oInter, `state.sim.surfaceInteractions[${pIdx}][${sIdx}]`)}
+                </div>
+                <div style="font-size:0.6rem;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">Inner Wall</div>
+                ${potDropdownHTML(iInter.type, `setSurfacePotentialType(${pIdx},${sIdx},'inner',this.value)`)}
+                <div class="pot-grid">
+                  ${potParamsHTML(iInter, `state.sim.innerSurfaceInteractions[${pIdx}][${sIdx}]`)}
+                </div>
+              </div>
+            `;
+          });
+        });
+        surfCont.innerHTML = html;
+      }
     }
 
     function updateSegParam(key, val) {
@@ -1185,7 +1665,7 @@
 
     function addSegment() {
       const last = state.segments[state.segments.length - 1];
-      state.segments.push({ ...last, length: 5 });
+      state.segments.push({ ...last, length: 5, potential: 'none', potParams: {} });
       state.selectedSegmentIndex = state.segments.length - 1;
       rebuildMesh();
     }
@@ -1196,6 +1676,459 @@
         state.selectedSegmentIndex = Math.min(state.selectedSegmentIndex, state.segments.length - 1);
         rebuildMesh();
       }
+    }
+
+    function updateInnerRadius(val) {
+      const v = Math.min(0.90, Math.max(0.05, parseFloat(val)));
+      if (isNaN(v)) return;
+      state.innerRadiusFactor = v;
+      // Keep slider and number input in sync
+      const range = document.getElementById('in-irf-range');
+      const num = document.getElementById('in-irf');
+      if (range) range.value = v;
+      if (num) num.value = v;
+      rebuildMesh();
+    }
+
+    function captureGeometry() {
+      const { segments, axialSegs, particles } = state;
+      const points = computeTubePath(segments, axialSegs);
+      const totalLength = segments.reduce((acc, s) => acc + s.length, 0);
+
+      state.simulationGeometry = {
+        points: JSON.parse(JSON.stringify(points)),
+        totalLength: totalLength,
+        innerRadiusFactor: state.innerRadiusFactor, // ratio: inner-tube outer surface / outer-tube radius
+        boundaries: []
+      };
+      let accL = 0;
+      segments.forEach(s => { accL += s.length; state.simulationGeometry.boundaries.push(accL); });
+
+      // Init interaction maps
+      particles.forEach((p, i) => {
+        for (let j = i; j < particles.length; j++) {
+          const key = `${i}-${j}`;
+          if (!state.sim.interactions[key]) state.sim.interactions[key] = defaultInteraction('lj');
+        }
+        // Outer wall
+        if (!state.sim.surfaceInteractions[i]) state.sim.surfaceInteractions[i] = {};
+        // Inner wall
+        if (!state.sim.innerSurfaceInteractions[i]) state.sim.innerSurfaceInteractions[i] = {};
+        segments.forEach((_, sIdx) => {
+          if (!state.sim.surfaceInteractions[i][sIdx]) state.sim.surfaceInteractions[i][sIdx] = defaultInteraction('lj');
+          if (!state.sim.innerSurfaceInteractions[i][sIdx]) state.sim.innerSurfaceInteractions[i][sIdx] = defaultInteraction('lj');
+        });
+      });
+
+      // UI Update
+      const statusBox = document.getElementById('sim-status-box');
+      statusBox.style.background = '#f0fff4';
+      statusBox.style.borderStyle = 'solid';
+      statusBox.style.borderColor = '#2d3748';
+      statusBox.style.opacity = '1';
+      document.getElementById('sim-status-msg').innerHTML = '<span style="color: #2f855a; font-weight: bold;">✓ GEOMETRY CONFIRMED</span>';
+
+      document.getElementById('sim-meta').style.display = 'block';
+      document.getElementById('meta-points').textContent = `Nodes: ${points.length}`;
+      document.getElementById('meta-length').textContent = `Length: ${totalLength.toFixed(1)} u`;
+
+      document.getElementById('interaction-sections').style.display = 'block';
+      updateSimulationUI();
+      document.getElementById('status-log').textContent = '>> Simulation domain initialized';
+    }
+
+    // PARTICLE MANAGEMENT
+    function setPairPotentialType(key, type) {
+      const inter = state.sim.interactions[key];
+      if (!inter) return;
+      inter.type = type;
+      const pot = POTENTIALS[type];
+      if (pot) pot.params.forEach(pd => { if (inter[pd.key] === undefined) inter[pd.key] = pd.def; });
+      updateSimulationUI();
+    }
+
+    function setSurfacePotentialType(pIdx, sIdx, wall, type) {
+      const arr = wall === 'outer' ? state.sim.surfaceInteractions : state.sim.innerSurfaceInteractions;
+      const inter = arr[pIdx]?.[sIdx];
+      if (!inter) return;
+      inter.type = type;
+      const pot = POTENTIALS[type];
+      if (pot) pot.params.forEach(pd => { if (inter[pd.key] === undefined) inter[pd.key] = pd.def; });
+      updateSimulationUI();
+    }
+
+    // PARTICLE MANAGEMENT
+    function addParticle() {
+      state.particles.push({ label: 'P' + (state.particles.length + 1), color: '#4488ff', diameter: 0.2, count: 10, mass: 1.0, side: 'left', speed: 1.0 });
+      updateUI();
+    }
+
+    function removeParticle(idx) {
+      state.particles.splice(idx, 1);
+      updateUI();
+    }
+
+    function updateParticle(idx, key, val) {
+      state.particles[idx][key] = (key === 'label' || key === 'color' || key === 'side') ? val : parseFloat(val);
+    }
+
+    // SIMULATION ENGINE
+    const PARTICLE_GEO = new THREE.SphereGeometry(0.1, 8, 8);
+
+    function resetSimulation() {
+      state.sim.running = false;
+      state.sim.time = 0;
+      state.sim.activeParticles.forEach(p => scene.remove(p.mesh));
+      state.sim.activeParticles = [];
+      const btn = document.getElementById('btn-sim-toggle');
+      if (btn) {
+        btn.textContent = '▶ Start Simulation';
+        btn.classList.remove('active');
+      }
+      document.getElementById('status-log').textContent = '>> Simulation reset';
+    }
+
+    function toggleSimulation() {
+      if (!state.simulationGeometry) { alert("Capture geometry first!"); return; }
+      state.sim.running = !state.sim.running;
+      const btn = document.getElementById('btn-sim-toggle');
+      btn.textContent = state.sim.running ? '⏸ Pause Simulation' : '▶ Resume Simulation';
+      btn.classList.toggle('active', state.sim.running);
+    }
+
+    // POTENTIAL REGISTRY
+    // Each entry: { label, eq, params:[{key,label,def,step}], force(r, interObj) }
+    const POTENTIALS = {
+      lj: {
+        label: 'LJ 6-12',
+        eq: 'U(r) = 4\u03b5C [(σ/r)¹² − (σ/r)⁶]',
+        params: [
+          { key: 'epsilon', label: '\u03b5', def: 0.5, step: 0.01 },
+          { key: 'sigma', label: '\u03c3', def: 0.3, step: 0.01 },
+          { key: 'C', label: 'C', def: 1.0, step: 0.1 }
+        ],
+        force(r, p) {
+          if (r < 1e-5) return 200;
+          const s = p.sigma / r, s6 = s ** 6;
+          const C = p.C !== undefined ? p.C : 1.0;
+          return C * (24 * p.epsilon / r) * (2 * s6 * s6 - s6);
+        }
+      },
+      morse: {
+        label: 'Morse',
+        eq: 'U(r) = Dₑ[1 − e⁻ᵃ⁻⁺ʳ⁻ʳᵉ⁻]\u00b2',
+        params: [
+          { key: 'De', label: 'De', def: 1.0, step: 0.01 },
+          { key: 'a', label: 'a', def: 1.5, step: 0.1 },
+          { key: 're', label: 're', def: 0.5, step: 0.01 }
+        ],
+        force(r, p) {
+          if (r < 1e-5) return 200;
+          const e = Math.exp(-p.a * (r - p.re));
+          return 2 * p.De * p.a * (1 - e) * e;
+        }
+      },
+      harmonic: {
+        label: 'Harmonic',
+        eq: 'U(r) = ½ k (r − r₀)²',
+        params: [
+          { key: 'k', label: 'k', def: 10.0, step: 0.1 },
+          { key: 'r0', label: 'r\u2080', def: 0.5, step: 0.01 }
+        ],
+        force(r, p) { return -p.k * (r - p.r0); }
+      },
+      yukawa: {
+        label: 'Yukawa',
+        eq: 'U(r) = ε e⁻ʳʳᴸ / r',
+        params: [
+          { key: 'epsilon', label: '\u03b5', def: 0.5, step: 0.01 },
+          { key: 'lambda', label: '\u03bb', def: 0.5, step: 0.01 }
+        ],
+        force(r, p) {
+          if (r < 1e-5) return 200;
+          return p.epsilon * Math.exp(-r / p.lambda) * (1 / r + 1 / p.lambda) / r;
+        }
+      },
+      wca: {
+        label: 'WCA (soft-core)',
+        eq: 'U(r) = 4ε[(σ/r)¹²−(σ/r)⁶]+ε,  r < 2¹ᐛ⁶σ',
+        params: [
+          { key: 'epsilon', label: '\u03b5', def: 0.5, step: 0.01 },
+          { key: 'sigma', label: '\u03c3', def: 0.3, step: 0.01 }
+        ],
+        force(r, p) {
+          const rc = p.sigma * Math.pow(2, 1 / 6);
+          if (r >= rc) return 0;
+          if (r < 1e-5) return 200;
+          const s = p.sigma / r, s6 = s ** 6;
+          return (24 * p.epsilon / r) * (2 * s6 * s6 - s6);
+        }
+      },
+      buckingham: {
+        label: 'Buckingham',
+        eq: 'U(r) = A e⁻ᴮʳ − C / r⁶',
+        params: [
+          { key: 'A', label: 'A', def: 1.0, step: 0.1 },
+          { key: 'B', label: 'B', def: 1.0, step: 0.1 },
+          { key: 'C', label: 'C', def: 1.0, step: 0.1 }
+        ],
+        force(r, p) {
+          if (r < 1e-5) return 200;
+          return p.A * p.B * Math.exp(-p.B * r) - 6 * p.C / r ** 7;
+        }
+      }
+    };
+
+    // Dispatch: pass the full interaction object (type + flat params)
+    function calcPotentialForce(inter, r) {
+      const pot = POTENTIALS[inter.type || 'lj'];
+      return pot ? pot.force(r, inter) : 0;
+    }
+
+    // Build a default interaction object for a given type
+    function defaultInteraction(type) {
+      type = type || 'lj';
+      const pot = POTENTIALS[type];
+      const obj = { type };
+      if (pot) pot.params.forEach(pd => { obj[pd.key] = pd.def; });
+      return obj;
+    }
+
+    // Render a potential-type <select> dropdown + equation display
+    function potDropdownHTML(currentType, onchangeCall) {
+      const type = currentType || 'lj';
+      const pot = POTENTIALS[type] || POTENTIALS.lj;
+      return `
+        <select style="width:100%;font-size:0.65rem;padding:2px 0;border:none;border-bottom:1px solid #ccc;background:transparent;margin-bottom:4px" onchange="${onchangeCall}">
+          ${Object.entries(POTENTIALS).map(([k, v]) =>
+        `<option value="${k}" ${type === k ? 'selected' : ''}>${v.label}</option>`
+      ).join('')}
+        </select>
+        <div style="font-family:'Courier New',monospace;font-size:0.62rem;color:#444;background:#f5f5f5;border-left:2px solid #000;padding:3px 6px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${pot.eq || ''}">${pot.eq || ''}</div>
+      `;
+    }
+
+    // Render parameter inputs for a potential object
+    function potParamsHTML(inter, onchangePrefix) {
+      const pot = POTENTIALS[inter.type || 'lj'];
+      if (!pot) return '';
+      return pot.params.map(pd => `
+        <div class="pot-param">
+          <label>${pd.label}</label>
+          <input type="number" step="${pd.step}" value="${inter[pd.key] !== undefined ? inter[pd.key] : pd.def}"
+            onchange="${onchangePrefix}['${pd.key}']=parseFloat(this.value)">
+        </div>
+      `).join('');
+    }
+
+    function getSurfaceForce(pos, pIdx) {
+      // Particles live in the annular gap between the inner tube outer surface
+      // and the outer tube inner surface.  Both walls apply LJ 6-12.
+      const { points, totalLength, boundaries, innerRadiusFactor: iRF } = state.simulationGeometry;
+      const x_norm = pos.x + totalLength / 2;
+      // Clamp to nearest valid node — do NOT bail out at ends; the wall still acts there.
+      const x_clamped = Math.max(0, Math.min(totalLength, x_norm));
+
+      let sIdx = boundaries.findIndex(b => x_norm <= b + 0.001);
+      if (sIdx === -1) sIdx = boundaries.length - 1;
+
+      const nodeIdx = Math.max(0, Math.min(points.length - 1,
+        Math.round((x_clamped / totalLength) * (points.length - 1))));
+      const node = points[nodeIdx];
+
+      // Radial vector from tube axis (X-component stripped so force is purely radial)
+      const radialVec = pos.clone().sub(node.center);
+      radialVec.x = 0;
+      const dist = radialVec.length();
+      if (dist < 1e-9) return new THREE.Vector3();
+      const radialDir = radialVec.clone().normalize(); // points outward from axis
+
+      const rOuter = node.radius;          // inner face of outer tube
+      const rInner = node.radius * iRF;   // outer face of inner tube
+
+      // ── Outer wall: particle distance from outer wall = rOuter - dist
+      //    Force points inward (-radialDir) when particle is close to outer wall
+      const oInter = state.sim.surfaceInteractions[pIdx]?.[sIdx] || defaultInteraction('lj');
+      const gapOuter = Math.max(1e-4, rOuter - dist);
+      const fOuter = calcPotentialForce(oInter, gapOuter);
+      const forceOuter = radialDir.clone().multiplyScalar(-fOuter); // push inward
+
+      // ── Inner wall: particle distance from inner wall = dist - rInner
+      //    Force points outward (+radialDir) when particle is close to inner wall
+      const iInter = state.sim.innerSurfaceInteractions[pIdx]?.[sIdx] || defaultInteraction('lj');
+      const gapInner = Math.max(1e-4, dist - rInner);
+      const fInner = calcPotentialForce(iInter, gapInner);
+      const forceInner = radialDir.clone().multiplyScalar(fInner); // push outward
+
+      return forceOuter.add(forceInner);
+    }
+
+    function stepSimulation() {
+      const { activeParticles, dt, interactions } = state.sim;
+      const { totalLength: totalL, points } = state.simulationGeometry;
+
+      // Helper: get tube node nearest to a world-x position
+      function nearestNode(xPos) {
+        const xn = xPos + totalL / 2;
+        const t = Math.max(0, Math.min(1, xn / totalL));
+        return points[Math.round(t * (points.length - 1))];
+      }
+
+      // Spawning
+      state.particles.forEach((pConf, pIdx) => {
+        const countActive = activeParticles.filter(ap => ap.typeIdx === pIdx).length;
+        if (countActive < pConf.count && Math.random() < 0.1) {
+          const r = (pConf.diameter !== undefined ? pConf.diameter : 0.2) / 2;
+          const geo = new THREE.SphereGeometry(r, 8, 8);
+          const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: pConf.color }));
+          // Pick a node near the entry end (left → first 15 %, right → last 15 %)
+          const xFrac = pConf.side === 'left' ? Math.random() * 0.15 : 0.85 + Math.random() * 0.15;
+          const spawnNode = points[Math.round(xFrac * (points.length - 1))];
+          const iRF = state.simulationGeometry.innerRadiusFactor;
+          const rInnerSpawn = spawnNode.radius * iRF + r; // just outside inner wall
+          const rOuterSpawn = spawnNode.radius - r;       // just inside outer wall
+          // Uniform random position in the annular gap
+          const angle = Math.random() * Math.PI * 2;
+          const rSafe = rInnerSpawn + Math.random() * Math.max(0, rOuterSpawn - rInnerSpawn);
+          mesh.position.set(
+            spawnNode.center.x,
+            spawnNode.center.y + rSafe * Math.cos(angle),
+            spawnNode.center.z + rSafe * Math.sin(angle)
+          );
+          scene.add(mesh);
+          // Random velocity: uniformly distributed direction on unit sphere (Marsaglia method),
+          // scaled by the particle type's configured speed magnitude.
+          const speed = pConf.speed !== undefined ? pConf.speed : 1.0;
+          let rx, ry, rz, rLen;
+          do {
+            rx = Math.random() * 2 - 1;
+            ry = Math.random() * 2 - 1;
+            rz = Math.random() * 2 - 1;
+            rLen = Math.sqrt(rx * rx + ry * ry + rz * rz);
+          } while (rLen > 1 || rLen < 1e-6); // reject outside unit sphere
+          const vel = new THREE.Vector3(rx / rLen * speed, ry / rLen * speed, rz / rLen * speed);
+          activeParticles.push({
+            typeIdx: pIdx, mesh, pos: mesh.position.clone(),
+            vel,
+            acc: new THREE.Vector3(), mass: pConf.mass || 1
+          });
+        }
+      });
+
+      //  Velocity Verlet integration  (standard Molecular Dynamics)
+      //
+      //  U(r) ──► F = −∇U  ──► a = F/m  ──► v, x
+      //
+      //  Phase 1  ½-kick + position:   v(t+½dt) = v(t) + ½·a(t)·dt
+      //                                x(t+dt)  = x(t) + v(t+½dt)·dt
+      //  Phase 2  Force evaluation:    F(t+dt)  from all potentials at new x
+      //                                a(t+dt)  = F(t+dt) / m
+      //  Phase 3  Second ½-kick:       v(t+dt)  = v(t+½dt) + ½·a(t+dt)·dt
+
+      const halfL = totalL / 2;
+      const MAX_SPEED = 20;
+
+      // Phase 1: ½-velocity kick  +  position update
+      activeParticles.forEach(p => {
+        // v(t + ½dt) = v(t) + ½·a(t)·dt
+        p.vel.addScaledVector(p.acc, 0.5 * dt);
+
+        // x(t+dt) = x(t) + v(t+½dt)·dt
+        p.pos.addScaledVector(p.vel, dt);
+
+        //  Axial boundary (closed ends)
+        if (p.pos.x < -halfL) { p.pos.x = -halfL; if (p.vel.x < 0) p.vel.x *= -0.9; }
+        if (p.pos.x > halfL) { p.pos.x = halfL; if (p.vel.x > 0) p.vel.x *= -0.9; }
+
+        //  Hard-wall annular confinement
+        {
+          const nd = nearestNode(p.pos.x);
+          const pCfg = state.particles[p.typeIdx];
+          const pR = (pCfg.diameter !== undefined ? pCfg.diameter : 0.2) / 2;
+          const iRF = state.simulationGeometry.innerRadiusFactor;
+          const rOuter = Math.max(0, nd.radius - pR);
+          const rInner = nd.radius * iRF + pR;
+          const dy = p.pos.y - nd.center.y, dz = p.pos.z - nd.center.z;
+          const dist = Math.sqrt(dy * dy + dz * dz);
+          if (dist > 1e-9) {
+            const ny = dy / dist, nz = dz / dist;
+            if (dist > rOuter) {
+              p.pos.y = nd.center.y + rOuter * ny;
+              p.pos.z = nd.center.z + rOuter * nz;
+              const vRad = p.vel.y * ny + p.vel.z * nz;
+              if (vRad > 0) { p.vel.y -= 1.9 * vRad * ny; p.vel.z -= 1.9 * vRad * nz; }
+            }
+            if (rInner < rOuter && dist < rInner) {
+              p.pos.y = nd.center.y + rInner * ny;
+              p.pos.z = nd.center.z + rInner * nz;
+              const vRad = p.vel.y * ny + p.vel.z * nz;
+              if (vRad < 0) { p.vel.y -= 1.9 * vRad * ny; p.vel.z -= 1.9 * vRad * nz; }
+            }
+          }
+        }
+
+        // Clear acceleration — will be filled in Phase 2
+        p.acc.set(0, 0, 0);
+      });
+
+      //  Phase 2: Force evaluation at new positions
+      //  U(r) → F = −dU/dr → a = F/m
+      activeParticles.forEach((p, i) => {
+        // Surface potentials (outer wall + inner wall)
+        const surfF = getSurfaceForce(p.pos, p.typeIdx);
+        p.acc.addScaledVector(surfF, 1 / p.mass);
+
+        // Particle-particle potentials (Newton's 3rd law applied symmetrically)
+        for (let j = i + 1; j < activeParticles.length; j++) {
+          const o = activeParticles[j];
+          const diff = p.pos.clone().sub(o.pos);
+          const r = diff.length();
+          if (r < 2.0 && r > 1e-9) {
+            const key = p.typeIdx < o.typeIdx
+              ? `${p.typeIdx}-${o.typeIdx}` : `${o.typeIdx}-${p.typeIdx}`;
+            const inter = interactions[key] || defaultInteraction('lj');
+            const fMag = calcPotentialForce(inter, r);        // F = −dU/dr
+            const fDir = diff.clone().normalize();
+            p.acc.addScaledVector(fDir, fMag / p.mass);       //  a_i += F/m_i
+            o.acc.addScaledVector(fDir, -fMag / o.mass);       //  a_j -= F/m_j  (Newton III)
+          }
+        }
+      });
+
+      //  Phase 3: Second ½-velocity kick  +  mesh sync
+      activeParticles.forEach(p => {
+        // v(t+dt) = v(t+½dt) + ½·a(t+dt)·dt
+        p.vel.addScaledVector(p.acc, 0.5 * dt);
+
+        // Speed cap — prevents tunnelling through walls on stiff force spikes
+        const spd = p.vel.length();
+        if (spd > MAX_SPEED) p.vel.multiplyScalar(MAX_SPEED / spd);
+
+        p.mesh.position.copy(p.pos);
+      });
+
+      // No axial removal — particles are reflected at both ends above
+      state.sim.time += dt;
+      const stats = document.getElementById('sim-live-stats');
+      if (stats) stats.textContent = `Active Particles: ${activeParticles.length} | Time: ${state.sim.time.toFixed(2)}`;
+    }
+
+    // POTENTIAL PARAMETERS DEFAULTS
+    const POTENTIAL_DEFAULTS = {
+      none: {},
+      'lennard-jones': { epsilon: 0.1, sigma: 1.0 },
+      'morse': { De: 1.0, a: 1.5, re: 1.0 },
+      'harmonic': { k: 10.0, r0: 1.0 }
+    };
+
+    function updatePotType(sIdx, type) {
+      state.segments[sIdx].potential = type;
+      state.segments[sIdx].potParams = { ...POTENTIAL_DEFAULTS[type] };
+      updateUI();
+    }
+
+    function updatePotParam(sIdx, key, val) {
+      state.segments[sIdx].potParams[key] = parseFloat(val);
     }
 
     // ANIMATION
@@ -1235,7 +2168,11 @@
     function animate() {
       requestAnimationFrame(animate);
       if (state.autoRot && !mouse.down) rot.y += 0.003;
-      tubeMeshes.forEach(m => { m.rotation.x = 0; m.rotation.y = 0; });
+
+      if (state.sim.running && state.simulationGeometry) {
+        stepSimulation();
+      }
+
       updateCamera();
       updateLabels();
       renderer.render(scene, camera);
