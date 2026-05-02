@@ -1,4 +1,4 @@
-### Drawing to GPX (Route Pattern Mapper)
+### Convert a Drawing to GPX (Route Pattern Mapper)
 
 A **web app** that takes a **color-coded pattern image** (e.g., a design, logo or similar), overlays it onto a **(multi)-city street network** (downloaded from OpenStreetMap), extracts **GPS coordinates** for each color layer, and outputs the result as one or more **GPX track files** — ready to be used in any **GPS-capable** navigation apps.
 
