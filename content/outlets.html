@@ -25,11 +25,11 @@
 <ul>
 <li><a href="#chemical-reaction-systems-analyzer">Chemical Reaction Systems Analyzer</a></li>
 <li><a href="#bike-trainer-dashboard">Bike Trainer Dashboard</a></li>
+<li><a href="#drawing-to-gpx-route-pattern-mapper">Drawing to GPX (Route Pattern Mapper)</a></li>
 <li><a href="#bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</a></li>
 <li><a href="#an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</a></li>
 <li><a href="#local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</a></li>
 <li><a href="#nanotube-builder-and-mesher">Nanotube Builder and Mesher</a></li>
-<li><a href="#drawing-to-gpx-route-pattern-mapper">Drawing to GPX (Route Pattern Mapper)</a></li>
 <li><a href="#creating-comsol-native-domains-from-mesh-points-cloud-data">Creating COMSOL-native Domains from Mesh Points Cloud Data</a></li>
 <li><a href="#hpc-job-management-tools">HPC Job Management Tools</a></li>
 <li><a href="#cosmo-sac-activity-coefficient-model">COSMO-SAC Activity Coefficient Model</a></li>
@@ -99,545 +99,6 @@ All 118 periodic table elements are supported (H through Og).</p>
 - <strong>Recording:</strong> Can record a simulated workout and export a GPX file readable by other cycling apps such as Strava.</p>
 <p>&nbsp;</p>
 <p><img alt="Bike Trainer Dashboard" src="images/tool_BikeTrainer.png" /></p></div>
-        </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
-            <div class="card-content"><h3 id="bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</h3>
-<p>&nbsp;</p>
-<p>This is a script to generate <strong><code>.GPX</code></strong> files from the <strong>old</strong> <a href="https://www.fitbit.com/"><strong>Fitbit</strong></a> data, so that it can be imported into <a href="https://www.strava.com/"><strong>Strava</strong></a>. </p>
-<p>&nbsp;</p>
-<ul>
-<li><strong>Access</strong> the script from <a href="tools/Fitbit2Strava.py"><strong>here</strong></a> and run it next to the <strong><code>Takeout</code></strong> directory. </li>
-</ul></div>
-        </section>
-
-        <section class="card span-2">
-            <div class="card-content"><h3 id="an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</h3>
-<p>&nbsp;</p>
-<p>This is a lightweight, single-file web application that mimics the <strong>Jupyter Notebook</strong> experience locally. It leverages <strong>Pyodide</strong> to run a full Python environment directly in browser without needing a remote backend. </p>
-<p>&nbsp;</p>
-<ul>
-<li>Access the <strong><code>.html</code></strong> file <a href="tools/Dashboard.html"><strong>here</strong></a>.</li>
-</ul>
-<p>&nbsp;</p>
-<p>It also has a sidebar <strong>assistant</strong> powered by <strong>Puter.ai</strong> that sees current code and output to provide debugging help or code suggestions. </p>
-<p>&nbsp;</p>
-<ol>
-<li><strong>Navigate to the directory</strong> containing <strong><code>.html</code></strong> file.</li>
-<li><strong>Start a Python local server</strong> by running the following command in terminal:<br />
-<code>bash
-    python -m http.server 8000</code></li>
-<li><strong>Access the dashboard</strong> by opening browser and navigating to <strong><code>http://localhost:8000/FILENAME.html</code></strong>.</li>
-</ol>
-<p>&nbsp;</p>
-<p><img alt="An Interactive Local Python Notebook (PyCompute + Puter.js)" src="images/tool_Dashboard.png" /></p></div>
-        </section>
-        <section class="card span-1 empty"></section>
-
-        <section class="card span-1 empty"></section>
-        <section class="card span-2">
-            <div class="card-content"><h3 id="local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
-<p>&nbsp;</p>
-<p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
-<p>&nbsp;</p>
-<p><strong>Workflow reference</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>You must have <strong><code>Ollama</code></strong> installed and have <strong><code>pulled</code></strong> the required models (<strong><code>embedding</code></strong> and <strong><code>LLM</code></strong>) (for example: <code>ollama pull gemma4:latest</code>) for the scripts to work.</li>
-<li>Before running any script, <strong><code>Ollama</code></strong> must be running in the background: <strong><code>ollama serve</code></strong>.</li>
-<li>Use <strong><code>--help</code></strong> to see all available options for each script.</li>
-</ul>
-<p>&nbsp;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Command</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Setup <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
-<td style="text-align: left;"><code>python database.py --rebuild</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Update <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
-<td style="text-align: left;"><code>python database.py --append</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Ask</strong> a question (uses file: <code>prompt.txt</code>)</td>
-<td style="text-align: left;"><code>python query.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Ask</strong> on command line</td>
-<td style="text-align: left;"><code>python query.py -q "..."</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Ask</strong> in interactive chat</td>
-<td style="text-align: left;"><code>python query.py --interactive</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Edit</strong> shared settings (models, paths, chunking)</td>
-<td style="text-align: left;"><code>config.py</code></td>
-</tr>
-</tbody>
-</table>
-<p>&nbsp;</p>
-<p><strong>Changing models or settings</strong></p>
-<p>&nbsp;</p>
-<p>Open <strong><code>config.py</code></strong> and edit the values:</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
-EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model (a very forgiving model)
-CHUNK_SIZE      = 500                   # Number of characters per chunk
-CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
-TOP_K_RESULTS   = 5                     # Number of chunks to retrieve
-</code></pre>
-<p>&nbsp;</p>
-<p><strong>Steps to prepare the WSL environment</strong></p>
-<p>&nbsp;</p>
-<ul>
-<li>Update and upgrade: <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code> </li>
-<li>Install dependencies: <code>sudo apt install -y build-essential python3-pip python3-venv curl git libmagic-dev poppler-utils tesseract-ocr</code>.</li>
-<li>Create a python virtual environment: <code>python3 -m venv venv</code> </li>
-<li>Activate it: <code>source venv/bin/activate</code>. </li>
-<li>Install pip packages: <code>pip install -r requirements.txt</code>.</li>
-<li>Install Ollama: <code>https://ollama.com/download</code> or <code>curl -fsSL https://ollama.com/install.sh | sh</code>.</li>
-<li>Pull the required model: <code>ollama pull gemma4:latest</code> and <code>ollama pull nomic-embed-text</code>.</li>
-</ul>
-<p>&nbsp;</p>
-<p>The <strong>requirements.txt</strong>:</p>
-<pre><code class="language-bash">langchain
-langchain-community
-langchain-core
-langchain-ollama
-chromadb
-python-dotenv
-langchain-unstructured
-langchain-text-splitters
-langchain-community
-langchain-core
-langchain-ollama
-chromadb
-python-dotenv
-langchain-unstructured
-langchain-text-splitters
-</code></pre>
-<p>&nbsp;</p>
-<h4>Scripts</h4>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>database.py</code></strong>: </li>
-</ul>
-<p>&nbsp;</p>
-<p>Builds or updates the <strong><code>ChromaDB</code></strong> database from the <strong>folders</strong> listed in <strong><code>folders.txt</code></strong>.</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">import argparse
-import os
-import shutil
-import sys
-import uuid
-
-# LangChain Imports
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_ollama import OllamaEmbeddings
-from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
-from langchain_unstructured import UnstructuredLoader
-
-import config
-from tqdm import tqdm
-
-# Priority mapping for loaders
-SPECIFIC_LOADERS = {
-    &quot;.pdf&quot;: PyPDFLoader,
-    &quot;.html&quot;: BSHTMLLoader,
-    &quot;.htm&quot;: BSHTMLLoader,
-    &quot;.txt&quot;: TextLoader,
-}
-
-# Document loading
-def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
-    &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
-    docs: list[Document] = []
-    folder_path = os.path.abspath(folder_path)
-    error_dir = os.path.join(folder_path, &quot;.not_indexed&quot;)
-
-    # Gather all files first for accurate progress
-    files_to_process = []
-    for root, dirs, files in os.walk(folder_path):
-        if &quot;.not_indexed&quot; in root:
-            continue
-        for filename in files:
-            files_to_process.append(os.path.join(root, filename))
-
-    # tqdm.write() ensures &quot;echoing&quot; doesn't break the progress bar
-    for file_path in tqdm(files_to_process, desc=f&quot;Scanning {os.path.basename(folder_path)}&quot;, unit=&quot;file&quot;):
-        filename = os.path.basename(file_path)
-        ext = os.path.splitext(filename)[1].lower()
-
-        if append_mode and file_path in indexed_sources:
-            tqdm.write(f&quot;  [Skip] Already indexed: {filename}&quot;)
-            continue
-
-        loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
-
-        try:
-            tqdm.write(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
-            loader = loader_cls(file_path)
-            docs.extend(loader.load())
-        except Exception as exc:
-            tqdm.write(f&quot;  [!! Error] Failed to read {filename}: {exc}&quot;)
-            if not os.path.exists(error_dir):
-                os.makedirs(error_dir)
-            try:
-                dest = os.path.join(error_dir, filename)
-                if os.path.exists(dest):
-                    dest = f&quot;{dest}_{uuid.uuid4().hex[:4]}&quot;
-                shutil.move(file_path, dest)
-                tqdm.write(f&quot;  [Moved] {filename} -&gt; .not_indexed/&quot;)
-            except Exception as move_exc:
-                tqdm.write(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
-    return docs
-
-# Main Logic
-def main():
-    parser = argparse.ArgumentParser(
-        description=(
-            &quot;Vector Database Manager\n\n&quot;
-            &quot;Manages the ChromaDB store for engineering document analysis.\n&quot;
-            &quot;This script tracks which files are indexed to avoid duplicate processing.&quot;
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            &quot;Usage Examples:\n&quot;
-            &quot;  python database.py --append    # Only index new files (Recommended)\n&quot;
-            &quot;  python database.py --rebuild   # Wipe and re-index all folders\n&quot;
-        )
-    )
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(&quot;--rebuild&quot;, action=&quot;store_true&quot;, help=&quot;Wipe and rebuild the DB from scratch.&quot;)
-    group.add_argument(&quot;--append&quot;, action=&quot;store_true&quot;, help=&quot;Add only new files.&quot;)
-
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(1)
-
-    args = parser.parse_args()
-    folders = config.load_folders()
-    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
-    indexed_sources = set()
-
-    # 1. Initialize Mode
-    if args.rebuild:
-        if os.path.exists(config.CHROMA_DB_PATH):
-            print(f&quot;[db] Action: Wiping database at {config.CHROMA_DB_PATH}&quot;)
-            shutil.rmtree(config.CHROMA_DB_PATH)
-    elif os.path.exists(config.CHROMA_DB_PATH):
-        vectorstore = Chroma(persist_directory=config.CHROMA_DB_PATH, embedding_function=embeddings)
-        existing_data = vectorstore.get()
-        indexed_sources = set(m.get('source') for m in existing_data['metadatas'])
-        print(f&quot;[db] Action: Append mode. Found {len(indexed_sources)} files already in database.&quot;)
-
-    # 2. Document Collection
-    all_new_docs = []
-    for f in folders:
-        # Keeping the folder header print
-        print(f&quot;\n[db] Scanning Folder: {f}&quot;)
-        folder_docs = load_folder(f, indexed_sources, args.append)
-        all_new_docs.extend(folder_docs)
-
-    if not all_new_docs:
-        print(&quot;\n[db] Result: No new documents to index. Database is up to date.&quot;)
-        return
-
-    # 3. Chunking &amp; Embedding
-    print(f&quot;\n[db] Splitting {len(all_new_docs)} documents into chunks...&quot;)
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=config.CHUNK_SIZE, 
-        chunk_overlap=config.CHUNK_OVERLAP
-    )
-    chunks = splitter.split_documents(all_new_docs)
-
-    print(f&quot;[db] Embedding {len(chunks)} chunks using '{config.EMBEDDING_MODEL}'...&quot;)
-
-    # Batch processing for the progress bar
-    batch_size = 50 
-
-    if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
-        # Initial chunk to create the store
-        vectorstore = Chroma.from_documents(
-            documents=chunks[:batch_size], 
-            embedding=embeddings, 
-            persist_directory=config.CHROMA_DB_PATH
-        )
-        start_idx = batch_size
-    else:
-        start_idx = 0
-
-    # Indexing Progress Bar
-    for i in tqdm(range(start_idx, len(chunks), batch_size), desc=&quot;Indexing Chunks&quot;, unit=&quot;batch&quot;):
-        batch = chunks[i : i + batch_size]
-        vectorstore.add_documents(batch)
-
-    print(f&quot;\n[db] ✓ Success! Added {len(chunks)} new chunks to the vector store.&quot;)
-
-if __name__ == &quot;__main__&quot;:
-    main()
-</code></pre>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>query.py</code></strong>: </li>
-</ul>
-<p>&nbsp;</p>
-<p>Queries the <strong><code>database</code></strong> using the <strong><code>prompt</code></strong> in <strong><code>prompt.txt</code></strong> or a <strong><code>custom query</code></strong>.</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">import argparse
-import sys
-import os
-import config
-
-# Imports matching database.py
-from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings, OllamaLLM
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-
-def get_rag_chain():
-    &quot;&quot;&quot;Helper to initialize the RAG chain using LCEL.&quot;&quot;&quot;
-    if not os.path.exists(config.CHROMA_DB_PATH):
-        print(f&quot;[error] Database not found at {config.CHROMA_DB_PATH}. Run 'python database.py --rebuild' first.&quot;)
-        sys.exit(1)
-
-    # Setup Retrieval
-    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
-    vectorstore = Chroma(
-        persist_directory=config.CHROMA_DB_PATH,
-        embedding_function=embeddings,
-    )
-    retriever = vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS})
-
-    # Setup LLM
-    llm = OllamaLLM(model=config.OLLAMA_MODEL)
-
-    # Define the Prompt Template
-    template = &quot;&quot;&quot;You are an expert in the field of the question you are asked. Answer the question based only on the following context: {context}. Make sure you answer in the same language as the question. Make sure the asnwer is based on the context only. If the answer is not in the context, say so. 
-
-    Question: {question}
-    &quot;&quot;&quot;
-    prompt = ChatPromptTemplate.from_template(template)
-
-    # Create the Chain (LCEL style)
-    chain = (
-        {&quot;context&quot;: retriever, &quot;question&quot;: RunnablePassthrough()}
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
-    return chain
-
-def main():
-    parser = argparse.ArgumentParser(
-        description=&quot;RAG Query Engine&quot;,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            &quot;Examples:\n&quot;
-            &quot;  python query.py --file          # Run using prompt.txt\n&quot;
-            &quot;  python query.py --question \&quot;...\&quot; # Ask a specific question\n&quot;
-            &quot;  python query.py --interactive   # Start a live chat&quot;
-        )
-    )
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(&quot;--interactive&quot;, action=&quot;store_true&quot;, help=&quot;Start an interactive chat session.&quot;)
-    group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question.&quot;)
-    group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Use content in prompt.txt.&quot;)
-
-    args = parser.parse_args()
-    rag_chain = get_rag_chain()
-
-    if args.file:
-        user_prompt = config.load_prompt()
-        print(f&quot;[query] Running batch prompt from {config.PROMPT_FILE}...&quot;)
-        response = rag_chain.invoke(user_prompt)
-        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
-
-    elif args.question:
-        print(f&quot;[query] Processing: {args.question}&quot;)
-        response = rag_chain.invoke(args.question)
-        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
-
-    elif args.interactive:
-        print(&quot;\n--- INTERACTIVE MODE ---&quot;)
-        print(&quot;Type 'exit' or 'quit' to end.\n&quot;)
-        while True:
-            user_input = input(&quot;You: &quot;).strip()
-            if user_input.lower() in [&quot;exit&quot;, &quot;quit&quot;]:
-                break
-            if not user_input: continue
-
-            print(&quot;Thinking...&quot;)
-            response = rag_chain.invoke(user_input)
-            print(f&quot;AI: {response}\n&quot;)
-
-if __name__ == &quot;__main__&quot;:
-    main()
-</code></pre>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>config.py</code></strong>: </li>
-</ul>
-<p>&nbsp;</p>
-<p>Configuration file for models, paths, and chunking settings</p>
-<p>&nbsp;</p>
-<pre><code class="language-bash">&quot;&quot;&quot;
-config.py — Shared configuration for RAG pipeline.
-This file manages models, paths, and environment-specific path conversions.
-&quot;&quot;&quot;
-
-import os
-import re
-import sys
-import argparse
-
-# --- Models ---
-OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
-EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
-
-# --- Vector Store ---
-CHROMA_DB_PATH = &quot;./databases/NAMED_RAG&quot;      # Directory for the Chroma database
-
-# --- Chunking &amp; Retrieval ---
-CHUNK_SIZE    = 500                    # Characters per chunk
-CHUNK_OVERLAP = 50                     # Overlap between chunks
-TOP_K_RESULTS = 5                      # Number of chunks to retrieve per query
-
-# --- Input Files ---
-FOLDERS_FILE = &quot;folders.txt&quot;           # File containing paths to scan
-PROMPT_FILE  = &quot;prompt.txt&quot;            # File containing the main prompt/question
-
-# --- Path Helpers ---
-
-def _win_to_wsl(path: str) -&gt; str:
-    &quot;&quot;&quot;
-    Automatically converts Windows paths to WSL paths.
-    C:\\Users\\Docs -&gt; /mnt/c/Users/Docs
-    &quot;&quot;&quot;
-    path = path.strip()
-    # Match C:\... or C:/...
-    m = re.match(r'^([A-Za-z]):[/\\\\](.*)', path)
-    if m:
-        drive, rest = m.groups()
-        rest = rest.replace('\\', '/')
-        return f&quot;/mnt/{drive.lower()}/{rest}&quot;
-    # If already Unix-style or relative, just fix slashes
-    return path.replace('\\', '/')
-
-def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
-    &quot;&quot;&quot;Reads and normalizes folder paths from the folders file.&quot;&quot;&quot;
-    if not os.path.exists(filepath):
-        return []
-
-    folders = []
-    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
-        for raw in fh:
-            line = raw.strip()
-            if not line or line.startswith(&quot;#&quot;):
-                continue
-
-            unix_path = _win_to_wsl(line)
-            # Ensure the directory exists before adding
-            if os.path.isdir(unix_path):
-                folders.append(unix_path)
-            else:
-                print(f&quot;[config] WARNING: Folder not found: {unix_path}&quot;)
-
-    return folders
-
-def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
-    &quot;&quot;&quot;Reads the content of the prompt file.&quot;&quot;&quot;
-    if not os.path.exists(filepath):
-        return &quot;No prompt found. Please check prompt.txt.&quot;
-    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
-        return fh.read().strip()
-
-# --- Help &amp; Verification ---
-if __name__ == &quot;__main__&quot;:
-    parser = argparse.ArgumentParser(
-        description=&quot;Configuration &amp; Path Verifier&quot;,
-        epilog=&quot;Run this script to verify your WSL mount points and model settings.&quot;
-    )
-    # Parse to allow --help but we don't need actual arguments
-    _ = parser.parse_known_args()
-
-    print(&quot;=&quot;*40)
-    print(&quot;Configuration Check&quot;)
-    print(&quot;=&quot;*40)
-    print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
-    print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
-    print(f&quot;Database Path:   {os.path.abspath(CHROMA_DB_PATH)}&quot;)
-
-    print(&quot;\n--- Folder Path Verification ---&quot;)
-    active_folders = load_folders()
-    if not active_folders:
-        print(&quot;  [!] No valid folders found. Check your folders.txt file.&quot;)
-    else:
-        for f in active_folders:
-            print(f&quot;  [✓] Detected: {f}&quot;)
-
-    print(&quot;\n--- Prompt Preview ---&quot;)
-    p_content = load_prompt()
-    preview = (p_content[:75] + '...') if len(p_content) &gt; 75 else p_content
-    print(f&quot;  Content: {preview}&quot;)
-    print(&quot;=&quot;*40)
-</code></pre>
-<p>&nbsp;</p>
-<ul>
-<li><strong><code>folders.txt</code></strong> </li>
-</ul>
-<p>&nbsp;</p>
-<pre><code class="language-bash"># folders.txt — List of document folders to index.
-#
-# • One folder per line.
-# • Lines starting with '#' and blank lines are ignored.
-# • Windows paths are converted to WSL paths automatically.
-#   Examples of accepted formats:
-#       C:\Users\mak\Documents\finance
-#       D:/Projects/reports
-#       /home/mak/docs/hr
-#       ./documents/legal
-
-# Windows-style examples (converted automatically):
-#D:\Projects\legal
-#D:\Projects\reports
-
-# Unix / relative examples:
-# /home/mak/extra_docs
-# ./documents/local_folder
-
-/home/mak/Desktop/AurelSystemsInc/drawing
-/home/mak/Desktop/AurelSystemsInc/guidelines
-/home/mak/Desktop/AurelSystemsInc/helpfiles
-</code></pre></div>
-        </section>
-
-        <section class="card span-2">
-            <div class="card-content"><h3 id="nanotube-builder-and-mesher">Nanotube Builder and Mesher</h3>
-<p>&nbsp;</p>
-<p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>. </p>
-<p>&nbsp;</p>
-<p><strong>Now supports MD Simulations</strong>.</p>
-<p>&nbsp;</p>
-<ul>
-<li>Access the tool <a href="tools/Nanotube.html"><strong>here</strong></a>.</li>
-</ul>
-<p>&nbsp;</p>
-<p><img alt="Nanotube Builder and Mesher" src="images/tool_Nanotube.png" /></p></div>
         </section>
         <section class="card span-1 empty"></section>
 
@@ -1352,6 +813,545 @@ color_map_rgba = {
             'night': [128, 128, 128, 255]
 }
 </code></pre></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3 id="bring-old-fitbit-data-to-strava">Bring Old Fitbit Data to Strava</h3>
+<p>&nbsp;</p>
+<p>This is a script to generate <strong><code>.GPX</code></strong> files from the <strong>old</strong> <a href="https://www.fitbit.com/"><strong>Fitbit</strong></a> data, so that it can be imported into <a href="https://www.strava.com/"><strong>Strava</strong></a>. </p>
+<p>&nbsp;</p>
+<ul>
+<li><strong>Access</strong> the script from <a href="tools/Fitbit2Strava.py"><strong>here</strong></a> and run it next to the <strong><code>Takeout</code></strong> directory. </li>
+</ul></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3 id="an-interactive-local-python-notebook-pycompute-puter-js">An Interactive Local Python Notebook (PyCompute + Puter.js)</h3>
+<p>&nbsp;</p>
+<p>This is a lightweight, single-file web application that mimics the <strong>Jupyter Notebook</strong> experience locally. It leverages <strong>Pyodide</strong> to run a full Python environment directly in browser without needing a remote backend. </p>
+<p>&nbsp;</p>
+<ul>
+<li>Access the <strong><code>.html</code></strong> file <a href="tools/Dashboard.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p>It also has a sidebar <strong>assistant</strong> powered by <strong>Puter.ai</strong> that sees current code and output to provide debugging help or code suggestions. </p>
+<p>&nbsp;</p>
+<ol>
+<li><strong>Navigate to the directory</strong> containing <strong><code>.html</code></strong> file.</li>
+<li><strong>Start a Python local server</strong> by running the following command in terminal:<br />
+<code>bash
+    python -m http.server 8000</code></li>
+<li><strong>Access the dashboard</strong> by opening browser and navigating to <strong><code>http://localhost:8000/FILENAME.html</code></strong>.</li>
+</ol>
+<p>&nbsp;</p>
+<p><img alt="An Interactive Local Python Notebook (PyCompute + Puter.js)" src="images/tool_Dashboard.png" /></p></div>
+        </section>
+
+        <section class="card span-2">
+            <div class="card-content"><h3 id="local-rag-pipeline-ollama-chromadb-langchain">Local RAG Pipeline — Ollama + ChromaDB + LangChain</h3>
+<p>&nbsp;</p>
+<p>This doc describes how to use the <code>local RAG</code> pipeline with <code>Ollama</code>, <code>ChromaDB</code>, and <code>LangChain</code>. </p>
+<p>&nbsp;</p>
+<p><strong>Workflow reference</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>You must have <strong><code>Ollama</code></strong> installed and have <strong><code>pulled</code></strong> the required models (<strong><code>embedding</code></strong> and <strong><code>LLM</code></strong>) (for example: <code>ollama pull gemma4:latest</code>) for the scripts to work.</li>
+<li>Before running any script, <strong><code>Ollama</code></strong> must be running in the background: <strong><code>ollama serve</code></strong>.</li>
+<li>Use <strong><code>--help</code></strong> to see all available options for each script.</li>
+</ul>
+<p>&nbsp;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Setup <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
+<td style="text-align: left;"><code>python database.py --rebuild</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Update <strong>database</strong> (from folder: <code>folders.txt</code>)</td>
+<td style="text-align: left;"><code>python database.py --append</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ask</strong> a question (uses file: <code>prompt.txt</code>)</td>
+<td style="text-align: left;"><code>python query.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ask</strong> on command line</td>
+<td style="text-align: left;"><code>python query.py -q "..."</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ask</strong> in interactive chat</td>
+<td style="text-align: left;"><code>python query.py --interactive</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Edit</strong> shared settings (models, paths, chunking)</td>
+<td style="text-align: left;"><code>config.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>Changing models or settings</strong></p>
+<p>&nbsp;</p>
+<p>Open <strong><code>config.py</code></strong> and edit the values:</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">OLLAMA_MODEL    = &quot;gemma4:latest&quot;   # LLM for answering
+EMBEDDING_MODEL = &quot;nomic-embed-text&quot;       # Embedding model (a very forgiving model)
+CHUNK_SIZE      = 500                   # Number of characters per chunk
+CHUNK_OVERLAP   = 50                    # Number of characters to overlap between chunks
+TOP_K_RESULTS   = 5                     # Number of chunks to retrieve
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Steps to prepare the WSL environment</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li>Update and upgrade: <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code> </li>
+<li>Install dependencies: <code>sudo apt install -y build-essential python3-pip python3-venv curl git libmagic-dev poppler-utils tesseract-ocr</code>.</li>
+<li>Create a python virtual environment: <code>python3 -m venv venv</code> </li>
+<li>Activate it: <code>source venv/bin/activate</code>. </li>
+<li>Install pip packages: <code>pip install -r requirements.txt</code>.</li>
+<li>Install Ollama: <code>https://ollama.com/download</code> or <code>curl -fsSL https://ollama.com/install.sh | sh</code>.</li>
+<li>Pull the required model: <code>ollama pull gemma4:latest</code> and <code>ollama pull nomic-embed-text</code>.</li>
+</ul>
+<p>&nbsp;</p>
+<p>The <strong>requirements.txt</strong>:</p>
+<pre><code class="language-bash">langchain
+langchain-community
+langchain-core
+langchain-ollama
+chromadb
+python-dotenv
+langchain-unstructured
+langchain-text-splitters
+langchain-community
+langchain-core
+langchain-ollama
+chromadb
+python-dotenv
+langchain-unstructured
+langchain-text-splitters
+</code></pre>
+<p>&nbsp;</p>
+<h4>Scripts</h4>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>database.py</code></strong>: </li>
+</ul>
+<p>&nbsp;</p>
+<p>Builds or updates the <strong><code>ChromaDB</code></strong> database from the <strong>folders</strong> listed in <strong><code>folders.txt</code></strong>.</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import argparse
+import os
+import shutil
+import sys
+import uuid
+
+# LangChain Imports
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_ollama import OllamaEmbeddings
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, BSHTMLLoader
+from langchain_unstructured import UnstructuredLoader
+
+import config
+from tqdm import tqdm
+
+# Priority mapping for loaders
+SPECIFIC_LOADERS = {
+    &quot;.pdf&quot;: PyPDFLoader,
+    &quot;.html&quot;: BSHTMLLoader,
+    &quot;.htm&quot;: BSHTMLLoader,
+    &quot;.txt&quot;: TextLoader,
+}
+
+# Document loading
+def load_folder(folder_path: str, indexed_sources: set, append_mode: bool) -&gt; list[Document]:
+    &quot;&quot;&quot;Smartly loads files, reports actions via tqdm.write, and isolates failures.&quot;&quot;&quot;
+    docs: list[Document] = []
+    folder_path = os.path.abspath(folder_path)
+    error_dir = os.path.join(folder_path, &quot;.not_indexed&quot;)
+
+    # Gather all files first for accurate progress
+    files_to_process = []
+    for root, dirs, files in os.walk(folder_path):
+        if &quot;.not_indexed&quot; in root:
+            continue
+        for filename in files:
+            files_to_process.append(os.path.join(root, filename))
+
+    # tqdm.write() ensures &quot;echoing&quot; doesn't break the progress bar
+    for file_path in tqdm(files_to_process, desc=f&quot;Scanning {os.path.basename(folder_path)}&quot;, unit=&quot;file&quot;):
+        filename = os.path.basename(file_path)
+        ext = os.path.splitext(filename)[1].lower()
+
+        if append_mode and file_path in indexed_sources:
+            tqdm.write(f&quot;  [Skip] Already indexed: {filename}&quot;)
+            continue
+
+        loader_cls = SPECIFIC_LOADERS.get(ext, UnstructuredLoader)
+
+        try:
+            tqdm.write(f&quot;  [Process] Loading: {filename} ({loader_cls.__name__})&quot;)
+            loader = loader_cls(file_path)
+            docs.extend(loader.load())
+        except Exception as exc:
+            tqdm.write(f&quot;  [!! Error] Failed to read {filename}: {exc}&quot;)
+            if not os.path.exists(error_dir):
+                os.makedirs(error_dir)
+            try:
+                dest = os.path.join(error_dir, filename)
+                if os.path.exists(dest):
+                    dest = f&quot;{dest}_{uuid.uuid4().hex[:4]}&quot;
+                shutil.move(file_path, dest)
+                tqdm.write(f&quot;  [Moved] {filename} -&gt; .not_indexed/&quot;)
+            except Exception as move_exc:
+                tqdm.write(f&quot;  [Critical] Could not move file: {move_exc}&quot;)
+    return docs
+
+# Main Logic
+def main():
+    parser = argparse.ArgumentParser(
+        description=(
+            &quot;Vector Database Manager\n\n&quot;
+            &quot;Manages the ChromaDB store for engineering document analysis.\n&quot;
+            &quot;This script tracks which files are indexed to avoid duplicate processing.&quot;
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            &quot;Usage Examples:\n&quot;
+            &quot;  python database.py --append    # Only index new files (Recommended)\n&quot;
+            &quot;  python database.py --rebuild   # Wipe and re-index all folders\n&quot;
+        )
+    )
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(&quot;--rebuild&quot;, action=&quot;store_true&quot;, help=&quot;Wipe and rebuild the DB from scratch.&quot;)
+    group.add_argument(&quot;--append&quot;, action=&quot;store_true&quot;, help=&quot;Add only new files.&quot;)
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    args = parser.parse_args()
+    folders = config.load_folders()
+    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
+    indexed_sources = set()
+
+    # 1. Initialize Mode
+    if args.rebuild:
+        if os.path.exists(config.CHROMA_DB_PATH):
+            print(f&quot;[db] Action: Wiping database at {config.CHROMA_DB_PATH}&quot;)
+            shutil.rmtree(config.CHROMA_DB_PATH)
+    elif os.path.exists(config.CHROMA_DB_PATH):
+        vectorstore = Chroma(persist_directory=config.CHROMA_DB_PATH, embedding_function=embeddings)
+        existing_data = vectorstore.get()
+        indexed_sources = set(m.get('source') for m in existing_data['metadatas'])
+        print(f&quot;[db] Action: Append mode. Found {len(indexed_sources)} files already in database.&quot;)
+
+    # 2. Document Collection
+    all_new_docs = []
+    for f in folders:
+        # Keeping the folder header print
+        print(f&quot;\n[db] Scanning Folder: {f}&quot;)
+        folder_docs = load_folder(f, indexed_sources, args.append)
+        all_new_docs.extend(folder_docs)
+
+    if not all_new_docs:
+        print(&quot;\n[db] Result: No new documents to index. Database is up to date.&quot;)
+        return
+
+    # 3. Chunking &amp; Embedding
+    print(f&quot;\n[db] Splitting {len(all_new_docs)} documents into chunks...&quot;)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=config.CHUNK_SIZE, 
+        chunk_overlap=config.CHUNK_OVERLAP
+    )
+    chunks = splitter.split_documents(all_new_docs)
+
+    print(f&quot;[db] Embedding {len(chunks)} chunks using '{config.EMBEDDING_MODEL}'...&quot;)
+
+    # Batch processing for the progress bar
+    batch_size = 50 
+
+    if args.rebuild or not os.path.exists(config.CHROMA_DB_PATH):
+        # Initial chunk to create the store
+        vectorstore = Chroma.from_documents(
+            documents=chunks[:batch_size], 
+            embedding=embeddings, 
+            persist_directory=config.CHROMA_DB_PATH
+        )
+        start_idx = batch_size
+    else:
+        start_idx = 0
+
+    # Indexing Progress Bar
+    for i in tqdm(range(start_idx, len(chunks), batch_size), desc=&quot;Indexing Chunks&quot;, unit=&quot;batch&quot;):
+        batch = chunks[i : i + batch_size]
+        vectorstore.add_documents(batch)
+
+    print(f&quot;\n[db] ✓ Success! Added {len(chunks)} new chunks to the vector store.&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>query.py</code></strong>: </li>
+</ul>
+<p>&nbsp;</p>
+<p>Queries the <strong><code>database</code></strong> using the <strong><code>prompt</code></strong> in <strong><code>prompt.txt</code></strong> or a <strong><code>custom query</code></strong>.</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">import argparse
+import sys
+import os
+import config
+
+# Imports matching database.py
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
+def get_rag_chain():
+    &quot;&quot;&quot;Helper to initialize the RAG chain using LCEL.&quot;&quot;&quot;
+    if not os.path.exists(config.CHROMA_DB_PATH):
+        print(f&quot;[error] Database not found at {config.CHROMA_DB_PATH}. Run 'python database.py --rebuild' first.&quot;)
+        sys.exit(1)
+
+    # Setup Retrieval
+    embeddings = OllamaEmbeddings(model=config.EMBEDDING_MODEL)
+    vectorstore = Chroma(
+        persist_directory=config.CHROMA_DB_PATH,
+        embedding_function=embeddings,
+    )
+    retriever = vectorstore.as_retriever(search_kwargs={&quot;k&quot;: config.TOP_K_RESULTS})
+
+    # Setup LLM
+    llm = OllamaLLM(model=config.OLLAMA_MODEL)
+
+    # Define the Prompt Template
+    template = &quot;&quot;&quot;You are an expert in the field of the question you are asked. Answer the question based only on the following context: {context}. Make sure you answer in the same language as the question. Make sure the asnwer is based on the context only. If the answer is not in the context, say so. 
+
+    Question: {question}
+    &quot;&quot;&quot;
+    prompt = ChatPromptTemplate.from_template(template)
+
+    # Create the Chain (LCEL style)
+    chain = (
+        {&quot;context&quot;: retriever, &quot;question&quot;: RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return chain
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=&quot;RAG Query Engine&quot;,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            &quot;Examples:\n&quot;
+            &quot;  python query.py --file          # Run using prompt.txt\n&quot;
+            &quot;  python query.py --question \&quot;...\&quot; # Ask a specific question\n&quot;
+            &quot;  python query.py --interactive   # Start a live chat&quot;
+        )
+    )
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(&quot;--interactive&quot;, action=&quot;store_true&quot;, help=&quot;Start an interactive chat session.&quot;)
+    group.add_argument(&quot;--question&quot;, type=str, metavar=&quot;STR&quot;, help=&quot;Ask a single specific question.&quot;)
+    group.add_argument(&quot;--file&quot;, action=&quot;store_true&quot;, help=&quot;Use content in prompt.txt.&quot;)
+
+    args = parser.parse_args()
+    rag_chain = get_rag_chain()
+
+    if args.file:
+        user_prompt = config.load_prompt()
+        print(f&quot;[query] Running batch prompt from {config.PROMPT_FILE}...&quot;)
+        response = rag_chain.invoke(user_prompt)
+        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
+
+    elif args.question:
+        print(f&quot;[query] Processing: {args.question}&quot;)
+        response = rag_chain.invoke(args.question)
+        print(f&quot;\n--- ANSWER ---\n{response}&quot;)
+
+    elif args.interactive:
+        print(&quot;\n--- INTERACTIVE MODE ---&quot;)
+        print(&quot;Type 'exit' or 'quit' to end.\n&quot;)
+        while True:
+            user_input = input(&quot;You: &quot;).strip()
+            if user_input.lower() in [&quot;exit&quot;, &quot;quit&quot;]:
+                break
+            if not user_input: continue
+
+            print(&quot;Thinking...&quot;)
+            response = rag_chain.invoke(user_input)
+            print(f&quot;AI: {response}\n&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>config.py</code></strong>: </li>
+</ul>
+<p>&nbsp;</p>
+<p>Configuration file for models, paths, and chunking settings</p>
+<p>&nbsp;</p>
+<pre><code class="language-bash">&quot;&quot;&quot;
+config.py — Shared configuration for RAG pipeline.
+This file manages models, paths, and environment-specific path conversions.
+&quot;&quot;&quot;
+
+import os
+import re
+import sys
+import argparse
+
+# --- Models ---
+OLLAMA_MODEL    = &quot;gemma4:latest&quot;      # LLM used for answering
+EMBEDDING_MODEL = &quot;nomic-embed-text&quot;   # Embedding model for vectorization
+
+# --- Vector Store ---
+CHROMA_DB_PATH = &quot;./databases/NAMED_RAG&quot;      # Directory for the Chroma database
+
+# --- Chunking &amp; Retrieval ---
+CHUNK_SIZE    = 500                    # Characters per chunk
+CHUNK_OVERLAP = 50                     # Overlap between chunks
+TOP_K_RESULTS = 5                      # Number of chunks to retrieve per query
+
+# --- Input Files ---
+FOLDERS_FILE = &quot;folders.txt&quot;           # File containing paths to scan
+PROMPT_FILE  = &quot;prompt.txt&quot;            # File containing the main prompt/question
+
+# --- Path Helpers ---
+
+def _win_to_wsl(path: str) -&gt; str:
+    &quot;&quot;&quot;
+    Automatically converts Windows paths to WSL paths.
+    C:\\Users\\Docs -&gt; /mnt/c/Users/Docs
+    &quot;&quot;&quot;
+    path = path.strip()
+    # Match C:\... or C:/...
+    m = re.match(r'^([A-Za-z]):[/\\\\](.*)', path)
+    if m:
+        drive, rest = m.groups()
+        rest = rest.replace('\\', '/')
+        return f&quot;/mnt/{drive.lower()}/{rest}&quot;
+    # If already Unix-style or relative, just fix slashes
+    return path.replace('\\', '/')
+
+def load_folders(filepath: str = FOLDERS_FILE) -&gt; list[str]:
+    &quot;&quot;&quot;Reads and normalizes folder paths from the folders file.&quot;&quot;&quot;
+    if not os.path.exists(filepath):
+        return []
+
+    folders = []
+    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
+        for raw in fh:
+            line = raw.strip()
+            if not line or line.startswith(&quot;#&quot;):
+                continue
+
+            unix_path = _win_to_wsl(line)
+            # Ensure the directory exists before adding
+            if os.path.isdir(unix_path):
+                folders.append(unix_path)
+            else:
+                print(f&quot;[config] WARNING: Folder not found: {unix_path}&quot;)
+
+    return folders
+
+def load_prompt(filepath: str = PROMPT_FILE) -&gt; str:
+    &quot;&quot;&quot;Reads the content of the prompt file.&quot;&quot;&quot;
+    if not os.path.exists(filepath):
+        return &quot;No prompt found. Please check prompt.txt.&quot;
+    with open(filepath, encoding=&quot;utf-8&quot;) as fh:
+        return fh.read().strip()
+
+# --- Help &amp; Verification ---
+if __name__ == &quot;__main__&quot;:
+    parser = argparse.ArgumentParser(
+        description=&quot;Configuration &amp; Path Verifier&quot;,
+        epilog=&quot;Run this script to verify your WSL mount points and model settings.&quot;
+    )
+    # Parse to allow --help but we don't need actual arguments
+    _ = parser.parse_known_args()
+
+    print(&quot;=&quot;*40)
+    print(&quot;Configuration Check&quot;)
+    print(&quot;=&quot;*40)
+    print(f&quot;LLM Model:       {OLLAMA_MODEL}&quot;)
+    print(f&quot;Embedding Model: {EMBEDDING_MODEL}&quot;)
+    print(f&quot;Database Path:   {os.path.abspath(CHROMA_DB_PATH)}&quot;)
+
+    print(&quot;\n--- Folder Path Verification ---&quot;)
+    active_folders = load_folders()
+    if not active_folders:
+        print(&quot;  [!] No valid folders found. Check your folders.txt file.&quot;)
+    else:
+        for f in active_folders:
+            print(f&quot;  [✓] Detected: {f}&quot;)
+
+    print(&quot;\n--- Prompt Preview ---&quot;)
+    p_content = load_prompt()
+    preview = (p_content[:75] + '...') if len(p_content) &gt; 75 else p_content
+    print(f&quot;  Content: {preview}&quot;)
+    print(&quot;=&quot;*40)
+</code></pre>
+<p>&nbsp;</p>
+<ul>
+<li><strong><code>folders.txt</code></strong> </li>
+</ul>
+<p>&nbsp;</p>
+<pre><code class="language-bash"># folders.txt — List of document folders to index.
+#
+# • One folder per line.
+# • Lines starting with '#' and blank lines are ignored.
+# • Windows paths are converted to WSL paths automatically.
+#   Examples of accepted formats:
+#       C:\Users\mak\Documents\finance
+#       D:/Projects/reports
+#       /home/mak/docs/hr
+#       ./documents/legal
+
+# Windows-style examples (converted automatically):
+#D:\Projects\legal
+#D:\Projects\reports
+
+# Unix / relative examples:
+# /home/mak/extra_docs
+# ./documents/local_folder
+
+/home/mak/Desktop/AurelSystemsInc/drawing
+/home/mak/Desktop/AurelSystemsInc/guidelines
+/home/mak/Desktop/AurelSystemsInc/helpfiles
+</code></pre></div>
+        </section>
+        <section class="card span-1 empty"></section>
+
+        <section class="card span-1 empty"></section>
+        <section class="card span-2">
+            <div class="card-content"><h3 id="nanotube-builder-and-mesher">Nanotube Builder and Mesher</h3>
+<p>&nbsp;</p>
+<p>An <strong>interactive browser-based tool</strong> for <strong>parametric design</strong> and <strong>3D visualization</strong> of nanochannel geometries, <strong>mesh generation</strong> in real time, and <strong>export</strong>. </p>
+<p>&nbsp;</p>
+<p><strong>Now supports MD Simulations</strong>.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Access the tool <a href="tools/Nanotube.html"><strong>here</strong></a>.</li>
+</ul>
+<p>&nbsp;</p>
+<p><img alt="Nanotube Builder and Mesher" src="images/tool_Nanotube.png" /></p></div>
         </section>
 
         <section class="card span-2">
