@@ -16,4 +16,4 @@ Inspected and evaluated, experimentally and numerically (via **Finite Element Mo
 - Utilized **finite element modeling** (**FEM**) to simulate heat transfer during drying at various **microwave power levels** and **mineral types**.
 - Conducted comprehensive **energy demand analysis** to evaluate **potential savings** compared to **traditional kiln operations**.
 
-![MASc. Mining Engineering](images/edu_MineEng.jpg)
+![MASc. Mining Engineering](images/edu_MineEng.png)
