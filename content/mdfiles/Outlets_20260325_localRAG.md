@@ -42,13 +42,13 @@ langchain-text-splitters
 **Usage Examples**
 ```bash 
 # Build a new database
-python rag.py --task=build-db   --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
+python rag.py --task=build-db --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
 # Append to existing database
-python rag.py --task=append-db  --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
+python rag.py --task=append-db --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
 # Query the database
-python rag.py --task=query      --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --question="..."
+python rag.py --task=query --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --question="..."
 # Interactive query
-python rag.py --task=query      --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --interactive
+python rag.py --task=query --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --interactive
 # Query with prompt file
-python rag.py --task=query      --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --prompt-file=FILE
+python rag.py --task=query --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --prompt-file=FILE
 ```
