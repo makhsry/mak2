@@ -543,6 +543,124 @@
     #canvas-wrap {
       flex: 1;
       position: relative;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+
+    /* Grid for 4 panels */
+    .viewport-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .grid-line-v {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .grid-line-h {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .viewport-tag {
+      position: absolute;
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: rgba(0, 0, 0, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 10px;
+      pointer-events: none;
+      z-index: 6;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .tag-tl {
+      top: 0;
+      left: 0;
+    }
+
+    .tag-tr {
+      top: 0;
+      left: 50%;
+    }
+
+    .tag-bl {
+      top: 50%;
+      left: 0;
+    }
+
+    .tag-br {
+      top: 50%;
+      left: 50%;
+    }
+
+    /* Sub-grid for top-right panel */
+    .grid-line-v-sub {
+      position: absolute;
+      left: 75%;
+      top: 0;
+      width: 1px;
+      height: 50%;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .grid-line-h-sub {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      width: 50%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .placeholder-msg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: rgba(0, 0, 0, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .sub-view-selector {
+      position: absolute;
+      z-index: 100;
+      font-size: 0.6rem;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 1px 2px;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .sel-tr {
+      top: 5px;
+      right: 5px;
+    }
+
+    .sel-br {
+      top: calc(25% + 5px);
+      right: 5px;
     }
 
     #canvas-wrap canvas {
@@ -1078,15 +1196,54 @@
     <!-- Canvas -->
     <div class="display-area">
       <div id="canvas-wrap">
-        <div id="hint">Drag to Pan · Shift-Drag / Right-Drag to Rotate · Scroll to Zoom</div>
+        <div class="viewport-grid">
+          <div class="grid-line-v"></div>
+          <div class="grid-line-h"></div>
+
+          <!-- Sub-grid for Top Right -->
+          <div class="grid-line-v-sub"></div>
+          <div class="grid-line-h-sub"></div>
+
+          <div class="viewport-tag tag-tl">Perspective View</div>
+
+          <!-- Sub-panel tags in Top Right -->
+          <div class="viewport-tag" style="top:0; left:50%; font-size:0.5rem;">End View 1</div>
+          <div class="viewport-tag" style="top:25%; left:50%; font-size:0.5rem;">End View 2</div>
+          <div class="viewport-tag" style="top:0; left:75%; font-size:0.5rem;" id="tag-sub-tr">X-Y (Side)</div>
+          <div class="viewport-tag" style="top:25%; left:75%; font-size:0.5rem;" id="tag-sub-br">X-Z (Top)</div>
+
+          <!-- Selectors for Projections -->
+          <select class="sub-view-selector sel-tr"
+            onchange="state.subViewTR = this.value; document.getElementById('tag-sub-tr').textContent = this.options[this.selectedIndex].text;">
+            <option value="xy" selected>X-Y Projection</option>
+            <option value="xz">X-Z Projection</option>
+            <option value="yz">Y-Z Projection</option>
+          </select>
+          <select class="sub-view-selector sel-br"
+            onchange="state.subViewBR = this.value; document.getElementById('tag-sub-br').textContent = this.options[this.selectedIndex].text;">
+            <option value="xy">X-Y Projection</option>
+            <option value="xz" selected>X-Z Projection</option>
+            <option value="yz">Y-Z Projection</option>
+          </select>
+
+          <!-- Placeholders for bottom panels -->
+          <div style="position:absolute; top:50%; left:0; width:50%; height:50%;">
+            <div class="placeholder-msg">[ Placeholder 1 ]</div>
+          </div>
+          <div style="position:absolute; top:50%; left:50%; width:50%; height:50%;">
+            <div class="placeholder-msg">[ Placeholder 2 ]</div>
+          </div>
+        </div>
+
+        <div id="hint">Perspective (Top-Left): Drag to Pan · Shift-Drag to Rotate · Scroll to Zoom</div>
         <div id="zoom-btns">
           <div class="zoom-btn" onclick="adjustZoom(-1.2)">+</div>
           <div class="zoom-btn" onclick="adjustZoom(1.2)">−</div>
           <div class="zoom-btn rst" onclick="resetZoom()">RST</div>
         </div>
         <div id="axes-legend"
-          style="position: absolute; bottom: 1.5rem; left: 1.5rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(0,0,0,0.4); pointer-events: none; border-left: 2px solid #ccc; padding-left: 8px;">
-          <span style="color: #cc0000">X-Axis</span><br>
+          style="position: absolute; top: calc(25% + 1.5rem); left: 1.5rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(0,0,0,0.4); pointer-events: none; border-left: 2px solid #ccc; padding-left: 8px;">
+          <span style="color: #cc0000">X-Axis (Axial)</span><br>
           <span style="color: #008800">Y-Axis</span><br>
           <span style="color: #0000cc">Z-Axis</span>
         </div>
@@ -1194,13 +1351,15 @@
       ],
       selectedSegmentIndex: 0,
       particles: [
-        { label: 'P', color: '#ff4444', diameter: 0.2, count: 50, mass: 1.0, side: 'left', speed: 2.0 }
+        { label: 'A', color: '#ff4444', diameter: 0.2, count: 50, mass: 1.0, side: 'left', speed: 2.0 }
       ],
       axialSegs: 200, radialSegs: 48,
       innerRadiusFactor: 0.35,   // ratio of inner-tube outer surface to outer-tube radius [0.05, 0.90]
       wireframe: true, showInner: true, autoRot: true,
       exportFmt: 'csv',
       simulationGeometry: null,
+      subViewTR: 'xy',
+      subViewBR: 'xz',
       sim: {
         running: false,
         time: 0,
@@ -1217,14 +1376,36 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
-    const camera = new THREE.PerspectiveCamera(55, wrap.clientWidth / wrap.clientHeight, 0.01, 100);
+    const camera = new THREE.PerspectiveCamera(55, (wrap.clientWidth / 2) / (wrap.clientHeight / 2), 0.01, 100);
     camera.position.set(0, 1.5, 5.5);
 
+    // Projection Cameras
+    const frustumSize = 10;
+    const aspect = (wrap.clientWidth / 2) / (wrap.clientHeight / 2);
+    const cameraXY = new THREE.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
+    cameraXY.position.set(0, 0, 10);
+    cameraXY.lookAt(0, 0, 0);
+
+    const cameraXZ = new THREE.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
+    cameraXZ.position.set(0, 10, 0);
+    cameraXZ.up.set(0, 0, 1);
+    cameraXZ.lookAt(0, 0, 0);
+
+    const cameraYZ = new THREE.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
+    cameraYZ.position.set(10, 0, 0);
+    cameraYZ.up.set(0, 1, 0);
+    cameraYZ.lookAt(0, 0, 0);
+
+    // End View Cameras
+    const cameraEnd1 = new THREE.PerspectiveCamera(40, aspect, 0.01, 100);
+    const cameraEnd2 = new THREE.PerspectiveCamera(40, aspect, 0.01, 100);
+
     const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.autoClear = false;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-    wrap.appendChild(renderer.domElement);
+    wrap.insertBefore(renderer.domElement, wrap.firstChild);
 
     // Overlay for segment labels
     const labelContainer = document.createElement('div');
@@ -2147,21 +2328,58 @@
         zoom * cosX * cosY
       );
       camera.lookAt(pan.x, pan.y, 0);
+
+      // Update Projection Cameras based on zoom/pan
+      const hw = wrap.clientWidth / 2;
+      const hh = wrap.clientHeight / 2;
+      const aspect = hw / hh;
+      const fSize = zoom * 1.5;
+
+      [cameraXY, cameraXZ, cameraYZ].forEach(cam => {
+        cam.left = -fSize * aspect / 2;
+        cam.right = fSize * aspect / 2;
+        cam.top = fSize / 2;
+        cam.bottom = -fSize / 2;
+        cam.updateProjectionMatrix();
+      });
+
+      cameraXY.position.set(pan.x, pan.y, 10);
+      cameraXY.lookAt(pan.x, pan.y, 0);
+
+      cameraXZ.position.set(pan.x, 10, 0);
+      cameraXZ.lookAt(pan.x, 0, 0);
+
+      cameraYZ.position.set(10, pan.y, 0);
+      cameraYZ.lookAt(0, pan.y, 0);
+
+      // End views
+      const totalL = state.segments.reduce((acc, s) => acc + s.length, 0);
+      const halfL = totalL / 2;
+      cameraEnd1.position.set(-halfL - 5, 0, 0);
+      cameraEnd1.lookAt(-halfL + 2, 0, 0);
+      cameraEnd2.position.set(halfL + 5, 0, 0);
+      cameraEnd2.lookAt(halfL - 2, 0, 0);
     }
 
     function updateLabels() {
       const labels = labelContainer.children;
+      const hw = wrap.clientWidth / 2;
+      const hh = wrap.clientHeight / 2;
+
       for (let label of labels) {
         if (!label.userData) continue;
         const vector = new THREE.Vector3(label.userData.x, 0, 0);
-        vector.project(camera);
-        const x = (vector.x * 0.5 + 0.5) * wrap.clientWidth;
-        const y = (vector.y * -0.5 + 0.5) * wrap.clientHeight;
+        vector.project(camera); // Perspective view
+
+        // Map NDC (-1 to 1) to top-left quadrant (0,0 to hw,hh)
+        const x = (vector.x * 0.5 + 0.5) * hw;
+        const y = (vector.y * -0.5 + 0.5) * hh;
         label.style.left = x + 'px';
         label.style.top = y + 'px';
 
-        // Hide if behind camera
-        label.style.display = (vector.z > 1) ? 'none' : 'flex';
+        // Hide if behind camera or outside perspective viewport
+        const visible = vector.z <= 1 && vector.x >= -1 && vector.x <= 1 && vector.y >= -1 && vector.y <= 1;
+        label.style.display = visible ? 'flex' : 'none';
       }
     }
 
@@ -2175,14 +2393,65 @@
 
       updateCamera();
       updateLabels();
+
+      const w = wrap.clientWidth;
+      const h = wrap.clientHeight;
+      const hw = w / 2;
+      const hh = h / 2;
+
+      // Clear the whole canvas first to avoid black areas in non-rendered panels
+      renderer.setScissorTest(false);
+      renderer.setClearColor(0xf0f0f0);
+      renderer.clear();
+      renderer.setScissorTest(true);
+
+      // 1. Top Left: Perspective (unchanged)
+      renderer.setViewport(0, hh, hw, hh);
+      renderer.setScissor(0, hh, hw, hh);
       renderer.render(scene, camera);
+
+      // 2. Top Right: Divided into 4 sub-panels
+      const qw = hw / 2; // quarter width
+      const qh = hh / 2; // quarter height
+
+      // Helper for sub-rendering
+      function renderSub(x, y, cam) {
+        renderer.setViewport(hw + x, hh + y, qw, qh);
+        renderer.setScissor(hw + x, hh + y, qw, qh);
+        renderer.render(scene, cam);
+      }
+
+      function getProjCam(type) {
+        if (type === 'xy') return cameraXY;
+        if (type === 'xz') return cameraXZ;
+        return cameraYZ;
+      }
+
+      renderSub(0, qh, cameraEnd1);          // Sub-TL: End 1
+      renderSub(0, 0, cameraEnd2);           // Sub-BL: End 2
+      renderSub(qw, qh, getProjCam(state.subViewTR)); // Sub-TR: Toggleable 1
+      renderSub(qw, 0, getProjCam(state.subViewBR));  // Sub-BR: Toggleable 2
+
+      // Bottom panels are placeholders (skipped rendering)
     }
     animate();
 
     window.addEventListener('resize', () => {
+      const hw = wrap.clientWidth / 2;
+      const hh = wrap.clientHeight / 2;
       renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-      camera.aspect = wrap.clientWidth / wrap.clientHeight;
+      camera.aspect = hw / hh;
       camera.updateProjectionMatrix();
+
+      const aspect = hw / hh;
+      const fSize = zoom * 1.5;
+      [cameraXY, cameraXZ, cameraYZ].forEach(cam => {
+        cam.left = -fSize * aspect / 2;
+        cam.right = fSize * aspect / 2;
+        cam.top = fSize / 2;
+        cam.bottom = -fSize / 2;
+        cam.updateProjectionMatrix();
+      });
     });
 
     // MOUSE / TOUCH
@@ -2194,15 +2463,23 @@
     canvas.addEventListener('contextmenu', e => e.preventDefault());
 
     canvas.addEventListener('mousedown', e => {
+      const rect = wrap.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const hw = wrap.clientWidth / 2;
+      const hh = wrap.clientHeight / 2;
+
+      // Interaction only in Perspective panel (Top-Left)
+      if (x > hw || y > hh) return;
+
       mouse.down = true;
       mouse.button = e.button;
       mouse.lastX = e.clientX;
       mouse.lastY = e.clientY;
 
-      // Raycast for handles
-      const rect = wrap.getBoundingClientRect();
-      rayMouse.x = ((e.clientX - rect.left) / wrap.clientWidth) * 2 - 1;
-      rayMouse.y = -((e.clientY - rect.top) / wrap.clientHeight) * 2 + 1;
+      // Raycast for handles in Perspective view
+      rayMouse.x = (x / hw) * 2 - 1;
+      rayMouse.y = -(y / hh) * 2 + 1;
       raycaster.setFromCamera(rayMouse, camera);
       const hits = raycaster.intersectObjects(boundaryHandles);
       if (hits.length > 0) {
