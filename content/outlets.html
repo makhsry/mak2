@@ -298,15 +298,15 @@ langchain-text-splitters
 <p>&nbsp;</p>
 <p><strong>Usage Examples</strong></p>
 <pre><code class="language-bash"># Build a new database
-python rag.py --task=build-db   --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
+python rag.py --task=build-db --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
 # Append to existing database
-python rag.py --task=append-db  --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
+python rag.py --task=append-db --source-dir=PATH --database-dir=PATH --embedder=MODEL [--size=small|medium|large]
 # Query the database
-python rag.py --task=query      --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --question=&quot;...&quot;
+python rag.py --task=query --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --question=&quot;...&quot;
 # Interactive query
-python rag.py --task=query      --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --interactive
+python rag.py --task=query --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --interactive
 # Query with prompt file
-python rag.py --task=query      --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --prompt-file=FILE
+python rag.py --task=query --database-dir=PATH --embedder=MODEL --ollama-llm=MODEL --prompt-file=FILE
 </code></pre></div>
         </section>
 
