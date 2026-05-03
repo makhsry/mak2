@@ -1,6 +1,5 @@
 ## Outlets
 
-- Double Pendulum Dynamics Analyzer
 - Chemical Reaction Systems Analyzer
 - Bike Trainer Dashboard
 - Convert a Drawing to GPX (Route Pattern Mapper)
@@ -10,4 +9,5 @@
 - Local RAG Pipeline — Ollama + ChromaDB + LangChain
 - Creating COMSOL-native Domains from Mesh Points Cloud Data
 - HPC Job Management Tools
+- Double Pendulum Dynamics Analyzer
 - COSMO-SAC Activity Coefficient Model
