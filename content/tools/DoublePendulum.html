@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulum Dynamics</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        :root {
+            --primary: #000;
+            --bg: #fff;
+            --text: #1a1a1a;
+            --border: #000;
+            --muted: #f0f0f0;
+            --accent-blue: #0000ff;
+            --accent-orange: #ff6600;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 2rem;
+            background: #fff;
+            border-bottom: 4px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            line-height: 1;
+            font-family: 'Bodoni Moda', serif;
+            font-weight: 700;
+        }
+
+        .header-left p {
+            margin: 0.5rem 0 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-bar {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #fff;
+            min-width: 340px;
+            height: 80px;
+            border: 1px solid #000;
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .hint-text {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        /* Main Layout */
+        main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 380px;
+            min-width: 380px;
+            padding: 1.5rem;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .control-group h3 {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .control-group h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: #000;
+        }
+
+        .eq-box {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.25rem 0.75rem;
+            font-size: 0.85rem;
+            color: #1a1a1a;
+            overflow-x: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .eq-item {
+            width: 100%;
+        }
+
+        .section-label {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #666;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Controls */
+        .param-control {
+            margin-bottom: 1rem;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .param-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .param-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 2px;
+            background: #ccc;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #000;
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: #000;
+            color: #fff;
+            padding: 0.85rem;
+            border: 1px solid #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: 0.2s;
+            margin-top: auto;
+        }
+
+        button.primary:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* 2x2 Display Area */
+        .display-area {
+            flex: 1;
+            background: #f0f0f0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1px;
+            border-left: 1px solid #000;
+        }
+
+        .viewport {
+            position: relative;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .viewport canvas {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viewport-header {
+            padding: 8px 12px;
+            background: #fff;
+            border-bottom: 1px solid #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .viewport-title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .viewport-tag {
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            text-transform: uppercase;
+        }
+
+        .tag-blue {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .tag-orange {
+            background: var(--accent-orange);
+            color: #fff;
+        }
+
+        /* Stats Panel */
+        aside.stats {
+            width: 280px;
+            min-width: 280px;
+            border-left: 1px solid var(--border);
+            border-right: none;
+        }
+
+        .stat-card {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-val {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .stat-lbl {
+            font-size: 0.65rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        aside::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        aside::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        aside::-webkit-scrollbar-thumb {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <h1>Pendulum Dynamics</h1>
+            <p>The Dynamics of a Double Pendulum</p>
+        </div>
+        <div class="status-bar">
+            <span class="hint-text">SYSTEM STATUS: <span id="status-val">QUAD-VIEW ACTIVE</span></span>
+            <span class="log-text" id="log-msg">PARALLEL ENGINES SYNCHRONIZED</span>
+        </div>
+    </header>
+
+    <main>
+        <aside>
+            <div class="control-group">
+                <span class="section-label">Dynamics Model</span>
+                <h3>Lagrangian Equations</h3>
+                <div class="eq-box" id="equation-container">
+                    <div class="eq-item" id="eq1"></div>
+                    <div class="eq-item" id="eq2"></div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <span class="section-label">System Config</span>
+                <h3>Global Parameters</h3>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Gravity (g)</span>
+                        <span class="param-value" id="val-g">9.81</span>
+                    </div>
+                    <input type="range" id="input-g" min="0" max="20" step="0.1" value="9.81">
+                </div>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Length 1 (L1)</span>
+                        <span class="param-value" id="val-l1">1.0</span>
+                    </div>
+                    <input type="range" id="input-l1" min="0.1" max="2" step="0.1" value="1.0">
+                </div>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Length 2 (L2)</span>
+                        <span class="param-value" id="val-l2">1.0</span>
+                    </div>
+                    <input type="range" id="input-l2" min="0.1" max="2" step="0.1" value="1.0">
+                </div>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Mass 1 (m1)</span>
+                        <span class="param-value" id="val-m1">1.0</span>
+                    </div>
+                    <input type="range" id="input-m1" min="0.1" max="5" step="0.1" value="1.0">
+                </div>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Mass 2 (m2)</span>
+                        <span class="param-value" id="val-m2">1.0</span>
+                    </div>
+                    <input type="range" id="input-m2" min="0.1" max="5" step="0.1" value="1.0">
+                </div>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Fractal Resolution (N×N)</span>
+                        <span class="param-value" id="val-res">128</span>
+                    </div>
+                    <input type="range" id="input-res" min="32" max="256" step="16" value="128">
+                </div>
+            </div>
+
+            <button class="primary" onclick="resetAll()">Reset All Simulations</button>
+
+            <div class="control-group" style="margin-top: 0.75rem;">
+                <span class="section-label">Live Telemetry</span>
+                <div class="stat-row">
+                    <span class="stat-lbl">Reference θ₁ (Blue)</span>
+                    <span class="stat-val" id="stat-t1">0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-lbl">Reference θ₂ (Blue)</span>
+                    <span class="stat-val" id="stat-t2">0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-lbl">Angular Divergence</span>
+                    <span class="stat-val" id="stat-delta">0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-lbl">Total Energy (J)</span>
+                    <span class="stat-val" id="stat-energy">0.00</span>
+                </div>
+            </div>
+        </aside>
+
+        <div class="display-area">
+            <div class="viewport">
+                <div class="viewport-header">
+                    <span class="viewport-title">Physical View</span>
+                    <span class="viewport-tag tag-blue">Blue</span>
+                </div>
+                <canvas id="canvas-phys-blue"></canvas>
+            </div>
+            <div class="viewport">
+                <div class="viewport-header">
+                    <span class="viewport-title">Chaos Divergence</span>
+                    <span class="viewport-tag tag-orange">Orange</span>
+                </div>
+                <canvas id="canvas-phys-orange"></canvas>
+            </div>
+            <div class="viewport">
+                <div class="viewport-header">
+                    <span class="viewport-title">Phase Space Fractal</span>
+                    <span class="viewport-tag tag-blue">Blue</span>
+                </div>
+                <canvas id="canvas-frac-blue"></canvas>
+            </div>
+            <div class="viewport">
+                <div class="viewport-header">
+                    <span class="viewport-title">Phase Space Fractal</span>
+                    <span class="viewport-tag tag-orange">Orange</span>
+                </div>
+                <canvas id="canvas-frac-orange"></canvas>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <script>
+        class DoublePendulum {
+            constructor(config) {
+                this.g = config.g || 9.81;
+                this.l1 = config.l1 || 1.0;
+                this.l2 = config.l2 || 1.0;
+                this.m1 = config.m1 || 1.0;
+                this.m2 = config.m2 || 1.0;
+                this.t1 = config.t1 || Math.PI / 2;
+                this.t2 = config.t2 || Math.PI / 2;
+                this.w1 = 0;
+                this.w2 = 0;
+                this.history = [];
+                this.maxHistory = 80;
+            }
+
+            getAccelerations(t1, t2, w1, w2) {
+                const { g, l1, l2, m1, m2 } = this;
+                const num1 = -g * (2 * m1 + m2) * Math.sin(t1);
+                const num2 = -m2 * g * Math.sin(t1 - 2 * t2);
+                const num3 = -2 * Math.sin(t1 - t2) * m2;
+                const num4 = w2 * w2 * l2 + w1 * w1 * l1 * Math.cos(t1 - t2);
+                const den = l1 * (2 * m1 + m2 - m2 * Math.cos(2 * t1 - 2 * t2));
+                const a1 = (num1 + num2 + num3 * num4) / den;
+
+                const num5 = 2 * Math.sin(t1 - t2);
+                const num6 = (w1 * w1 * l1 * (m1 + m2));
+                const num7 = g * (m1 + m2) * Math.cos(t1);
+                const num8 = w2 * w2 * l2 * m2 * Math.cos(t1 - t2);
+                const den2 = l2 * (2 * m1 + m2 - m2 * Math.cos(2 * t1 - 2 * t2));
+                const a2 = (num5 * (num6 + num7 + num8)) / den2;
+
+                return [a1, a2];
+            }
+
+            step(dt) {
+                const k1 = this.getAccelerations(this.t1, this.t2, this.w1, this.w2);
+                const t1_2 = this.t1 + this.w1 * dt / 2;
+                const t2_2 = this.t2 + this.w2 * dt / 2;
+                const w1_2 = this.w1 + k1[0] * dt / 2;
+                const w2_2 = this.w2 + k1[1] * dt / 2;
+                const k2 = this.getAccelerations(t1_2, t2_2, w1_2, w2_2);
+                const t1_3 = this.t1 + w1_2 * dt / 2;
+                const t2_3 = this.t2 + w2_2 * dt / 2;
+                const w1_3 = this.w1 + k2[0] * dt / 2;
+                const w2_3 = this.w2 + k2[1] * dt / 2;
+                const k3 = this.getAccelerations(t1_3, t2_3, w1_3, w2_3);
+                const t1_4 = this.t1 + w1_3 * dt;
+                const t2_4 = this.t2 + w2_3 * dt;
+                const w1_4 = this.w1 + k3[0] * dt;
+                const w2_4 = this.w2 + k3[1] * dt;
+                const k4 = this.getAccelerations(t1_4, t2_4, w1_4, w2_4);
+
+                this.w1 += (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]) * dt / 6;
+                this.w2 += (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]) * dt / 6;
+                this.t1 += this.w1 * dt;
+                this.t2 += this.w2 * dt;
+            }
+
+            getEnergy() {
+                const { g, l1, l2, m1, m2, t1, t2, w1, w2 } = this;
+                const ke = 0.5 * m1 * (l1 * w1) ** 2 + 0.5 * m2 * ((l1 * w1) ** 2 + (l2 * w2) ** 2 + 2 * l1 * l2 * w1 * w2 * Math.cos(t1 - t2));
+                const pe = -(m1 + m2) * g * l1 * Math.cos(t1) - m2 * g * l2 * Math.cos(t2);
+                return ke + pe;
+            }
+        }
+
+        let canvases = {};
+        let ctxs = {};
+        let engines = { physBlue: [], physOrange: [], fracBlue: [], fracOrange: [] };
+        let fractalGridSize = 64;
+        let lastTime = Date.now();
+        let fracImageData = { blue: null, orange: null };
+
+        const config = { g: 9.81, l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0 };
+
+        function init() {
+            ['phys-blue', 'phys-orange', 'frac-blue', 'frac-orange'].forEach(id => {
+                canvases[id] = document.getElementById(`canvas-${id}`);
+                ctxs[id] = canvases[id].getContext('2d');
+            });
+
+            window.addEventListener('resize', resize);
+            resize();
+            setupControls();
+            resetAll();
+            requestAnimationFrame(loop);
+        }
+
+        function setupControls() {
+            ['g', 'l1', 'l2', 'm1', 'm2'].forEach(key => {
+                const el = document.getElementById(`input-${key}`);
+                const valEl = document.getElementById(`val-${key}`);
+                el.addEventListener('input', (e) => {
+                    config[key] = parseFloat(e.target.value);
+                    valEl.textContent = config[key].toFixed(2);
+                    updateAllParams();
+                });
+            });
+
+            const resInput = document.getElementById('input-res');
+            const resVal = document.getElementById('val-res');
+            resInput.addEventListener('change', (e) => {
+                fractalGridSize = parseInt(e.target.value);
+                resVal.textContent = fractalGridSize;
+                resetAll();
+            });
+        }
+
+        function updateAllParams() {
+            Object.values(engines).forEach(list => {
+                list.forEach(p => {
+                    p.g = config.g; p.l1 = config.l1; p.l2 = config.l2;
+                    p.m1 = config.m1; p.m2 = config.m2;
+                });
+            });
+        }
+
+        function resetAll() {
+            engines.physBlue = [new DoublePendulum({ ...config, t1: Math.PI / 2, t2: Math.PI / 2 })];
+            engines.physOrange = [new DoublePendulum({ ...config, t1: Math.PI / 2, t2: Math.PI / 2 + 0.001 })];
+
+            engines.fracBlue = [];
+            engines.fracOrange = [];
+            for (let y = 0; y < fractalGridSize; y++) {
+                for (let x = 0; x < fractalGridSize; x++) {
+                    // Use a 0.5 offset to avoid landing exactly on 0,0 (equilibrium point)
+                    // which causes coordinate-line artifacts in the color mapping.
+                    const t1 = ((x + 0.5) / fractalGridSize) * Math.PI * 2 - Math.PI;
+                    const t2 = ((y + 0.5) / fractalGridSize) * Math.PI * 2 - Math.PI;
+                    engines.fracBlue.push(new DoublePendulum({ ...config, t1, t2 }));
+                    engines.fracOrange.push(new DoublePendulum({ ...config, t1: t1 + 0.0001, t2: t2 + 0.0001 }));
+                }
+            }
+
+            fracImageData.blue = ctxs['frac-blue'].createImageData(fractalGridSize, fractalGridSize);
+            fracImageData.orange = ctxs['frac-orange'].createImageData(fractalGridSize, fractalGridSize);
+        }
+
+        function resize() {
+            Object.keys(canvases).forEach(id => {
+                const parent = canvases[id].parentElement;
+                canvases[id].width = parent.clientWidth * window.devicePixelRatio;
+                canvases[id].height = parent.clientHeight * window.devicePixelRatio;
+                ctxs[id].setTransform(1, 0, 0, 1, 0, 0);
+                ctxs[id].scale(window.devicePixelRatio, window.devicePixelRatio);
+
+                if (id.startsWith('frac-')) {
+                    const type = id.split('-')[1];
+                    fracImageData[type] = ctxs[id].createImageData(fractalGridSize, fractalGridSize);
+                }
+            });
+        }
+
+        function loop() {
+            const now = Date.now();
+            const dt = Math.min((now - lastTime) / 1000, 0.032);
+            lastTime = now;
+
+            const subSteps = 4;
+            for (let s = 0; s < subSteps; s++) {
+                Object.values(engines).forEach(list => {
+                    for (let i = 0; i < list.length; i++) list[i].step(dt / subSteps);
+                });
+            }
+
+            draw();
+            updateStats();
+            requestAnimationFrame(loop);
+        }
+
+        function draw() {
+            drawPendulums(ctxs['phys-blue'], engines.physBlue, canvases['phys-blue'], '#0000ff');
+            drawPendulums(ctxs['phys-orange'], engines.physOrange, canvases['phys-orange'], '#ff6600');
+
+            updateFractalBuffer('blue', engines.fracBlue);
+            updateFractalBuffer('orange', engines.fracOrange);
+
+            renderFractalBuffer('blue', ctxs['frac-blue'], canvases['frac-blue']);
+            renderFractalBuffer('orange', ctxs['frac-orange'], canvases['frac-orange']);
+        }
+
+        function drawPendulums(ctx, list, canvas, color) {
+            const w = canvas.width / window.devicePixelRatio;
+            const h = canvas.height / window.devicePixelRatio;
+            const centerX = w / 2;
+            const centerY = h / 2.5;
+
+            // Adaptive Zoom: Calculate scale based on the total reach of the pendulum
+            // Ensuring it fits within roughly 35% of the viewport dimension
+            const maxReach = config.l1 + config.l2;
+            const scale = (Math.min(w, h) * 0.35) / Math.max(maxReach, 0.5);
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, h);
+
+            list.forEach((p, idx) => {
+                const x1 = centerX + p.l1 * scale * Math.sin(p.t1);
+                const y1 = centerY + p.l1 * scale * Math.cos(p.t1);
+                const x2 = x1 + p.l2 * scale * Math.sin(p.t2);
+                const y2 = y1 + p.l2 * scale * Math.cos(p.t2);
+
+                p.history.push({ x: x2, y: y2 });
+                if (p.history.length > p.maxHistory) p.history.shift();
+
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.globalAlpha = 0.2;
+                ctx.lineWidth = 1.5;
+                for (let i = 1; i < p.history.length; i++) {
+                    ctx.moveTo(p.history[i - 1].x, p.history[i - 1].y);
+                    ctx.lineTo(p.history[i].x, p.history[i].y);
+                }
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+
+                ctx.beginPath();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+
+                ctx.fillStyle = color;
+                [[x1, y1], [x2, y2]].forEach(([px, py]) => {
+                    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
+                });
+            });
+        }
+
+        function updateFractalBuffer(type, list) {
+            const img = fracImageData[type];
+            const data = img.data;
+            for (let i = 0; i < list.length; i++) {
+                const p = list[i];
+                const idx = i * 4;
+                data[idx] = 127 + 127 * Math.cos(p.t2) * Math.sin(p.t1);
+                data[idx + 1] = 127 + 127 * Math.sin(p.t2) * Math.sin(p.t1);
+                data[idx + 2] = 127 + 127 * Math.cos(p.t1);
+                data[idx + 3] = 255;
+            }
+        }
+
+        function renderFractalBuffer(type, ctx, canvas) {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = fractalGridSize;
+            tempCanvas.height = fractalGridSize;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.putImageData(fracImageData[type], 0, 0);
+
+            const w = canvas.width / window.devicePixelRatio;
+            const h = canvas.height / window.devicePixelRatio;
+
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(tempCanvas, 0, 0, w, h);
+        }
+
+        function updateStats() {
+            const p1 = engines.physBlue[0];
+            const pChaos = engines.physOrange[0];
+            document.getElementById('stat-t1').textContent = p1.t1.toFixed(4);
+            document.getElementById('stat-t2').textContent = p1.t2.toFixed(4);
+            document.getElementById('stat-delta').textContent = Math.abs(p1.t2 - pChaos.t2).toFixed(6);
+            document.getElementById('stat-energy').textContent = p1.getEnergy().toFixed(2);
+        }
+
+        init();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const eq1 = "\\ddot{\\theta}_1 = \\frac{-g(2m_1+m_2)\\sin\\theta_1 - m_2g\\sin(\\theta_1-2\\theta_2) - 2\\sin(\\theta_1-\\theta_2)m_2(\\dot{\\theta}_2^2 L_2 + \\dot{\\theta}_1^2 L_1 \\cos(\\theta_1-\\theta_2))}{L_1(2m_1+m_2 - m_2\\cos(2\\theta_1-2\\theta_2))}";
+            const eq2 = "\\ddot{\\theta}_2 = \\frac{2\\sin(\\theta_1-\\theta_2)(\\dot{\\theta}_1^2 L_1(m_1+m_2) + g(m_1+m_2)\\cos\\theta_1 + \\dot{\\theta}_2^2 L_2 m_2 \\cos(\\theta_1-\\theta_2))}{L_2(2m_1+m_2 - m_2\\cos(2\\theta_1-2\\theta_2))}";
+
+            const render = () => {
+                if (window.katex) {
+                    katex.render(eq1, document.getElementById('eq1'), { displayMode: true });
+                    katex.render(eq2, document.getElementById('eq2'), { displayMode: true });
+                } else {
+                    setTimeout(render, 100);
+                }
+            };
+            render();
+        });
+    </script>
+
+</body>
+
+</html>
