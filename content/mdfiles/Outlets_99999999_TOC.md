@@ -9,5 +9,5 @@
 - Local RAG Pipeline — Ollama + ChromaDB + LangChain
 - Creating COMSOL-native Domains from Mesh Points Cloud Data
 - HPC Job Management Tools
-- Double Pendulum Dynamics Analyzer
+- Pendulum Dynamics Analyzer
 - COSMO-SAC Activity Coefficient Model
