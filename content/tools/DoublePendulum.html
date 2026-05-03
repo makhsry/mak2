@@ -328,7 +328,7 @@
     <header>
         <div class="header-left">
             <h1>Pendulum Dynamics</h1>
-            <p>The Dynamics of a Double Pendulum</p>
+            <p>The Dynamics of an N-Pendulum System</p>
         </div>
         <div class="status-bar">
             <span class="hint-text">SYSTEM STATUS: <span id="status-val">QUAD-VIEW ACTIVE</span></span>
@@ -340,7 +340,7 @@
         <aside>
             <div class="control-group">
                 <span class="section-label">Dynamics Model</span>
-                <h3>Lagrangian Equations</h3>
+                <h3>System Equations</h3>
                 <div class="eq-box" id="equation-container">
                     <div class="eq-item" id="eq1"></div>
                     <div class="eq-item" id="eq2"></div>
@@ -350,6 +350,13 @@
             <div class="control-group">
                 <span class="section-label">System Config</span>
                 <h3>Global Parameters</h3>
+                <div class="param-control">
+                    <div class="param-header">
+                        <span class="param-label">Number of Pendulums (N)</span>
+                        <span class="param-value" id="val-n">2</span>
+                    </div>
+                    <input type="range" id="input-n" min="1" max="25" step="1" value="2">
+                </div>
                 <div class="param-control">
                     <div class="param-header">
                         <span class="param-label">Gravity (g)</span>
@@ -451,68 +458,144 @@
     </main>
 
     <script>
-        class DoublePendulum {
+        class NPendulum {
             constructor(config) {
+                this.n = config.n || 2;
                 this.g = config.g || 9.81;
-                this.l1 = config.l1 || 1.0;
-                this.l2 = config.l2 || 1.0;
-                this.m1 = config.m1 || 1.0;
-                this.m2 = config.m2 || 1.0;
-                this.t1 = config.t1 || Math.PI / 2;
-                this.t2 = config.t2 || Math.PI / 2;
-                this.w1 = 0;
-                this.w2 = 0;
+                this.ls = new Float64Array(this.n).fill(config.l1);
+                this.ms = new Float64Array(this.n).fill(config.m1);
+
+                if (this.n === 2) {
+                    this.ls[1] = config.l2;
+                    this.ms[1] = config.m2;
+                } else if (this.n > 2) {
+                    if (this.ls.length > 1) this.ls[1] = config.l2;
+                    if (this.ms.length > 1) this.ms[1] = config.m2;
+                }
+
+                this.thetas = new Float64Array(this.n).fill(0);
+                this.omegas = new Float64Array(this.n).fill(0);
+
+                this.thetas[0] = config.t1 !== undefined ? config.t1 : Math.PI / 2;
+                if (this.n > 1) {
+                    this.thetas[1] = config.t2 !== undefined ? config.t2 : Math.PI / 2;
+                }
+
                 this.history = [];
-                this.maxHistory = 80;
+                this.maxHistory = 100;
             }
 
-            getAccelerations(t1, t2, w1, w2) {
-                const { g, l1, l2, m1, m2 } = this;
-                const num1 = -g * (2 * m1 + m2) * Math.sin(t1);
-                const num2 = -m2 * g * Math.sin(t1 - 2 * t2);
-                const num3 = -2 * Math.sin(t1 - t2) * m2;
-                const num4 = w2 * w2 * l2 + w1 * w1 * l1 * Math.cos(t1 - t2);
-                const den = l1 * (2 * m1 + m2 - m2 * Math.cos(2 * t1 - 2 * t2));
-                const a1 = (num1 + num2 + num3 * num4) / den;
+            getAccelerations(t, w) {
+                const n = this.n;
+                const M = Array.from({ length: n }, () => new Float64Array(n));
+                const b = new Float64Array(n);
 
-                const num5 = 2 * Math.sin(t1 - t2);
-                const num6 = (w1 * w1 * l1 * (m1 + m2));
-                const num7 = g * (m1 + m2) * Math.cos(t1);
-                const num8 = w2 * w2 * l2 * m2 * Math.cos(t1 - t2);
-                const den2 = l2 * (2 * m1 + m2 - m2 * Math.cos(2 * t1 - 2 * t2));
-                const a2 = (num5 * (num6 + num7 + num8)) / den2;
+                const massSums = new Float64Array(n);
+                for (let j = 0; j < n; j++) {
+                    let sum = 0;
+                    for (let i = j; i < n; i++) sum += this.ms[i];
+                    massSums[j] = sum;
+                }
 
-                return [a1, a2];
+                for (let j = 0; j < n; j++) {
+                    for (let k = 0; k < n; k++) {
+                        const mSum = (j >= k) ? massSums[j] : massSums[k];
+                        M[j][k] = this.ls[j] * this.ls[k] * mSum * Math.cos(t[j] - t[k]);
+                    }
+
+                    let fj = -massSums[j] * this.g * this.ls[j] * Math.sin(t[j]);
+                    for (let k = 0; k < n; k++) {
+                        const mSum = (j >= k) ? massSums[j] : massSums[k];
+                        fj -= this.ls[j] * this.ls[k] * mSum * w[k] * w[k] * Math.sin(t[j] - t[k]);
+                    }
+                    b[j] = fj;
+                }
+
+                return this.solve(M, b);
+            }
+
+            solve(A, b) {
+                const n = b.length;
+                for (let i = 0; i < n; i++) {
+                    let max = i;
+                    for (let j = i + 1; j < n; j++) {
+                        if (Math.abs(A[j][i]) > Math.abs(A[max][i])) max = j;
+                    }
+                    [A[i], A[max]] = [A[max], A[i]];
+                    [b[i], b[max]] = [b[max], b[i]];
+
+                    const pivot = A[i][i];
+                    if (Math.abs(pivot) < 1e-12) continue;
+
+                    for (let j = i + 1; j < n; j++) {
+                        const factor = A[j][i] / pivot;
+                        b[j] -= factor * b[i];
+                        for (let k = i; k < n; k++) {
+                            A[j][k] -= factor * A[i][k];
+                        }
+                    }
+                }
+
+                const x = new Float64Array(n);
+                for (let i = n - 1; i >= 0; i--) {
+                    let sum = 0;
+                    for (let j = i + 1; j < n; j++) sum += A[i][j] * x[j];
+                    x[i] = (b[i] - sum) / A[i][i];
+                }
+                return x;
             }
 
             step(dt) {
-                const k1 = this.getAccelerations(this.t1, this.t2, this.w1, this.w2);
-                const t1_2 = this.t1 + this.w1 * dt / 2;
-                const t2_2 = this.t2 + this.w2 * dt / 2;
-                const w1_2 = this.w1 + k1[0] * dt / 2;
-                const w2_2 = this.w2 + k1[1] * dt / 2;
-                const k2 = this.getAccelerations(t1_2, t2_2, w1_2, w2_2);
-                const t1_3 = this.t1 + w1_2 * dt / 2;
-                const t2_3 = this.t2 + w2_2 * dt / 2;
-                const w1_3 = this.w1 + k2[0] * dt / 2;
-                const w2_3 = this.w2 + k2[1] * dt / 2;
-                const k3 = this.getAccelerations(t1_3, t2_3, w1_3, w2_3);
-                const t1_4 = this.t1 + w1_3 * dt;
-                const t2_4 = this.t2 + w2_3 * dt;
-                const w1_4 = this.w1 + k3[0] * dt;
-                const w2_4 = this.w2 + k3[1] * dt;
-                const k4 = this.getAccelerations(t1_4, t2_4, w1_4, w2_4);
+                const n = this.n;
+                const t = this.thetas;
+                const w = this.omegas;
 
-                this.w1 += (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]) * dt / 6;
-                this.w2 += (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]) * dt / 6;
-                this.t1 += this.w1 * dt;
-                this.t2 += this.w2 * dt;
+                const k1w = this.getAccelerations(t, w);
+                const k1t = w;
+
+                const t2 = t.map((v, i) => v + k1t[i] * dt / 2);
+                const w2 = w.map((v, i) => v + k1w[i] * dt / 2);
+                const k2w = this.getAccelerations(t2, w2);
+                const k2t = w2;
+
+                const t3 = t.map((v, i) => v + k2t[i] * dt / 2);
+                const w3 = w.map((v, i) => v + k2w[i] * dt / 2);
+                const k3w = this.getAccelerations(t3, w3);
+                const k3t = w3;
+
+                const t4 = t.map((v, i) => v + k3t[i] * dt);
+                const w4 = w.map((v, i) => v + k3w[i] * dt);
+                const k4w = this.getAccelerations(t4, w4);
+                const k4t = w4;
+
+                for (let i = 0; i < n; i++) {
+                    this.omegas[i] += (k1w[i] + 2 * k2w[i] + 2 * k3w[i] + k4w[i]) * dt / 6;
+                    this.thetas[i] += (k1t[i] + 2 * k2t[i] + 2 * k3t[i] + k4t[i]) * dt / 6;
+                }
             }
 
             getEnergy() {
-                const { g, l1, l2, m1, m2, t1, t2, w1, w2 } = this;
-                const ke = 0.5 * m1 * (l1 * w1) ** 2 + 0.5 * m2 * ((l1 * w1) ** 2 + (l2 * w2) ** 2 + 2 * l1 * l2 * w1 * w2 * Math.cos(t1 - t2));
-                const pe = -(m1 + m2) * g * l1 * Math.cos(t1) - m2 * g * l2 * Math.cos(t2);
+                const n = this.n;
+                const t = this.thetas;
+                const w = this.omegas;
+                let ke = 0;
+                let pe = 0;
+
+                const massSums = new Float64Array(n);
+                for (let j = 0; j < n; j++) {
+                    let sum = 0;
+                    for (let i = j; i < n; i++) sum += this.ms[i];
+                    massSums[j] = sum;
+                }
+
+                for (let j = 0; j < n; j++) {
+                    for (let k = 0; k < n; k++) {
+                        const mSum = (j >= k) ? massSums[j] : massSums[k];
+                        ke += 0.5 * this.ls[j] * this.ls[k] * mSum * w[j] * w[k] * Math.cos(t[j] - t[k]);
+                    }
+                    pe -= this.ls[j] * Math.cos(t[j]) * massSums[j] * this.g;
+                }
+
                 return ke + pe;
             }
         }
@@ -524,7 +607,7 @@
         let lastTime = Date.now();
         let fracImageData = { blue: null, orange: null };
 
-        const config = { g: 9.81, l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0 };
+        const config = { n: 2, g: 9.81, l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0 };
 
         function init() {
             ['phys-blue', 'phys-orange', 'frac-blue', 'frac-orange'].forEach(id => {
@@ -540,13 +623,20 @@
         }
 
         function setupControls() {
-            ['g', 'l1', 'l2', 'm1', 'm2'].forEach(key => {
+            ['n', 'g', 'l1', 'l2', 'm1', 'm2'].forEach(key => {
                 const el = document.getElementById(`input-${key}`);
                 const valEl = document.getElementById(`val-${key}`);
+                if (!el) return;
                 el.addEventListener('input', (e) => {
-                    config[key] = parseFloat(e.target.value);
-                    valEl.textContent = config[key].toFixed(2);
-                    updateAllParams();
+                    const val = key === 'n' ? parseInt(e.target.value) : parseFloat(e.target.value);
+                    config[key] = val;
+                    valEl.textContent = val.toFixed(key === 'n' ? 0 : 2);
+                    if (key === 'n') {
+                        updateEquations();
+                        resetAll();
+                    } else {
+                        updateAllParams();
+                    }
                 });
             });
 
@@ -562,31 +652,37 @@
         function updateAllParams() {
             Object.values(engines).forEach(list => {
                 list.forEach(p => {
-                    p.g = config.g; p.l1 = config.l1; p.l2 = config.l2;
-                    p.m1 = config.m1; p.m2 = config.m2;
+                    p.g = config.g;
+                    for (let i = 0; i < p.n; i++) {
+                        p.ls[i] = config.l1;
+                        p.ms[i] = config.m1;
+                    }
+                    if (p.n >= 2) {
+                        p.ls[1] = config.l2;
+                        p.ms[1] = config.m2;
+                    }
                 });
             });
         }
 
         function resetAll() {
-            engines.physBlue = [new DoublePendulum({ ...config, t1: Math.PI / 2, t2: Math.PI / 2 })];
-            engines.physOrange = [new DoublePendulum({ ...config, t1: Math.PI / 2, t2: Math.PI / 2 + 0.001 })];
+            engines.physBlue = [new NPendulum({ ...config, t1: Math.PI / 2, t2: Math.PI / 2 })];
+            engines.physOrange = [new NPendulum({ ...config, t1: Math.PI / 2, t2: Math.PI / 2 + 0.001 })];
 
             engines.fracBlue = [];
             engines.fracOrange = [];
             for (let y = 0; y < fractalGridSize; y++) {
                 for (let x = 0; x < fractalGridSize; x++) {
-                    // Use a 0.5 offset to avoid landing exactly on 0,0 (equilibrium point)
-                    // which causes coordinate-line artifacts in the color mapping.
                     const t1 = ((x + 0.5) / fractalGridSize) * Math.PI * 2 - Math.PI;
                     const t2 = ((y + 0.5) / fractalGridSize) * Math.PI * 2 - Math.PI;
-                    engines.fracBlue.push(new DoublePendulum({ ...config, t1, t2 }));
-                    engines.fracOrange.push(new DoublePendulum({ ...config, t1: t1 + 0.0001, t2: t2 + 0.0001 }));
+                    engines.fracBlue.push(new NPendulum({ ...config, t1, t2 }));
+                    engines.fracOrange.push(new NPendulum({ ...config, t1: t1 + 0.0001, t2: t2 + 0.0001 }));
                 }
             }
 
             fracImageData.blue = ctxs['frac-blue'].createImageData(fractalGridSize, fractalGridSize);
             fracImageData.orange = ctxs['frac-orange'].createImageData(fractalGridSize, fractalGridSize);
+            updateEquations();
         }
 
         function resize() {
@@ -638,21 +734,29 @@
             const centerX = w / 2;
             const centerY = h / 2.5;
 
-            // Adaptive Zoom: Calculate scale based on the total reach of the pendulum
-            // Ensuring it fits within roughly 35% of the viewport dimension
-            const maxReach = config.l1 + config.l2;
-            const scale = (Math.min(w, h) * 0.35) / Math.max(maxReach, 0.5);
-
             ctx.fillStyle = '#fff';
             ctx.fillRect(0, 0, w, h);
 
-            list.forEach((p, idx) => {
-                const x1 = centerX + p.l1 * scale * Math.sin(p.t1);
-                const y1 = centerY + p.l1 * scale * Math.cos(p.t1);
-                const x2 = x1 + p.l2 * scale * Math.sin(p.t2);
-                const y2 = y1 + p.l2 * scale * Math.cos(p.t2);
+            if (list.length === 0) return;
 
-                p.history.push({ x: x2, y: y2 });
+            const totalLength = list[0].ls.reduce((a, b) => a + b, 0);
+            const scale = (Math.min(w, h) * 0.35) / Math.max(totalLength, 0.5);
+
+            list.forEach((p, idx) => {
+                let lastX = centerX;
+                let lastY = centerY;
+
+                const points = [];
+                for (let i = 0; i < p.n; i++) {
+                    const x = lastX + p.ls[i] * scale * Math.sin(p.thetas[i]);
+                    const y = lastY + p.ls[i] * scale * Math.cos(p.thetas[i]);
+                    points.push({ x, y });
+                    lastX = x;
+                    lastY = y;
+                }
+
+                const endBob = points[points.length - 1];
+                p.history.push({ x: endBob.x, y: endBob.y });
                 if (p.history.length > p.maxHistory) p.history.shift();
 
                 ctx.beginPath();
@@ -670,13 +774,12 @@
                 ctx.strokeStyle = '#000';
                 ctx.lineWidth = 3;
                 ctx.moveTo(centerX, centerY);
-                ctx.lineTo(x1, y1);
-                ctx.lineTo(x2, y2);
+                points.forEach(pt => ctx.lineTo(pt.x, pt.y));
                 ctx.stroke();
 
                 ctx.fillStyle = color;
-                [[x1, y1], [x2, y2]].forEach(([px, py]) => {
-                    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
+                points.forEach(pt => {
+                    ctx.beginPath(); ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2); ctx.fill();
                 });
             });
         }
@@ -687,9 +790,9 @@
             for (let i = 0; i < list.length; i++) {
                 const p = list[i];
                 const idx = i * 4;
-                data[idx] = 127 + 127 * Math.cos(p.t2) * Math.sin(p.t1);
-                data[idx + 1] = 127 + 127 * Math.sin(p.t2) * Math.sin(p.t1);
-                data[idx + 2] = 127 + 127 * Math.cos(p.t1);
+                data[idx] = 127 + 127 * Math.cos(p.thetas[1] || 0) * Math.sin(p.thetas[0]);
+                data[idx + 1] = 127 + 127 * Math.sin(p.thetas[1] || 0) * Math.sin(p.thetas[0]);
+                data[idx + 2] = 127 + 127 * Math.cos(p.thetas[0]);
                 data[idx + 3] = 255;
             }
         }
@@ -711,27 +814,32 @@
         function updateStats() {
             const p1 = engines.physBlue[0];
             const pChaos = engines.physOrange[0];
-            document.getElementById('stat-t1').textContent = p1.t1.toFixed(4);
-            document.getElementById('stat-t2').textContent = p1.t2.toFixed(4);
-            document.getElementById('stat-delta').textContent = Math.abs(p1.t2 - pChaos.t2).toFixed(6);
+            document.getElementById('stat-t1').textContent = p1.thetas[0].toFixed(4);
+            document.getElementById('stat-t2').textContent = (p1.thetas[1] || 0).toFixed(4);
+            document.getElementById('stat-delta').textContent = Math.abs((p1.thetas[1] || p1.thetas[0]) - (pChaos.thetas[1] || pChaos.thetas[0])).toFixed(6);
             document.getElementById('stat-energy').textContent = p1.getEnergy().toFixed(2);
+        }
+
+        function updateEquations() {
+            let eq1, eq2;
+            if (config.n === 2) {
+                eq1 = "\\ddot{\\theta}_1 = \\frac{-g(2m_1+m_2)\\sin\\theta_1 - m_2g\\sin(\\theta_1-2\\theta_2) - 2\\sin(\\theta_1-\\theta_2)m_2(\\dot{\\theta}_2^2 L_2 + \\dot{\\theta}_1^2 L_1 \\cos(\\theta_1-\\theta_2))}{L_1(2m_1+m_2 - m_2\\cos(2\\theta_1-2\\theta_2))}";
+                eq2 = "\\ddot{\\theta}_2 = \\frac{2\\sin(\\theta_1-\\theta_2)(\\dot{\\theta}_1^2 L_1(m_1+m_2) + g(m_1+m_2)\\cos\\theta_1 + \\dot{\\theta}_2^2 L_2 m_2 \\cos(\\theta_1-\\theta_2))}{L_2(2m_1+m_2 - m_2\\cos(2\\theta_1-2\\theta_2))}";
+            } else {
+                eq1 = "\\sum_{j=1}^N \\bar{m}_{ij} \\ell_i \\ell_j \\ddot{\\theta}_j \\cos(\\theta_i - \\theta_j) + \\sum_{j \\neq i} \\bar{m}_{ij} \\ell_i \\ell_j \\dot{\\theta}_j^2 \\sin(\\theta_i - \\theta_j) + \\bar{m}_i g \\ell_i \\sin \\theta_i = 0";
+                eq2 = "\\text{where } \\bar{m}_{ij} = \\sum_{k=\\max(i,j)}^N m_k, \\quad \\bar{m}_i = \\sum_{k=i}^N m_k";
+            }
+
+            if (window.katex) {
+                katex.render(eq1, document.getElementById('eq1'), { displayMode: true });
+                katex.render(eq2, document.getElementById('eq2'), { displayMode: true });
+            }
         }
 
         init();
 
         window.addEventListener('DOMContentLoaded', () => {
-            const eq1 = "\\ddot{\\theta}_1 = \\frac{-g(2m_1+m_2)\\sin\\theta_1 - m_2g\\sin(\\theta_1-2\\theta_2) - 2\\sin(\\theta_1-\\theta_2)m_2(\\dot{\\theta}_2^2 L_2 + \\dot{\\theta}_1^2 L_1 \\cos(\\theta_1-\\theta_2))}{L_1(2m_1+m_2 - m_2\\cos(2\\theta_1-2\\theta_2))}";
-            const eq2 = "\\ddot{\\theta}_2 = \\frac{2\\sin(\\theta_1-\\theta_2)(\\dot{\\theta}_1^2 L_1(m_1+m_2) + g(m_1+m_2)\\cos\\theta_1 + \\dot{\\theta}_2^2 L_2 m_2 \\cos(\\theta_1-\\theta_2))}{L_2(2m_1+m_2 - m_2\\cos(2\\theta_1-2\\theta_2))}";
-
-            const render = () => {
-                if (window.katex) {
-                    katex.render(eq1, document.getElementById('eq1'), { displayMode: true });
-                    katex.render(eq2, document.getElementById('eq2'), { displayMode: true });
-                } else {
-                    setTimeout(render, 100);
-                }
-            };
-            render();
+            updateEquations();
         });
     </script>
 
