@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Particle Generator</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --primary: #000;
+      --bg: #fff;
+      --text: #1a1a1a;
+      --border: #000;
+      --muted: #f0f0f0;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 700;
+      color: #000;
+    }
+
+    header {
+      padding: 1.2rem 2rem;
+      background: #fff;
+      border-bottom: 4px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .header-left h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .header-left p {
+      margin: 0.4rem 0 0;
+      font-size: 0.85rem;
+      opacity: 0.8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-bar {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: #fff;
+      min-width: 360px;
+      height: 72px;
+      border: 1px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .hint-text {
+      color: blue;
+      font-weight: 700;
+    }
+
+    .log-text {
+      color: #000;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* LEFT SIDEBAR */
+    aside.controls {
+      width: 310px;
+      min-width: 310px;
+      padding: 1.5rem;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+      border-right: 1px solid #000;
+    }
+
+    aside.controls::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    aside.controls::-webkit-scrollbar-thumb {
+      background: #ccc;
+    }
+
+    .control-group h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.9rem;
+      position: relative;
+      padding-bottom: 0.4rem;
+    }
+
+    .control-group h3::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 28px;
+      height: 3px;
+      background: #000;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #000;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .param-control {
+      margin-bottom: 1rem;
+    }
+
+    .param-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .param-label {
+      color: #000;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .param-unit {
+      color: #888;
+      font-size: 0.72rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    input,
+    select,
+    button {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: #000;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0;
+      font-size: 0.82rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #000;
+    }
+
+    .param-input {
+      width: 100%;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #ccc;
+      color: #666;
+      border-color: #ccc;
+    }
+
+    /* Shape selector */
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .shape-btn {
+      padding: 8px 4px;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      font-size: 0.68rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.15s;
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .shape-btn .shape-icon {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .shape-btn:hover .shape-icon {
+      transform: translateY(-2px) scale(1.1);
+    }
+
+    .shape-icon svg {
+      width: 32px;
+      height: 32px;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+    }
+
+    .shape-btn.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .shape-btn:hover:not(.active) {
+      background: #f0f0f0;
+    }
+
+    /* PSD Table */
+    .psd-table-wrap {
+      border: 1px solid #000;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .psd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+      background: #fff;
+    }
+
+    .psd-table th {
+      background: #000;
+      color: #fff;
+      padding: 6px 8px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .psd-table td {
+      border-bottom: 1px solid #eee;
+      padding: 3px 4px;
+    }
+
+    .psd-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .psd-table input {
+      width: 100%;
+      border: none;
+      padding: 3px 4px;
+      font-size: 0.72rem;
+      background: transparent;
+      font-family: 'Courier New', monospace;
+    }
+
+    .psd-table input:focus {
+      background: #f5f5f5;
+      outline: none;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-sm {
+      flex: 1;
+      padding: 6px 8px;
+      background: #fff;
+      color: #000;
+      border: 1px solid #000;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-sm:hover {
+      background: #eee;
+    }
+
+    .btn-del-row {
+      color: #cc0000;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0 6px;
+      background: none;
+      border: none;
+      width: auto;
+    }
+
+    .btn-del-row:hover {
+      background: #fff0f0;
+    }
+
+    /* Eq box */
+    .eq-box {
+      background: #f8f8f8;
+      border: 1px solid #000;
+      padding: 0.85rem;
+      font-size: 0.75rem;
+      color: #1a1a1a;
+      line-height: 2;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 0;
+    }
+
+    .eq-sub {
+      color: #555;
+      margin-top: 2px;
+      font-size: 0.7rem;
+    }
+
+    /* Stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-card {
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      padding: 6px 8px;
+    }
+
+    .stat-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .stat-val {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #000;
+      font-family: 'Courier New', monospace;
+    }
+
+    .stat-lbl {
+      color: #888;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1px;
+    }
+
+    /* Validation row */
+    .val-row-ui {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 8px;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-bottom: none;
+      font-size: 0.72rem;
+    }
+
+    .val-row-ui:last-child {
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 0.75rem;
+    }
+
+    .val-key {
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .val-num {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+    }
+
+    .val-ok {
+      color: #1a7a1a;
+    }
+
+    .val-warn {
+      color: #cc6600;
+    }
+
+    .val-err {
+      color: #cc0000;
+    }
+
+    /* VIEWPORT */
+    .display-area {
+      flex: 1;
+      position: relative;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #canvas-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #canvas-wrap canvas {
+      display: block;
+    }
+
+    #hint {
+      position: absolute;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(0, 0, 0, 0.35);
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    #zoom-btns {
+      position: absolute;
+      right: 1.2rem;
+      bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .zoom-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 0;
+      background: #fff;
+      border: 1px solid #000;
+      color: #000;
+      font-size: 16px;
+      line-height: 34px;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .zoom-btn:hover {
+      background: #f0f0f0;
+      color: #000;
+    }
+
+    .zoom-btn.rst {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* View controls overlay */
+    .view-toolbar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+    }
+
+    .view-btn {
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      border: 1px solid #000;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .view-btn.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .view-btn:hover:not(.active) {
+      background: #f0f0f0;
+    }
+
+    /* RIGHT PANEL */
+    aside.results {
+      width: 420px;
+      min-width: 420px;
+      padding: 1.5rem;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+      border-left: 1px solid #000;
+    }
+
+    aside.results::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    aside.results::-webkit-scrollbar-thumb {
+      background: #ccc;
+    }
+
+    /* PSD Chart */
+    .psd-chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      border: 1px solid #000;
+      background: #f8f8f8;
+    }
+
+    #psd-canvas {
+      display: block;
+    }
+
+    /* Particle list */
+    .particle-list-wrap {
+      border: 1px solid #000;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .particle-list-wrap::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .particle-list-wrap::-webkit-scrollbar-thumb {
+      background: #ccc;
+    }
+
+    .particle-list {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.68rem;
+    }
+
+    .particle-list th {
+      background: #000;
+      color: #fff;
+      padding: 5px 6px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+    }
+
+    .particle-list td {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 4px 6px;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+    }
+
+    .particle-list tr:hover td {
+      background: #f0f0f0;
+    }
+
+    .particle-list tr.selected td {
+      background: #000;
+      color: #fff;
+    }
+
+    /* Export */
+    .fmt-row {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0.6rem;
+    }
+
+    .fmt-btn {
+      flex: 1;
+      padding: 0.55rem 0;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s;
+      width: auto;
+    }
+
+    .fmt-btn+.fmt-btn {
+      border-left: none;
+    }
+
+    .fmt-btn.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .fmt-btn:hover:not(.active) {
+      background: #f0f0f0;
+    }
+
+    .export-msg {
+      margin-top: 0.4rem;
+      padding: 0.4rem 0.6rem;
+      background: #f8f8f8;
+      border: 1px solid #000;
+      border-left: 4px solid #000;
+      color: #000;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: none;
+    }
+
+    .progress-bar-wrap {
+      background: #eee;
+      border: 1px solid #ccc;
+      height: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #000;
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    select {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-left">
+      <h1>Particle Generator</h1>
+      <p>PSD-matched 3D particle assembly · volume, weight &amp; export</p>
+    </div>
+    <div class="header-right">
+      <div class="status-bar">
+        <div class="hint-text">Hint: Enter PSD data, select shapes, set density &amp; target weight, then Generate</div>
+        <div class="log-text" id="status-log">>> Ready — awaiting input</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT CONTROLS -->
+    <aside class="controls">
+
+      <!-- 1. Shape Selection -->
+      <div class="control-group">
+        <h3>1. Particle Shapes</h3>
+        <div class="section-label">Select one or more shapes (mix = random assignment)</div>
+        <div class="shape-grid">
+          <button class="shape-btn active" data-shape="sphere" onclick="toggleShape('sphere',this)">
+            <div class="shape-icon">
+              <svg viewBox="0 0 32 32">
+                <defs>
+                  <radialGradient id="sphereGrad" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" style="stop-color:#4a6a8c" />
+                    <stop offset="100%" style="stop-color:#1a3a5c" />
+                  </radialGradient>
+                </defs>
+                <circle cx="16" cy="16" r="12" fill="url(#sphereGrad)" />
+              </svg>
+            </div>
+            Spheres
+          </button>
+          <button class="shape-btn" data-shape="ellipsoid" onclick="toggleShape('ellipsoid',this)">
+            <div class="shape-icon">
+              <svg viewBox="0 0 32 32">
+                <defs>
+                  <radialGradient id="ellipGrad" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" style="stop-color:#6a4a4a" />
+                    <stop offset="100%" style="stop-color:#3a1a1a" />
+                  </radialGradient>
+                </defs>
+                <ellipse cx="16" cy="16" rx="14" ry="8" fill="url(#ellipGrad)" transform="rotate(-45, 16, 16)" />
+              </svg>
+            </div>
+            Ellipsoids
+          </button>
+          <button class="shape-btn" data-shape="fiber" onclick="toggleShape('fiber',this)">
+            <div class="shape-icon">
+              <svg viewBox="0 0 32 32">
+                <path d="M10,12 L10,22 A6,3 0 0,0 22,22 L22,12 A6,3 0 0,0 10,12 Z" fill="#1a3a1a" />
+                <ellipse cx="16" cy="12" rx="6" ry="3" fill="#3a5a3a" />
+                <path d="M10,12 L10,22 A6,3 0 0,0 22,22" fill="none" stroke="#0a2a0a" stroke-width="0.5" />
+              </svg>
+            </div>
+            Rods/Fibers
+          </button>
+          <button class="shape-btn" data-shape="brick" onclick="toggleShape('brick',this)">
+            <div class="shape-icon">
+              <svg viewBox="0 0 32 32">
+                <path d="M16,6 L26,11 L26,21 L16,26 L6,21 L6,11 Z" fill="#3a2a0a" />
+                <path d="M16,6 L26,11 L16,16 L6,11 Z" fill="#5a4a2a" />
+                <path d="M16,16 L26,11 L26,21 L16,26 Z" fill="#2a1a00" />
+              </svg>
+            </div>
+            Bricks
+          </button>
+          <button class="shape-btn" data-shape="polyhedron" onclick="toggleShape('polyhedron',this)">
+            <div class="shape-icon">
+              <svg viewBox="0 0 32 32">
+                <path d="M16,4 L28,12 L16,28 L4,12 Z" fill="#2a1a3a" />
+                <path d="M16,4 L28,12 L16,16 Z" fill="#4a3a5a" />
+                <path d="M16,4 L4,12 L16,16 Z" fill="#1a0a2a" />
+                <path d="M16,28 L28,12 L16,16 Z" fill="#3a2a4a" />
+                <path d="M16,28 L4,12 L16,16 Z" fill="#0a001a" />
+              </svg>
+            </div>
+            Polyhedra
+          </button>
+          <button class="shape-btn" data-shape="random" onclick="toggleShape('random',this)">
+            <div class="shape-icon">
+              <svg viewBox="0 0 32 32">
+                <path d="M16,4 L26,8 L30,20 L16,28 L2,20 L6,8 Z" fill="#1a3a3a" />
+                <path d="M16,4 L26,8 L16,14 L6,8 Z" fill="#2a4a4a" />
+                <path d="M26,8 L30,20 L16,14 Z" fill="#0a2a2a" />
+                <path d="M30,20 L16,28 L16,14 Z" fill="#1a3a3a" />
+                <path d="M16,28 L2,20 L16,14 Z" fill="#001a1a" />
+                <path d="M2,20 L6,8 L16,14 Z" fill="#1a3a3a" />
+              </svg>
+            </div>
+            Random
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Material Properties -->
+      <div class="control-group">
+        <h3>2. Material Properties</h3>
+        <div class="param-control">
+          <div class="param-header">
+            <span class="param-label">Particle Density</span>
+            <span class="param-unit">g/cm³</span>
+          </div>
+          <input type="number" class="param-input" id="in-density" value="2.65" min="0.01" step="0.01"
+            oninput="updateStats();computeTotalVolume();computeBinVolumes()">
+        </div>
+        <div class="param-control">
+          <div class="param-header">
+            <span class="param-label">Target Total Weight</span>
+            <span class="param-unit">g</span>
+          </div>
+          <input type="number" class="param-input" id="in-weight" value="100" min="0.001" step="0.1"
+            oninput="updateStats();computeTotalVolume();computeBinVolumes()">
+        </div>
+        <div class="param-control">
+          <div class="param-header">
+            <span class="param-label">Aspect Ratio (h/d)</span>
+            <span class="param-unit">for non-spheres</span>
+          </div>
+          <input type="number" class="param-input" id="in-aspect" value="1.0" min="0.1" max="10" step="0.1"
+            oninput="updateStats()">
+        </div>
+      </div>
+
+      <!-- 3. Container Dish -->
+      <div class="control-group">
+        <h3>3. Container Dish</h3>
+        <div class="param-control">
+          <div class="param-header">
+            <span class="param-label">Length (L)</span>
+            <span class="param-unit">mm</span>
+          </div>
+          <input type="number" class="param-input" id="in-L" value="10" min="0.001" step="0.1"
+            oninput="drawDish();computeTotalVolume()">
+        </div>
+        <div class="param-control">
+          <div class="param-header">
+            <span class="param-label">Width (W)</span>
+            <span class="param-unit">mm</span>
+          </div>
+          <input type="number" class="param-input" id="in-W" value="10" min="0.001" step="0.1"
+            oninput="drawDish();computeTotalVolume()">
+        </div>
+        <div class="param-control">
+          <div class="param-header">
+            <span class="param-label">Height (H)</span>
+            <span class="param-unit">mm</span>
+          </div>
+          <input type="number" class="param-input" id="in-H" value="5" min="0.001" step="0.1"
+            oninput="drawDish();computeTotalVolume()">
+        </div>
+      </div>
+
+
+      <!-- Generate -->
+      <div class="control-group">
+        <button id="btn-gen" onclick="generateParticles()">⚙ Generate Particles</button>
+        <div style="margin-top:0.5rem">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" id="gen-progress"></div>
+          </div>
+        </div>
+        <div class="eq-sub" style="margin-top:0.4rem;font-family:'Courier New',monospace;font-size:0.68rem;color:#888;">
+          Viewport cap: 2000 meshes — larger assemblies subsampled
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- VIEWPORT -->
+    <div class="display-area">
+      <div id="canvas-wrap">
+        <div class="view-toolbar">
+          <button class="view-btn active" id="vbtn-persp" onclick="setView('persp')">3D</button>
+          <button class="view-btn" id="vbtn-top" onclick="setView('top')">Top</button>
+          <button class="view-btn" id="vbtn-front" onclick="setView('front')">Front</button>
+          <button class="view-btn" id="vbtn-side" onclick="setView('side')">Side</button>
+          <button class="view-btn" id="vbtn-wire" onclick="toggleWire()">Wire</button>
+          <button class="view-btn" id="vbtn-axes" onclick="toggleAxes()">Axes</button>
+        </div>
+        <!-- Shape colour legend -->
+        <div id="shape-legend"
+          style="position:absolute;top:44px;left:10px;display:flex;gap:6px;flex-wrap:wrap;z-index:10;">
+          <div
+            style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+            <span
+              style="width:10px;height:10px;background:#1a3a5c;display:inline-block;border:1px solid #000;"></span>Sphere
+          </div>
+          <div
+            style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+            <span
+              style="width:10px;height:10px;background:#3a1a1a;display:inline-block;border:1px solid #000;"></span>Ellipsoid
+          </div>
+          <div
+            style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+            <span
+              style="width:10px;height:10px;background:#1a3a1a;display:inline-block;border:1px solid #000;"></span>Fiber
+          </div>
+          <div
+            style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+            <span
+              style="width:10px;height:10px;background:#3a2a0a;display:inline-block;border:1px solid #000;"></span>Brick
+          </div>
+          <div
+            style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+            <span
+              style="width:10px;height:10px;background:#2a1a3a;display:inline-block;border:1px solid #000;"></span>Polyhedron
+          </div>
+          <div
+            style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+            <span
+              style="width:10px;height:10px;background:#1a3a3a;display:inline-block;border:1px solid #000;"></span>Random
+          </div>
+        </div>
+        <div id="hint">Drag to orbit · Scroll to zoom · Shift+drag to pan</div>
+        <div id="zoom-btns">
+          <div class="zoom-btn" onclick="adjustZoom(-0.8)">+</div>
+          <div class="zoom-btn" onclick="adjustZoom(0.8)">−</div>
+          <div class="zoom-btn rst" onclick="resetView()">RST</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT RESULTS -->
+    <aside class="results">
+
+      <!-- PSD Input Table -->
+      <div class="control-group">
+        <h3>4. PSD Input</h3>
+        <div class="section-label">Size class | d_min | d_max | weight fraction (%)</div>
+        <div class="psd-table-wrap">
+          <table class="psd-table" id="psd-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>d_min (mm)</th>
+                <th>d_max (mm)</th>
+                <th>Wt%</th>
+                <th title="Estimated number of particles in this class">Est. N</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="psd-tbody">
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn-sm" onclick="addPSDRow()">+ Add Row</button>
+          <button class="btn-sm" onclick="loadSamplePSD()">Load Sample</button>
+          <button class="btn-sm" onclick="clearPSD()">Clear</button>
+        </div>
+
+        <!-- PSD Chart -->
+        <div class="section-label">PSD Distribution Chart</div>
+        <div class="psd-chart-wrap">
+          <canvas id="psd-canvas" width="300" height="158"></canvas>
+        </div>
+      </div>
+
+      <!-- Results / Validation -->
+      <div class="control-group">
+        <h3>5. Results &amp; Validation</h3>
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card full">
+            <div class="stat-val" id="s-npart">—</div>
+            <div class="stat-lbl">Total particles</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-vol">—</div>
+            <div class="stat-lbl">Total volume (mm³)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-mass">—</div>
+            <div class="stat-lbl">Total mass (g)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-err">—</div>
+            <div class="stat-lbl">Mass error (%)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-psd">—</div>
+            <div class="stat-lbl">PSD frac. error (%)</div>
+          </div>
+        </div>
+
+        <div class="val-row-ui">
+          <span class="val-key">PSD sums to 100%</span>
+          <span class="val-num" id="v-psdsum">—</span>
+        </div>
+        <div class="val-row-ui">
+          <span class="val-key">Mass match</span>
+          <span class="val-num" id="v-mass">—</span>
+        </div>
+        <div class="val-row-ui">
+          <span class="val-key">Selected shapes</span>
+          <span class="val-num" id="v-shapes">—</span>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="control-group">
+        <h3>6. Export</h3>
+
+        <!-- Format selector -->
+        <div class="section-label">Format</div>
+        <div class="fmt-row">
+          <button class="fmt-btn active" id="fmt-csv" onclick="setFmt('csv')">CSV</button>
+          <button class="fmt-btn" id="fmt-tri" onclick="setFmt('tri')">TRI</button>
+          <button class="fmt-btn" id="fmt-stl" onclick="setFmt('stl')">STL</button>
+          <button class="fmt-btn" id="fmt-txt" onclick="setFmt('txt')">TXT</button>
+        </div>
+
+        <!-- Fineness selector -->
+        <div class="section-label" style="margin-top:0.75rem">Mesh Fineness</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:0.75rem;">
+          <button class="fmt-btn" id="fine-extcoarse" onclick="setFineness('extcoarse')">Ext. Coarse</button>
+          <button class="fmt-btn" id="fine-vcoarse" onclick="setFineness('vcoarse')">Very Coarse</button>
+          <button class="fmt-btn" id="fine-coarse" onclick="setFineness('coarse')">Coarse</button>
+          <button class="fmt-btn active" id="fine-normal" onclick="setFineness('normal')">Normal</button>
+          <button class="fmt-btn" id="fine-fine" onclick="setFineness('fine')">Fine</button>
+          <button class="fmt-btn" id="fine-ultrafine" onclick="setFineness('ultrafine')">Ultra Fine</button>
+          <button class="fmt-btn" id="fine-extfine" onclick="setFineness('extfine')" style="grid-column:1/-1">Extremely
+            Fine</button>
+        </div>
+
+        <!-- Fineness info -->
+        <div class="eq-box" id="fineness-info" style="margin-bottom:0.75rem;">
+          <div class="eq-sub" id="fi-est">Est. file size: generate first</div>
+        </div>
+
+        <button onclick="doExport()" id="btn-export" disabled>↓ Download <span id="dl-fmt">CSV</span></button>
+        <div class="export-msg" id="export-msg"></div>
+      </div>
+
+    </aside>
+  </main>
+
+  <script>
+    // STATE
+    const state = {
+      selectedShapes: new Set(['sphere']),
+      psdRows: [],
+      bins: [],
+      particles: [],
+      density: 2.65,
+      targetWeight: 100,
+      aspectRatio: 1.0,
+      exportFmt: 'csv',
+      fineness: 'normal',
+      wireframe: false,
+      showAxes: true,
+    };
+
+    // Fineness → resolution table
+    const FINENESS = {
+      extcoarse: { lat: 4, lon: 4, radial: 4, subdiv: 0, label: 'Extremely Coarse' },
+      vcoarse: { lat: 6, lon: 6, radial: 6, subdiv: 0, label: 'Very Coarse' },
+      coarse: { lat: 8, lon: 8, radial: 8, subdiv: 1, label: 'Coarse' },
+      normal: { lat: 12, lon: 12, radial: 12, subdiv: 1, label: 'Normal' },
+      fine: { lat: 16, lon: 16, radial: 16, subdiv: 2, label: 'Fine' },
+      ultrafine: { lat: 24, lon: 24, radial: 24, subdiv: 2, label: 'Ultra Fine' },
+      extfine: { lat: 32, lon: 32, radial: 32, subdiv: 3, label: 'Extremely Fine' },
+    };
+
+    // PSD TABLE
+    let rowId = 0;
+    function addPSDRow(dmin = '', dmax = '', wt = '') {
+      const id = ++rowId;
+      const tr = document.createElement('tr');
+      tr.id = 'psd-row-' + id;
+      tr.innerHTML = `
+    <td style="color:#888;font-family:Courier New">${id}</td>
+    <td><input type="number" value="${dmin}" min="0" step="any" oninput="onPSDChange()" placeholder="e.g. 0.01"></td>
+    <td><input type="number" value="${dmax}" min="0" step="any" oninput="onPSDChange()" placeholder="e.g. 0.1"></td>
+    <td><input type="number" value="${wt}" min="0" max="100" step="any" oninput="onPSDChange()" placeholder="e.g. 25"></td>
+    <td class="est-n" style="font-family:'Courier New', monospace; font-weight:700; color:#555; text-align:right; padding-right:8px;">—</td>
+    <td><span class="btn-del-row" onclick="delPSDRow(${id})">✕</span></td>`;
+      document.getElementById('psd-tbody').appendChild(tr);
+      onPSDChange();
+    }
+
+    function delPSDRow(id) {
+      const el = document.getElementById('psd-row-' + id);
+      if (el) el.remove();
+      onPSDChange();
+    }
+
+    function clearPSD() {
+      document.getElementById('psd-tbody').innerHTML = '';
+      onPSDChange();
+    }
+
+    function loadSamplePSD() {
+      clearPSD();
+      const sample = [
+        [0.001, 0.010, 5], [0.010, 0.050, 15], [0.050, 0.100, 30], [0.100, 0.250, 30], [0.250, 0.500, 15], [0.500, 1.000, 5]
+      ];
+      sample.forEach(([a, b, c]) => addPSDRow(a, b, c));
+    }
+
+    function getPSDData() {
+      const rows = [];
+      document.querySelectorAll('#psd-tbody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        if (inputs.length < 3) return;
+        const dmin = parseFloat(inputs[0].value);
+        const dmax = parseFloat(inputs[1].value);
+        const wt = parseFloat(inputs[2].value);
+        if (!isNaN(dmin) && !isNaN(dmax) && !isNaN(wt) && dmax > dmin && wt > 0) {
+          rows.push({ dmin, dmax, wt });
+        }
+      });
+      return rows;
+    }
+
+    function onPSDChange() {
+      const rows = getPSDData();
+      updateValidation(rows);
+      drawPSDChart(rows);
+      computeBinVolumes();
+      updatePSDEstimates();
+    }
+
+    function updatePSDEstimates() {
+      const { vTotal } = computeTotalVolume();
+      const aspect = parseFloat(document.getElementById('in-aspect').value) || 1.0;
+      const shapeList = [...state.selectedShapes];
+      const tbody = document.getElementById('psd-tbody');
+      if (!tbody) return;
+      const rows = tbody.querySelectorAll('tr');
+
+      rows.forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const dmin = parseFloat(inputs[0].value);
+        const dmax = parseFloat(inputs[1].value);
+        const wt = parseFloat(inputs[2].value);
+        const cell = tr.querySelector('.est-n');
+
+        if (!isNaN(dmin) && !isNaN(dmax) && !isNaN(wt) && dmax > dmin && wt > 0) {
+          const vBin_um3 = (wt / 100) * vTotal * 1e9;
+          const dMean_um = ((dmin + dmax) / 2) * 1000;
+          // Use the first selected shape for estimation (as per internal logic)
+          const vMean_um3 = particleVolume(shapeList[0] || 'sphere', dMean_um, aspect);
+          const N = Math.max(1, Math.round(vBin_um3 / vMean_um3));
+          cell.textContent = N.toLocaleString();
+        } else {
+          cell.textContent = '—';
+        }
+      });
+    }
+
+    // SHAPE TOGGLE
+    function toggleShape(shape, btn) {
+      if (state.selectedShapes.has(shape)) {
+        if (state.selectedShapes.size === 1) return; // keep at least one
+        state.selectedShapes.delete(shape);
+        btn.classList.remove('active');
+      } else {
+        state.selectedShapes.add(shape);
+        btn.classList.add('active');
+      }
+      updateValidation(getPSDData());
+      updatePSDEstimates();
+    }
+
+    // VOLUME COMPUTATION
+    function particleVolume(shape, d_um, aspect) {
+      switch (shape) {
+        case 'sphere': return (Math.PI * d_um ** 3) / 6;
+        case 'ellipsoid': return (Math.PI * d_um ** 3 * aspect) / 6;
+        case 'fiber': return (Math.PI * d_um ** 3 * aspect) / 4;
+        case 'brick': return (d_um ** 3 * aspect);
+        case 'polyhedron': return 0.524 * d_um ** 3;
+        case 'random': return 0.42 * d_um ** 3;
+        default: return (Math.PI * d_um ** 3) / 6;
+      }
+    }
+
+    // PARTICLE GENERATION
+    let genAnimId = null; // handle for stopping generation
+
+    function stopGeneration() {
+      if (genAnimId) { clearTimeout(genAnimId); genAnimId = null; }
+      document.getElementById('btn-gen').disabled = false;
+      setLog(`>> Stopped · ${state.particles.length} particles placed`);
+      updateResultStats(state.particles, state.targetWeight);
+      updateFinenessInfo();
+      document.getElementById('btn-export').disabled = state.particles.length === 0;
+    }
+
+    function generateParticles() {
+      const rows = getPSDData();
+      const sumWt = rows.reduce((s, r) => s + r.wt, 0);
+      if (Math.abs(sumWt - 100) > 0.5) {
+        setLog('>> ERROR: PSD weight fractions must sum to 100%'); return;
+      }
+      if (rows.length === 0) {
+        setLog('>> ERROR: No valid PSD rows entered'); return;
+      }
+
+      const density = parseFloat(document.getElementById('in-density').value) || 2.65;
+      const targetWeightG = parseFloat(document.getElementById('in-weight').value) || 100;
+      const aspect = parseFloat(document.getElementById('in-aspect').value) || 1.0;
+      state.density = density;
+      state.targetWeight = targetWeightG;
+      state.aspectRatio = aspect;
+
+      const L = parseFloat(document.getElementById('in-L').value) || 10;
+      const W = parseFloat(document.getElementById('in-W').value) || 10;
+      const H = parseFloat(document.getElementById('in-H').value) || 5;
+
+      computeBinVolumes();
+
+      const shapeList = [...state.selectedShapes];
+      const rhoMicro = density * 1e-6; // g/cm³ → µg/µm³
+
+      // Pre-compute full particle list (data only, no positions yet)
+      const allParticles = [];
+      state.bins.forEach((bin, ri) => {
+        const { dmin, dmax, vBin } = bin;
+        const vBin_um3 = vBin * 1e9;
+        const dMean = (dmin + dmax) / 2;
+        const vMean = particleVolume(shapeList[0], dMean, aspect);
+        const N = Math.max(1, Math.round(vBin_um3 / vMean));
+        for (let i = 0; i < N; i++) {
+          const d = dmin + Math.random() * (dmax - dmin);
+          const shape = shapeList[Math.floor(Math.random() * shapeList.length)];
+          const vol = particleVolume(shape, d, aspect);
+          const mass = rhoMicro * vol;
+          allParticles.push({ id: allParticles.length + 1, shape, d, vol, mass, psdClass: ri });
+        }
+      });
+
+      const totalN = allParticles.length;
+      const vDish = L * W * H;
+
+      // Clear scene and reset state
+      meshObjects.forEach(m => scene.remove(m));
+      meshObjects = [];
+      state.particles = [];
+      if (genAnimId) clearTimeout(genAnimId);
+
+      document.getElementById('btn-gen').disabled = true;
+      document.getElementById('btn-export').disabled = true;
+
+      const progress = document.getElementById('gen-progress');
+      let cursor = 0;
+      let batchSize = Math.max(5, Math.floor(totalN / 100)); // 100 batches total
+      let skippedParticles = 0;
+
+      // Helper: Check if particle collides with existing particles
+      function checkCollision(x, y, z, r) {
+        for (let p of state.particles) {
+          const dx = p.x_mm - x;
+          const dy = p.y_mm - y;
+          const dz = p.z_mm - z;
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          const p_r = (p.d * 1e-3) / 2;
+          if (dist < r + p_r + 0.001) { // small epsilon for numerical stability
+            return true; // collision detected
+          }
+        }
+        return false;
+      }
+
+      // Helper: Try to place particle at a valid position (with max retries)
+      function findValidPosition(particle, maxRetries = 30) {
+        const r_mm = (particle.d * 1e-3) / 2;
+        const xMax = Math.max(0, L / 2 - r_mm);
+        const yMax = Math.max(0, H / 2 - r_mm);
+        const zMax = Math.max(0, W / 2 - r_mm);
+
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+          const x = (Math.random() * 2 - 1) * xMax;
+          const y = (Math.random() * 2 - 1) * yMax;
+          const z = (Math.random() * 2 - 1) * zMax;
+
+          if (!checkCollision(x, y, z, r_mm)) {
+            particle.x_mm = x;
+            particle.y_mm = y;
+            particle.z_mm = z;
+            return true; // successfully placed
+          }
+        }
+        return false; // failed to place after max retries
+      }
+
+      function addNextBatch() {
+        if (cursor >= totalN) {
+          // Generation complete
+          document.getElementById('btn-gen').disabled = false;
+          document.getElementById('btn-export').disabled = state.particles.length === 0;
+
+          const finalMassG = state.particles.reduce((s, p) => s + p.mass, 0) / 1e6;
+          const devPct = ((finalMassG - targetWeightG) / targetWeightG * 100);
+          const sign = devPct >= 0 ? '+' : '';
+          const renderNote = totalN > RENDER_CAP ? ` (rendering ${RENDER_CAP} of ${state.particles.length})` : '';
+          const skipNote = skippedParticles > 0 ? ` · ${skippedParticles} skipped (no space)` : '';
+          setLog(`>> Done · ${state.particles.length}/${totalN} particles · ${finalMassG.toFixed(4)} g · dev ${sign}${devPct.toFixed(2)}%${renderNote}${skipNote}`);
+
+          // Fit camera to dish
+          const maxDim = Math.max(L, W, H);
+          zoom = maxDim * 2.2;
+          rot.x = 0.4; rot.y = 0.5; pan.x = 0; pan.y = 0;
+
+          setTimeout(() => { progress.style.width = '0%'; }, 1200);
+          updateResultStats(state.particles, targetWeightG);
+          updateFinenessInfo();
+          return;
+        }
+
+        const end = Math.min(cursor + batchSize, totalN);
+
+        for (let i = cursor; i < end; i++) {
+          const p = allParticles[i];
+
+          // Try to find a valid position without collisions
+          if (findValidPosition(p)) {
+            state.particles.push(p);
+
+            // Render up to RENDER_CAP meshes
+            if (meshObjects.length < RENDER_CAP) {
+              try {
+                const mesh = buildParticleMesh(p, L, W, H, aspect);
+                if (mesh) {
+                  scene.add(mesh);
+                  meshObjects.push(mesh);
+                }
+              } catch (e) {
+                console.error('Error building particle mesh:', e);
+              }
+            }
+          } else {
+            // Could not find valid position due to collisions
+            skippedParticles++;
+          }
+        }
+
+        cursor = end;
+        const pct = (cursor / totalN) * 100;
+        progress.style.width = pct + '%';
+
+        const currentVol_mm3 = state.particles.reduce((s, p) => s + p.vol, 0) / 1e9;
+        const currentPack = vDish > 0 ? (currentVol_mm3 / vDish) * 100 : 0;
+
+        setLog(`>> Placing particle ${state.particles.length.toLocaleString()} / ${totalN.toLocaleString()} · Progress: ${pct.toFixed(1)}% · Packing: ${currentPack.toFixed(2)}%`);
+
+        // Schedule next batch with a small delay to allow rendering
+        genAnimId = setTimeout(addNextBatch, 16); // ~60fps
+      }
+
+      // Start generation
+      setLog(`>> Generating ${totalN} particles...`);
+      addNextBatch();
+    }
+
+    // VALIDATION
+    function updateValidation(rows) {
+      const sumWt = rows.reduce((s, r) => s + r.wt, 0);
+      const vSum = document.getElementById('v-psdsum');
+      if (rows.length === 0) { vSum.textContent = '—'; vSum.className = 'val-num'; }
+      else if (Math.abs(sumWt - 100) < 0.5) { vSum.textContent = `✓ ${sumWt.toFixed(1)}%`; vSum.className = 'val-num val-ok'; }
+      else { vSum.textContent = `✗ ${sumWt.toFixed(1)}%`; vSum.className = 'val-num val-err'; }
+
+      document.getElementById('v-shapes').textContent = [...state.selectedShapes].join(', ');
+
+      const btn = document.getElementById('btn-gen');
+      if (btn) {
+        btn.disabled = (Math.abs(sumWt - 100) > 0.5 || state.selectedShapes.size === 0);
+      }
+    }
+
+    function updateResultStats(particles, targetG) {
+      document.getElementById('s-npart').textContent = particles.length.toLocaleString();
+      const totalVolMm3 = particles.reduce((s, p) => s + p.vol, 0) / 1e9;
+      const totalMassG = particles.reduce((s, p) => s + p.mass, 0) / 1e6;
+      const massErr = Math.abs(totalMassG - targetG) / targetG * 100;
+
+      document.getElementById('s-vol').textContent = totalVolMm3.toFixed(2);
+      document.getElementById('s-mass').textContent = totalMassG.toFixed(4);
+      document.getElementById('s-err').textContent = massErr.toFixed(4);
+
+      // PSD check
+      const rows = getPSDData();
+      let maxPSDErr = 0;
+      rows.forEach(row => {
+        const classParticles = particles.filter(p => p.d >= row.dmin && p.d <= row.dmax);
+        const classMass = classParticles.reduce((s, p) => s + p.mass, 0);
+        const totalMass = particles.reduce((s, p) => s + p.mass, 0);
+        const frac = classMass / totalMass * 100;
+        const err = Math.abs(frac - row.wt);
+        maxPSDErr = Math.max(maxPSDErr, err);
+      });
+      document.getElementById('s-psd').textContent = maxPSDErr.toFixed(2);
+
+      const vMass = document.getElementById('v-mass');
+      if (massErr < 0.01) { vMass.textContent = `✓ ${totalMassG.toFixed(4)} g`; vMass.className = 'val-num val-ok'; }
+      else if (massErr < 0.5) { vMass.textContent = `~ ${totalMassG.toFixed(4)} g`; vMass.className = 'val-num val-warn'; }
+      else { vMass.textContent = `✗ ${totalMassG.toFixed(4)} g`; vMass.className = 'val-num val-err'; }
+    }
+
+    // PSD CHART
+    function drawPSDChart(rows) {
+      const canvas = document.getElementById('psd-canvas');
+      const W = canvas.parentElement.clientWidth || 300;
+      canvas.width = W;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, 158);
+      if (rows.length === 0) {
+        ctx.fillStyle = '#ccc'; ctx.font = '11px Inter';
+        ctx.fillText('Enter PSD data to see chart', W / 2 - 80, 80);
+        return;
+      }
+
+      const pad = { l: 36, r: 12, t: 12, b: 32 };
+      const cW = W - pad.l - pad.r;
+      const cH = 158 - pad.t - pad.b;
+      const maxWt = Math.max(...rows.map(r => r.wt)) * 1.15;
+
+      // Axes
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + cH); ctx.lineTo(pad.l + cW, pad.t + cH); ctx.stroke();
+
+      // Bars
+      const n = rows.length;
+      const bw = cW / n;
+      rows.forEach((row, i) => {
+        const bh = (row.wt / maxWt) * cH;
+        const x = pad.l + i * bw;
+        const y = pad.t + cH - bh;
+
+        // Gradient fill
+        const grad = ctx.createLinearGradient(x, y, x, pad.t + cH);
+        grad.addColorStop(0, '#000');
+        grad.addColorStop(1, '#666');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x + 2, y, bw - 4, bh);
+
+        // Label
+        ctx.fillStyle = '#000'; ctx.font = '8px Courier New'; ctx.textAlign = 'center';
+        const label = row.dmax >= 1 ? `${row.dmax.toFixed(1)}mm` : `${(row.dmax * 1000).toFixed(0)}µ`;
+        ctx.fillText(label, x + bw / 2, pad.t + cH + 12);
+        ctx.fillText(`${row.wt}%`, x + bw / 2, y - 2);
+      });
+
+      // Y-axis labels
+      ctx.fillStyle = '#888'; ctx.font = '8px Courier New'; ctx.textAlign = 'right';
+      [0, 25, 50, 75, 100].forEach(v => {
+        if (v <= maxWt) {
+          const y = pad.t + cH - (v / maxWt) * cH;
+          ctx.fillText(v, pad.l - 4, y + 3);
+          ctx.strokeStyle = '#eee'; ctx.setLineDash([2, 2]);
+          ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      });
+
+      // Cumulative curve
+      const sumWt = rows.reduce((s, r) => s + r.wt, 0);
+      if (sumWt > 0) {
+        ctx.strokeStyle = '#004080'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 2]);
+        ctx.beginPath();
+        let cum = 0;
+        rows.forEach((row, i) => {
+          cum += row.wt;
+          const x = pad.l + i * bw + bw;
+          const y = pad.t + cH - (cum / maxWt) * cH;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // THREE.JS SCENE
+    let renderer, scene, camera, animId;
+    let rot = { x: 0.4, y: 0.5 }, pan = { x: 0, y: 0 }, zoom = 5.0;
+    let mouse = { down: false, button: 0, lastX: 0, lastY: 0 };
+    let axesHelper = null;
+    let meshObjects = [];
+    const COLORS = {
+      sphere: 0x1a3a5c,
+      ellipsoid: 0x3a1a1a,
+      fiber: 0x1a3a1a,
+      brick: 0x3a2a0a,
+      polyhedron: 0x2a1a3a,
+      random: 0x1a3a3a,
+    };
+
+    // BIN VOLUMES
+    function computeBinVolumes() {
+      const { vTotal } = computeTotalVolume();
+      const rows = getPSDData();
+      state.bins = rows.map(r => ({
+        dmin: r.dmin * 1000, // mm -> um
+        dmax: r.dmax * 1000, // mm -> um
+        wt: r.wt,
+        vBin: (r.wt / 100) * vTotal   // mm³
+      }));
+      return state.bins;
+    }
+
+    // VOLUME SUMMARY
+    function computeTotalVolume() {
+      const massG = parseFloat(document.getElementById('in-weight').value) || 0;
+      const densGCm3 = parseFloat(document.getElementById('in-density').value) || 1;
+      const L = parseFloat(document.getElementById('in-L').value) || 0;
+      const W = parseFloat(document.getElementById('in-W').value) || 0;
+      const H = parseFloat(document.getElementById('in-H').value) || 0;
+
+      // density: g/cm³ → g/mm³ : 1 g/cm³ = 1e-3 g/mm³
+      const densGMm3 = densGCm3 * 1e-3;
+      const vTotal = massG / densGMm3;          // mm³
+      const vDish = L * W * H;                 // mm³
+      const packing = vDish > 0 ? (vTotal / vDish) * 100 : 0;
+
+      // Report to status log
+      if (vDish > 0) {
+        const color = packing > 100 ? '#cc0000' : '#1a7a1a';
+        setLog(`>> Packing Estimate: ${packing.toFixed(2)}%`, color);
+      }
+
+      return { vTotal, vDish, packing };
+    }
+
+    // BIN VOLUMES
+    let dishMesh = null;
+    // scene units: 1 unit = 1 mm
+    function drawDish() {
+      const L = parseFloat(document.getElementById('in-L').value) || 10;
+      const W = parseFloat(document.getElementById('in-W').value) || 10;
+      const H = parseFloat(document.getElementById('in-H').value) || 5;
+      if (!scene) return;
+      if (dishMesh) { scene.remove(dishMesh); dishMesh = null; }
+      const geo = new THREE.BoxGeometry(L, H, W);
+      const edges = new THREE.EdgesGeometry(geo);
+      dishMesh = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 1.5 }));
+      dishMesh.position.set(0, 0, 0);
+      scene.add(dishMesh);
+      // fit camera to dish
+      const maxDim = Math.max(L, W, H);
+      zoom = maxDim * 2.2;
+      pan.x = 0; pan.y = 0;
+      rot.x = 0.4; rot.y = 0.5;
+    }
+
+    function initThree() {
+      const wrap = document.getElementById('canvas-wrap');
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setClearColor(0xf0f0f0);
+      renderer.shadowMap.enabled = true;
+      wrap.appendChild(renderer.domElement);
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(50, 1, 0.01, 10000);
+
+      const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambient);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+      dir.position.set(5, 8, 5);
+      scene.add(dir);
+      const fill = new THREE.DirectionalLight(0xffffff, 0.3);
+      fill.position.set(-5, -2, -5);
+      scene.add(fill);
+
+      axesHelper = new THREE.AxesHelper(50);
+      scene.add(axesHelper);
+
+      resize();
+      animate();
+
+      window.addEventListener('resize', resize);
+      const cvs = renderer.domElement;
+      cvs.addEventListener('mousedown', e => { mouse.down = true; mouse.button = e.button; mouse.lastX = e.clientX; mouse.lastY = e.clientY; });
+      window.addEventListener('mouseup', () => { mouse.down = false; });
+      window.addEventListener('mousemove', e => {
+        if (!mouse.down) return;
+        const dx = e.clientX - mouse.lastX, dy = e.clientY - mouse.lastY;
+        mouse.lastX = e.clientX; mouse.lastY = e.clientY;
+        if (mouse.button === 2 || e.shiftKey) {
+          pan.x += dx * zoom * 0.0015; pan.y -= dy * zoom * 0.0015;
+        } else {
+          rot.y += dx * 0.007; rot.x += dy * 0.007;
+        }
+      });
+      cvs.addEventListener('wheel', e => { e.preventDefault(); zoom = Math.max(0.5, Math.min(1000, zoom * (1 + e.deltaY * 0.001))); }, { passive: false });
+      cvs.addEventListener('contextmenu', e => e.preventDefault());
+    }
+
+    function resize() {
+      const wrap = document.getElementById('canvas-wrap');
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      const target = new THREE.Vector3(pan.x, pan.y, 0);
+      const r = zoom;
+      camera.position.set(
+        target.x + r * Math.sin(rot.y) * Math.cos(rot.x),
+        target.y + r * Math.sin(rot.x),
+        target.z + r * Math.cos(rot.y) * Math.cos(rot.x)
+      );
+      camera.lookAt(target);
+      renderer.render(scene, camera);
+    }
+
+    const RENDER_CAP = 2000; // max individual meshes before subsampling
+
+    function buildScene(particles) {
+      // Remove old particle meshes only (preserve dish)
+      meshObjects.forEach(m => scene.remove(m));
+      meshObjects = [];
+
+      // Dish dimensions in mm (scene units = mm)
+      const L = parseFloat(document.getElementById('in-L').value) || 10;
+      const W = parseFloat(document.getElementById('in-W').value) || 10;
+      const H = parseFloat(document.getElementById('in-H').value) || 5;
+      const aspect = state.aspectRatio;
+
+      // Subsample if over render cap
+      let renderList = particles;
+      let subsampled = false;
+      if (particles.length > RENDER_CAP) {
+        // Random subsample without replacement
+        const indices = Array.from({ length: particles.length }, (_, i) => i);
+        for (let i = indices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        renderList = indices.slice(0, RENDER_CAP).map(i => particles[i]);
+        subsampled = true;
+      }
+
+      // Assign positions to ALL particles (rendered or not) for export
+      particles.forEach(p => {
+        if (p.x_mm === undefined) {
+          const r_mm = (p.d * 1e-3) / 2;
+          p.x_mm = (Math.random() * 2 - 1) * Math.max(0, L / 2 - r_mm);
+          p.y_mm = (Math.random() * 2 - 1) * Math.max(0, H / 2 - r_mm);
+          p.z_mm = (Math.random() * 2 - 1) * Math.max(0, W / 2 - r_mm);
+        }
+      });
+
+      renderList.forEach((p, idx) => {
+        const mesh = buildParticleMesh(p, L, W, H, aspect);
+        scene.add(mesh);
+        meshObjects.push(mesh);
+      });
+
+      // Auto-fit camera to dish
+      const maxDim = Math.max(L, W, H);
+      zoom = maxDim * 2.2;
+      rot.x = 0.4; rot.y = 0.5;
+      pan.x = 0; pan.y = 0;
+
+      const renderNote = subsampled
+        ? ` (rendering ${RENDER_CAP} of ${particles.length})`
+        : ` (all ${particles.length} rendered)`;
+      setLog(`>> Scene built: ${particles.length} particles generated${renderNote}`);
+    }
+
+    // Seeded pseudo-random: deterministic per particle id
+    function seededRand(seed, i) {
+      const x = Math.sin(seed * 9301 + i * 49297 + 233720) * 439.545;
+      return x - Math.floor(x);
+    }
+
+    function buildRandomShape(r, seed) {
+      // Build a fully closed polyhedron from scratch
+      // Start with icosahedron vertices (normalized to unit sphere)
+      const t = (1 + Math.sqrt(5)) / 2;
+      const verts = [
+        [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+        [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+        [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]
+      ].map(v => {
+        const l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        return [v[0] / l, v[1] / l, v[2] / l];
+      });
+
+      // Icosahedron faces (20 triangles)
+      const faces = [
+        [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+        [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+        [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+        [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]
+      ];
+
+      // Subdivide once for smoother mesh
+      const midCache = {};
+      const newFaces = [];
+      function midpoint(a, b) {
+        const key = a < b ? `${a}_${b}` : `${b}_${a}`;
+        if (midCache[key] !== undefined) return midCache[key];
+        const va = verts[a], vb = verts[b];
+        let mx = (va[0] + vb[0]) / 2, my = (va[1] + vb[1]) / 2, mz = (va[2] + vb[2]) / 2;
+        const l = Math.sqrt(mx * mx + my * my + mz * mz);
+        verts.push([mx / l, my / l, mz / l]);
+        midCache[key] = verts.length - 1;
+        return verts.length - 1;
+      }
+      faces.forEach(([a, b, c]) => {
+        const ab = midpoint(a, b), bc = midpoint(b, c), ca = midpoint(c, a);
+        newFaces.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]);
+      });
+
+      // Apply radial seeded displacement
+      const displacedVerts = verts.map((v, i) => {
+        const dist = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (dist > 0) {
+          const noiseFactor = 0.85 + seededRand(seed, i) * 0.35;
+          const scale = (r * noiseFactor) / dist;
+          return new THREE.Vector3(v[0] * scale, v[1] * scale, v[2] * scale);
+        }
+        return new THREE.Vector3(v[0] * r, v[1] * r, v[2] * r);
+      });
+
+      // Create geometry with indexed buffer
+      const geo = new THREE.BufferGeometry();
+      const positions = new Float32Array(displacedVerts.length * 3);
+      displacedVerts.forEach((v, i) => {
+        positions[i * 3] = v.x;
+        positions[i * 3 + 1] = v.y;
+        positions[i * 3 + 2] = v.z;
+      });
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const indices = new Uint32Array(newFaces.flat());
+      geo.setIndex(new THREE.BufferAttribute(indices, 1));
+      geo.computeVertexNormals();
+      geo.computeBoundingSphere();
+
+      return geo;
+    }
+
+    function buildParticleMesh(p, L, W, H, aspect) {
+      const r = (p.d * 1e-3) / 2;
+      // If position not set (e.g. from step loop), pick random
+      if (p.x_mm === undefined) {
+        const xRange = L / 2 - r; const yRange = H / 2 - r; const zRange = W / 2 - r;
+        p.x_mm = (Math.random() * 2 - 1) * Math.max(0, xRange);
+        p.y_mm = (Math.random() * 2 - 1) * Math.max(0, yRange);
+        p.z_mm = (Math.random() * 2 - 1) * Math.max(0, zRange);
+      }
+      let geo;
+      switch (p.shape) {
+        case 'sphere': geo = new THREE.SphereGeometry(r, 16, 12); break;
+        case 'ellipsoid':
+          geo = new THREE.SphereGeometry(r, 16, 12);
+          geo.scale(1, aspect, 1);
+          break;
+        case 'fiber': geo = new THREE.CylinderGeometry(r, r, r * 2 * aspect, 16, 1); break;
+        case 'brick': geo = new THREE.BoxGeometry(r * 2, r * 2 * aspect, r * 2); break;
+        case 'polyhedron': geo = buildRandomShape(r, p.id); break;
+        case 'random': geo = buildHullShape(r, p.id); break;
+        default: geo = new THREE.SphereGeometry(r, 8, 6);
+      }
+      const mat = new THREE.MeshStandardMaterial({
+        color: COLORS[p.shape] || 0x444444,
+        wireframe: state.wireframe,
+        metalness: 0.1, roughness: 0.7,
+        emissive: new THREE.Color(0x000000),
+        side: THREE.DoubleSide
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(p.x_mm, p.y_mm, p.z_mm);
+      mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      return mesh;
+    }
+
+    function buildHullShape(r, seed) {
+      // Build highly irregular but fully closed convex hull
+      const t = (1 + Math.sqrt(5)) / 2;
+      const verts = [
+        [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+        [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+        [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]
+      ].map(v => {
+        const l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        return [v[0] / l, v[1] / l, v[2] / l];
+      });
+
+      const faces = [
+        [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+        [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+        [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+        [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]
+      ];
+
+      // More aggressive displacement for hull, but still radially outward
+      const displacedVerts = verts.map((v, i) => {
+        const dist = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (dist > 0) {
+          const noiseFactor = 0.6 + seededRand(seed, i) * 0.8; // range [0.6, 1.4]
+          const scale = (r * noiseFactor) / dist;
+          return new THREE.Vector3(v[0] * scale, v[1] * scale, v[2] * scale);
+        }
+        return new THREE.Vector3(v[0] * r, v[1] * r, v[2] * r);
+      });
+
+      // Create indexed geometry
+      const geo = new THREE.BufferGeometry();
+      const positions = new Float32Array(displacedVerts.length * 3);
+      displacedVerts.forEach((v, i) => {
+        positions[i * 3] = v.x;
+        positions[i * 3 + 1] = v.y;
+        positions[i * 3 + 2] = v.z;
+      });
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const indices = new Uint32Array(faces.flat());
+      geo.setIndex(new THREE.BufferAttribute(indices, 1));
+      geo.computeVertexNormals();
+      geo.computeBoundingSphere();
+
+      return geo;
+    }
+
+    function toggleWire() {
+      state.wireframe = !state.wireframe;
+      meshObjects.forEach(m => { if (m.material) m.material.wireframe = state.wireframe; });
+      const btn = document.getElementById('vbtn-wire');
+      btn.classList.toggle('active', state.wireframe);
+    }
+
+    function toggleAxes() {
+      state.showAxes = !state.showAxes;
+      if (axesHelper) axesHelper.visible = state.showAxes;
+      document.getElementById('vbtn-axes').classList.toggle('active', state.showAxes);
+    }
+
+    const viewPresets = {
+      persp: { rotX: 0.4, rotY: 0.5, fov: 50 },
+      top: { rotX: Math.PI / 2 - 0.01, rotY: 0, fov: 50 },
+      front: { rotX: 0, rotY: 0, fov: 50 },
+      side: { rotX: 0, rotY: Math.PI / 2, fov: 50 },
+    };
+    function setView(v) {
+      const p = viewPresets[v];
+      if (!p) return;
+      rot.x = p.rotX; rot.y = p.rotY;
+      ['persp', 'top', 'front', 'side'].forEach(k => document.getElementById('vbtn-' + k).classList.toggle('active', k === v));
+    }
+    function adjustZoom(d) { zoom = Math.max(0.5, Math.min(5000, zoom * Math.pow(1.3, d))); }
+    function resetView() { zoom = 80; rot.x = 0.4; rot.y = 0.5; pan.x = 0; pan.y = 0; }
+
+    // TRIANGULATION ENGINE
+    // All canonical meshes are built at unit scale (r=1, d=2).
+    // Each returns { vertices: [[x,y,z],...], faces: [[i,j,k],...] }
+    // Caller scales vertices by (d_actual / 2) and translates by particle position.
+
+    function triSphere(fn) {
+      const lat = fn.lat, lon = fn.lon;
+      const verts = [], faces = [];
+      for (let i = 0; i <= lat; i++) {
+        const theta = (i / lat) * Math.PI;
+        for (let j = 0; j <= lon; j++) {
+          const phi = (j / lon) * 2 * Math.PI;
+          verts.push([
+            Math.sin(theta) * Math.cos(phi),
+            Math.cos(theta),
+            Math.sin(theta) * Math.sin(phi)
+          ]);
+        }
+      }
+      for (let i = 0; i < lat; i++) {
+        for (let j = 0; j < lon; j++) {
+          const a = i * (lon + 1) + j;
+          const b = a + lon + 1;
+          faces.push([a, b, a + 1]);
+          faces.push([b, b + 1, a + 1]);
+        }
+      }
+      return { vertices: verts, faces };
+    }
+
+    function triCube() {
+      // Unit cube: side = 2, centred at origin
+      const v = [
+        [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+        [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+      ];
+      const faces = [
+        [0, 1, 2], [0, 2, 3], // -Z
+        [4, 6, 5], [4, 7, 6], // +Z
+        [0, 4, 5], [0, 5, 1], // -Y
+        [2, 6, 7], [2, 7, 3], // +Y
+        [0, 3, 7], [0, 7, 4], // -X
+        [1, 5, 6], [1, 6, 2], // +X
+      ];
+      return { vertices: v, faces };
+    }
+
+    function triFiber(fn) {
+      return triCylinder(fn);
+    }
+
+    function triBrick() {
+      return triCube();
+    }
+
+    function triCylinder(fn) {
+      const N = fn.radial;
+      const h = state.aspectRatio;
+      const verts = [];
+      // Bottom ring (y = -h), top ring (y = +h)
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * 2 * Math.PI;
+        verts.push([Math.cos(a), -h, Math.sin(a)]); // bottom ring: 0..N-1
+      }
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * 2 * Math.PI;
+        verts.push([Math.cos(a), h, Math.sin(a)]);  // top ring:    N..2N-1
+      }
+      verts.push([0, -h, 0]); // bottom centre: 2N
+      verts.push([0, h, 0]); // top centre:    2N+1
+      const faces = [];
+      for (let i = 0; i < N; i++) {
+        const next = (i + 1) % N;
+        // Side quads → 2 tris
+        faces.push([i, next, N + next]);
+        faces.push([i, N + next, N + i]);
+        // Bottom cap
+        faces.push([2 * N, next, i]);
+        // Top cap
+        faces.push([2 * N + 1, N + i, N + next]);
+      }
+      return { vertices: verts, faces };
+    }
+
+    function triRandom(fn, seed) {
+      // Build a fully closed polyhedron mesh for export
+      const t = (1 + Math.sqrt(5)) / 2;
+      let verts = [
+        [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+        [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+        [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]
+      ].map(v => { const l = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2); return [v[0] / l, v[1] / l, v[2] / l]; });
+      let faces = [
+        [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+        [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+        [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+        [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]
+      ];
+
+      // Subdivide
+      for (let s = 0; s < fn.subdiv; s++) {
+        const midCache = {};
+        const newFaces = [];
+        function midpoint(a, b) {
+          const key = a < b ? `${a}_${b}` : `${b}_${a}`;
+          if (midCache[key] !== undefined) return midCache[key];
+          const va = verts[a], vb = verts[b];
+          let mx = (va[0] + vb[0]) / 2, my = (va[1] + vb[1]) / 2, mz = (va[2] + vb[2]) / 2;
+          const l = Math.sqrt(mx * mx + my * my + mz * mz);
+          verts.push([mx / l, my / l, mz / l]);
+          midCache[key] = verts.length - 1;
+          return verts.length - 1;
+        }
+        faces.forEach(([a, b, c]) => {
+          const ab = midpoint(a, b), bc = midpoint(b, c), ca = midpoint(c, a);
+          newFaces.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]);
+        });
+        faces = newFaces;
+      }
+
+      // Apply seeded radial displacement maintaining closed surface
+      verts = verts.map((v, i) => {
+        const dist = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (dist > 0) {
+          const noiseFactor = 0.85 + seededRand(seed, i) * 0.35;
+          const scale = noiseFactor / dist;
+          return [v[0] * scale, v[1] * scale, v[2] * scale];
+        }
+        return v;
+      });
+
+      return { vertices: verts, faces };
+    }
+
+    // Build canonical unit mesh for a given shape + fineness + seed
+    function buildCanonicalMesh(shape, seed) {
+      const fn = FINENESS[state.fineness];
+      const aspect = state.aspectRatio;
+      let mesh;
+      switch (shape) {
+        case 'sphere': mesh = triSphere(fn); break;
+        case 'ellipsoid':
+          mesh = triSphere(fn);
+          mesh.vertices = mesh.vertices.map(([x, y, z]) => [x, y * aspect, z]);
+          break;
+        case 'fiber': mesh = triCylinder(fn); break;
+        case 'brick':
+          mesh = triCube();
+          mesh.vertices = mesh.vertices.map(([x, y, z]) => [x, y * aspect, z]);
+          break;
+        case 'polyhedron': mesh = triRandom(fn, seed); break;
+        case 'random': mesh = triRandom({ subdiv: 0 }, seed); break;
+        default: mesh = triSphere(fn);
+      }
+      return mesh;
+    }
+
+    // Scale + translate a canonical mesh to a specific particle
+    // Returns { vertices: [[x,y,z],...], faces: [[i,j,k],...] }
+    function transformMesh(canonical, d_um, x_mm, y_mm, z_mm) {
+      const r_mm = (d_um * 1e-3) / 2;
+      const vertices = canonical.vertices.map(([vx, vy, vz]) => [
+        vx * r_mm + x_mm,
+        vy * r_mm + y_mm,
+        vz * r_mm + z_mm
+      ]);
+      return { vertices, faces: canonical.faces };
+    }
+
+    // EXPORT
+    function setFmt(f) {
+      state.exportFmt = f;
+      ['csv', 'tri', 'stl', 'txt'].forEach(k => {
+        const el = document.getElementById('fmt-' + k);
+        if (el) el.classList.toggle('active', k === f);
+      });
+      document.getElementById('dl-fmt').textContent = f.toUpperCase();
+      updateFinenessInfo();
+    }
+
+    function setFineness(f) {
+      state.fineness = f;
+      Object.keys(FINENESS).forEach(k => {
+        const el = document.getElementById('fine-' + k);
+        if (el) el.classList.toggle('active', k === f);
+      });
+      updateFinenessInfo();
+    }
+
+    function updateFinenessInfo() {
+      const fn = FINENESS[state.fineness];
+      if (!fn) return;
+
+      // Estimate file size
+      const n = state.particles.length || 0;
+      const trisSphere = fn.lat * fn.lon * 2;
+      const trisCone = fn.radial * 2;
+      const trisCyl = fn.radial * 4;
+      const trisCube = 12;
+      const trisPyramid = 6;
+      const trisRandom = fn.subdiv === 0 ? 20 : fn.subdiv === 1 ? 80 : fn.subdiv === 2 ? 320 : 1280;
+      const avgTris = (trisSphere + trisCone + trisCyl + trisCube + trisPyramid + trisRandom) / 6;
+      const bytesPerTri = state.exportFmt === 'stl' ? 50 : state.exportFmt === 'tri' ? 80 : state.exportFmt === 'csv' ? 120 : 80;
+      const estBytes = n * avgTris * bytesPerTri;
+      const estStr = estBytes < 1e6
+        ? (estBytes / 1024).toFixed(0) + ' KB'
+        : (estBytes / 1e6).toFixed(1) + ' MB';
+      document.getElementById('fi-est').textContent =
+        n > 0 ? `Est. file size: ${estStr}` : 'Est. file size: generate first';
+    }
+
+    function doExport() {
+      const particles = state.particles;
+      if (!particles.length) return;
+      const density = state.density;
+      const targetG = state.targetWeight;
+
+      const header = `# Particle Generator Export
+# Shapes: ${[...state.selectedShapes].join(', ')}
+# Density: ${density} g/cm3
+# Target Weight: ${targetG} g
+# Total Particles: ${particles.length}
+`;
+
+      let content, filename, mime;
+
+      if (state.exportFmt === 'csv') {
+        const rows = ['id,shape,d_um,d_eff_um,volume_um3,mass_ug,psd_class'];
+        particles.forEach(p => {
+          rows.push(`${p.id},${p.shape},${p.d.toFixed(4)},${(p.d_eff || p.d).toFixed(4)},${p.vol.toExponential(6)},${p.mass.toExponential(6)},${p.psdClass + 1}`);
+        });
+        content = header.replace(/^#/gm, '#') + rows.join('\n');
+        filename = 'particles.csv'; mime = 'text/csv';
+      } else if (state.exportFmt === 'tri') {
+        // Triangulation export
+        content = exportTriangulation(particles, density, targetG);
+        filename = 'particles_triangulation.csv'; mime = 'text/csv';
+      } else if (state.exportFmt === 'json') {
+        const out = {
+          metadata: { shapes: [...state.selectedShapes], density_kg_m3: density, target_weight_g: targetG, total_particles: particles.length },
+          particles: particles.map(p => ({
+            id: p.id, shape: p.shape, d_um: +p.d.toFixed(4),
+            volume_um3: +p.vol.toExponential(6), mass_ug: +p.mass.toExponential(6), psd_class: p.psdClass + 1
+          }))
+        };
+        content = JSON.stringify(out, null, 2);
+        filename = 'particles.json'; mime = 'application/json';
+      } else {
+        // OBJ: export particle positions and sizes as comment-annotated vertices
+        const lines = [header, '# Each vertex = particle centroid position (scene units)'];
+        lines.push('# v x y z   # id shape d_um mass_ug');
+        meshObjects.forEach((m, i) => {
+          const p = particles[i];
+          const pos = m.position;
+          lines.push(`v ${pos.x.toFixed(4)} ${pos.y.toFixed(4)} ${pos.z.toFixed(4)} # ${p.id} ${p.shape} ${p.d.toFixed(2)} ${p.mass.toExponential(3)}`);
+        });
+        content = lines.join('\n');
+        filename = 'particles.obj'; mime = 'text/plain';
+      }
+
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+
+      const msg = document.getElementById('export-msg');
+      msg.textContent = `✓ Exported ${state.exportFmt.toUpperCase()} — ${particles.length.toLocaleString()} particles`;
+      msg.style.display = 'block';
+      setLog(`>> Exported ${state.exportFmt.toUpperCase()} — ${particles.length} particles`);
+      setTimeout(() => { msg.style.display = 'none'; }, 3500);
+    }
+
+    function exportTriangulation(particles, density, targetG) {
+      const aspect = state.aspectRatio;
+      const lines = [];
+
+      // Write header
+      lines.push(`# Particle Triangulation Export`);
+      lines.push(`# Export Date: ${new Date().toISOString().split('T')[0]}`);
+      lines.push(`# Shapes: ${[...state.selectedShapes].join(', ')}`);
+      lines.push(`# Density: ${density} g/cm³`);
+      lines.push(`# Target Weight: ${targetG} g`);
+      lines.push(`# Total Particles: ${particles.length}`);
+      lines.push(`# Mesh Fineness: ${FINENESS[state.fineness].label}`);
+
+      let totalVertices = 0;
+      let totalFaces = 0;
+      const particleGeoms = [];
+
+      // Pre-build all particle geometries
+      for (let p of particles) {
+        const mesh = buildCanonicalMesh(p.shape, p.id);
+        const transformed = transformMesh(mesh, p.d, p.x_mm, p.y_mm, p.z_mm);
+        particleGeoms.push({ particle: p, vertices: transformed.vertices, faces: transformed.faces });
+        totalVertices += transformed.vertices.length;
+        totalFaces += transformed.faces.length;
+      }
+
+      lines.push(`# Total Vertices: ${totalVertices.toLocaleString()}`);
+      lines.push(`# Total Faces: ${totalFaces.toLocaleString()}`);
+      lines.push('');
+
+      // PARTICLE_METADATA section
+      lines.push('PARTICLE_METADATA');
+      lines.push('particle_id,shape,diameter_um,mass_ug,position_x_mm,position_y_mm,position_z_mm,vertex_count,face_count,vertex_start_idx,face_start_idx');
+      let vertexIdx = 0, faceIdx = 0;
+      particleGeoms.forEach(pg => {
+        const p = pg.particle;
+        const vCount = pg.vertices.length;
+        const fCount = pg.faces.length;
+        lines.push(`${p.id},${p.shape},${p.d.toFixed(4)},${p.mass.toExponential(6)},${p.x_mm.toFixed(4)},${p.y_mm.toFixed(4)},${p.z_mm.toFixed(4)},${vCount},${fCount},${vertexIdx},${faceIdx}`);
+        vertexIdx += vCount;
+        faceIdx += fCount;
+      });
+      lines.push('');
+
+      // VERTICES section
+      lines.push('VERTICES');
+      lines.push('global_vertex_idx,particle_id,local_vertex_idx,x_mm,y_mm,z_mm');
+      let globalVertIdx = 0;
+      particleGeoms.forEach(pg => {
+        const p = pg.particle;
+        pg.vertices.forEach((v, localIdx) => {
+          lines.push(`${globalVertIdx},${p.id},${localIdx},${v[0].toFixed(6)},${v[1].toFixed(6)},${v[2].toFixed(6)}`);
+          globalVertIdx++;
+        });
+      });
+      lines.push('');
+
+      // FACES section
+      lines.push('FACES');
+      lines.push('global_face_idx,particle_id,local_face_idx,v1_global_idx,v2_global_idx,v3_global_idx');
+      let globalFaceIdx = 0;
+      let globalVertStart = 0;
+      particleGeoms.forEach(pg => {
+        const p = pg.particle;
+        pg.faces.forEach((f, localIdx) => {
+          const v1 = globalVertStart + f[0];
+          const v2 = globalVertStart + f[1];
+          const v3 = globalVertStart + f[2];
+          lines.push(`${globalFaceIdx},${p.id},${localIdx},${v1},${v2},${v3}`);
+          globalFaceIdx++;
+        });
+        globalVertStart += pg.vertices.length;
+      });
+
+      return lines.join('\n');
+    }
+
+    // UTILS
+    function setLog(msg, color = '#000') {
+      const el = document.getElementById('status-log');
+      if (el) {
+        el.textContent = msg;
+        el.style.color = color;
+      }
+    }
+    function updateStats() {
+      const density = parseFloat(document.getElementById('in-density').value);
+      const weight = parseFloat(document.getElementById('in-weight').value);
+      if (!isNaN(density) && !isNaN(weight)) {
+        const rows = getPSDData();
+        updateValidation(rows);
+        updatePSDEstimates();
+      }
+    }
+
+    // INIT
+    window.addEventListener('load', () => {
+      initThree();
+      drawDish();
+      computeTotalVolume();
+      loadSamplePSD();
+      computeBinVolumes();
+      updateStats();
+      updateFinenessInfo();
+      // Resize PSD chart on window resize
+      window.addEventListener('resize', () => { drawPSDChart(getPSDData()); resize(); });
+    });
+  </script>
+</body>
+
+</html>
