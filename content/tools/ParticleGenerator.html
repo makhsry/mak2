@@ -900,32 +900,32 @@
           <div
             style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
             <span
-              style="width:10px;height:10px;background:#1a3a5c;display:inline-block;border:1px solid #000;"></span>Sphere
+              style="width:10px;height:10px;background:#f5f253;display:inline-block;border:1px solid hsl(64, 86%, 53%);"></span>Sphere
           </div>
           <div
             style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
             <span
-              style="width:10px;height:10px;background:#3a1a1a;display:inline-block;border:1px solid #000;"></span>Ellipsoid
+              style="width:10px;height:10px;background:#c56060;display:inline-block;border:1px solid hsl(0, 93%, 57%);"></span>Ellipsoid
           </div>
           <div
             style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
             <span
-              style="width:10px;height:10px;background:#1a3a1a;display:inline-block;border:1px solid #000;"></span>Fiber
+              style="width:10px;height:10px;background:hsl(120, 56%, 64%);display:inline-block;border:1px solid hsl(120, 60%, 64%);"></span>Fiber
           </div>
           <div
             style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
             <span
-              style="width:10px;height:10px;background:#3a2a0a;display:inline-block;border:1px solid #000;"></span>Brick
+              style="width:10px;height:10px;background:hsl(40, 64%, 71%);display:inline-block;border:1px solid hsl(36, 96%, 59%);"></span>Brick
           </div>
           <div
             style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
             <span
-              style="width:10px;height:10px;background:#2a1a3a;display:inline-block;border:1px solid #000;"></span>Polyhedron
+              style="width:10px;height:10px;background:hsl(270, 51%, 59%);display:inline-block;border:1px solid hsl(300, 55%, 30%);"></span>Polyhedron
           </div>
           <div
             style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.88);border:1px solid #ccc;padding:3px 7px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
             <span
-              style="width:10px;height:10px;background:#1a3a3a;display:inline-block;border:1px solid #000;"></span>Random
+              style="width:10px;height:10px;background:#1a3a3a;display:inline-block;border:1px solid hsl(0, 0%, 0%);"></span>Random
           </div>
         </div>
         <div id="hint">Drag to orbit · Scroll to zoom · Shift+drag to pan</div>
@@ -1625,7 +1625,7 @@
       renderer.render(scene, camera);
     }
 
-    const RENDER_CAP = 2000; // max individual meshes before subsampling
+    const RENDER_CAP = 1000000; // max individual meshes before subsampling
 
     function buildScene(particles) {
       // Remove old particle meshes only (preserve dish)
