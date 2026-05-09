@@ -4,7 +4,7 @@
 - Chemical Reaction Systems Analyzer
 - Bike Trainer Dashboard
 - Convert a Drawing to GPX (Route Pattern Mapper)
-- Nanochannel Builder and Mesher (with MD Simulations on the Web!)
+- Nanochannel Builder and Mesher (with MD-like Simulations on the Web)
 - Transfer Old Fitbit Data to Strava
 - An Interactive Local Python Notebook (PyCompute + Puter.js)
 - Local RAG Pipeline — Ollama + ChromaDB + LangChain
