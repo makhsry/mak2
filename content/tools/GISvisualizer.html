@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS Data Visualizer</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --primary: #000;
+            --bg: #fff;
+            --text: #1a1a1a;
+            --border: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: 'Bodoni Moda', serif;
+            font-weight: 700;
+            color: #000;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            background: #fff;
+            border-bottom: 4px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .header-left p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .controls {
+            width: 350px;
+            padding: 2rem;
+            border-right: 1px solid var(--border);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .control-group h3 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .control-group h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: #000;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select,
+        button {
+            background: #fff;
+            border: 1px solid var(--border);
+            color: #000;
+            padding: 0.85rem;
+            border-radius: 0;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #000;
+        }
+
+        button {
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #ccc;
+            color: #666;
+            border-color: #ccc;
+        }
+
+        .status-bar {
+            padding: 0.75rem 1rem;
+            border-radius: 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #fff;
+            min-width: 400px;
+            height: 80px;
+            text-align: left;
+            border: 1px solid #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .hint-text {
+            color: blue;
+            font-weight: 700;
+        }
+
+        .log-text {
+            color: #000;
+        }
+
+        .display-area {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: #f0f0f0;
+        }
+
+        .analysis-panel {
+            width: 350px;
+            padding: 2rem;
+            border-left: 1px solid var(--border);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .analysis-panel .panel-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            line-height: 1.1;
+            border-bottom: 3px solid #000;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .analysis-panel .panel-header p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+            color: #333;
+        }
+
+        #map {
+            flex: 1;
+            width: 100%;
+        }
+
+        .info-legend {
+            background: #ffffff;
+            border: 2px solid #000;
+            padding: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #000;
+            cursor: grab;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+            min-width: 150px;
+        }
+
+        .info-legend:active {
+            cursor: grabbing;
+        }
+
+        .legend-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border-bottom: 2px solid #000;
+            padding-bottom: 4px;
+        }
+
+        .legend-scale {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .legend-gradient {
+            height: 12px;
+            width: 100%;
+            margin-top: 5px;
+            border: 1px solid #000;
+        }
+
+        .slider-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .slider-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-item label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slider-item span {
+            font-size: 0.85rem;
+            color: #000;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            accent-color: #000;
+            padding: 0;
+            border: none;
+            height: 2px;
+            background: #ccc;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <h1>GIS Data Analyzer</h1>
+            <p>Upload a CSV file with GPS data, map columns, and visualize with styling options.</p>
+        </div>
+        <div class="header-right">
+            <div id="status-bar" class="status-bar">
+                <div id="status-hint" class="hint-text">hint: Upload a CSV file to begin</div>
+                <div id="status-log" class="log-text">>> Ready</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <aside class="controls">
+            <section class="control-group">
+                <h3>1. Load Data</h3>
+                <div class="input-wrapper">
+                    <input type="file" id="csv_input" accept=".csv">
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>2. Data Mapping</h3>
+                <div class="input-wrapper">
+                    <label>Latitude Column</label>
+                    <select id="col_lat" disabled>
+                        <option>---</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <label>Longitude Column</label>
+                    <select id="col_lng" disabled>
+                        <option>---</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <label>Feature Column (Color & Size)</label>
+                    <select id="col_feature" disabled>
+                        <option>None</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>3. Plotting Options</h3>
+                <div class="input-wrapper">
+                    <label>Base Map</label>
+                    <select id="map_style">
+                        <option value="light">Carto Light</option>
+                        <option value="osm">OpenStreetMap</option>
+                        <option value="satellite">Satellite</option>
+                    </select>
+                </div>
+                <div class="slider-grid">
+                    <div class="slider-item">
+                        <label>Point Size (Radius)</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" id="point_size" min="1" max="100" step="1" value="5" style="flex: 1;">
+                            <input type="number" id="val-point-size" min="1" max="100" value="5"
+                                style="width: 50px; padding: 0.2rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: bold; border: 1px solid #000; text-align: center;">
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <label>Opacity</label>
+                        <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.8">
+                        <span id="val-opacity">0.8</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>4. Visualize</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button id="btn-plot" disabled style="flex: 1;">Plot Data</button>
+                    <button id="btn-clear" style="flex: 1; background: #fff; color: #000;">Clear</button>
+                </div>
+            </section>
+        </aside>
+
+        <section class="display-area">
+            <div id="map"></div>
+        </section>
+
+        <aside class="analysis-panel">
+            <div class="panel-header">
+                <h2>Statistical Analysis</h2>
+                <p>Tools coming soon...</p>
+            </div>
+            <!-- Future content here -->
+        </aside>
+    </main>
+
+    <!-- Legend Settings Modal -->
+    <div id="legend-modal"
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border: 2px solid #000; padding: 1.5rem; z-index: 10000; box-shadow: 4px 4px 0 #000; width: 360px; font-family: 'Inter', sans-serif;">
+        <h3
+            style="margin-top: 0; font-family: 'Bodoni Moda', serif; border-bottom: 2px solid #000; padding-bottom: 0.5rem; color: #000;">
+            Edit Legend</h3>
+        <div class="input-wrapper" style="margin-bottom: 1rem;">
+            <label style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Legend Title</label>
+            <input type="text" id="legend_title" placeholder="Auto (Column Name)"
+                style="width: 100%; border: 1px solid #000; padding: 0.5rem; font-family: 'Inter', sans-serif; box-sizing: border-box;">
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+            <div style="flex: 1;">
+                <label
+                    style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.3rem;">Min
+                    Val</label>
+                <input type="number" id="legend_min" placeholder="Auto"
+                    style="width: 100%; border: 1px solid #000; padding: 0.5rem; font-family: 'Inter', sans-serif; box-sizing: border-box;">
+            </div>
+            <div style="flex: 1;">
+                <label
+                    style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.3rem;">Max
+                    Val</label>
+                <input type="number" id="legend_max" placeholder="Auto"
+                    style="width: 100%; border: 1px solid #000; padding: 0.5rem; font-family: 'Inter', sans-serif; box-sizing: border-box;">
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 1.5rem;">
+            <div style="flex: 1;">
+                <label
+                    style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.3rem;">Low
+                    Color</label>
+                <input type="color" id="color_low" value="#0000ff"
+                    style="width: 100%; height: 35px; border: 1px solid #000; padding: 0; box-sizing: border-box;">
+            </div>
+            <div style="flex: 1;">
+                <label
+                    style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.3rem;">High
+                    Color</label>
+                <input type="color" id="color_high" value="#ff0000"
+                    style="width: 100%; height: 35px; border: 1px solid #000; padding: 0; box-sizing: border-box;">
+            </div>
+        </div>
+        <h4
+            style="margin: 0 0 0.5rem 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; text-transform: uppercase;">
+            Discrete Bins</h4>
+        <div id="bins_container"
+            style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; max-height: 150px; overflow-y: auto;">
+            <!-- Bins go here -->
+        </div>
+        <button id="btn-add-bin"
+            style="width: 100%; margin-bottom: 1.5rem; padding: 0.5rem; font-size: 0.8rem; background: #fff; border: 1px solid #000; cursor: pointer;">+
+            Add Bin</button>
+
+        <button id="btn-close-legend-modal"
+            style="width: 100%; background: #000; color: #fff; border: 1px solid #000; padding: 0.8rem; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">Apply
+            & Close</button>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- PapaParse for CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Html2Canvas for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- App Logic -->
+    <script src="GISvisualizer.js"></script>
+</body>
+
+</html>
