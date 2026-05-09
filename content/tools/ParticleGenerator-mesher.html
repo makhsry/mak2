@@ -1026,6 +1026,23 @@
           <button class="fmt-btn" id="fmt-txt" onclick="setFmt('txt')">TXT</button>
         </div>
 
+        <!-- Fineness selector -->
+        <div class="section-label" style="margin-top:0.75rem">Mesh Fineness</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:0.75rem;">
+          <button class="fmt-btn" id="fine-extcoarse" onclick="setFineness('extcoarse')">Ext. Coarse</button>
+          <button class="fmt-btn" id="fine-vcoarse" onclick="setFineness('vcoarse')">Very Coarse</button>
+          <button class="fmt-btn" id="fine-coarse" onclick="setFineness('coarse')">Coarse</button>
+          <button class="fmt-btn active" id="fine-normal" onclick="setFineness('normal')">Normal</button>
+          <button class="fmt-btn" id="fine-fine" onclick="setFineness('fine')">Fine</button>
+          <button class="fmt-btn" id="fine-ultrafine" onclick="setFineness('ultrafine')">Ultra Fine</button>
+          <button class="fmt-btn" id="fine-extfine" onclick="setFineness('extfine')" style="grid-column:1/-1">Extremely
+            Fine</button>
+        </div>
+
+        <!-- Fineness info -->
+        <div class="eq-box" id="fineness-info" style="margin-bottom:0.75rem;">
+          <div class="eq-sub" id="fi-est">Est. file size: generate first</div>
+        </div>
 
         <button onclick="doExport()" id="btn-export" disabled>↓ Download <span id="dl-fmt">CSV</span></button>
         <div class="export-msg" id="export-msg"></div>
@@ -1045,10 +1062,21 @@
       targetWeight: 100,
       aspectRatio: 1.0,
       exportFmt: 'csv',
+      fineness: 'normal',
       wireframe: false,
       showAxes: true,
     };
 
+    // Fineness → resolution table
+    const FINENESS = {
+      extcoarse: { lat: 4, lon: 4, radial: 4, subdiv: 0, label: 'Extremely Coarse' },
+      vcoarse: { lat: 6, lon: 6, radial: 6, subdiv: 0, label: 'Very Coarse' },
+      coarse: { lat: 8, lon: 8, radial: 8, subdiv: 1, label: 'Coarse' },
+      normal: { lat: 12, lon: 12, radial: 12, subdiv: 1, label: 'Normal' },
+      fine: { lat: 16, lon: 16, radial: 16, subdiv: 2, label: 'Fine' },
+      ultrafine: { lat: 24, lon: 24, radial: 24, subdiv: 2, label: 'Ultra Fine' },
+      extfine: { lat: 32, lon: 32, radial: 32, subdiv: 3, label: 'Extremely Fine' },
+    };
 
     // PSD TABLE
     let rowId = 0;
@@ -1172,6 +1200,7 @@
       document.getElementById('btn-gen').disabled = false;
       setLog(`>> Stopped · ${state.particles.length} particles placed`);
       updateResultStats(state.particles, state.targetWeight);
+      updateFinenessInfo();
       document.getElementById('btn-export').disabled = state.particles.length === 0;
     }
 
@@ -1292,6 +1321,7 @@
 
           setTimeout(() => { progress.style.width = '0%'; }, 1200);
           updateResultStats(state.particles, targetWeightG);
+          updateFinenessInfo();
           return;
         }
 
@@ -1969,9 +1999,9 @@
       return { vertices: verts, faces };
     }
 
-    // Build canonical unit mesh for a given shape + seed
+    // Build canonical unit mesh for a given shape + fineness + seed
     function buildCanonicalMesh(shape, seed) {
-      const fn = { lat: 12, lon: 12, radial: 12, subdiv: 1 };
+      const fn = FINENESS[state.fineness];
       const aspect = state.aspectRatio;
       let mesh;
       switch (shape) {
@@ -2012,9 +2042,39 @@
         if (el) el.classList.toggle('active', k === f);
       });
       document.getElementById('dl-fmt').textContent = f.toUpperCase();
+      updateFinenessInfo();
     }
 
+    function setFineness(f) {
+      state.fineness = f;
+      Object.keys(FINENESS).forEach(k => {
+        const el = document.getElementById('fine-' + k);
+        if (el) el.classList.toggle('active', k === f);
+      });
+      updateFinenessInfo();
+    }
 
+    function updateFinenessInfo() {
+      const fn = FINENESS[state.fineness];
+      if (!fn) return;
+
+      // Estimate file size
+      const n = state.particles.length || 0;
+      const trisSphere = fn.lat * fn.lon * 2;
+      const trisCone = fn.radial * 2;
+      const trisCyl = fn.radial * 4;
+      const trisCube = 12;
+      const trisPyramid = 6;
+      const trisRandom = fn.subdiv === 0 ? 20 : fn.subdiv === 1 ? 80 : fn.subdiv === 2 ? 320 : 1280;
+      const avgTris = (trisSphere + trisCone + trisCyl + trisCube + trisPyramid + trisRandom) / 6;
+      const bytesPerTri = state.exportFmt === 'stl' ? 50 : state.exportFmt === 'tri' ? 80 : state.exportFmt === 'csv' ? 120 : 80;
+      const estBytes = n * avgTris * bytesPerTri;
+      const estStr = estBytes < 1e6
+        ? (estBytes / 1024).toFixed(0) + ' KB'
+        : (estBytes / 1e6).toFixed(1) + ' MB';
+      document.getElementById('fi-est').textContent =
+        n > 0 ? `Est. file size: ${estStr}` : 'Est. file size: generate first';
+    }
 
     function doExport() {
       const particles = state.particles;
@@ -2089,6 +2149,7 @@
       lines.push(`# Density: ${density} g/cm³`);
       lines.push(`# Target Weight: ${targetG} g`);
       lines.push(`# Total Particles: ${particles.length}`);
+      lines.push(`# Mesh Fineness: ${FINENESS[state.fineness].label}`);
 
       let totalVertices = 0;
       let totalFaces = 0;
@@ -2180,6 +2241,7 @@
       loadSamplePSD();
       computeBinVolumes();
       updateStats();
+      updateFinenessInfo();
       // Resize PSD chart on window resize
       window.addEventListener('resize', () => { drawPSDChart(getPSDData()); resize(); });
     });
