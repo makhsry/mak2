@@ -1,8 +1,8 @@
-### Nanochannel Builder and Mesher (with MD Simulations on the Web!)
+### Nanochannel Builder and Mesher (with MD-like Simulations on the Web)
 
 An **interactive browser-based tool** for **parametric design** and **3D visualization** of nanochannel geometries, **mesh generation** in real time, and **export**. 
 
-**Now supports MD Simulations**.
+**Now supports MD-like simulations**.
 
 - **Access** the tool [**here**](tools/Nanotube.html).
 
